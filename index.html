@@ -7,11 +7,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Khatabook">
+<meta name="apple-mobile-web-app-title" content="MY SHOP">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="icon" href="./icon-192.png">
-<title>Khatabook — Business Ledger</title>
+<title>MY SHOP — Business Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Firebase (used only for the optional Live Orders feature — safe to keep even if not configured) -->
@@ -490,11 +490,19 @@
   <div class="login-card perforated">
     <div class="login-mark">₿</div>
     <h1 class="display">Welcome to Khatabook</h1>
-    <div class="tag">Set up your business ledger — all data stays on this device</div>
-    <form id="onboardingForm" onsubmit="return handleOnboarding(event)">
+    <div class="tag" id="authTag">Create your shop account — your data is saved securely to your account</div>
+    <div id="migrateNotice" style="display:none; background:#FFF6E5; border:1px solid var(--gold-light); border-radius:10px; padding:10px 12px; font-size:12px; color:var(--green-900); margin-bottom:14px;">
+      এই ফোনে আগের কিছু ডাটা পাওয়া গেছে — সাইন আপ করলে সেটা আপনার নতুন একাউন্টে যোগ হয়ে যাবে।
+    </div>
+    <div class="segmented" id="authTabs" style="margin-bottom:16px;">
+      <button data-authtab="signup" class="active">Sign Up</button>
+      <button data-authtab="login">Log In</button>
+    </div>
+
+    <form id="signupForm" onsubmit="return handleSignup(event)">
       <div class="field">
-        <label>Business / Company Name</label>
-        <input type="text" id="obCoName" placeholder="e.g. Karim Traders" required>
+        <label>Business / Shop Name</label>
+        <input type="text" id="obCoName" placeholder="e.g. SOHAN SHOP BD" required>
       </div>
       <div class="field">
         <label>Currency</label>
@@ -506,8 +514,16 @@
           <option value="£">£ — British Pound</option>
         </select>
       </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="কমপক্ষে ৬ ক্যারেক্টার" required minlength="6">
+      </div>
       <div class="toggle-row">
-        <span class="k">Lock app with a PIN</span>
+        <span class="k">Lock app with a PIN (on this device)</span>
         <label class="switch"><input type="checkbox" id="obPinToggle" onchange="toggleObPinFields()"><span class="slider"></span></label>
       </div>
       <div id="obPinFields" style="display:none;">
@@ -523,9 +539,23 @@
         </div>
       </div>
       <div class="login-error" id="onboardingError">PIN must be 4 digits and match.</div>
-      <button type="submit" class="btn btn-primary">Get Started</button>
+      <button type="submit" class="btn btn-primary" id="signupSubmitBtn">Create Account &amp; Get Started</button>
     </form>
-    <div class="login-hint">No internet, account or server needed — everything you enter is saved only on this phone.</div>
+
+    <form id="loginForm" style="display:none;" onsubmit="return handleLogin(event)">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+      <div class="login-error" id="loginError">ইমেইল বা পাসওয়ার্ড ভুল হয়েছে।</div>
+      <button type="submit" class="btn btn-primary" id="loginSubmitBtn">Log In</button>
+    </form>
+
+    <div class="login-hint">প্রতিটা দোকানের ডাটা আলাদাভাবে ও নিরাপদে ক্লাউডে সংরক্ষিত থাকে।</div>
   </div>
 </div>
 
@@ -771,8 +801,26 @@
       </div>
 
       <div class="settings-block">
+        <h3>☁️ Cloud Account</h3>
+        <div class="helper-text" style="margin-top:0;">লগইন করা আছে: <strong id="cloudAccountEmail">—</strong></div>
+        <div class="field" style="margin-top:12px;">
+          <label>আপনার দোকানের অর্ডার-ফর্ম লিংক (কাস্টমারদের শেয়ার করুন)</label>
+          <input type="text" id="shopLinkBox" readonly onclick="this.select()">
+        </div>
+        <button class="btn btn-gold" onclick="copyShopLink()">লিংক কপি করুন</button>
+        <button class="btn btn-danger" style="margin-top:10px;" onclick="logoutShop()">Log Out</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>🔔 Order Notifications</h3>
+        <div class="helper-text" style="margin-top:0;">নতুন অর্ডার এলে এই ব্রাউজারে একটা নোটিফিকেশন দেখাবে (অ্যাপটা খোলা বা ব্যাকগ্রাউন্ড ট্যাবে থাকা অবস্থায়)।</div>
+        <button class="btn btn-primary" style="margin-top:10px;" onclick="requestOrderNotifications()">নোটিফিকেশন চালু করুন</button>
+        <div class="helper-text" id="notifyStatusText">এখনো চালু করা হয়নি।</div>
+      </div>
+
+      <div class="settings-block">
         <h3>🛒 Products Catalog (shown on your Landing Page)</h3>
-        <div class="helper-text" style="margin-top:0;">Add the products customers can order from your landing page, including a photo and a video link. Saving here also pushes the list live to Firebase (once connected below).</div>
+        <div class="helper-text" style="margin-top:0;">Add the products customers can order from your landing page, including a photo and a video link. Saving here pushes the list live to your shop link above.</div>
         <div id="productsListBox" style="margin-top:10px;"></div>
 
         <div id="productFormTitle" style="font-size:13px; font-weight:600; margin:16px 0 8px; color:var(--green-800);">Add a Product</div>
@@ -806,24 +854,23 @@
       </div>
 
       <div class="settings-block">
-        <h3>🔥 Live Order Sync (Firebase)</h3>
-        <div class="helper-text" style="margin-top:0;">Connect a free Firebase project so orders placed on your landing page appear here live. See the setup guide for how to create the project and get these values.</div>
-        <div class="field" style="margin-top:10px;">
-          <label>Firebase Config (paste the firebaseConfig object)</label>
-          <textarea id="settingsFirebaseConfig" rows="5" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"..."}'></textarea>
+        <h3>🎬 Info Videos (shown on Landing Page)</h3>
+        <div class="helper-text" style="margin-top:0;">এগুলো প্রডাক্ট না — সাধারণ তথ্য/ঘোষণা/অফার জানানোর ভিডিও, দাম থাকবে না। ল্যান্ডিং পেজে প্রডাক্টের নিচে আলাদা সেকশনে দেখাবে।</div>
+        <div id="videosListBox" style="margin-top:10px;"></div>
+
+        <div id="videoFormTitle" style="font-size:13px; font-weight:600; margin:16px 0 8px; color:var(--green-800);">Add a Video</div>
+        <div class="field">
+          <label>Caption / Title *</label>
+          <input type="text" id="newVideoCaption" placeholder="e.g. ঈদ অফার — ৩০% ছাড়!">
         </div>
-        <div class="row2">
-          <div class="field">
-            <label>Admin Email</label>
-            <input type="email" id="settingsFirebaseEmail" placeholder="you@example.com">
-          </div>
-          <div class="field">
-            <label>Admin Password</label>
-            <input type="password" id="settingsFirebasePassword" placeholder="••••••••">
-          </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Video URL *</label>
+          <input type="text" id="newVideoUrl" placeholder="YouTube link or direct video (.mp4) link">
         </div>
-        <button class="btn btn-gold" onclick="connectFirebase()">Connect & Sign In</button>
-        <div class="helper-text" id="firebaseStatusText">Not connected — orders page will stay empty until you connect.</div>
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="saveVideo()" id="videoSaveBtn">Add Video</button>
+          <button class="btn btn-ghost" style="flex:1; display:none;" id="videoCancelBtn" onclick="cancelEditVideo()">Cancel</button>
+        </div>
       </div>
 
     </section>
@@ -964,6 +1011,17 @@
    ========================================================= */
 const STORAGE_KEY = 'khatabook_v1';
 
+// Shared Firebase project — every shop's data lives isolated under /shops/{uid}/
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCJOhYaGVS3OlMdpwHAYtNTnkc4cLNWlIU",
+  authDomain: "sohanshopbd.firebaseapp.com",
+  databaseURL: "https://sohanshopbd-default-rtdb.firebaseio.com",
+  projectId: "sohanshopbd",
+  storageBucket: "sohanshopbd.firebasestorage.app",
+  messagingSenderId: "375490913858",
+  appId: "1:375490913858:web:3596b25f007cc10be1efdb"
+};
+
 const state = {
   company: { name: "My Business", currency: "৳" },
   settings: {
@@ -971,16 +1029,14 @@ const state = {
     purchaseCategories: ["Raw Material","Stock/Goods","Packaging","Equipment","Other Purchase"],
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
-    sheetUrl: "",
     products: [], // [{id, name, price}] — shown on the landing page
-    firebaseConfig: null, // parsed firebaseConfig object, or null if not connected
-    firebaseEmail: ""
+    videos: [] // [{id, caption, videoUrl}] — general info videos, not products (no price)
   },
   security: { pinEnabled: false, pin: "" },
   sales: [],
   purchases: [],
   expenses: [],
-  orders: [], // live mirror of Firebase "orders" node — not saved to localStorage
+  orders: [], // live mirror of Firebase "orders" node for this shop
   currentPage: "dashboard",
   currentPeriod: "today",
   currentOrderTab: "pending",
@@ -988,9 +1044,13 @@ const state = {
 };
 
 let idCounter = 1;
-const todayISO = () => new Date().toISOString().slice(0,10);
+function toLocalISODate(d){
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+const todayISO = () => toLocalISODate(new Date());
 
-/* ---------------- PERSISTENCE ---------------- */
+/* ---------------- PERSISTENCE (local cache) ---------------- */
 function saveState(){
   try{
     const payload = {
@@ -1006,6 +1066,7 @@ function saveState(){
   }catch(err){
     showToast('Could not save — device storage may be full');
   }
+  syncShopToCloud();
 }
 function loadState(){
   try{
@@ -1025,35 +1086,76 @@ function loadState(){
   }
 }
 
-/* ---------------- APP BOOT: onboarding / lock / app ---------------- */
-function bootApp(){
-  const hasData = loadState();
-  if(!hasData){
-    document.getElementById('onboardingScreen').style.display = 'flex';
-    return;
-  }
-  if(state.security.pinEnabled){
-    showLockScreen();
-  } else {
-    enterApp();
-  }
+/* ---------------- CLOUD ACCOUNT (Firebase Auth + per-shop data) ---------------- */
+let fbApp = null, fbAuth = null, fbDb = null, currentUid = null;
+let cloudSyncTimer = null;
+
+let isSigningUp = false;
+function initFirebaseCore(){
+  if(fbApp) return;
+  fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+  fbAuth = firebase.auth();
+  fbDb = firebase.database();
+  fbAuth.onAuthStateChanged(user => {
+    if(isSigningUp) return; // handleSignup() drives entry itself after the initial cloud write
+    if(user){
+      currentUid = user.uid;
+      loadShopData(currentUid).then(()=>{
+        if(state.security.pinEnabled) showLockScreen(); else enterApp();
+      });
+    } else {
+      currentUid = null;
+      showAuthScreen();
+    }
+  });
 }
-function enterApp(){
-  document.getElementById('onboardingScreen').style.display = 'none';
-  document.getElementById('lockScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  renderAll();
-  initFirebaseFromSaved();
+function shopRef(path){ return fbDb.ref('shops/' + currentUid + (path ? '/' + path : '')); }
+
+function loadShopData(uid){
+  return fbDb.ref('shops/' + uid).once('value').then(snap => {
+    const d = snap.val() || {};
+    Object.assign(state.company, d.company || {});
+    Object.assign(state.settings, d.settings || {});
+    Object.assign(state.security, d.security || {});
+    state.sales = d.sales ? Object.values(d.sales) : [];
+    state.purchases = d.purchases ? Object.values(d.purchases) : [];
+    state.expenses = d.expenses ? Object.values(d.expenses) : [];
+    idCounter = d.idCounter || 1;
+    if(!state.settings.products) state.settings.products = [];
+    if(!state.settings.videos) state.settings.videos = [];
+    saveState(); // caches locally too
+  });
+}
+function syncShopToCloud(){
+  if(!fbDb || !currentUid) return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(()=>{
+    shopRef().update({
+      company: state.company,
+      settings: state.settings,
+      security: state.security,
+      sales: state.sales,
+      purchases: state.purchases,
+      expenses: state.expenses,
+      idCounter
+    }).catch(()=> showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন'));
+  }, 600);
 }
 
-/* ---------------- ONBOARDING (first run) ---------------- */
-function toggleObPinFields(){
-  document.getElementById('obPinFields').style.display = document.getElementById('obPinToggle').checked ? 'block' : 'none';
+function showAuthScreen(){
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('onboardingScreen').style.display = 'flex';
+  const hasLocalData = !!localStorage.getItem(STORAGE_KEY);
+  document.getElementById('migrateNotice').style.display = hasLocalData ? 'block' : 'none';
 }
-function handleOnboarding(e){
+
+function handleSignup(e){
   e.preventDefault();
   const name = document.getElementById('obCoName').value.trim();
   const currency = document.getElementById('obCurrency').value;
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
   const pinOn = document.getElementById('obPinToggle').checked;
   const errBox = document.getElementById('onboardingError');
 
@@ -1061,6 +1163,7 @@ function handleOnboarding(e){
     const p1 = document.getElementById('obPin1').value;
     const p2 = document.getElementById('obPin2').value;
     if(!/^\d{4}$/.test(p1) || p1 !== p2){
+      errBox.textContent = 'PIN must be 4 digits and match.';
       errBox.style.display = 'block';
       return false;
     }
@@ -1073,9 +1176,109 @@ function handleOnboarding(e){
   errBox.style.display = 'none';
   state.company.name = name || 'My Business';
   state.company.currency = currency;
-  saveState();
-  enterApp();
+
+  const hadLocalData = !!localStorage.getItem(STORAGE_KEY);
+  const btn = document.getElementById('signupSubmitBtn');
+  btn.disabled = true; btn.textContent = 'অ্যাকাউন্ট তৈরি হচ্ছে…';
+
+  isSigningUp = true;
+  initFirebaseCore();
+  fbAuth.createUserWithEmailAndPassword(email, password)
+    .then(cred => {
+      currentUid = cred.user.uid;
+      // brand-new shop: push current (possibly migrated) local state up as the initial cloud copy
+      return shopRef().set({
+        company: state.company,
+        settings: state.settings,
+        security: state.security,
+        sales: state.sales,
+        purchases: state.purchases,
+        expenses: state.expenses,
+        idCounter
+      });
+    })
+    .then(()=>{
+      if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
+      saveState(); // refresh local cache for this account
+      isSigningUp = false;
+      if(state.security.pinEnabled) showLockScreen(); else enterApp();
+    })
+    .catch(err => {
+      isSigningUp = false;
+      btn.disabled = false; btn.textContent = 'Create Account & Get Started';
+      errBox.textContent = firebaseErrorBn(err);
+      errBox.style.display = 'block';
+    });
   return false;
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errBox = document.getElementById('loginError');
+  const btn = document.getElementById('loginSubmitBtn');
+  btn.disabled = true; btn.textContent = 'লগইন হচ্ছে…';
+  initFirebaseCore();
+  fbAuth.signInWithEmailAndPassword(email, password)
+    .catch(err => {
+      btn.disabled = false; btn.textContent = 'Log In';
+      errBox.textContent = firebaseErrorBn(err);
+      errBox.style.display = 'block';
+    });
+  return false;
+}
+
+function firebaseErrorBn(err){
+  const map = {
+    'auth/email-already-in-use': 'এই ইমেইল দিয়ে আগে থেকেই একাউন্ট আছে — Log In করুন।',
+    'auth/invalid-email': 'সঠিক ইমেইল দিন।',
+    'auth/weak-password': 'পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার হতে হবে।',
+    'auth/user-not-found': 'এই ইমেইলে কোনো একাউন্ট পাওয়া যায়নি।',
+    'auth/wrong-password': 'পাসওয়ার্ড ভুল হয়েছে।',
+    'auth/invalid-credential': 'ইমেইল বা পাসওয়ার্ড ভুল হয়েছে।',
+    'auth/network-request-failed': 'ইন্টারনেট কানেকশন চেক করুন।'
+  };
+  return map[err.code] || ('সমস্যা হয়েছে: ' + err.message);
+}
+
+function logoutShop(){
+  if(!confirm('লগ আউট করতে চান? এই ডিভাইসে থাকা ক্যাশও মুছে যাবে।')) return;
+  fbAuth.signOut().then(()=>{
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  });
+}
+
+document.getElementById('authTabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  document.querySelectorAll('#authTabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const isSignup = btn.dataset.authtab === 'signup';
+  document.getElementById('signupForm').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('loginForm').style.display = isSignup ? 'none' : 'block';
+  document.getElementById('authTag').textContent = isSignup
+    ? 'Create your shop account — your data is saved securely to your account'
+    : 'Log in to access your shop\'s data from any device';
+});
+
+/* ---------------- APP BOOT ---------------- */
+function bootApp(){
+  loadState(); // warm local cache immediately so onboarding can detect existing local data
+  initFirebaseCore();
+}
+function enterApp(){
+  document.getElementById('onboardingScreen').style.display = 'none';
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+  listenOrders();
+}
+
+/* ---------------- ONBOARDING HELPERS ---------------- */
+function toggleObPinFields(){
+  document.getElementById('obPinFields').style.display = document.getElementById('obPinToggle').checked ? 'block' : 'none';
 }
 
 /* ---------------- LOCK SCREEN (PIN keypad) ---------------- */
@@ -1534,7 +1737,7 @@ function receiptCardHTML(s){
       <canvas class="bc-canvas" data-value="${escapeHTML(pid)}" height="40"></canvas>
       <div class="rc-pid">${escapeHTML(pid)}</div>
     </div>
-    <div class="rc-foot">Thank you for your business</div>
+    <div class="rc-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
   </div>`;
 }
 function printReceipts(){
@@ -1601,10 +1804,22 @@ function renderSettings(){
   renderChips('chipsExpenseCat', state.settings.expenseCategories, 'expense');
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
   renderProductsSettings();
-  if(state.settings.firebaseConfig){
-    document.getElementById('settingsFirebaseConfig').value = JSON.stringify(state.settings.firebaseConfig, null, 2);
-  }
-  document.getElementById('settingsFirebaseEmail').value = state.settings.firebaseEmail || '';
+  renderVideosSettings();
+  updateNotifyStatus();
+  document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
+  document.getElementById('shopLinkBox').value = buildShopLink();
+}
+function buildShopLink(){
+  if(!currentUid) return '';
+  return location.href.replace(/[^\/]*$/, 'order-form.html') + '?shop=' + currentUid;
+}
+function copyShopLink(){
+  const box = document.getElementById('shopLinkBox');
+  box.select();
+  navigator.clipboard && navigator.clipboard.writeText(box.value).then(
+    () => showToast('লিংক কপি হয়েছে'),
+    () => showToast('কপি করতে সমস্যা — ম্যানুয়ালি সিলেক্ট করে কপি করুন')
+  );
 }
 function renderProductsSettings(){
   const box = document.getElementById('productsListBox');
@@ -1744,7 +1959,7 @@ function exportPDF(period){
   const expense = expenseRows.reduce((s,t)=>s+t.total,0);
   const profit = sales - purchase - expense;
 
-  const dateRangeLabel = `${fmtDate(range.start.toISOString().slice(0,10))} — ${fmtDate(range.end.toISOString().slice(0,10))}`;
+  const dateRangeLabel = `${fmtDate(toLocalISODate(range.start))} — ${fmtDate(toLocalISODate(range.end))}`;
 
   function rowsTable(rows, cols){
     if(rows.length === 0) return '<p style="font-size:11px;color:#888;">No entries in this period.</p>';
@@ -1863,79 +2078,90 @@ function removeProduct(idx){
   pushProductsToFirebase();
 }
 function pushProductsToFirebase(){
-  if(!fbDb) return;
+  if(!fbDb || !currentUid) return;
   const obj = {};
   state.settings.products.forEach(p => {
     obj[p.id] = { name: p.name, price: p.price, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
   });
-  fbDb.ref('products').set(obj).catch(()=> showToast('Could not sync products to Firebase'));
+  shopRef('products').set(obj).catch(()=> showToast('Could not sync products to Firebase'));
 }
 
-/* ---------------- FIREBASE: CONNECT / LIVE ORDER SYNC ---------------- */
-let fbApp = null, fbDb = null, fbAuth = null;
-
-function initFirebaseFromSaved(){
-  if(!state.settings.firebaseConfig) return;
-  try{
-    fbApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(state.settings.firebaseConfig);
-    fbAuth = firebase.auth();
-    fbDb = firebase.database();
-    fbAuth.onAuthStateChanged(user => {
-      if(user){
-        setFirebaseStatus('Connected — live orders active ✅', true);
-        listenOrders();
-        pushProductsToFirebase();
-      } else {
-        setFirebaseStatus('Signed out — tap Connect & Sign In to resume live orders.', false);
-      }
-    });
-  }catch(err){
-    setFirebaseStatus('Could not initialize Firebase — check the config.', false);
+/* ---------------- INFO VIDEOS (not products — no price) ---------------- */
+function renderVideosSettings(){
+  const box = document.getElementById('videosListBox');
+  const list = state.settings.videos || [];
+  if(list.length === 0){
+    box.innerHTML = '<div class="helper-text">No videos added yet.</div>';
+    return;
   }
+  box.innerHTML = list.map((v,i) => `
+    <div class="field-inline">
+      <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+        <div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;">🎬</div>
+        <div style="min-width:0;">
+          <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;">${escapeHTML(v.caption)}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button class="mini-btn" onclick="editVideo(${i})" aria-label="Edit">✎</button>
+        <button class="mini-btn" onclick="removeVideo(${i})" aria-label="Remove">✕</button>
+      </div>
+    </div>`).join('');
 }
-
-function connectFirebase(){
-  const raw = document.getElementById('settingsFirebaseConfig').value.trim();
-  const email = document.getElementById('settingsFirebaseEmail').value.trim();
-  const password = document.getElementById('settingsFirebasePassword').value;
-  if(!raw || !email || !password){
-    showToast('Fill in the config, email and password first');
-    return;
+let editingVideoIdx = null;
+function saveVideo(){
+  const caption = document.getElementById('newVideoCaption').value.trim();
+  const videoUrl = document.getElementById('newVideoUrl').value.trim();
+  if(!caption || !videoUrl){ showToast('ক্যাপশন ও ভিডিও লিংক দুটোই দিন'); return; }
+  if(!state.settings.videos) state.settings.videos = [];
+  if(editingVideoIdx !== null){
+    Object.assign(state.settings.videos[editingVideoIdx], { caption, videoUrl });
+    showToast('Video updated');
+  } else {
+    state.settings.videos.push({ id: 'v' + Date.now() + Math.floor(Math.random()*1000), caption, videoUrl });
+    showToast('Video added');
   }
-  let config;
-  try{
-    config = JSON.parse(raw);
-  }catch(err){
-    showToast('That does not look like valid JSON — copy it exactly from Firebase');
-    return;
-  }
-  state.settings.firebaseConfig = config;
-  state.settings.firebaseEmail = email;
+  cancelEditVideo();
   saveState();
-  try{
-    fbApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(config);
-    fbAuth = firebase.auth();
-    fbDb = firebase.database();
-    setFirebaseStatus('Connecting…', false);
-    fbAuth.signInWithEmailAndPassword(email, password)
-      .then(()=>{
-        document.getElementById('settingsFirebasePassword').value = '';
-        setFirebaseStatus('Connected — live orders active ✅', true);
-        listenOrders();
-        pushProductsToFirebase();
-        showToast('Connected to Firebase');
-      })
-      .catch(err => {
-        setFirebaseStatus('Sign-in failed: ' + err.message, false);
-      });
-  }catch(err){
-    setFirebaseStatus('Could not initialize Firebase — check the config.', false);
-  }
+  renderVideosSettings();
+  pushVideosToFirebase();
+}
+function editVideo(idx){
+  const v = state.settings.videos[idx];
+  if(!v) return;
+  editingVideoIdx = idx;
+  document.getElementById('newVideoCaption').value = v.caption || '';
+  document.getElementById('newVideoUrl').value = v.videoUrl || '';
+  document.getElementById('videoFormTitle').textContent = 'Edit Video';
+  document.getElementById('videoSaveBtn').textContent = 'Save Changes';
+  document.getElementById('videoCancelBtn').style.display = 'block';
+  document.getElementById('videoFormTitle').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function cancelEditVideo(){
+  editingVideoIdx = null;
+  document.getElementById('newVideoCaption').value = '';
+  document.getElementById('newVideoUrl').value = '';
+  document.getElementById('videoFormTitle').textContent = 'Add a Video';
+  document.getElementById('videoSaveBtn').textContent = 'Add Video';
+  document.getElementById('videoCancelBtn').style.display = 'none';
+}
+function removeVideo(idx){
+  if(editingVideoIdx === idx) cancelEditVideo();
+  state.settings.videos.splice(idx, 1);
+  saveState();
+  renderVideosSettings();
+  pushVideosToFirebase();
+}
+function pushVideosToFirebase(){
+  if(!fbDb || !currentUid) return;
+  const obj = {};
+  (state.settings.videos || []).forEach(v => {
+    obj[v.id] = { caption: v.caption, videoUrl: v.videoUrl };
+  });
+  shopRef('videos').set(obj).catch(()=> showToast('Could not sync videos to Firebase'));
 }
 
 function setFirebaseStatus(msg, connected){
-  const el = document.getElementById('firebaseStatusText');
-  if(el) el.textContent = msg;
   const badge = document.getElementById('ordersConnStatus');
   if(badge){
     badge.textContent = connected ? 'Live ●' : 'Not connected';
@@ -1943,15 +2169,67 @@ function setFirebaseStatus(msg, connected){
   }
 }
 
+let knownOrderIds = null; // null = not loaded yet (first snapshot won't notify)
 function listenOrders(){
-  if(!fbDb) return;
-  fbDb.ref('orders').on('value', snapshot => {
+  if(!fbDb || !currentUid) return;
+  shopRef('orders').on('value', snapshot => {
     const val = snapshot.val() || {};
     state.orders = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     state.orders.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    const currentIds = new Set(state.orders.map(o => o.id));
+    if(knownOrderIds !== null){
+      state.orders.forEach(o => {
+        if(!knownOrderIds.has(o.id) && (o.status || 'pending') === 'pending'){
+          notifyNewOrder(o);
+        }
+      });
+    }
+    knownOrderIds = currentIds;
+
     updateOrdersBadge();
     if(state.currentPage === 'orders') renderOrders();
   });
+  pushProductsToFirebase();
+  pushVideosToFirebase();
+  setFirebaseStatus('', true);
+}
+
+function notifyNewOrder(order){
+  const title = '🛎️ নতুন অর্ডার এসেছে!';
+  const body = `${order.customerName || 'কাস্টমার'} — ${fmtMoney(order.total || 0)}`;
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+    try{
+      const n = new Notification(title, { body, tag: 'order-' + order.id });
+      n.onclick = () => { window.focus(); goPage('orders'); n.close(); };
+    }catch(err){ /* ignore — some browsers block Notification() outside a service worker */ }
+  }
+  showToast(title + ' — ' + body);
+}
+
+function requestOrderNotifications(){
+  if(typeof Notification === 'undefined'){
+    showToast('এই ব্রাউজার নোটিফিকেশন সাপোর্ট করে না');
+    return;
+  }
+  Notification.requestPermission().then(perm => {
+    updateNotifyStatus();
+    if(perm === 'granted') showToast('নোটিফিকেশন চালু হয়েছে');
+    else showToast('নোটিফিকেশন অনুমতি দেওয়া হয়নি');
+  });
+}
+function updateNotifyStatus(){
+  const el = document.getElementById('notifyStatusText');
+  if(!el) return;
+  if(typeof Notification === 'undefined'){
+    el.textContent = 'এই ব্রাউজারে সাপোর্ট নেই।';
+  } else if(Notification.permission === 'granted'){
+    el.textContent = '✅ চালু আছে — অ্যাপ খোলা থাকলে নতুন অর্ডারে নোটিফিকেশন আসবে।';
+  } else if(Notification.permission === 'denied'){
+    el.textContent = '❌ বন্ধ করা আছে — ব্রাউজার সেটিংস থেকে চালু করতে হবে।';
+  } else {
+    el.textContent = 'এখনো চালু করা হয়নি।';
+  }
 }
 
 function updateOrdersBadge(){
@@ -1971,10 +2249,6 @@ function renderOrders(){
   const tab = state.currentOrderTab;
   const list = state.orders.filter(o => tab === 'all' ? true : (o.status || 'pending') === tab);
   const box = document.getElementById('ordersList');
-  if(!state.settings.firebaseConfig){
-    box.innerHTML = emptyStateHTML('Live orders not connected yet.', 'Go to Settings → Live Order Sync to connect Firebase.');
-    return;
-  }
   if(list.length === 0){
     box.innerHTML = emptyStateHTML('No orders here.', 'New orders from your landing page will appear live.');
     return;
@@ -2032,20 +2306,20 @@ function confirmOrder(orderId){
     });
   });
   saveState();
-  if(fbDb) fbDb.ref('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
+  if(fbDb) shopRef('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
   renderList('sales');
   renderDashboard();
   showToast('Order confirmed and added to Sales');
 }
 function cancelOrder(orderId){
   if(!fbDb) return;
-  fbDb.ref('orders/' + orderId).update({ status: 'cancelled', cancelledAt: Date.now() });
+  shopRef('orders/' + orderId).update({ status: 'cancelled', cancelledAt: Date.now() });
   showToast('Order marked as cancelled');
 }
 function deleteOrderPermanently(orderId){
   if(!fbDb) return;
   if(!confirm('Remove this order from the list permanently? This cannot be undone.')) return;
-  fbDb.ref('orders/' + orderId).remove();
+  shopRef('orders/' + orderId).remove();
 }
 
 /* ---------------- TOAST ---------------- */

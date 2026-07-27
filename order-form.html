@@ -6,9 +6,10 @@
 <meta name="theme-color" content="#2A1533">
 <title>অর্ডার করুন — SOHAN SHOP BD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Hind+Siliguri:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="preconnect" href="https://sohanshopbd-default-rtdb.firebaseio.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#211726; --paper:#FBF6EC; --paper-deep:#F1E7D4;
@@ -35,35 +36,65 @@
   /* ---------- Hero (designed business illustration) ---------- */
   .hero{
     position:relative; overflow:hidden; min-height:172px;
-    background:linear-gradient(150deg, var(--plum-900) 0%, var(--plum-800) 50%, var(--plum-700) 100%);
+    background:var(--plum-900);
   }
-  .hero-glow{ position:absolute; border-radius:50%; filter:blur(26px); opacity:.55; pointer-events:none; }
+  .hero-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .hero::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:linear-gradient(100deg, rgba(20,10,26,0.72) 0%, rgba(20,10,26,0.42) 45%, rgba(20,10,26,0.20) 75%);
+    pointer-events:none;
+  }
   .hero-inner{
     position:relative; z-index:2; text-align:left;
-    padding:22px 18px 20px; max-width:58%;
+    padding:22px 18px 20px; max-width:72%;
   }
   .seal{
-    width:40px; height:40px; margin:0 0 11px; border-radius:50%; position:relative;
+    width:40px; height:40px; margin:0 0 10px; border-radius:50%; position:relative;
     display:flex; align-items:center; justify-content:center;
     background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
     box-shadow:0 6px 16px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.5);
   }
   .seal::before{ content:""; position:absolute; inset:-5px; border-radius:50%; border:1.5px dashed rgba(227,190,121,0.6); }
   .seal span{ font-size:17px; color:var(--plum-900); }
-  .hero h1{ font-size:22px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; }
-  .hero .tagline{ font-size:11.5px; margin:8px 0 0; color:#E7D3B8; letter-spacing:.01em; line-height:1.5; }
-  .hero-art{ position:absolute; right:0; bottom:0; width:46%; height:100%; z-index:1; }
+  .hero-top-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .hero h1{ font-size:21px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  .hero .tagline{ font-size:11.5px; margin:8px 0 0; color:#F3EAD9; letter-spacing:.01em; line-height:1.5; text-shadow:0 1px 8px rgba(0,0,0,0.5); }
+  .hero-datetime{
+    position:absolute; top:14px; right:14px; z-index:3; text-align:right; max-width:44%;
+    background:rgba(20,10,26,0.62); border:1px solid rgba(227,190,121,0.35);
+    border-radius:10px; padding:6px 10px; backdrop-filter:blur(3px);
+  }
 
-  /* ---------- Contact card ---------- */
-  .contact-card{ display:flex; gap:10px; }
+  /* ---------- Marquee ---------- */
+  .marquee-bar{
+    background:var(--plum-900); overflow:hidden; white-space:nowrap; padding:7px 0;
+    border-bottom:1px solid rgba(227,190,121,0.25);
+    position:sticky; top:0; z-index:40;
+  }
+  .marquee-track{ display:inline-flex; animation:marquee-scroll 22s linear infinite; }
+  .marquee-track span{
+    display:inline-block; padding:0 28px; font-size:12px; font-weight:600; color:var(--gold-light);
+    letter-spacing:.01em; font-family:'Hind Siliguri',sans-serif;
+  }
+  @keyframes marquee-scroll{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
+
+  .hero-datetime .d1{ font-size:11px; font-weight:700; color:var(--gold-light); margin-bottom:3px; }
+  .hero-datetime .d2{ font-size:9.5px; color:#F8F1E6; margin-top:2px; line-height:1.5; }
+
+  /* ---------- Contact buttons (circular, real icons) ---------- */
+  .contact-card{ display:flex; gap:16px; align-items:flex-start; justify-content:center; }
   .contact-btn{
-    flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
-    padding:12px 10px; border-radius:12px; font-size:13px; font-weight:600; text-decoration:none;
+    display:flex; flex-direction:column; align-items:center; gap:6px; text-decoration:none;
     font-family:'Hind Siliguri',sans-serif;
   }
-  .contact-btn.whatsapp{ background:#25D366; color:#fff; }
-  .contact-btn.phone{ background:var(--plum-800); color:#F8F1E6; }
-  .contact-btn .ico{ font-size:16px; line-height:1; }
+  .contact-btn .circle{
+    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 18px rgba(42,21,51,0.22);
+  }
+  .contact-btn.whatsapp .circle{ background:#25D366; }
+  .contact-btn.phone .circle{ background:var(--plum-800); }
+  .contact-btn .circle svg{ width:28px; height:28px; }
+  .contact-btn .lbl{ font-size:11.5px; font-weight:600; color:var(--plum-800); }
 
   /* ---------- Category menu ---------- */
   .cat-nav{ display:flex; gap:8px; overflow-x:auto; padding:14px 16px 2px; scrollbar-width:none; -ms-overflow-style:none; }
@@ -114,6 +145,22 @@
 
   /* ---------- Product catalog ---------- */
   .catalog-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  /* ---------- Video section ---------- */
+  .video-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  .video-caption{ font-size:12.5px; font-weight:600; color:var(--plum-800); margin:0 0 8px; line-height:1.5; }
+  .video-frame{
+    position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden;
+    background:#000; cursor:pointer;
+  }
+  .video-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .video-frame iframe{ width:100%; height:100%; border:0; display:block; }
+  .video-play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(20,10,26,0.6); color:#fff; font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+  }
   .pcard{
     background:var(--card); border:1px solid var(--rule); border-radius:16px; overflow:hidden;
     display:flex; flex-direction:column; box-shadow:0 4px 14px rgba(42,21,51,0.08);
@@ -142,15 +189,36 @@
   .pcard .body{ padding:11px 11px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .pcard .pname{ font-size:13px; font-weight:600; line-height:1.3; color:var(--ink); }
   .pcard .pdesc{ font-size:11px; color:var(--muted); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .pcard .add-btn{ margin-top:8px; border:none; background:var(--plum-800); color:#F8F1E6; border-radius:10px; padding:9px; font-size:12.5px; font-weight:600; }
+  .pcard .add-btn{ margin-top:8px; border:none; background:var(--plum-800); color:#F8F1E6; border-radius:10px; padding:9px; font-size:12.5px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
   .pcard .add-btn.in-cart{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); }
+  .pcard .add-btn .plus{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:17px; height:17px; border-radius:50%; background:rgba(255,255,255,0.22); font-size:13px; line-height:1;
+  }
+  .pcard .add-btn.in-cart .plus{ background:rgba(59,31,69,0.18); }
+
+  .delivery-box{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
+  .delivery-note{ font-size:11.5px; color:var(--ink-soft); margin:0 0 10px; line-height:1.6; }
+  .delivery-options{ display:flex; gap:8px; margin-bottom:12px; }
+  .delivery-opt{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    border:1.5px solid var(--rule); border-radius:12px; padding:10px 8px; cursor:pointer;
+    font-size:12px; font-weight:600; color:var(--plum-800); position:relative;
+  }
+  .delivery-opt input{ position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+  .delivery-opt b{ font-size:13.5px; font-weight:700; }
+  .delivery-opt:has(input:checked){
+    border-color:transparent; background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
+    box-shadow:0 4px 12px rgba(156,107,36,0.30);
+  }
+  .cart-breakdown .br-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); padding:3px 0; }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
   #cartCard h2::after{ content:""; }
   .cart-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dashed var(--rule); }
   .cart-row:last-child{ border-bottom:none; }
-  .cart-row .ci-name{ flex:1; font-size:13px; font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+  .cart-row .ci-name{ flex:1; font-size:13px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
   .cart-row .ci-price{ font-size:11.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
   .stepper{ display:flex; align-items:center; gap:6px; }
   .stepper button{ width:25px; height:25px; border-radius:7px; border:none; background:var(--paper-deep); font-size:14px; color:var(--plum-800); }
@@ -167,7 +235,7 @@
   /* ---------- Sticky order footer (total + submit) ---------- */
   .order-footer{
     position:fixed; left:0; right:0; bottom:0; z-index:40;
-    background:rgba(251,246,236,0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    background:rgba(251,246,236,0.98);
     border-top:1px solid var(--rule); box-shadow:0 -8px 24px rgba(42,21,51,0.10);
     padding:12px 16px calc(12px + env(safe-area-inset-bottom));
   }
@@ -206,43 +274,34 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%, 0); }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js" defer></script>
 </head>
 <body>
 
 <div class="wrap" id="orderWrap">
+  <div class="marquee-bar">
+    <div class="marquee-track">
+      <span>🌿 SOHAN SHOP BD-তে আপনাকে স্বাগতম</span>
+      <span>✦ বিশ্বস্ততার সাথে সেবা দিয়ে আসছি</span>
+      <span>📞 অর্ডার বা যেকোনো প্রশ্নে যোগাযোগ করুন: 01629348284</span>
+      <span>🚚 সারা বাংলাদেশে হোম ডেলিভারি সুবিধা</span>
+      <span>💛 আমাদের সাথে কেনাকাটা করার জন্য ধন্যবাদ</span>
+      <span>🌿 SOHAN SHOP BD-তে আপনাকে স্বাগতম</span>
+      <span>✦ বিশ্বস্ততার সাথে সেবা দিয়ে আসছি</span>
+      <span>📞 অর্ডার বা যেকোনো প্রশ্নে যোগাযোগ করুন: 01629348284</span>
+      <span>🚚 সারা বাংলাদেশে হোম ডেলিভারি সুবিধা</span>
+      <span>💛 আমাদের সাথে কেনাকাটা করার জন্য ধন্যবাদ</span>
+    </div>
+  </div>
   <div class="hero">
-    <div class="hero-glow" style="width:140px; height:140px; background:var(--gold-light); top:-40px; right:-20px;"></div>
-    <div class="hero-glow" style="width:100px; height:100px; background:#8C5B93; bottom:-30px; left:10%;"></div>
-    <svg class="hero-art" viewBox="0 0 220 190" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bagGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#E3BE79"/>
-          <stop offset="100%" stop-color="#9C6B24"/>
-        </linearGradient>
-        <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#F8F1E6"/>
-          <stop offset="100%" stop-color="#D8C7A6"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="120" cy="176" rx="88" ry="10" fill="rgba(0,0,0,0.18)"/>
-      <g>
-        <rect x="30" y="118" width="62" height="52" rx="6" fill="url(#boxGrad)"/>
-        <rect x="30" y="118" width="62" height="14" fill="#C6933E"/>
-        <rect x="55" y="118" width="12" height="52" fill="#9C4630"/>
-      </g>
-      <g>
-        <path d="M118 78 h58 a6 6 0 0 1 6 6 v78 a8 8 0 0 1 -8 8 h-54 a8 8 0 0 1 -8 -8 v-78 a6 6 0 0 1 6 -6 Z" fill="url(#bagGrad)"/>
-        <path d="M132 78 q0 -22 15 -22 t15 22" fill="none" stroke="#55326A" stroke-width="5" stroke-linecap="round"/>
-        <rect x="118" y="96" width="70" height="10" fill="rgba(255,255,255,0.25)"/>
-        <circle cx="153" cy="128" r="15" fill="#F8F1E6" opacity="0.9"/>
-        <text x="153" y="133" font-size="13" text-anchor="middle" fill="#3B1F45" font-family="IBM Plex Mono, monospace" font-weight="700">৳</text>
-      </g>
-      <g fill="#E3BE79">
-        <circle cx="196" cy="60" r="4"/>
-        <circle cx="60" cy="90" r="3"/>
-        <path d="M182 30 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z"/>
-      </g>
-    </svg>
+    <img class="hero-photo" src="https://images.unsplash.com/photo-1604118464816-5e2bd7b863c2?fm=jpg&q=45&w=500&auto=format&fit=crop" alt="শপিং ব্যাগ" fetchpriority="high" decoding="async">
+    <div class="hero-datetime" id="heroDateTime">
+      <div class="d1" id="heroDay">—</div>
+      <div class="d2" id="heroDateEn">—</div>
+      <div class="d2" id="heroDateBn">—</div>
+      <div class="d2" id="heroDateHijri">—</div>
+    </div>
     <div class="hero-inner">
       <div class="seal"><span>🛍️</span></div>
       <h1 id="bizName">SOHAN SHOP BD</h1>
@@ -262,10 +321,34 @@
         <div class="catalog-grid" id="catalogGrid"></div>
       </div>
 
+      <div class="card" id="videoSection" style="display:none;">
+        <span class="eyebrow">ভিডিও</span>
+        <h2>আমাদের ভিডিও দেখুন</h2>
+        <div class="video-grid" id="videoGrid"></div>
+      </div>
+
       <div class="card" id="cartCard" style="display:none;">
         <span class="eyebrow">০২ · অর্ডার সারাংশ</span>
         <h2>আপনার অর্ডার</h2>
         <div id="cartBox"></div>
+
+        <div class="delivery-box">
+          <p class="delivery-note">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে — ঢাকার ভেতরে ৳70, ঢাকার বাইরে ৳120।</p>
+          <div class="delivery-options">
+            <label class="delivery-opt">
+              <input type="radio" name="deliveryArea" value="70" data-label="ঢাকার ভেতরে" onchange="updateTotal()" required>
+              <span>ঢাকার ভেতরে<b>৳70</b></span>
+            </label>
+            <label class="delivery-opt">
+              <input type="radio" name="deliveryArea" value="120" data-label="ঢাকার বাইরে" onchange="updateTotal()" required>
+              <span>ঢাকার বাইরে<b>৳120</b></span>
+            </label>
+          </div>
+          <div class="cart-breakdown">
+            <div class="br-row"><span>সাবটোটাল</span><span id="subtotalDisplay">৳0.00</span></div>
+            <div class="br-row"><span>ডেলিভারি চার্জ</span><span id="deliveryDisplay">—</span></div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -309,10 +392,16 @@
         <h2>সরাসরি কথা বলুন</h2>
         <div class="contact-card">
           <a class="contact-btn whatsapp" href="https://wa.me/8801629348284" target="_blank" rel="noopener">
-            <span class="ico">🟢</span> WhatsApp
+            <span class="circle">
+              <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3C9.377 3 4 8.373 4 15c0 2.31.646 4.47 1.77 6.31L4 29l7.86-1.73A11.94 11.94 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm0 21.7c-1.93 0-3.73-.55-5.26-1.5l-.376-.224-4.664 1.026 1.006-4.542-.246-.39A9.66 9.66 0 0 1 5.29 15c0-5.9 4.81-10.7 10.714-10.7 5.902 0 10.71 4.8 10.71 10.7 0 5.9-4.808 10.7-10.71 10.7Zm5.87-8.01c-.32-.16-1.9-.94-2.194-1.047-.294-.108-.508-.16-.722.16-.213.322-.828 1.048-1.015 1.262-.187.214-.373.24-.694.08-.32-.16-1.352-.498-2.575-1.588-.952-.85-1.595-1.898-1.782-2.22-.187-.32-.02-.494.14-.653.144-.144.32-.373.48-.56.16-.187.213-.32.32-.534.107-.213.053-.4-.027-.56-.08-.16-.722-1.74-.99-2.383-.26-.626-.526-.54-.722-.55l-.615-.01c-.213 0-.56.08-.854.4-.293.32-1.12 1.096-1.12 2.673 0 1.578 1.147 3.102 1.307 3.316.16.214 2.257 3.446 5.468 4.833.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.9-.777 2.167-1.527.267-.75.267-1.393.187-1.527-.08-.133-.293-.213-.613-.373Z"/></svg>
+            </span>
+            <span class="lbl">WhatsApp</span>
           </a>
           <a class="contact-btn phone" href="tel:01629348284">
-            <span class="ico">📞</span> 01629348284
+            <span class="circle">
+              <svg viewBox="0 0 24 24" fill="#F8F1E6" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
+            </span>
+            <span class="lbl">01629348284</span>
           </a>
         </div>
       </div>
@@ -386,18 +475,83 @@ const FIREBASE_CONFIG = {
 
 document.getElementById('bizName').textContent = BUSINESS_NAME;
 
+/* ---------------- LIVE DATE (English + Bengali + Hijri) ---------------- */
+const BN_DAYS = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+const EN_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const BN_MONTHS = ['বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন','চৈত্র'];
+const HIJRI_MONTHS = ['মহররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
+const BN_DIGITS = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+function toBnNum(n){ return String(n).split('').map(d => BN_DIGITS[d] ?? d).join(''); }
+function isGregorianLeap(y){ return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
+
+function getBengaliDate(date){
+  const gDay = date.getDate(), gMonth = date.getMonth() + 1, gYear = date.getFullYear();
+  const gMonthDays = [31, isGregorianLeap(gYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let dayOfYear = gDay;
+  for(let i = 0; i < gMonth - 1; i++) dayOfYear += gMonthDays[i];
+  const newYearDoY = isGregorianLeap(gYear) ? 105 : 104; // 14 April
+  let bYear = gYear - 594, bDayOfYear, leapRefYear;
+  if(dayOfYear >= newYearDoY){
+    bDayOfYear = dayOfYear - newYearDoY + 1;
+    bYear += 1;
+    leapRefYear = gYear + 1;
+  } else {
+    const prevDays = isGregorianLeap(gYear - 1) ? 366 : 365;
+    const prevNewYearDoY = isGregorianLeap(gYear - 1) ? 105 : 104;
+    bDayOfYear = (prevDays - prevNewYearDoY + 1) + dayOfYear;
+    leapRefYear = gYear;
+  }
+  const banglaLeap = isGregorianLeap(leapRefYear);
+  const monthLens = [31,31,31,31,31,30,30,30,30,30, banglaLeap ? 31 : 30, 30];
+  let m = 0, rem = bDayOfYear;
+  while(rem > monthLens[m]){ rem -= monthLens[m]; m++; }
+  return { day: rem, month: BN_MONTHS[m], year: bYear };
+}
+function getHijriDate(date){
+  try{
+    const parts = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {day:'numeric', month:'numeric', year:'numeric'}).formatToParts(date);
+    const get = t => Number(parts.find(p => p.type === t)?.value);
+    return { day: get('day'), month: HIJRI_MONTHS[get('month') - 1], year: get('year') };
+  } catch(e){ return null; }
+}
+function updateHeroDateTime(){
+  const now = new Date();
+  const dayEl = document.getElementById('heroDay');
+  const enEl = document.getElementById('heroDateEn');
+  const bnEl = document.getElementById('heroDateBn');
+  const hjEl = document.getElementById('heroDateHijri');
+  if(dayEl) dayEl.textContent = BN_DAYS[now.getDay()];
+  if(enEl) enEl.textContent = `${now.getDate()} ${EN_MONTHS[now.getMonth()]}, ${now.getFullYear()}`;
+  if(bnEl){ const b = getBengaliDate(now); bnEl.textContent = `${toBnNum(b.day)} ${b.month}, ${toBnNum(b.year)}`; }
+  if(hjEl){ const h = getHijriDate(now); if(h) hjEl.textContent = `${toBnNum(h.day)} ${h.month}, ${toBnNum(h.year)} হি.`; }
+}
+updateHeroDateTime();
+setInterval(updateHeroDateTime, 60 * 1000);
+
 let products = [];
+let videos = [];
 let cart = {}; // productId -> { productId, name, price, qty }
 let selectedCategory = 'সকল';
+let db;
 
-firebase.initializeApp(FIREBASE_CONFIG);
-const db = firebase.database();
+document.addEventListener('DOMContentLoaded', function(){
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.database();
 
-db.ref('products').on('value', snap => {
-  const val = snap.val() || {};
-  products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
-  renderCatNav();
-  renderCatalog();
+  db.ref('products').on('value', snap => {
+    const val = snap.val() || {};
+    products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+    renderCatNav();
+    renderCatalog();
+  });
+
+  // আলাদা "ভিডিও" সেকশনের জন্য — Firebase-এ একটা আলাদা "videos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
+  // প্রতিটা এন্ট্রিতে থাকবে: title (ঐচ্ছিক ক্যাপশন) ও videoUrl (ইউটিউব লিংক)
+  db.ref('videos').on('value', snap => {
+    const val = snap.val() || {};
+    videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+    renderVideos();
+  });
 });
 
 function renderCatNav(){
@@ -440,7 +594,7 @@ function renderCatalog(){
     <div class="pcard">
       <div class="thumb">
         ${thumbUrl
-          ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" onerror="this.outerHTML='<div class=noimg>🛍️</div>'">`
+          ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=noimg>🛍️</div>'">`
           : `<div class="noimg">🛍️</div>`}
         ${p.videoUrl ? `<button type="button" class="play-btn" onclick="playVideo('${escapeHTML(p.videoUrl)}')" aria-label="ভিডিও দেখুন">▶</button>` : ''}
         <span class="price-tag">৳${(Number(p.price) || 0).toFixed(2)}</span>
@@ -449,7 +603,7 @@ function renderCatalog(){
         <div class="pname">${escapeHTML(p.name)}</div>
         ${p.description ? `<div class="pdesc">${escapeHTML(p.description)}</div>` : ''}
         <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
-          ${inCartQty ? `কার্টে ${inCartQty}টি · আরও যোগ করুন` : 'যোগ করুন'}
+          ${inCartQty ? `কার্টে ${inCartQty}টি যুক্ত · আরও অর্ডার করুন <span class="plus">+</span>` : `অর্ডার করুন <span class="plus">+</span>`}
         </button>
       </div>
     </div>`;
@@ -504,9 +658,19 @@ function renderCart(){
 function collectItems(){
   return Object.values(cart);
 }
+function getDeliveryChoice(){
+  const el = document.querySelector('input[name="deliveryArea"]:checked');
+  return el ? { charge: Number(el.value), label: el.dataset.label } : null;
+}
 function updateTotal(){
   const items = collectItems();
-  const total = items.reduce((s,it) => s + it.price * it.qty, 0);
+  const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
+  const delivery = getDeliveryChoice();
+  const total = subtotal + (delivery ? delivery.charge : 0);
+  const subtotalEl = document.getElementById('subtotalDisplay');
+  const deliveryEl = document.getElementById('deliveryDisplay');
+  if(subtotalEl) subtotalEl.textContent = '৳' + subtotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  if(deliveryEl) deliveryEl.textContent = delivery ? '৳' + delivery.charge.toFixed(2) + ' (' + delivery.label + ')' : '— (এলাকা নির্বাচন করুন)';
   document.getElementById('totalDisplay').textContent = '৳' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -515,6 +679,42 @@ function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;',
 function getYouTubeEmbed(url){
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{6,})/);
   return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+function renderVideos(){
+  const section = document.getElementById('videoSection');
+  const grid = document.getElementById('videoGrid');
+  if(!section || !grid) return;
+  if(videos.length === 0){ section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  grid.innerHTML = videos.map(v => {
+    const yid = getYouTubeId(v.videoUrl);
+    const thumbUrl = yid ? `https://img.youtube.com/vi/${yid}/hqdefault.jpg` : '';
+    return `
+    <div class="video-item">
+      ${v.title ? `<p class="video-caption">${escapeHTML(v.title)}</p>` : ''}
+      <div class="video-frame" data-url="${escapeHTML(v.videoUrl || '')}" onclick="playInlineVideo(this)">
+        ${thumbUrl
+          ? `<img src="${thumbUrl}" alt="${escapeHTML(v.title || 'ভিডিও')}" loading="lazy" decoding="async">`
+          : ''}
+        <button type="button" class="video-play-btn" aria-label="Play">▶</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function playInlineVideo(frameEl){
+  const url = frameEl.dataset.url;
+  if(!url) return;
+  const ytEmbed = getYouTubeEmbed(url);
+  if(ytEmbed){
+    frameEl.innerHTML = `<iframe src="${ytEmbed}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  } else if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){
+    frameEl.innerHTML = `<video src="${escapeHTML(url)}" controls autoplay playsinline></video>`;
+  } else {
+    frameEl.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:16px; text-align:center;">
+      <a href="${escapeHTML(url)}" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; width:auto; padding:10px 20px;">ভিডিও দেখুন</a>
+    </div>`;
+  }
+  frameEl.onclick = null;
 }
 function playVideo(url){
   const content = document.getElementById('lightboxContent');
@@ -540,7 +740,10 @@ function submitOrder(e){
   e.preventDefault();
   const items = collectItems();
   if(items.length === 0){ showToast('অন্তত একটি পণ্য নির্বাচন করুন'); return false; }
-  const total = items.reduce((s,it) => s + it.price * it.qty, 0);
+  const delivery = getDeliveryChoice();
+  if(!delivery){ showToast('ডেলিভারি এলাকা নির্বাচন করুন (ঢাকা / ঢাকার বাইরে)'); return false; }
+  const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
+  const total = subtotal + delivery.charge;
   const order = {
     customerName: document.getElementById('custName').value.trim(),
     phone: document.getElementById('custPhone').value.trim(),
@@ -548,6 +751,9 @@ function submitOrder(e){
     paymentMethod: document.getElementById('custPayment').value,
     notes: document.getElementById('custNotes').value.trim(),
     items,
+    subtotal,
+    deliveryArea: delivery.label,
+    deliveryCharge: delivery.charge,
     total,
     status: 'pending',
     createdAt: Date.now()

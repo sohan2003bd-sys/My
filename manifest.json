@@ -1,11 +1,9 @@
 {
-  "name": "Khatabook — Business Ledger",
-  "short_name": "Khatabook",
-  "description": "Track sales, purchases, expenses and live orders — all in one simple ledger.",
+  "name": "MY SHOP",
+  "short_name": "MY SHOP",
+  "description": "Business ledger, live orders and landing page for your shop",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#F1F3EC",
   "theme_color": "#123832",
   "icons": [
