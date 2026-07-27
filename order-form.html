@@ -473,6 +473,17 @@ const FIREBASE_CONFIG = {
 };
 /* ========================================================= */
 
+const SHOP_ID = new URLSearchParams(location.search).get('shop');
+if(!SHOP_ID){
+  document.body.innerHTML = `
+    <div style="max-width:420px; margin:80px auto; text-align:center; padding:0 20px; font-family:sans-serif;">
+      <div style="font-size:40px; margin-bottom:14px;">⚠️</div>
+      <h2>লিংকটি সম্পূর্ণ নয়</h2>
+      <p style="color:#888; font-size:14px; line-height:1.6;">এই অর্ডার ফর্মে কোনো দোকান উল্লেখ নেই। দোকানদারের কাছ থেকে সঠিক লিংকটি নিন (লিংকের শেষে <code>?shop=...</code> থাকতে হবে)।</p>
+    </div>`;
+  throw new Error('Missing ?shop= parameter');
+}
+
 document.getElementById('bizName').textContent = BUSINESS_NAME;
 
 /* ---------------- LIVE DATE (English + Bengali + Hijri) ---------------- */
@@ -538,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function(){
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
 
-  db.ref('products').on('value', snap => {
+  db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
     const val = snap.val() || {};
     products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderCatNav();
@@ -547,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // আলাদা "ভিডিও" সেকশনের জন্য — Firebase-এ একটা আলাদা "videos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
   // প্রতিটা এন্ট্রিতে থাকবে: title (ঐচ্ছিক ক্যাপশন) ও videoUrl (ইউটিউব লিংক)
-  db.ref('videos').on('value', snap => {
+  db.ref('shops/' + SHOP_ID + '/videos').on('value', snap => {
     const val = snap.val() || {};
     videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderVideos();
@@ -761,7 +772,7 @@ function submitOrder(e){
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = 'পাঠানো হচ্ছে…';
-  db.ref('orders').push(order)
+  db.ref('shops/' + SHOP_ID + '/orders').push(order)
     .then(()=>{
       document.getElementById('orderWrap').querySelector('main').style.display = 'none';
       document.querySelector('.hero').style.display = 'none';
