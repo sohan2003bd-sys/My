@@ -476,6 +476,10 @@
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .rc-item-amt{ font-size:9.8px; font-family:'IBM Plex Mono', monospace; font-weight:600; color:#3F5C50; flex:none; }
 
+    .rc-cod-note{ text-align:center; font-size:8.3px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.07em; color:#B8863E; background:#FCF3E3; border:1px solid #EAD3A3;
+      border-radius:5px; padding:2.5px 0; margin-bottom:3px; }
+
     .rc-total{ display:flex; justify-content:space-between; align-items:center; margin-top:auto;
       background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:5px; padding:6px 8px; }
     .rc-total .k{ font-size:8.5px; text-transform:uppercase; letter-spacing:.05em; color:#3F5C50; font-weight:600; }
@@ -1736,7 +1740,7 @@ function receiptCardHTML(group){
   const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
   // Cash-on-Delivery orders haven't been paid yet — the slip should say
   // "পরিশোধ করতে হবে" (amount due) instead of "Total Paid" for those.
-  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$/i.test(String(first.payment || '').trim());
+  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
   const totalLabel = isCOD ? 'Amount Due' : 'Total Paid';
   const itemsHTML = rows.map(r => `
       <div class="rc-item-line">
@@ -1767,6 +1771,7 @@ function receiptCardHTML(group){
       <div class="rc-label">Product / Service</div>
       ${itemsHTML}
     </div>
+    ${isCOD ? `<div class="rc-cod-note">Cash on Delivery</div>` : ''}
     <div class="rc-total"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
     <div class="rc-barcode">
       <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="48"></canvas>
