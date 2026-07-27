@@ -458,12 +458,14 @@
     .rc-meta-strip .k{ font-size:6.6px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
     .rc-meta-strip .v{ font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-top:1px; }
 
-    .rc-section{ margin-bottom:5px; }
+    .rc-section{ margin-bottom:5px; min-width:0; }
     .rc-label{ font-size:6.6px; text-transform:uppercase; color:#9A9F92; letter-spacing:.05em; font-weight:600; }
     .rc-val{ font-weight:600; font-size:11px; margin-top:1.5px; color:#1B2420; line-height:1.25;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .rc-sub{ font-size:9px; color:#6B7268; margin-top:1.5px; line-height:1.35;
+    .rc-sub{ font-size:10.5px; color:#6B7268; margin-top:1.5px; line-height:1.35;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rc-address{ font-size:9px; color:#6B7268; margin-top:1.5px; line-height:1.35;
+      white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
 
     .rc-divider{ border:none; border-top:1px dashed #D3D6C9; margin:0 0 5px; }
 
@@ -1754,7 +1756,7 @@ function receiptCardHTML(group){
       <div class="rc-label">Billed To</div>
       <div class="rc-val">${escapeHTML(first.party || 'Walk-in Customer')}</div>
       ${first.phone ? `<div class="rc-sub">Tel: ${escapeHTML(first.phone)}</div>` : ''}
-      ${first.address ? `<div class="rc-sub">Address: ${escapeHTML(first.address)}</div>` : ''}
+      ${first.address ? `<div class="rc-address">Address: ${escapeHTML(first.address)}</div>` : ''}
     </div>
     <hr class="rc-divider">
     <div class="rc-section rc-item-box">
