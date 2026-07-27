@@ -586,7 +586,7 @@
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="icon-btn" onclick="goPage('orders')" aria-label="Live Orders" style="position:relative;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-        <span id="ordersBadge" style="display:none; position:absolute; top:-3px; right:-3px; background:var(--gold-bright); color:var(--green-900); font-size:9.5px; font-weight:700; min-width:16px; height:16px; border-radius:8px; align-items:center; justify-content:center; padding:0 3px; box-shadow:0 0 0 2px var(--green-800);">0</span>
+        <span id="ordersBadge" style="display:none; position:absolute; top:-3px; right:-3px; background:var(--loss); color:#fff; font-size:9.5px; font-weight:700; min-width:16px; height:16px; border-radius:8px; align-items:center; justify-content:center; padding:0 3px; box-shadow:0 0 0 2px var(--green-800);">0</span>
       </button>
       <button class="icon-btn" onclick="goPage('settings')" aria-label="Settings">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -1703,8 +1703,15 @@ function toggleAllReceiptChecks(){
   const allChecked = Array.from(boxes).every(b => b.checked);
   boxes.forEach(b => b.checked = !allChecked);
 }
+function shortSlipId(s){
+  const raw = String(s.productId || s.ref || '').trim();
+  // Keep short codes as-is; shorten long IDs (e.g. Firebase keys) to a compact,
+  // still-unique code based on this sale entry's own unique id.
+  if(raw && raw.length <= 10) return raw;
+  return 'ID' + String(s.id).padStart(6, '0');
+}
 function receiptCardHTML(s){
-  const pid = s.productId || s.ref || ('ID-' + s.id);
+  const pid = shortSlipId(s);
   const initial = (state.company.name || 'K').trim().charAt(0).toUpperCase();
   return `
   <div class="receipt-card">
@@ -2165,7 +2172,7 @@ function setFirebaseStatus(msg, connected){
   const badge = document.getElementById('ordersConnStatus');
   if(badge){
     badge.textContent = connected ? 'Live ●' : 'Not connected';
-    badge.style.color = connected ? 'var(--green-600)' : 'var(--muted)';
+    badge.style.color = connected ? 'var(--loss)' : 'var(--muted)';
   }
 }
 
@@ -2305,6 +2312,29 @@ function confirmOrder(orderId){
       total: (it.qty || 1) * (it.price || 0)
     });
   });
+  // Delivery charge: order.total may include a delivery/shipping charge on top of
+  // the item prices. Add the difference as its own sales line so Sales/print slip
+  // totals match the amount shown on the Orders page (which shows order.total).
+  const itemsSum = items.reduce((s, it) => s + (it.qty || 1) * (it.price || 0), 0);
+  const deliveryCharge = Math.round(((order.total || 0) - itemsSum) * 100) / 100;
+  if(deliveryCharge > 0){
+    state.sales.push({
+      id: idCounter++,
+      date: todayISO(),
+      ref: 'ORD-' + orderId.slice(-6),
+      name: 'Delivery Charge',
+      category: 'Online Order',
+      qty: 1,
+      price: deliveryCharge,
+      party: order.customerName || '',
+      phone: order.phone || '',
+      address: order.address || '',
+      productId: '',
+      payment: order.paymentMethod || '',
+      notes: order.notes || '',
+      total: deliveryCharge
+    });
+  }
   saveState();
   if(fbDb) shopRef('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
   renderList('sales');
