@@ -137,6 +137,17 @@
     background-repeat:no-repeat; background-position:right 12px center; padding-right:34px;
   }
 
+  /* ---------- Online payment details panel ---------- */
+  .pay-panel{ background:var(--paper-deep); border:1.5px dashed var(--gold); border-radius:12px; padding:12px; }
+  .pay-panel-title{ font-size:13px; font-weight:700; color:var(--plum-900); margin:0 0 10px; }
+  .pay-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed var(--rule); }
+  .pay-row:last-of-type{ border-bottom:none; }
+  .pay-row-lbl{ display:block; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
+  .pay-row-val{ display:block; font-size:15.5px; font-weight:700; color:var(--plum-900); font-family:'IBM Plex Mono',monospace; word-break:break-all; }
+  .copy-btn{ flex:none; border:none; background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); font-size:12px; font-weight:700; padding:9px 15px; border-radius:9px; }
+  .copy-btn:active{ transform:scale(0.95); }
+  .pay-panel-note{ font-size:11.5px; color:var(--plum-700); line-height:1.6; margin:10px 0 0; }
+
   .item-row{ display:flex; gap:8px; align-items:flex-end; margin-bottom:10px; }
   .item-row .grow{ flex:1; }
   .item-row .qty{ width:70px; }
@@ -281,17 +292,8 @@
 
 <div class="wrap" id="orderWrap">
   <div class="marquee-bar">
-    <div class="marquee-track">
-      <span>🌿 SOHAN SHOP BD-তে আপনাকে স্বাগতম</span>
-      <span>✦ বিশ্বস্ততার সাথে সেবা দিয়ে আসছি</span>
-      <span>📞 অর্ডার বা যেকোনো প্রশ্নে যোগাযোগ করুন: 01629348284</span>
-      <span>🚚 সারা বাংলাদেশে হোম ডেলিভারি সুবিধা</span>
-      <span>💛 আমাদের সাথে কেনাকাটা করার জন্য ধন্যবাদ</span>
-      <span>🌿 SOHAN SHOP BD-তে আপনাকে স্বাগতম</span>
-      <span>✦ বিশ্বস্ততার সাথে সেবা দিয়ে আসছি</span>
-      <span>📞 অর্ডার বা যেকোনো প্রশ্নে যোগাযোগ করুন: 01629348284</span>
-      <span>🚚 সারা বাংলাদেশে হোম ডেলিভারি সুবিধা</span>
-      <span>💛 আমাদের সাথে কেনাকাটা করার জন্য ধন্যবাদ</span>
+    <div class="marquee-track" id="marqueeTrack">
+      <span>লোড হচ্ছে…</span>
     </div>
   </div>
   <div class="hero">
@@ -333,15 +335,15 @@
         <div id="cartBox"></div>
 
         <div class="delivery-box">
-          <p class="delivery-note">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে — ঢাকার ভেতরে ৳70, ঢাকার বাইরে ৳120।</p>
+          <p class="delivery-note" id="deliveryNote">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে।</p>
           <div class="delivery-options">
             <label class="delivery-opt">
-              <input type="radio" name="deliveryArea" value="70" data-label="ঢাকার ভেতরে" onchange="updateTotal()" required>
-              <span>ঢাকার ভেতরে<b>৳70</b></span>
+              <input type="radio" name="deliveryArea" id="deliveryInsideInput" value="0" data-label="ঢাকার ভেতরে" onchange="updateTotal()" required>
+              <span>ঢাকার ভেতরে<b id="deliveryInsideAmt">৳0</b></span>
             </label>
             <label class="delivery-opt">
-              <input type="radio" name="deliveryArea" value="120" data-label="ঢাকার বাইরে" onchange="updateTotal()" required>
-              <span>ঢাকার বাইরে<b>৳120</b></span>
+              <input type="radio" name="deliveryArea" id="deliveryOutsideInput" value="0" data-label="ঢাকার বাইরে" onchange="updateTotal()" required>
+              <span>ঢাকার বাইরে<b id="deliveryOutsideAmt">৳0</b></span>
             </label>
           </div>
           <div class="cart-breakdown">
@@ -373,7 +375,7 @@
         <h2>পেমেন্ট পদ্ধতি ও নোট</h2>
         <div class="field">
           <label>পেমেন্ট পদ্ধতি *</label>
-          <select id="custPayment" required>
+          <select id="custPayment" required onchange="updatePaymentPanel()">
             <option value="Cash on Delivery">ক্যাশ অন ডেলিভারি</option>
             <option value="bKash">বিকাশ</option>
             <option value="Nagad">নগদ</option>
@@ -381,6 +383,43 @@
             <option value="Bank Transfer">ব্যাংক ট্রান্সফার</option>
           </select>
         </div>
+        <div class="field" id="paymentDetailsPanel" style="display:none;">
+          <div class="pay-panel">
+            <p class="pay-panel-title">📌 <span id="payMethodLabel">bKash</span>-এ টাকা পাঠান</p>
+
+            <div class="pay-row" id="payNumberRow">
+              <div>
+                <span class="pay-row-lbl">Send Money নম্বর</span>
+                <span class="pay-row-val" id="payNumberText">—</span>
+              </div>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('payNumberText').textContent)">কপি</button>
+            </div>
+
+            <div class="pay-row" id="bankDetailsRow" style="display:none; align-items:flex-start;">
+              <div>
+                <span class="pay-row-lbl">ব্যাংক তথ্য</span>
+                <span class="pay-row-val" id="bankDetailsText" style="white-space:pre-line; font-size:12.5px;">—</span>
+              </div>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('bankDetailsText').textContent)">কপি</button>
+            </div>
+
+            <div class="pay-row">
+              <div>
+                <span class="pay-row-lbl">Reference (অবশ্যই উল্লেখ করুন)</span>
+                <span class="pay-row-val" id="orderRefText">—</span>
+              </div>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('orderRefText').textContent)">কপি</button>
+            </div>
+
+            <p class="pay-panel-note">উপরের নম্বরে টাকা পাঠানোর সময় <b>Reference</b> ফিল্ডে এই কোডটি বসান — এতে আমরা সহজে মিলিয়ে নিতে পারব। এরপর নিচে TrxID লিখুন।</p>
+          </div>
+        </div>
+
+        <div class="field" id="trxIdFieldWrap" style="display:none;">
+          <label>TrxID (লেনদেন আইডি) *</label>
+          <input type="text" id="custTrxId" placeholder="যেমনঃ 9H72K3L1AB">
+        </div>
+
         <div class="field" style="margin-bottom:0;">
           <label>বিশেষ নোট (ঐচ্ছিক)</label>
           <textarea id="custNotes" rows="2" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></textarea>
@@ -391,17 +430,17 @@
         <span class="eyebrow">০৫ · যোগাযোগ করুন</span>
         <h2>সরাসরি কথা বলুন</h2>
         <div class="contact-card">
-          <a class="contact-btn whatsapp" href="https://wa.me/8801629348284" target="_blank" rel="noopener">
+          <a class="contact-btn whatsapp" id="whatsappLink" href="#" target="_blank" rel="noopener">
             <span class="circle">
               <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3C9.377 3 4 8.373 4 15c0 2.31.646 4.47 1.77 6.31L4 29l7.86-1.73A11.94 11.94 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm0 21.7c-1.93 0-3.73-.55-5.26-1.5l-.376-.224-4.664 1.026 1.006-4.542-.246-.39A9.66 9.66 0 0 1 5.29 15c0-5.9 4.81-10.7 10.714-10.7 5.902 0 10.71 4.8 10.71 10.7 0 5.9-4.808 10.7-10.71 10.7Zm5.87-8.01c-.32-.16-1.9-.94-2.194-1.047-.294-.108-.508-.16-.722.16-.213.322-.828 1.048-1.015 1.262-.187.214-.373.24-.694.08-.32-.16-1.352-.498-2.575-1.588-.952-.85-1.595-1.898-1.782-2.22-.187-.32-.02-.494.14-.653.144-.144.32-.373.48-.56.16-.187.213-.32.32-.534.107-.213.053-.4-.027-.56-.08-.16-.722-1.74-.99-2.383-.26-.626-.526-.54-.722-.55l-.615-.01c-.213 0-.56.08-.854.4-.293.32-1.12 1.096-1.12 2.673 0 1.578 1.147 3.102 1.307 3.316.16.214 2.257 3.446 5.468 4.833.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.9-.777 2.167-1.527.267-.75.267-1.393.187-1.527-.08-.133-.293-.213-.613-.373Z"/></svg>
             </span>
             <span class="lbl">WhatsApp</span>
           </a>
-          <a class="contact-btn phone" href="tel:01629348284">
+          <a class="contact-btn phone" id="phoneLink" href="#">
             <span class="circle">
               <svg viewBox="0 0 24 24" fill="#F8F1E6" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
             </span>
-            <span class="lbl">01629348284</span>
+            <span class="lbl" id="phoneLinkLbl">—</span>
           </a>
         </div>
       </div>
@@ -545,9 +584,148 @@ let cart = {}; // productId -> { productId, name, price, qty }
 let selectedCategory = 'সকল';
 let db;
 
+// bKash/Nagad/Rocket/Bank details পাওয়ার জন্য — শপ প্রোফাইল লোড হলে applyShopProfile() এটা ভরে দেয়
+let PAYMENT_INFO = { bKash: '', Nagad: '', Rocket: '', 'Bank Transfer': '' };
+let shopWhatsAppIntl = ''; // দোকানের WhatsApp নম্বর, আন্তর্জাতিক ফরম্যাটে (৮৮ সহ), অর্ডার নোটিফিকেশন পাঠাতে ব্যবহার হয়
+// প্রতিটা অর্ডার-এর জন্য একটা ছোট, পড়তে সহজ রেফারেন্স কোড — bKash/Nagad "Send Money" স্টেটমেন্টে
+// কোন টাকা কোন অর্ডারের সেটা মেলাতে সাহায্য করে। শুধু এই একটা অর্ডারের জন্যই বৈধ ধরা হয়।
+let currentOrderRef = 'ORD' + Math.floor(100 + Math.random() * 900);
+
+// Telegram বট দিয়ে অটো-নোটিফিকেশন — কাস্টমারকে কোথাও রিডাইরেক্ট না করেই সরাসরি ব্রাউজার থেকে
+// দোকানদারের Telegram-এ মেসেজ পাঠানো হয়। শপ প্রোফাইল লোড হলে applyShopProfile() এগুলো ভরে দেয়।
+let TELEGRAM_BOT_TOKEN = '';
+let TELEGRAM_CHAT_ID = '';
+
+function applyShopProfile(company){
+  const name = company.name || BUSINESS_NAME;
+  const phone = company.contactPhone || '';
+  const inside = Number(company.deliveryInside) || 0;
+  const outside = Number(company.deliveryOutside) || 0;
+
+  document.getElementById('bizName').textContent = name;
+  document.title = 'অর্ডার করুন — ' + name;
+
+  const track = document.getElementById('marqueeTrack');
+  if(track){
+    const lines = [
+      `🌿 ${name}-তে আপনাকে স্বাগতম`,
+      `✦ বিশ্বস্ততার সাথে সেবা দিয়ে আসছি`,
+      phone ? `📞 অর্ডার বা যেকোনো প্রশ্নে যোগাযোগ করুন: ${phone}` : '',
+      `🚚 সারা বাংলাদেশে হোম ডেলিভারি সুবিধা`,
+      `💛 আমাদের সাথে কেনাকাটা করার জন্য ধন্যবাদ`
+    ].filter(Boolean);
+    track.innerHTML = [...lines, ...lines].map(l => `<span>${l}</span>`).join('');
+  }
+
+  const note = document.getElementById('deliveryNote');
+  if(note) note.textContent = `মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে — ঢাকার ভেতরে ৳${inside}, ঢাকার বাইরে ৳${outside}।`;
+
+  const insideInput = document.getElementById('deliveryInsideInput');
+  const outsideInput = document.getElementById('deliveryOutsideInput');
+  if(insideInput) insideInput.value = inside;
+  if(outsideInput) outsideInput.value = outside;
+  const insideAmt = document.getElementById('deliveryInsideAmt');
+  const outsideAmt = document.getElementById('deliveryOutsideAmt');
+  if(insideAmt) insideAmt.textContent = '৳' + inside;
+  if(outsideAmt) outsideAmt.textContent = '৳' + outside;
+
+  const wa = document.getElementById('whatsappLink');
+  const tel = document.getElementById('phoneLink');
+  const telLbl = document.getElementById('phoneLinkLbl');
+  if(phone){
+    const digitsOnly = phone.replace(/\D/g, '');
+    const intl = digitsOnly.startsWith('0') ? '88' + digitsOnly : digitsOnly;
+    if(wa) wa.href = 'https://wa.me/' + intl;
+    if(tel) tel.href = 'tel:' + digitsOnly;
+    if(telLbl) telLbl.textContent = phone;
+    shopWhatsAppIntl = intl;
+  } else {
+    if(wa) wa.style.display = 'none';
+    if(tel) tel.style.display = 'none';
+    shopWhatsAppIntl = '';
+  }
+
+  // bKash/Nagad/Rocket নম্বর — আলাদাভাবে সেট করা না থাকলে যোগাযোগের নম্বরটাই ফলব্যাক হিসেবে দেখানো হয়
+  PAYMENT_INFO = {
+    bKash: (company.bkashNumber || '').trim() || phone || '',
+    Nagad: (company.nagadNumber || '').trim() || phone || '',
+    Rocket: (company.rocketNumber || '').trim() || phone || '',
+    'Bank Transfer': (company.bankDetails || '').trim()
+  };
+  TELEGRAM_BOT_TOKEN = (company.telegramBotToken || '').trim();
+  TELEGRAM_CHAT_ID = (company.telegramChatId || '').trim();
+  updatePaymentPanel();
+}
+
+/* ---------------- ONLINE PAYMENT PANEL (bKash/Nagad/Rocket/Bank) ---------------- */
+function updatePaymentPanel(){
+  const select = document.getElementById('custPayment');
+  if(!select) return;
+  const method = select.value;
+  const panel = document.getElementById('paymentDetailsPanel');
+  const trxWrap = document.getElementById('trxIdFieldWrap');
+  const trxInput = document.getElementById('custTrxId');
+  if(method === 'Cash on Delivery'){
+    panel.style.display = 'none';
+    trxWrap.style.display = 'none';
+    trxInput.required = false;
+    return;
+  }
+  panel.style.display = 'block';
+  trxWrap.style.display = 'block';
+  trxInput.required = true;
+
+  const labels = { bKash: 'বিকাশ', Nagad: 'নগদ', Rocket: 'রকেট', 'Bank Transfer': 'ব্যাংক' };
+  document.getElementById('payMethodLabel').textContent = labels[method] || method;
+
+  const numberRow = document.getElementById('payNumberRow');
+  const bankRow = document.getElementById('bankDetailsRow');
+  if(method === 'Bank Transfer'){
+    numberRow.style.display = 'none';
+    const bankInfo = PAYMENT_INFO['Bank Transfer'];
+    bankRow.style.display = bankInfo ? 'flex' : 'none';
+    document.getElementById('bankDetailsText').textContent = bankInfo || '—';
+  } else {
+    bankRow.style.display = 'none';
+    const num = PAYMENT_INFO[method] || '';
+    numberRow.style.display = num ? 'flex' : 'none';
+    document.getElementById('payNumberText').textContent = num || '—';
+  }
+  document.getElementById('orderRefText').textContent = currentOrderRef;
+}
+
+function copyText(text){
+  const val = (text || '').trim();
+  if(!val || val === '—'){ showToast('কপি করার মতো কিছু নেই'); return; }
+  const done = () => showToast('কপি হয়েছে ✓');
+  const fail = () => {
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = val;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      done();
+    }catch(e){ showToast('কপি করা যায়নি'); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(val).then(done).catch(fail);
+  } else {
+    fail();
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
+
+  db.ref('shops/' + SHOP_ID + '/company').once('value').then(snap => {
+    const company = snap.val() || {};
+    applyShopProfile(company);
+  });
 
   db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
     const val = snap.val() || {};
@@ -747,19 +925,62 @@ function closeLightbox(){
   document.getElementById('lightboxContent').innerHTML = '';
 }
 
+function buildOrderNotificationText(order){
+  const itemsList = order.items.map(it => `- ${it.name} × ${it.qty} = ৳${(it.price * it.qty).toFixed(2)}`).join('\n');
+  const lines = [
+    `🛍️ নতুন অর্ডার${order.orderRef ? ' — রেফারেন্স: ' + order.orderRef : ''}`,
+    `নাম: ${order.customerName}`,
+    `মোবাইল: ${order.phone}`,
+    `ঠিকানা: ${order.address}`,
+    ``,
+    `পণ্য:`,
+    itemsList,
+    ``,
+    `সাবটোটাল: ৳${order.subtotal.toFixed(2)}`,
+    `ডেলিভারি (${order.deliveryArea}): ৳${order.deliveryCharge.toFixed(2)}`,
+    `সর্বমোট: ৳${order.total.toFixed(2)}`,
+    ``,
+    `পেমেন্ট মাধ্যম: ${order.paymentMethod}`
+  ];
+  if(order.trxId) lines.push(`TrxID: ${order.trxId}`);
+  if(order.notes) lines.push(`নোট: ${order.notes}`);
+  return lines.join('\n');
+}
+
+// Telegram বট API সরাসরি ব্রাউজার থেকে কল করা হয় — কাস্টমারকে কোথাও পাঠাতে হয় না,
+// কোনো অ্যাপ খুলতে হয় না, সাবমিট চাপার সাথে সাথেই দোকানদারের Telegram-এ মেসেজ পৌঁছে যায়।
+function sendTelegramNotification(order){
+  if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  const text = buildOrderNotificationText(order);
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+  }).catch(()=>{ /* নোটিফিকেশন ব্যর্থ হলেও অর্ডার ইতিমধ্যে সেভ হয়ে গেছে, তাই নীরবে বাদ দেওয়া হলো */ });
+}
+
 function submitOrder(e){
   e.preventDefault();
   const items = collectItems();
   if(items.length === 0){ showToast('অন্তত একটি পণ্য নির্বাচন করুন'); return false; }
   const delivery = getDeliveryChoice();
   if(!delivery){ showToast('ডেলিভারি এলাকা নির্বাচন করুন (ঢাকা / ঢাকার বাইরে)'); return false; }
+  const paymentMethod = document.getElementById('custPayment').value;
+  const isCOD = paymentMethod === 'Cash on Delivery';
+  if(!isCOD && !document.getElementById('custTrxId').value.trim()){
+    showToast('bKash/Nagad থেকে পাওয়া TrxID লিখুন');
+    return false;
+  }
+
   const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
   const total = subtotal + delivery.charge;
   const order = {
     customerName: document.getElementById('custName').value.trim(),
     phone: document.getElementById('custPhone').value.trim(),
     address: document.getElementById('custAddress').value.trim(),
-    paymentMethod: document.getElementById('custPayment').value,
+    paymentMethod,
+    trxId: isCOD ? '' : document.getElementById('custTrxId').value.trim(),
+    orderRef: isCOD ? '' : currentOrderRef,
     notes: document.getElementById('custNotes').value.trim(),
     items,
     subtotal,
@@ -774,6 +995,7 @@ function submitOrder(e){
   btn.textContent = 'পাঠানো হচ্ছে…';
   db.ref('shops/' + SHOP_ID + '/orders').push(order)
     .then(()=>{
+      if(!isCOD) sendTelegramNotification(order); // পেজ থেকেই সরাসরি, কাস্টমার কোথাও যায় না
       document.getElementById('orderWrap').querySelector('main').style.display = 'none';
       document.querySelector('.hero').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';

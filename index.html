@@ -221,6 +221,12 @@
   .txn-amt.sales{ color:var(--green-600); }
   .txn-amt.purchase{ color:var(--gold); }
   .txn-amt.expense{ color:var(--loss); }
+  .order-badge{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:4px 9px; border-radius:20px; white-space:nowrap; flex:none; }
+  .order-badge.cod{ background:rgba(46,125,91,0.14); color:var(--green-700); }
+  .order-badge.verify{ background:rgba(179,67,45,0.14); color:var(--loss); }
+  .order-badge.confirmed{ background:rgba(46,125,91,0.14); color:var(--green-600); }
+  .order-badge.cancelled{ background:rgba(107,114,104,0.14); color:var(--muted); }
+  .order-trx{ font-size:11.5px; color:var(--plum-800, var(--ink)); margin-top:6px; background:var(--paper-deep); border-radius:8px; padding:6px 9px; }
   .txn-actions{ display:flex; gap:6px; margin-top:4px; justify-content:flex-end; }
   .mini-btn{ border:none; background:var(--paper-deep); border-radius:7px; width:24px;height:24px; font-size:11px; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:background .12s; }
   .mini-btn:active{ background:var(--gold-light); }
@@ -704,11 +710,13 @@
         <span class="num" id="ordersConnStatus" style="font-size:10.5px; color:var(--muted); text-transform:none; letter-spacing:0;">Not connected</span>
       </div>
       <div class="segmented" id="orderTabs">
-        <button data-ostatus="pending" class="active">Pending</button>
+        <button data-ostatus="cod" class="active">COD</button>
+        <button data-ostatus="verify">Verify Payment</button>
         <button data-ostatus="confirmed">Confirmed</button>
         <button data-ostatus="cancelled">Cancelled</button>
         <button data-ostatus="all">All</button>
       </div>
+      <div class="helper-text" id="orderTabHint" style="margin:8px 2px 0;"></div>
       <div class="ledger-card" id="ordersList" style="margin-top:12px;"></div>
     </section>
 
@@ -732,6 +740,74 @@
           </select>
         </div>
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>🚚 Landing Page — Contact &amp; Delivery</h3>
+        <div class="helper-text" style="margin-top:0;">এগুলো আপনার নিজস্ব landing page-এ (WhatsApp/ফোন বাটন, ডেলিভারি চার্জ) দেখাবে — প্রতিটা দোকানের জন্য আলাদা।</div>
+        <div class="field" style="margin-top:10px;">
+          <label>WhatsApp / ফোন নম্বর (দেশের কোড ছাড়া, যেমনঃ 01629348284)</label>
+          <input type="text" id="settingsContactPhone" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="row2">
+          <div class="field" style="margin-bottom:0;">
+            <label>ডেলিভারি চার্জ — ঢাকার ভেতরে</label>
+            <input type="number" id="settingsDeliveryInside" placeholder="70">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>ডেলিভারি চার্জ — ঢাকার বাইরে</label>
+            <input type="number" id="settingsDeliveryOutside" placeholder="120">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>💳 Landing Page — bKash / Nagad / Rocket / Bank</h3>
+        <div class="helper-text" style="margin-top:0;">কাস্টমার "ক্যাশ অন ডেলিভারি" ছাড়া অন্য পেমেন্ট বেছে নিলে এই নম্বরগুলো (কপি বাটনসহ) landing page-এ দেখানো হবে। খালি রাখলে উপরের WhatsApp/ফোন নম্বরটাই ব্যবহার হবে।</div>
+        <div class="row2" style="margin-top:10px;">
+          <div class="field" style="margin-bottom:0;">
+            <label>bKash নম্বর</label>
+            <input type="text" id="settingsBkashNumber" placeholder="01XXXXXXXXX">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Nagad নম্বর</label>
+            <input type="text" id="settingsNagadNumber" placeholder="01XXXXXXXXX">
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px;">
+          <label>Rocket নম্বর</label>
+          <input type="text" id="settingsRocketNumber" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>ব্যাংক অ্যাকাউন্ট তথ্য (Bank Transfer)</label>
+          <textarea id="settingsBankDetails" rows="3" placeholder="Bank: ..., A/C Name: ..., A/C No: ..., Branch: ..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>🔔 অর্ডার নোটিফিকেশন (Telegram)</h3>
+        <div class="helper-text" style="margin-top:0; line-height:1.7;">
+          অনলাইন পেমেন্টের (bKash/Nagad/Rocket/Bank) অর্ডার সাবমিট হওয়ার সাথে সাথেই — কাস্টমারকে কোথাও না পাঠিয়ে, পেজ থেকে সরাসরি — আপনার Telegram-এ মেসেজ চলে আসবে।<br><br>
+          <b>সেটআপ (২ মিনিট):</b><br>
+          ১. Telegram-এ <b>@BotFather</b>-কে মেসেজ দিন → <code>/newbot</code> লিখে একটা বট বানান → একটা <b>Token</b> পাবেন, সেটা নিচে বসান।<br>
+          ২. আপনার বানানো বটে গিয়ে যেকোনো একটা মেসেজ পাঠান (যেমন "hi"), যাতে বট আপনাকে চিনতে পারে।<br>
+          ৩. Telegram-এ <b>@userinfobot</b>-কে মেসেজ দিয়ে আপনার <b>Chat ID</b> সংখ্যাটা নিন, সেটাও নিচে বসান।<br>
+          ৪. Save করে "টেস্ট নোটিফিকেশন" বাটনে চেপে যাচাই করুন।
+        </div>
+        <div class="field" style="margin-top:10px;">
+          <label>Telegram Bot Token</label>
+          <input type="text" id="settingsTelegramBotToken" placeholder="123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Telegram Chat ID</label>
+          <input type="text" id="settingsTelegramChatId" placeholder="987654321">
+        </div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="saveProfile()">Save Changes</button>
+          <button class="btn btn-ghost" style="flex:1;" onclick="testTelegramNotification()">টেস্ট নোটিফিকেশন</button>
+        </div>
       </div>
 
       <div class="settings-block">
@@ -1054,7 +1130,7 @@ const state = {
   orders: [], // live mirror of Firebase "orders" node for this shop
   currentPage: "dashboard",
   currentPeriod: "today",
-  currentOrderTab: "pending",
+  currentOrderTab: "cod",
   editing: null // {type, id}
 };
 
@@ -1853,6 +1929,15 @@ function drawCode39(canvas, text){
 function renderSettings(){
   document.getElementById('settingsCoName').value = state.company.name;
   document.getElementById('settingsCurrency').value = state.company.currency;
+  document.getElementById('settingsContactPhone').value = state.company.contactPhone || '';
+  document.getElementById('settingsDeliveryInside').value = state.company.deliveryInside || '';
+  document.getElementById('settingsDeliveryOutside').value = state.company.deliveryOutside || '';
+  document.getElementById('settingsBkashNumber').value = state.company.bkashNumber || '';
+  document.getElementById('settingsNagadNumber').value = state.company.nagadNumber || '';
+  document.getElementById('settingsRocketNumber').value = state.company.rocketNumber || '';
+  document.getElementById('settingsBankDetails').value = state.company.bankDetails || '';
+  document.getElementById('settingsTelegramBotToken').value = state.company.telegramBotToken || '';
+  document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
   renderChips('chipsSalesCat', state.settings.salesCategories, 'sales');
@@ -2099,9 +2184,31 @@ function removeCategory(key, idx){
   saveState();
   renderSettings();
 }
+function testTelegramNotification(){
+  const token = document.getElementById('settingsTelegramBotToken').value.trim();
+  const chatId = document.getElementById('settingsTelegramChatId').value.trim();
+  if(!token || !chatId){ showToast('আগে Bot Token ও Chat ID দিয়ে Save করুন'); return; }
+  fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text: '✅ টেস্ট মেসেজ — আপনার Telegram নোটিফিকেশন ঠিকভাবে কাজ করছে।' })
+  }).then(r => r.json()).then(res => {
+    if(res.ok) showToast('টেস্ট মেসেজ পাঠানো হয়েছে — Telegram চেক করুন');
+    else showToast('ব্যর্থ: ' + (res.description || 'Token/Chat ID ভুল হতে পারে'));
+  }).catch(() => showToast('নেটওয়ার্ক সমস্যা — আবার চেষ্টা করুন'));
+}
 function saveProfile(){
   state.company.name = document.getElementById('settingsCoName').value.trim() || 'My Business';
   state.company.currency = document.getElementById('settingsCurrency').value;
+  state.company.contactPhone = document.getElementById('settingsContactPhone').value.trim();
+  state.company.deliveryInside = parseFloat(document.getElementById('settingsDeliveryInside').value) || 0;
+  state.company.deliveryOutside = parseFloat(document.getElementById('settingsDeliveryOutside').value) || 0;
+  state.company.bkashNumber = document.getElementById('settingsBkashNumber').value.trim();
+  state.company.nagadNumber = document.getElementById('settingsNagadNumber').value.trim();
+  state.company.rocketNumber = document.getElementById('settingsRocketNumber').value.trim();
+  state.company.bankDetails = document.getElementById('settingsBankDetails').value.trim();
+  state.company.telegramBotToken = document.getElementById('settingsTelegramBotToken').value.trim();
+  state.company.telegramChatId = document.getElementById('settingsTelegramChatId').value.trim();
   document.getElementById('topCoName').textContent = state.company.name;
   document.getElementById('brandMark').textContent = state.company.name.trim().charAt(0).toUpperCase() || 'K';
   saveState();
@@ -2304,9 +2411,29 @@ function updateOrdersBadge(){
 }
 
 /* ---------------- ORDERS PAGE ---------------- */
+// একটা অর্ডার "Cash on Delivery" কিনা তা paymentMethod ফিল্ড দেখেই বোঝা যায় — এটাই ঠিক করে
+// অর্ডারটা সরাসরি পাঠানো যাবে (COD), নাকি আগে পেমেন্ট (bKash/Nagad/Rocket/Bank) যাচাই করতে হবে।
+function isCODOrder(o){ return (o.paymentMethod || '').trim() === 'Cash on Delivery'; }
+
+const ORDER_TAB_HINTS = {
+  cod: 'এই অর্ডারগুলোর পেমেন্ট এখনো নেওয়া হয়নি — ডেলিভারির সময় ক্যাশ সংগ্রহ করুন।',
+  verify: 'কাস্টমার ইতিমধ্যে bKash/Nagad/Rocket/Bank-এ টাকা পাঠিয়েছে বলে জানিয়েছে — TrxID ও Reference মিলিয়ে নিশ্চিত করার পর Confirm করুন।',
+  confirmed: '',
+  cancelled: '',
+  all: ''
+};
+
 function renderOrders(){
   const tab = state.currentOrderTab;
-  const list = state.orders.filter(o => tab === 'all' ? true : (o.status || 'pending') === tab);
+  const list = state.orders.filter(o => {
+    const status = o.status || 'pending';
+    if(tab === 'all') return true;
+    if(tab === 'cod') return status === 'pending' && isCODOrder(o);
+    if(tab === 'verify') return status === 'pending' && !isCODOrder(o);
+    return status === tab;
+  });
+  const hintEl = document.getElementById('orderTabHint');
+  if(hintEl) hintEl.textContent = ORDER_TAB_HINTS[tab] || '';
   const box = document.getElementById('ordersList');
   if(list.length === 0){
     box.innerHTML = emptyStateHTML('No orders here.', 'New orders from your landing page will appear live.');
@@ -2318,7 +2445,15 @@ function orderCardHTML(o){
   const items = Array.isArray(o.items) ? o.items : [];
   const itemsText = items.map(it => `${escapeHTML(it.name)} × ${it.qty}`).join(', ');
   const status = o.status || 'pending';
-  const statusColor = status === 'pending' ? 'var(--gold)' : status === 'confirmed' ? 'var(--green-600)' : 'var(--loss)';
+  const isCOD = isCODOrder(o);
+  let badgeClass, badgeLabel;
+  if(status === 'pending'){
+    badgeClass = isCOD ? 'cod' : 'verify';
+    badgeLabel = isCOD ? 'Cash on Delivery' : 'Payment Verification Pending';
+  } else {
+    badgeClass = status === 'confirmed' ? 'confirmed' : 'cancelled';
+    badgeLabel = status.charAt(0).toUpperCase() + status.slice(1);
+  }
   const when = o.createdAt ? new Date(o.createdAt).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : '';
   const actions = status === 'pending' ? `
       <button class="btn btn-primary" style="flex:1; padding:9px;" onclick="confirmOrder('${o.id}')">✓ Confirm</button>
@@ -2331,10 +2466,11 @@ function orderCardHTML(o){
         <div class="txn-name">${escapeHTML(o.customerName || 'Unknown customer')}</div>
         <div class="txn-meta">${escapeHTML(o.phone || '')}${o.phone && o.address ? ' · ' : ''}${escapeHTML(o.address || '')}</div>
       </div>
-      <span style="font-size:10.5px; font-weight:700; text-transform:uppercase; color:${statusColor};">${escapeHTML(status)}</span>
+      <span class="order-badge ${badgeClass}">${escapeHTML(badgeLabel)}</span>
     </div>
     <div class="txn-meta" style="margin-top:8px;">${itemsText || '—'}</div>
     ${o.notes ? `<div class="txn-meta" style="margin-top:2px; font-style:italic;">Note: ${escapeHTML(o.notes)}</div>` : ''}
+    ${(!isCOD && (o.trxId || o.orderRef)) ? `<div class="order-trx">💳 TrxID: <b class="num">${escapeHTML(o.trxId || '—')}</b>${o.orderRef ? ' &nbsp;·&nbsp; Ref: <b class="num">' + escapeHTML(o.orderRef) + '</b>' : ''}</div>` : ''}
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
       <span class="txn-meta">${escapeHTML(o.paymentMethod || '')} · ${when}</span>
       <span class="txn-amt sales">${fmtMoney(o.total || 0)}</span>
