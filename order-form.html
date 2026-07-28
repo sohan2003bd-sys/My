@@ -995,7 +995,7 @@ function submitOrder(e){
   btn.textContent = 'পাঠানো হচ্ছে…';
   db.ref('shops/' + SHOP_ID + '/orders').push(order)
     .then(()=>{
-      if(!isCOD) sendTelegramNotification(order); // পেজ থেকেই সরাসরি, কাস্টমার কোথাও যায় না
+      sendTelegramNotification(order); // COD সহ সব অর্ডারেই — কাস্টমার কোথাও যায় না
       document.getElementById('orderWrap').querySelector('main').style.display = 'none';
       document.querySelector('.hero').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
