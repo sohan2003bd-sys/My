@@ -323,6 +323,26 @@
         <div class="catalog-grid" id="catalogGrid"></div>
       </div>
 
+      <div class="card" id="imageSection" style="display:none; padding:0;">
+        <div style="padding:18px 16px 0;">
+          <span class="eyebrow">আমাদের ছবি</span>
+          <h2 style="margin:0 0 14px;">সংগ্রহ দেখুন</h2>
+        </div>
+        <div style="overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; padding:0 16px 16px;">
+          <div id="imageGrid" style="display:flex; gap:12px; direction:rtl;"></div>
+        </div>
+        <style>
+          #imageGrid::-webkit-scrollbar { display:none; }
+          .gallery-item{ 
+            flex:none; width:144px; height:96px; border-radius:12px; 
+            overflow:hidden; box-shadow:0 4px 12px rgba(42,21,51,0.14);
+            background:#f0f0f0; display:flex; align-items:center; justify-content:center;
+            flex-shrink:0;
+          }
+          .gallery-item img{ width:100%; height:100%; object-fit:cover; }
+        </style>
+      </div>
+
       <div class="card" id="videoSection" style="display:none;">
         <span class="eyebrow">ভিডিও</span>
         <h2>আমাদের ভিডিও দেখুন</h2>
@@ -580,6 +600,7 @@ setInterval(updateHeroDateTime, 60 * 1000);
 
 let products = [];
 let videos = [];
+let images = []; // { imageUrl, title }
 let cart = {}; // productId -> { productId, name, price, qty }
 let selectedCategory = 'সকল';
 let db;
@@ -741,6 +762,14 @@ document.addEventListener('DOMContentLoaded', function(){
     videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderVideos();
   });
+
+  // ছবি গ্যালারি সেকশনের জন্য — Firebase-এ একটা আলাদা "images" নোড থেকে পড়া হয়
+  // প্রতিটা এন্ট্রিতে থাকবে: imageUrl (ছবির URL) ও title (ঐচ্ছিক ক্যাপশন)
+  db.ref('shops/' + SHOP_ID + '/images').on('value', snap => {
+    const val = snap.val() || {};
+    images = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+    renderGallery();
+  });
 });
 
 function renderCatNav(){
@@ -869,6 +898,18 @@ function getYouTubeEmbed(url){
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{6,})/);
   return m ? `https://www.youtube.com/embed/${m[1]}` : null;
 }
+function renderGallery(){
+  const section = document.getElementById('imageSection');
+  const grid = document.getElementById('imageGrid');
+  if(!section || !grid) return;
+  if(!images || images.length === 0){ section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  grid.innerHTML = images.map(img => `
+    <div class="gallery-item">
+      <img src="${escapeHTML(img.imageUrl || '')}" alt="${escapeHTML(img.title || 'ছবি')}" loading="lazy" decoding="async" onerror="this.parentElement.textContent='⚠️'">
+    </div>`).join('');
+}
+
 function renderVideos(){
   const section = document.getElementById('videoSection');
   const grid = document.getElementById('videoGrid');
