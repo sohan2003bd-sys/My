@@ -964,26 +964,6 @@
         </div>
       </div>
 
-      <div class="settings-block">
-        <h3>🖼️ ছবি গ্যালারি (ল্যান্ডিং পেজে)</h3>
-        <div class="helper-text" style="margin-top:0;">পণ্য ও ভিডিওর মধ্যে ছবি স্লাইড করে দেখান হবে। GitHub বা অন্য কোথাও হোস্ট করা ছবির সরাসরি লিংক (URL) দিন।</div>
-        <div id="imagesListBox" style="margin-top:10px;"></div>
-
-        <div id="imageFormTitle" style="font-size:13px; font-weight:600; margin:16px 0 8px; color:var(--green-800);">ছবি যোগ করুন</div>
-        <div class="field">
-          <label>ছবি URL *</label>
-          <input type="text" id="newImageUrl" placeholder="https://example.com/image.jpg">
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>ছবির শিরোনাম (ঐচ্ছিক)</label>
-          <input type="text" id="newImageTitle" placeholder="e.g. নতুন কালেকশন">
-        </div>
-        <div style="display:flex; gap:8px; margin-top:14px;">
-          <button class="btn btn-primary" style="flex:1;" onclick="saveImage()" id="imageSaveBtn">ছবি যোগ করুন</button>
-          <button class="btn btn-ghost" style="flex:1; display:none;" id="imageCancelBtn" onclick="cancelEditImage()">বাতিল করুন</button>
-        </div>
-      </div>
-
     </section>
 
   </main>
@@ -1141,8 +1121,7 @@ const state = {
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
     products: [], // [{id, name, price}] — shown on the landing page
-    videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
-    images: [] // [{id, imageUrl, title}] — photo gallery shown on landing page
+    videos: [] // [{id, caption, videoUrl}] — general info videos, not products (no price)
   },
   security: { pinEnabled: false, pin: "" },
   sales: [],
@@ -1235,7 +1214,6 @@ function loadShopData(uid){
     idCounter = d.idCounter || 1;
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
-    if(!state.settings.images) state.settings.images = [];
     saveState(); // caches locally too
   });
 }
@@ -1968,7 +1946,6 @@ function renderSettings(){
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
   renderProductsSettings();
   renderVideosSettings();
-  renderImagesSettings();
   updateNotifyStatus();
   document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
   document.getElementById('shopLinkBox').value = buildShopLink();
@@ -2350,83 +2327,6 @@ function pushVideosToFirebase(){
   shopRef('videos').set(obj).catch(()=> showToast('Could not sync videos to Firebase'));
 }
 
-/* ---------------- PHOTO GALLERY (shown on landing page) ---------------- */
-function renderImagesSettings(){
-  const box = document.getElementById('imagesListBox');
-  const list = state.settings.images || [];
-  if(list.length === 0){
-    box.innerHTML = '<div class="helper-text">এখনো কোনো ছবি যোগ করা হয়নি।</div>';
-    return;
-  }
-  box.innerHTML = list.map((img,i) => `
-    <div class="field-inline">
-      <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-        <div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;">
-          <img src="${escapeHTML(img.imageUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='🖼️'">
-        </div>
-        <div style="min-width:0;">
-          <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;">${escapeHTML(img.title || 'ছবি')}</div>
-        </div>
-      </div>
-      <div style="display:flex; gap:6px;">
-        <button class="mini-btn" onclick="editImage(${i})" aria-label="Edit">✎</button>
-        <button class="mini-btn" onclick="removeImage(${i})" aria-label="Remove">✕</button>
-      </div>
-    </div>`).join('');
-}
-let editingImageIdx = null;
-function saveImage(){
-  const imageUrl = document.getElementById('newImageUrl').value.trim();
-  const title = document.getElementById('newImageTitle').value.trim();
-  if(!imageUrl){ showToast('ছবির URL দিন'); return; }
-  if(!state.settings.images) state.settings.images = [];
-  if(editingImageIdx !== null){
-    Object.assign(state.settings.images[editingImageIdx], { imageUrl, title });
-    showToast('ছবি আপডেট হয়েছে');
-  } else {
-    state.settings.images.push({ id: 'i' + Date.now() + Math.floor(Math.random()*1000), imageUrl, title });
-    showToast('ছবি যোগ করা হয়েছে');
-  }
-  cancelEditImage();
-  saveState();
-  renderImagesSettings();
-  pushImagesToFirebase();
-}
-function editImage(idx){
-  const img = state.settings.images[idx];
-  if(!img) return;
-  editingImageIdx = idx;
-  document.getElementById('newImageUrl').value = img.imageUrl || '';
-  document.getElementById('newImageTitle').value = img.title || '';
-  document.getElementById('imageFormTitle').textContent = 'ছবি এডিট করুন';
-  document.getElementById('imageSaveBtn').textContent = 'পরিবর্তন সংরক্ষণ করুন';
-  document.getElementById('imageCancelBtn').style.display = 'block';
-  document.getElementById('imageFormTitle').scrollIntoView({ behavior:'smooth', block:'center' });
-}
-function cancelEditImage(){
-  editingImageIdx = null;
-  document.getElementById('newImageUrl').value = '';
-  document.getElementById('newImageTitle').value = '';
-  document.getElementById('imageFormTitle').textContent = 'ছবি যোগ করুন';
-  document.getElementById('imageSaveBtn').textContent = 'ছবি যোগ করুন';
-  document.getElementById('imageCancelBtn').style.display = 'none';
-}
-function removeImage(idx){
-  if(editingImageIdx === idx) cancelEditImage();
-  state.settings.images.splice(idx, 1);
-  saveState();
-  renderImagesSettings();
-  pushImagesToFirebase();
-}
-function pushImagesToFirebase(){
-  if(!fbDb || !currentUid) return;
-  const obj = {};
-  (state.settings.images || []).forEach(img => {
-    obj[img.id] = { imageUrl: img.imageUrl, title: img.title || '' };
-  });
-  shopRef('images').set(obj).catch(()=> showToast('Firebase এ ছবি সংরক্ষণ করতে ব্যর্থ'));
-}
-
 function setFirebaseStatus(msg, connected){
   const badge = document.getElementById('ordersConnStatus');
   if(badge){
@@ -2458,7 +2358,6 @@ function listenOrders(){
   });
   pushProductsToFirebase();
   pushVideosToFirebase();
-  pushImagesToFirebase();
   setFirebaseStatus('', true);
 }
 
