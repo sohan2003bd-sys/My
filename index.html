@@ -487,18 +487,26 @@
        logo's width so it starts at the same left edge as the Billed To name
        below it (name and date fall in one visual column/serial). */
     .rc-date-line{ margin-left:-26px; margin-top:3px; }
-    .rc-date-line .k{ display:inline; font-size:6.4px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
+    .rc-date-line .k{ display:inline; font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; font-weight:700; }
     .rc-date-line .v{ display:inline; font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-left:5px; }
 
-    /* Cash-on-Delivery flag — sits in the header row's own spare height, to
-       the left of the QR code, vertically centered, instead of taking up a
-       whole extra row further down the slip. */
-    .rc-cod-inline{ flex:none; align-self:center; text-align:center; font-size:10.5px; font-weight:800; line-height:1.3;
-      text-transform:uppercase; letter-spacing:.03em; color:#B8863E; background:#FCF3E3;
-      border:1px solid #EAD3A3; border-radius:5px; padding:5px 9px; white-space:nowrap; }
+    /* Cash-on-Delivery seal — sits back in its old header slot (between the
+       date/name column and the QR code), nudged a touch further left, now
+       styled as a proper round double-ring stamp instead of a plain badge. */
+    .rc-cod-stamp{ flex:none; align-self:center; margin-right:2px; margin-left:-4px;
+      width:15mm; height:15mm; border-radius:50%; box-sizing:border-box;
+      transform:rotate(-12deg);
+      border:1.4px solid #A6431F; outline:1px solid #A6431F; outline-offset:1.6px;
+      display:flex; align-items:center; justify-content:center; text-align:center;
+      font-size:6.6px; font-weight:800; line-height:1.22; text-transform:uppercase;
+      letter-spacing:.02em; color:#A6431F; }
 
     .rc-section{ margin-bottom:3px; min-width:0; }
-    .rc-section-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
+    /* Pulled up into the header's spare height (left empty since the QR
+       column is taller than the date/name text above it), so the Billed To
+       row sits right under the date with no dead gap, and the item box
+       below gets that reclaimed height instead. */
+    .rc-section-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; margin-top:-32px; }
     .rc-billto-col{ min-width:0; flex:1; }
     .rc-label{ font-size:6.6px; text-transform:uppercase; color:#9A9F92; letter-spacing:.05em; font-weight:600; }
     .rc-val{ font-weight:600; font-size:11px; margin-top:1.5px; color:#1B2420; line-height:1.25;
@@ -3293,7 +3301,7 @@ function receiptCardHTML(group){
         <div class="rc-tag">Sales Receipt</div>
         <div class="rc-date-line"><span class="k">Date</span><span class="v">${fmtDate(first.date)}</span></div>
       </div>
-      ${isCOD ? `<div class="rc-cod-inline">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
+      ${isCOD ? `<div class="rc-cod-stamp">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
       <div class="rc-qr-wrap">
         <div class="rc-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
         <div class="rc-invoice-under"><span class="k">Invoice</span><span class="v">${escapeHTML(invoiceNo)}</span></div>
