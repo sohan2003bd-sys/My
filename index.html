@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#123832">
+<meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,11 +13,15 @@
 <link rel="icon" href="./icon-192.png">
 <title>MY SHOP — Business Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<!-- Firebase (used only for the optional Live Orders feature — safe to keep even if not configured) -->
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<!-- Fonts loaded non-blocking: page paints immediately with fallback fonts, then swaps in webfonts -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+<!-- Firebase (auth + optional Live Orders) — deferred so it downloads in parallel without blocking first paint -->
+<script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 <style>
   :root{
     --ink:#1B2420;
@@ -90,7 +94,7 @@
   #app{ display:none; max-width:520px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:84px; }
   .topbar{
     position:sticky; top:0; z-index:30;
-    background: linear-gradient(120deg, var(--green-900) 0%, var(--green-800) 55%, var(--green-700) 130%);
+    background: linear-gradient(120deg, #000000 0%, #111111 55%, #1a1a1a 130%);
     color:#fff;
     padding:16px 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
@@ -271,20 +275,45 @@
   @media (max-width:560px){ .fab{ right:20px; } }
 
   /* ---------- Bottom nav ---------- */
-  .bottomnav{
+  .bottomnav-wrap{
     position:fixed; bottom:0; left:0; right:0; z-index:30;
     max-width:520px; margin:0 auto;
-    background:linear-gradient(180deg, var(--green-800), var(--green-900)); display:flex;
-    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-    box-shadow:0 -6px 20px rgba(15,40,34,0.22);
+    padding:0 10px calc(10px + env(safe-area-inset-bottom));
+    pointer-events:none;
   }
-  .navbtn{ flex:1; background:none; border:none; color:rgba(255,255,255,0.55); display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 2px; border-radius:12px; position:relative; transition:color .15s ease; }
-  .navbtn svg{ width:21px;height:21px; transition:transform .15s ease; }
-  .navbtn span{ font-size:10px; font-weight:600; letter-spacing:.02em; }
-  .navbtn.active{ color:#fff; background:rgba(255,255,255,0.10); }
-  .navbtn.active svg{ transform:translateY(-1px); }
-  .navbtn.active .dot-ind{ display:block; }
-  .dot-ind{ display:none; width:4px;height:4px;border-radius:50%;background:var(--gold-bright); margin-top:-1px; box-shadow:0 0 6px var(--gold-bright); }
+  .bottomnav{
+    position:relative; pointer-events:auto;
+    --notch-x:50%;
+    display:flex; overflow:visible;
+    border-radius:26px;
+    padding:0;
+    height:66px;
+  }
+  .bottomnav-bg{
+    position:absolute; inset:0; z-index:0; border-radius:26px;
+    background:linear-gradient(180deg, #1c1c1c, #000000);
+    box-shadow:0 10px 28px rgba(0,0,0,0.45);
+    -webkit-mask-image: radial-gradient(circle 31px at var(--notch-x) 0px, transparent 30px, #000 32.5px);
+            mask-image: radial-gradient(circle 31px at var(--notch-x) 0px, transparent 30px, #000 32.5px);
+  }
+  .navbtn{ flex:1; background:none; border:none; color:rgba(255,255,255,0.5); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0 2px; position:relative; z-index:1; transition:color .2s ease; }
+  .navbtn .ico-wrap{
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    transition:transform .32s cubic-bezier(.34,1.56,.64,1), width .32s cubic-bezier(.34,1.56,.64,1), height .32s cubic-bezier(.34,1.56,.64,1), background .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .navbtn svg{ width:20px;height:20px; }
+  .navbtn span{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; }
+  .navbtn.active{ color:#fff; }
+  .navbtn.active .ico-wrap{
+    transform:translateY(-27px);
+    width:54px; height:54px;
+    background:#000;
+    border:3px solid #fff;
+    box-shadow:0 8px 16px rgba(0,0,0,0.5);
+  }
+  .navbtn.active svg{ width:22px; height:22px; }
+  .dot-ind{ display:none; }
 
   /* ---------- Forms / inputs ---------- */
   .field{ margin-bottom:14px; }
@@ -416,32 +445,46 @@
   /* ---------- Settings hamburger menu / subpages ---------- */
   .settings-nav-bar{ display:flex; align-items:center; gap:12px; margin:0 0 16px; }
   .settings-hamburger{
-    background:var(--card); border:1px solid var(--rule); box-shadow:var(--shadow);
-    width:42px; height:42px; border-radius:12px; flex:none;
-    display:flex; align-items:center; justify-content:center; color:var(--green-800);
+    background:linear-gradient(155deg, #1a1a1a, #000000); border:1px solid rgba(224,172,83,0.35);
+    box-shadow:0 6px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
+    width:44px; height:44px; border-radius:13px; flex:none;
+    display:flex; align-items:center; justify-content:center; color:var(--gold-light);
+    transition:transform .12s ease;
   }
-  .settings-hamburger:active{ transform:scale(0.94); }
+  .settings-hamburger:active{ transform:scale(0.92); }
   .settings-nav-title{ font-size:15px; font-weight:600; color:var(--green-900); font-family:'Fraunces',serif; }
   .settings-menu-overlay{
-    position:fixed; inset:0; background:rgba(15,40,34,0.38); z-index:49;
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:49;
     opacity:0; pointer-events:none; transition:opacity .2s ease;
+    backdrop-filter:blur(1px);
   }
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
   .settings-menu-drawer{
-    position:fixed; top:0; left:0; bottom:0; width:80%; max-width:320px;
-    background:var(--paper); z-index:50; box-shadow:var(--shadow-lift);
-    transform:translateX(-105%); transition:transform .22s ease;
-    padding:18px 12px; overflow-y:auto;
+    position:fixed; top:0; left:0; bottom:0; width:82%; max-width:320px;
+    background:linear-gradient(165deg, #141414 0%, #000000 60%); z-index:50;
+    box-shadow:0 0 40px rgba(0,0,0,0.5);
+    transform:translateX(-105%); transition:transform .26s cubic-bezier(.2,.8,.2,1);
+    padding:22px 14px; overflow-y:auto;
+    border-right:1px solid rgba(224,172,83,0.18);
   }
   .settings-menu-drawer.open{ transform:translateX(0); }
-  .settings-menu-drawer-title{ font-family:'Fraunces',serif; font-weight:600; font-size:17px; color:var(--green-900); padding:6px 8px 14px; }
-  .settings-menu-item{
-    display:block; width:100%; text-align:left; background:var(--card);
-    border:1px solid var(--rule); border-radius:12px; padding:12px 14px; margin-bottom:8px;
-    font-size:13px; font-weight:600; color:var(--ink); box-shadow:0 2px 6px rgba(15,40,34,0.06);
+  .settings-menu-drawer-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;
+    padding:4px 10px 16px; margin-bottom:6px;
+    border-bottom:1px solid rgba(224,172,83,0.22);
   }
-  .settings-menu-item:active{ background:var(--paper-deep); }
-  .settings-menu-item.active{ border-color:var(--gold); background:linear-gradient(155deg,#FFF7E8,#FFFFFF); color:var(--green-900); }
+  .settings-menu-item{
+    display:block; width:100%; text-align:left; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:13px 14px; margin-bottom:8px;
+    font-size:13px; font-weight:600; color:rgba(255,255,255,0.75);
+    transition:background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+  }
+  .settings-menu-item:active{ background:rgba(255,255,255,0.09); transform:scale(0.98); }
+  .settings-menu-item.active{
+    border-color:var(--gold); color:#fff;
+    background:linear-gradient(155deg, rgba(224,172,83,0.22), rgba(184,134,62,0.08));
+    box-shadow:0 4px 12px rgba(184,134,62,0.18);
+  }
   .settings-subpage{ display:none; }
   .settings-subpage.active{ display:block; }
   .settings-empty-hint{ text-align:center; color:var(--muted); font-size:13px; padding:70px 24px; line-height:1.7; }
@@ -1115,32 +1158,35 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
   </button>
 
-  <nav class="bottomnav">
-    <button class="navbtn active" data-page="dashboard" onclick="goPage('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
-      <span>Dashboard</span><i class="dot-ind"></i>
-    </button>
-    <button class="navbtn" data-page="sales" onclick="goPage('sales')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-      <span>Sales</span><i class="dot-ind"></i>
-    </button>
-    <button class="navbtn" data-page="purchase" onclick="goPage('purchase')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-      <span>Purchase</span><i class="dot-ind"></i>
-    </button>
-    <button class="navbtn" data-page="expense" onclick="goPage('expense')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
-      <span>Expense</span><i class="dot-ind"></i>
-    </button>
-    <button class="navbtn" data-page="orders" onclick="goPage('orders')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-      <span>Orders</span><i class="dot-ind"></i>
-    </button>
-    <button class="navbtn" data-page="settings" onclick="goPage('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      <span>Settings</span><i class="dot-ind"></i>
-    </button>
-  </nav>
+  <div class="bottomnav-wrap">
+    <nav class="bottomnav" id="bottomNav">
+      <div class="bottomnav-bg"></div>
+      <button class="navbtn active" data-page="dashboard" onclick="goPage('dashboard')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span>
+        <span>Dashboard</span>
+      </button>
+      <button class="navbtn" data-page="sales" onclick="goPage('sales')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></span>
+        <span>Sales</span>
+      </button>
+      <button class="navbtn" data-page="purchase" onclick="goPage('purchase')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></span>
+        <span>Purchase</span>
+      </button>
+      <button class="navbtn" data-page="expense" onclick="goPage('expense')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></span>
+        <span>Expense</span>
+      </button>
+      <button class="navbtn" data-page="orders" onclick="goPage('orders')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span>
+        <span>Orders</span>
+      </button>
+      <button class="navbtn" data-page="settings" onclick="goPage('settings')">
+        <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
 </div>
 
 <!-- ===================== ADD/EDIT TRANSACTION SHEET ===================== -->
@@ -2974,11 +3020,25 @@ function lockNow(){
 }
 
 /* ---------------- NAVIGATION ---------------- */
+function updateNavNotch(){
+  const nav = document.getElementById('bottomNav');
+  if(!nav) return;
+  const activeBtn = nav.querySelector('.navbtn.active');
+  if(!activeBtn) return;
+  const navRect = nav.getBoundingClientRect();
+  const btnRect = activeBtn.getBoundingClientRect();
+  const centerX = (btnRect.left - navRect.left) + (btnRect.width / 2);
+  nav.style.setProperty('--notch-x', centerX + 'px');
+}
+window.addEventListener('resize', updateNavNotch);
+window.addEventListener('orientationchange', () => setTimeout(updateNavNotch, 150));
+
 function goPage(page){
   state.currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  updateNavNotch();
   const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings'};
   document.getElementById('topPageLabel').textContent = labels[page];
   document.getElementById('fabAdd').style.display = (page === 'settings' || page === 'dashboard' || page === 'orders') ? 'none' : 'flex';
@@ -3615,7 +3675,7 @@ function renderProductsSettings(){
   box.innerHTML = list.map((p,i) => `
     <div class="field-inline">
       <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-        ${p.imageUrl ? `<img src="${escapeHTML(p.imageUrl)}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex:none;" onerror="this.style.display='none'">` : `<div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;">🛍️</div>`}
+        ${p.imageUrl ? `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex:none;" onerror="this.style.display='none'">` : `<div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;">🛍️</div>`}
         <div style="min-width:0;">
           <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escapeHTML(p.name)}${p.videoUrl ? ' 🎬' : ''}</div>
           <div class="v">${fmtMoney(p.price)}</div>
@@ -4219,9 +4279,14 @@ function renderAll(){
   applyBrandMark();
   renderDashboard();
   renderSettings();
+  setTimeout(updateNavNotch, 0);
 }
 
-bootApp();
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
 </script>
 <div id="printArea"></div>
 
