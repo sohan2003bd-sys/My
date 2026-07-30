@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Firebase (used only for the optional Live Orders feature — safe to keep even if not configured) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
@@ -462,6 +463,8 @@
       background:linear-gradient(90deg, #0F3830 0%, #1F5C4F 40%, #B8863E 75%, #E0AC53 100%); }
 
     .rc-head{ display:flex; align-items:center; gap:6px; padding-top:3px; margin-bottom:6px; }
+    .rc-qr{ width:34px; height:34px; flex:none; }
+    .rc-qr canvas, .rc-qr img{ width:100%; height:100%; image-rendering:pixelated; }
     .rc-mark{ width:20px; height:20px; border-radius:6px; flex:none;
       background:linear-gradient(150deg,#E0AC53,#B8863E); overflow:hidden;
       display:flex; align-items:center; justify-content:center;
@@ -1853,6 +1856,7 @@ function receiptCardHTML(group){
   const rcLogo = (state.company.logoUrl || '').trim();
   const rcMarkInner = rcLogo ? `<img src="${escapeHTML(rcLogo)}" alt="">` : escapeHTML(initial);
   const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const qrText = `Order ID: ${invoiceNo}\nAmount: ${fmtMoney(grandTotal)}\nPhone: ${first.phone || '—'}`;
   // Cash-on-Delivery orders haven't been paid yet — the slip should say
   // "পরিশোধ করতে হবে" (amount due) instead of "Total Paid" for those.
   const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
@@ -1870,6 +1874,7 @@ function receiptCardHTML(group){
         <div class="rc-co">${escapeHTML(state.company.name)}</div>
         <div class="rc-tag">Sales Receipt</div>
       </div>
+      <div class="rc-qr" data-qr="${escapeHTML(qrText)}"></div>
     </div>
     <div class="rc-meta-strip">
       <div><div class="k">Date</div><div class="v">${fmtDate(first.date)}</div></div>
@@ -1921,6 +1926,9 @@ function printReceipts(){
     .map(pageGroups => `<div class="receipt-page">${pageGroups.map(receiptCardHTML).join('')}</div>`)
     .join('');
   document.querySelectorAll('#printArea .bc-canvas').forEach(cv => drawCode39(cv, cv.dataset.value));
+  document.querySelectorAll('#printArea .rc-qr').forEach(el => {
+    new QRCode(el, { text: el.dataset.qr, width: 136, height: 136, correctLevel: QRCode.CorrectLevel.M });
+  });
   closeReceiptSheet();
   setTimeout(()=> window.print(), 60);
 }
