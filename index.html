@@ -51,13 +51,13 @@
     --shadow-gold: 0 10px 24px rgba(184,134,62,0.35);
     --radius: 16px;
     /* Light green + light orange blended brand chrome (replaces former black chrome) */
-    --blend-a:#A9E4B4;
-    --blend-b:#FFD8A8;
-    --blend-c:#FFC98A;
+    --blend-a:#82DB98;
+    --blend-b:#FFCA85;
+    --blend-c:#FFB663;
     --blend-grad: linear-gradient(120deg, var(--blend-a) 0%, var(--blend-b) 55%, var(--blend-c) 130%);
-    --blend-grad-v: linear-gradient(180deg, #BEEACA 0%, #FFD29C 100%);
-    --blend-knob: linear-gradient(150deg, #6FBF8A 0%, #F0A85E 100%);
-    --blend-shadow: 0 10px 26px rgba(120,150,90,0.30);
+    --blend-grad-v: linear-gradient(180deg, #A5E8B8 0%, #FFC488 100%);
+    --blend-knob: linear-gradient(150deg, #45B074 0%, #F0872E 100%);
+    --blend-shadow: 0 10px 26px rgba(90,140,70,0.34);
   }
   /* Light mode (Drag mode): only the top bar and bottom nav bar switch from black to white */
   body.light-mode .topbar{
@@ -403,7 +403,7 @@
     border-radius:50%;
     transition:transform .32s cubic-bezier(.34,1.56,.64,1), width .32s cubic-bezier(.34,1.56,.64,1), height .32s cubic-bezier(.34,1.56,.64,1), background .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
-  .navbtn svg{ width:20px;height:20px; }
+  .navbtn svg{ width:20px;height:20px; stroke-width:2.6; }
   .navbtn span{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; }
   .navbtn.active{ color:var(--green-900); }
   .navbtn.active .ico-wrap{
@@ -412,9 +412,9 @@
     background:var(--blend-knob);
     border:3px solid #fff;
     color:#fff;
-    box-shadow:0 6px 14px rgba(60,90,50,0.35);
+    box-shadow:0 6px 14px rgba(40,70,40,0.40);
   }
-  .navbtn.active svg{ width:22px; height:22px; }
+  .navbtn.active svg{ width:23px; height:23px; stroke-width:2.9; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.18)); }
   .dot-ind{ display:none; }
 
   /* ---------- Forms / inputs ---------- */
@@ -462,31 +462,66 @@
   .sheet h2{ font-size:19px; margin:0 0 16px; }
   .sheet-close{ position:absolute; right:16px; top:18px; background:none; border:none; font-size:20px; color:var(--muted); }
 
-  /* ---------- Login ---------- */
+  /* ---------- Login (modern glass design) ---------- */
   #onboardingScreen, #lockScreen{
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
-    background:
-      radial-gradient(circle at 20% 15%, rgba(224,172,83,0.20), transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(31,92,79,0.30), transparent 50%),
-      linear-gradient(160deg, var(--green-900), #081F1A);
+    position:relative; overflow:hidden;
+    background: linear-gradient(160deg, #EAFBEA 0%, #FFF4E4 55%, #FFE6C4 100%);
+  }
+  #onboardingScreen::before, #onboardingScreen::after,
+  #lockScreen::before, #lockScreen::after{
+    content:""; position:absolute; border-radius:50%; filter:blur(64px); z-index:0; opacity:.6; pointer-events:none;
+  }
+  #onboardingScreen::before, #lockScreen::before{
+    width:300px; height:300px; top:-100px; left:-90px;
+    background:radial-gradient(circle, var(--blend-a), transparent 70%);
+  }
+  #onboardingScreen::after, #lockScreen::after{
+    width:280px; height:280px; bottom:-90px; right:-70px;
+    background:radial-gradient(circle, var(--blend-c), transparent 70%);
   }
   .login-card{
-    width:100%; max-width:380px; background:var(--paper); border-radius:24px;
-    padding:30px 26px 26px; box-shadow:0 30px 70px rgba(0,0,0,0.4); position:relative;
-    border-top:3px solid var(--gold);
+    width:100%; max-width:380px; background:rgba(255,255,255,0.86); border-radius:28px;
+    padding:40px 26px 26px; box-shadow:0 30px 60px rgba(40,80,40,0.20), inset 0 1px 0 rgba(255,255,255,0.7);
+    position:relative; z-index:1; border:1px solid rgba(255,255,255,0.6);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   }
   .login-mark{
-    width:56px;height:56px;border-radius:16px;
-    background:linear-gradient(150deg, var(--gold-bright), var(--gold));
-    margin:0 auto 14px; overflow:hidden;
-    box-shadow:0 10px 22px rgba(184,134,62,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
-    display:flex;align-items:center;justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:24px; color:var(--green-900);
+    width:72px;height:72px;border-radius:22px;
+    background:var(--blend-knob);
+    margin:-66px auto 16px; overflow:hidden;
+    box-shadow:0 14px 28px rgba(50,110,60,0.38), inset 0 1px 0 rgba(255,255,255,0.4);
+    display:flex;align-items:center;justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:#fff;
+    border:4px solid #fff;
   }
   .login-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-  .login-card h1{ text-align:center; font-size:22px; margin:0 0 2px; }
-  .login-card .tag{ text-align:center; font-size:12.5px; color:var(--muted); margin-bottom:22px; }
-  .login-hint{ margin-top:16px; background:var(--paper-deep); border-radius:11px; padding:10px 12px; font-size:11.5px; color:var(--muted); text-align:center; }
+  .login-card h1{ text-align:center; font-size:23px; margin:0 0 4px; color:var(--green-900); }
+  .login-card .tag{ text-align:center; font-size:12.5px; color:var(--muted); margin-bottom:24px; line-height:1.55; }
+  .login-hint{ margin-top:18px; background:linear-gradient(120deg, rgba(130,219,152,0.16), rgba(255,182,99,0.16)); border:1px solid rgba(60,120,70,0.14); border-radius:13px; padding:11px 13px; font-size:11.5px; color:var(--green-900); text-align:center; }
   .login-error{ color:var(--loss); font-size:12.5px; margin:-6px 0 12px; display:none; }
+
+  /* Scoped modern styling for controls inside the login/lock screens only */
+  #onboardingScreen .segmented, #lockScreen .segmented{
+    background:rgba(255,255,255,0.65); border-radius:14px; padding:4px; box-shadow:inset 0 1px 4px rgba(40,80,40,0.10);
+  }
+  #onboardingScreen .segmented button.active{
+    background:var(--blend-knob); color:#fff; box-shadow:0 4px 12px rgba(50,110,60,0.32);
+  }
+  #onboardingScreen .field input, #onboardingScreen .field select{
+    background:rgba(255,255,255,0.75); border:1.5px solid rgba(60,120,70,0.16); border-radius:13px;
+  }
+  #onboardingScreen .field input:focus, #onboardingScreen .field select:focus{
+    border-color:#45B074; background:#fff; box-shadow:0 0 0 4px rgba(69,176,116,0.16);
+  }
+  #onboardingScreen .btn-primary{
+    background:var(--blend-knob); box-shadow:0 10px 24px rgba(50,110,60,0.34); letter-spacing:.01em;
+  }
+  #onboardingScreen .btn-primary:active{ transform:scale(0.97); filter:brightness(0.96); }
+  #lockScreen .keypad button{
+    background:rgba(255,255,255,0.78); box-shadow:0 6px 14px rgba(40,80,40,0.14);
+  }
+  #lockScreen .keypad button:active{ background:var(--blend-b); }
+  #lockScreen .lock-dots .d.filled{ background:var(--blend-knob); border-color:transparent; }
 
   .pin-row{ display:flex; gap:10px; justify-content:center; margin:6px 0 4px; }
   .pin-row input{
@@ -742,9 +777,9 @@
 
 <!-- ===================== ONBOARDING (first run) ===================== -->
 <div id="onboardingScreen" style="display:none;">
-  <div class="login-card perforated">
-    <div class="login-mark">₿</div>
-    <h1 class="display">Welcome to Khatabook</h1>
+  <div class="login-card">
+    <div class="login-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 9l1.5-5h15L21 9"></path><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"></path><path d="M9 21v-8h6v8"></path></svg></div>
+    <h1 class="display">Welcome to Your Business</h1>
     <div class="tag" id="authTag">Create your shop account — your data is saved securely to your account</div>
     <div id="migrateNotice" style="display:none; background:#FFF6E5; border:1px solid var(--gold-light); border-radius:10px; padding:10px 12px; font-size:12px; color:var(--green-900); margin-bottom:14px;">
       এই ফোনে আগের কিছু ডাটা পাওয়া গেছে — সাইন আপ করলে সেটা আপনার নতুন একাউন্টে যোগ হয়ে যাবে।
@@ -816,9 +851,9 @@
 
 <!-- ===================== LOCK SCREEN (returning, PIN enabled) ===================== -->
 <div id="lockScreen" style="display:none;">
-  <div class="login-card perforated" style="text-align:center;">
+  <div class="login-card" style="text-align:center;">
     <div class="login-mark" id="lockMark">₿</div>
-    <h1 class="display" id="lockCoName">Khatabook</h1>
+    <h1 class="display" id="lockCoName">Your Business</h1>
     <div class="tag">Enter your PIN to continue</div>
     <div class="lock-dots" id="lockDots">
       <span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span>
@@ -986,15 +1021,6 @@
 
       <div class="settings-block settings-subpage" id="sblk1">
         <h3>Business Profile</h3>
-        
-        <!-- Drag Mode Toggle - Prominent at top -->
-        <div class="drag-mode-toggle" style="margin-top:0; margin-bottom:20px; border: 1.5px solid var(--gold-light);">
-          <div class="label">
-            <div class="title" style="font-size: 15px; font-weight: 700;">🌗 Light Mode (Top/Bottom Bar)</div>
-            <div class="subtitle">Switches the top bar & bottom nav from black to white</div>
-          </div>
-          <button class="toggle-switch" id="dragModeToggle" onclick="toggleDragModeUI()"></button>
-        </div>
         
         <div class="field">
           <label>Company Name</label>
