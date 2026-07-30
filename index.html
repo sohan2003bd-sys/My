@@ -53,8 +53,8 @@
   }
   body.light-mode {
     --ink:#FFFFFF;
-    --paper:linear-gradient(135deg, #FF6B6B 0%, #FFA500 25%, #FFD700 50%, #4CAF50 75%, #00BCD4 100%);
-    --paper-deep:#FF9800;
+    --paper:#FF9800;
+    --paper-deep:#FF7043;
     --green-900:#FF1744;
     --green-800:#D32F2F;
     --green-700:#4CAF50;
@@ -77,6 +77,7 @@
     --shadow: 0 8px 24px rgba(255, 107, 107, 0.35);
     --shadow-lift: 0 14px 32px rgba(255, 152, 0, 0.35);
     --shadow-gold: 0 10px 24px rgba(255, 215, 0, 0.45);
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA500 25%, #FFD700 50%, #4CAF50 75%, #00BCD4 100%) fixed;
   }
   
   /* Color options slide-in animation */
@@ -981,6 +982,16 @@
 
       <div class="settings-block settings-subpage" id="sblk1">
         <h3>Business Profile</h3>
+        
+        <!-- Drag Mode Toggle - Prominent at top -->
+        <div class="drag-mode-toggle" style="margin-top:0; margin-bottom:20px; background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,215,0,0.1)); border: 2px solid var(--gold-light);">
+          <div class="label">
+            <div class="title" style="font-size: 15px; font-weight: 700;">🌈 Light Mode (Colorful Theme)</div>
+            <div class="subtitle">Enable rainbow colors for entire app</div>
+          </div>
+          <button class="toggle-switch" id="dragModeToggle" onclick="toggleDragModeUI()"></button>
+        </div>
+        
         <div class="field">
           <label>Company Name</label>
           <input type="text" id="settingsCoName" placeholder="e.g. Karim Traders">
@@ -1002,14 +1013,6 @@
             <option value="€">€ — Euro</option>
             <option value="£">£ — British Pound</option>
           </select>
-        </div>
-        
-        <div class="drag-mode-toggle" style="margin-top:16px;">
-          <div class="label">
-            <div class="title">Light Mode (Colorful Theme)</div>
-            <div class="subtitle">Enable rainbow colors mode</div>
-          </div>
-          <button class="toggle-switch" id="dragModeToggle" onclick="toggleDragModeUI()"></button>
         </div>
         
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
@@ -3713,13 +3716,44 @@ function previewLogoUrl(){
     el.textContent = initial;
   }
 }
+let settingsMenuClickCount = 0;
+let menuClickTimer = null;
+
 function toggleSettingsMenu(){
+  settingsMenuClickCount++;
+  clearTimeout(menuClickTimer);
+  menuClickTimer = setTimeout(() => { settingsMenuClickCount = 0; }, 1500);
+
   const drawer = document.getElementById('settingsMenuDrawer');
   if(drawer.classList.contains('open')){ closeSettingsMenu(); }
   else{
     document.getElementById('settingsMenuOverlay').classList.add('open');
     drawer.classList.add('open');
   }
+
+  if(settingsMenuClickCount === 3){
+    settingsMenuClickCount = 0;
+    clearTimeout(menuClickTimer);
+    // Make sure the drawer is open so the animation is visible
+    document.getElementById('settingsMenuOverlay').classList.add('open');
+    drawer.classList.add('open');
+    animateMenuItems();
+  }
+}
+
+function animateMenuItems(){
+  const menuItems = document.querySelectorAll('.settings-menu-item');
+  menuItems.forEach((item, index) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(-40px)';
+    item.style.transition = 'none';
+    
+    setTimeout(() => {
+      item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      item.style.opacity = '1';
+      item.style.transform = 'translateX(0)';
+    }, index * 60);
+  });
 }
 function closeSettingsMenu(){
   document.getElementById('settingsMenuOverlay').classList.remove('open');
@@ -3734,22 +3768,6 @@ function openSettingsSection(id, btn){
   if(btn){ btn.classList.add('active'); document.getElementById('settingsNavTitle').textContent = btn.textContent.trim(); }
   closeSettingsMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  // Add slide-in animation to section elements
-  setTimeout(() => {
-    const elements = section.querySelectorAll('h3, .field, .row2, button, .helper-text');
-    elements.forEach((el, index) => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateX(-40px)';
-      el.style.transition = 'none';
-      
-      setTimeout(() => {
-        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        el.style.opacity = '1';
-        el.style.transform = 'translateX(0)';
-      }, index * 80);
-    });
-  }, 50);
 }
 function resetSettingsView(){
   document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
