@@ -51,33 +51,27 @@
     --shadow-gold: 0 10px 24px rgba(184,134,62,0.35);
     --radius: 16px;
   }
-  body.light-mode {
-    --ink:#FFFFFF;
-    --paper:#FF9800;
-    --paper-deep:#FF7043;
-    --green-900:#FF1744;
-    --green-800:#D32F2F;
-    --green-700:#4CAF50;
-    --green-600:#2196F3;
-    --green-500:#00BCD4;
-    --gold:#FFD700;
-    --gold-light:#FFEB3B;
-    --gold-bright:#FFC107;
-    --rule:rgba(255,255,255,0.25);
-    --card:#FF9800;
-    --muted:#FFFFFF;
-    --loss:#9C27B0;
-    --loss-light:#E91E63;
-    --loss-bg:#FFF9C4;
-    --profit-bg:#C8E6C9;
-    --tint-sales: linear-gradient(160deg, #81C784 0%, #FFD700 55%);
-    --tint-purchase: linear-gradient(160deg, #FF9800 0%, #FFEB3B 55%);
-    --tint-expense: linear-gradient(160deg, #EF5350 0%, #FF6B6B 55%);
-    --tint-profit: linear-gradient(160deg, #4CAF50 0%, #8BC34A 55%);
-    --shadow: 0 8px 24px rgba(255, 107, 107, 0.35);
-    --shadow-lift: 0 14px 32px rgba(255, 152, 0, 0.35);
-    --shadow-gold: 0 10px 24px rgba(255, 215, 0, 0.45);
-    background: linear-gradient(135deg, #FF6B6B 0%, #FFA500 25%, #FFD700 50%, #4CAF50 75%, #00BCD4 100%) fixed;
+  /* Light mode (Drag mode): only the top bar and bottom nav bar switch from black to white */
+  body.light-mode .topbar{
+    background: linear-gradient(120deg, #FFFFFF 0%, #F5F5F5 55%, #EFEFEF 130%);
+    color: var(--ink);
+  }
+  body.light-mode .topbar .co-name{ color: var(--ink); }
+  body.light-mode .topbar .co-sub{ color: var(--muted); }
+  body.light-mode .icon-btn{
+    background: rgba(0,0,0,0.08);
+    color: var(--ink);
+  }
+  body.light-mode .icon-btn:active{ background: rgba(0,0,0,0.16); }
+  body.light-mode .bottomnav-bg{
+    background: linear-gradient(180deg, #FFFFFF, #F0F0F0);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+  }
+  body.light-mode .navbtn{ color: rgba(0,0,0,0.45); }
+  body.light-mode .navbtn.active{ color: #000; }
+  body.light-mode .navbtn.active .ico-wrap{
+    background: #fff;
+    border: 3px solid #000;
   }
   
   /* Color options slide-in animation */
@@ -984,10 +978,10 @@
         <h3>Business Profile</h3>
         
         <!-- Drag Mode Toggle - Prominent at top -->
-        <div class="drag-mode-toggle" style="margin-top:0; margin-bottom:20px; background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,215,0,0.1)); border: 2px solid var(--gold-light);">
+        <div class="drag-mode-toggle" style="margin-top:0; margin-bottom:20px; border: 1.5px solid var(--gold-light);">
           <div class="label">
-            <div class="title" style="font-size: 15px; font-weight: 700;">🌈 Light Mode (Colorful Theme)</div>
-            <div class="subtitle">Enable rainbow colors for entire app</div>
+            <div class="title" style="font-size: 15px; font-weight: 700;">🌗 Light Mode (Top/Bottom Bar)</div>
+            <div class="subtitle">Switches the top bar & bottom nav from black to white</div>
           </div>
           <button class="toggle-switch" id="dragModeToggle" onclick="toggleDragModeUI()"></button>
         </div>
@@ -3805,7 +3799,7 @@ function applyDragMode(enabled){
     body.classList.remove('light-mode');
   }
   
-  showToast(enabled ? '🌈 Light Mode Activated' : '🌙 Dark Mode Activated');
+  showToast(enabled ? '🌗 Light Mode Activated' : '🌙 Dark Mode Activated');
 }
 
 function initThemeMode(){
