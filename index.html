@@ -235,6 +235,9 @@
   .order-trx{ font-size:11.5px; color:var(--plum-800, var(--ink)); margin-top:6px; background:var(--paper-deep); border-radius:8px; padding:6px 9px; }
   .txn-actions{ display:flex; gap:6px; margin-top:4px; justify-content:flex-end; }
   .mini-btn{ border:none; background:var(--paper-deep); border-radius:7px; width:24px;height:24px; font-size:11px; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:background .12s; }
+  .photo-thumb-item{ position:relative; width:74px; height:74px; border-radius:10px; overflow:hidden; flex:none; box-shadow:var(--shadow); }
+  .photo-thumb-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-thumb-item .mini-btn{ position:absolute; top:4px; right:4px; background:rgba(27,36,32,0.55); color:#fff; }
   .mini-btn:active{ background:var(--gold-light); }
   .txn-menu-wrap{ position:relative; margin-top:4px; display:flex; justify-content:flex-end; }
   .dots-btn{ font-size:15px; font-weight:700; letter-spacing:-1px; }
@@ -1042,6 +1045,14 @@
           <button class="btn btn-primary" style="flex:1;" onclick="saveVideo()" id="videoSaveBtn">Add Video</button>
           <button class="btn btn-ghost" style="flex:1; display:none;" id="videoCancelBtn" onclick="cancelEditVideo()">Cancel</button>
         </div>
+      </div>
+
+      <div class="settings-block">
+        <h3>🖼️ Photo Collage (Landing Page, প্রডাক্ট সেকশনের উপরে দেখাবে)</h3>
+        <div class="helper-text" style="margin-top:0;">ফোন থেকে সরাসরি ছবি আপলোড করুন — ল্যান্ডিং পেজে প্রডাক্ট সেকশনের ঠিক উপরে একটা কোলাজ হিসেবে ছবিগুলো ডান থেকে বামে অটো-স্লাইড হয়ে (ভিডিওর মতো) দেখাবে।</div>
+        <div id="photosListBox" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:10px;"></div>
+        <input type="file" id="newPhotoFile" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+        <button class="btn btn-primary" style="margin-top:14px;" onclick="document.getElementById('newPhotoFile').click()">+ ছবি আপলোড করুন</button>
       </div>
 
     </section>
@@ -2593,7 +2604,8 @@ const state = {
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
     products: [], // [{id, name, price}] — shown on the landing page
-    videos: [] // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    photos: [] // [{id, imageUrl}] — photo collage shown above the product section on the landing page
   },
   security: { pinEnabled: false, pin: "" },
   sales: [],
@@ -2686,6 +2698,7 @@ function loadShopData(uid){
     idCounter = d.idCounter || 1;
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
+    if(!state.settings.photos) state.settings.photos = [];
     saveState(); // caches locally too
   });
 }
@@ -3497,6 +3510,7 @@ function renderSettings(){
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
   renderProductsSettings();
   renderVideosSettings();
+  renderPhotosSettings();
   updateNotifyStatus();
   document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
   document.getElementById('shopLinkBox').value = buildShopLink();
@@ -3892,6 +3906,68 @@ function pushVideosToFirebase(){
     obj[v.id] = { caption: v.caption, videoUrl: v.videoUrl };
   });
   shopRef('videos').set(obj).catch(()=> showToast('Could not sync videos to Firebase'));
+}
+
+/* ---------------- PHOTO COLLAGE (uploaded from device, no price, no product) ---------------- */
+function renderPhotosSettings(){
+  const box = document.getElementById('photosListBox');
+  const list = state.settings.photos || [];
+  if(list.length === 0){
+    box.innerHTML = '<div class="helper-text" style="margin-top:0;">এখনো কোনো ছবি যোগ করা হয়নি।</div>';
+    return;
+  }
+  box.innerHTML = list.map((p,i) => `
+    <div class="photo-thumb-item">
+      <img src="${escapeHTML(p.imageUrl)}" alt="">
+      <button class="mini-btn" onclick="removePhoto(${i})" aria-label="Remove">✕</button>
+    </div>`).join('');
+}
+function handlePhotoUpload(e){
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if(!file) return;
+  if(!file.type || !file.type.startsWith('image/')){ showToast('একটি ছবি ফাইল নির্বাচন করুন'); return; }
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const img = new Image();
+    img.onload = function(){
+      // ফোনের বড় ছবিকে ছোট করে (compress) রাখা হয় যাতে ক্লাউডে দ্রুত সিঙ্ক হয়
+      const MAX_W = 1000;
+      const scale = Math.min(1, MAX_W / img.width);
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+      if(!state.settings.photos) state.settings.photos = [];
+      state.settings.photos.push({ id: 'ph' + Date.now() + Math.floor(Math.random()*1000), imageUrl: dataUrl });
+      saveState();
+      renderPhotosSettings();
+      pushPhotosToFirebase();
+      showToast('ছবি যোগ হয়েছে');
+    };
+    img.onerror = function(){ showToast('ছবি লোড করা যায়নি'); };
+    img.src = evt.target.result;
+  };
+  reader.onerror = function(){ showToast('ফাইল পড়া যায়নি'); };
+  reader.readAsDataURL(file);
+}
+function removePhoto(idx){
+  if(!confirm('এই ছবিটি মুছে ফেলবেন?')) return;
+  state.settings.photos.splice(idx, 1);
+  saveState();
+  renderPhotosSettings();
+  pushPhotosToFirebase();
+}
+function pushPhotosToFirebase(){
+  if(!fbDb || !currentUid) return;
+  const obj = {};
+  (state.settings.photos || []).forEach(p => {
+    obj[p.id] = { imageUrl: p.imageUrl };
+  });
+  shopRef('photos').set(obj).catch(()=> showToast('Could not sync photos to Firebase'));
 }
 
 function setFirebaseStatus(msg, connected){

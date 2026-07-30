@@ -136,6 +136,17 @@
   .catalog-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
   /* ---------- Video section ---------- */
+  /* ---------- Photo Collage (auto-scrolling, right-to-left) ---------- */
+  .photo-collage-card{ padding:14px 0 16px; overflow:hidden; }
+  .photo-collage-card .eyebrow, .photo-collage-card h2{ padding:0 16px; }
+  .photo-collage-outer{ overflow:hidden; width:100%; -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .photo-collage-track{ display:flex; width:max-content; animation:photoCollageScroll linear infinite; }
+  .photo-collage-track img{
+    width:150px; height:112px; object-fit:cover; border-radius:14px; margin-right:10px; flex:none;
+    box-shadow:0 6px 16px rgba(42,21,51,0.18);
+  }
+  @keyframes photoCollageScroll{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
+
   .video-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
   .video-caption{ font-size:12.5px; font-weight:600; color:var(--plum-800); margin:0 0 8px; line-height:1.5; }
   .video-frame{
@@ -355,6 +366,14 @@
 
   <main>
     <form id="orderForm" onsubmit="return submitOrder(event)">
+
+      <div class="card photo-collage-card" id="photoCollageSection" style="display:none;">
+        <span class="eyebrow">ফটো কোলাজ</span>
+        <h2>আমাদের কিছু ছবি</h2>
+        <div class="photo-collage-outer">
+          <div class="photo-collage-track" id="photoCollageTrack"></div>
+        </div>
+      </div>
 
       <div class="card" style="padding-left:14px; padding-right:14px;">
         <span class="eyebrow">০১ · পণ্য নির্বাচন</span>
@@ -652,6 +671,7 @@ setInterval(updateHeroDateTime, 60 * 1000);
 
 let products = [];
 let videos = [];
+let collagePhotos = [];
 let cart = {}; // productId -> { productId, name, price, qty }
 let selectedCategory = 'সকল';
 let db;
@@ -863,7 +883,27 @@ document.addEventListener('DOMContentLoaded', function(){
     videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderVideos();
   });
+
+  // "ফটো কোলাজ" সেকশনের জন্য — Firebase-এ একটা আলাদা "photos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
+  // প্রতিটা এন্ট্রিতে থাকবে শুধু imageUrl — প্রডাক্ট সেকশনের ঠিক উপরে ডান থেকে বামে অটো-স্লাইড করে দেখানো হয়
+  db.ref('shops/' + SHOP_ID + '/photos').on('value', snap => {
+    const val = snap.val() || {};
+    collagePhotos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+    renderPhotoCollage();
+  });
 });
+
+function renderPhotoCollage(){
+  const section = document.getElementById('photoCollageSection');
+  const track = document.getElementById('photoCollageTrack');
+  if(!collagePhotos.length){ section.style.display = 'none'; track.innerHTML = ''; return; }
+  section.style.display = 'block';
+  // ছবিগুলো দুইবার বসানো হয় যাতে স্ক্রল লুপ নিরবচ্ছিন্ন (seamless) দেখায়
+  const imgsHTML = collagePhotos.map(p => `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy">`).join('');
+  track.innerHTML = imgsHTML + imgsHTML;
+  // প্রতিটা ছবির জন্য প্রায় ৩ সেকেন্ড করে সময় — ছবি ডান থেকে বামে ভিডিওর মতো মসৃণভাবে চলতে থাকবে
+  track.style.animationDuration = (collagePhotos.length * 3) + 's';
+}
 
 function renderCatNav(){
   const nav = document.getElementById('catNav');
