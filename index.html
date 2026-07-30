@@ -513,8 +513,12 @@
     .rc-total .k{ font-size:8.5px; text-transform:uppercase; letter-spacing:.05em; color:#3F5C50; font-weight:600; }
     .rc-total .v{ font-weight:700; font-size:16.5px; color:#0F3830; font-family:'IBM Plex Mono', monospace; }
 
-    .rc-barcode{ text-align:center; margin-top:5px; padding-top:4px; border-top:1px dashed #D3D6C9; }
-    .rc-barcode canvas{ width:100%; height:22px; image-rendering:pixelated; }
+    .rc-barcode{ text-align:center; margin-top:8px; padding-top:6px; border-top:1px dashed #D3D6C9; }
+    /* Centered, fixed 2-inch barcode label — like a printed product barcode
+       sticker — instead of stretching edge-to-edge across the wide slip. */
+    .rc-barcode-box{ width:2in; max-width:100%; margin:0 auto; box-sizing:border-box;
+      background:#fff; border:1px solid #C7CBBB; border-radius:4px; padding:4px 5px 3px; }
+    .rc-barcode-box canvas{ width:100%; height:22px; image-rendering:pixelated; display:block; }
     .rc-pid{ font-size:8px; letter-spacing:.1em; font-family:'IBM Plex Mono', monospace; font-weight:600; margin-top:2px; color:#3F473E; }
 
     .rc-foot{ text-align:center; font-size:7.3px; color:#B8863E; margin-top:3px;
@@ -3296,8 +3300,10 @@ function receiptCardHTML(group){
     </div>
     <div class="rc-total"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
     <div class="rc-barcode">
-      <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="48"></canvas>
-      <div class="rc-pid">${escapeHTML(invoiceNo)}</div>
+      <div class="rc-barcode-box">
+        <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="48"></canvas>
+        <div class="rc-pid">${escapeHTML(invoiceNo)}</div>
+      </div>
     </div>
     <div class="rc-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
   </div>`;
