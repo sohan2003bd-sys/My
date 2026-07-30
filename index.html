@@ -485,6 +485,8 @@
     .rc-meta-strip .v{ font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-top:1px; }
 
     .rc-section{ margin-bottom:5px; min-width:0; }
+    .rc-section-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
+    .rc-billto-col{ min-width:0; flex:1; }
     .rc-label{ font-size:6.6px; text-transform:uppercase; color:#9A9F92; letter-spacing:.05em; font-weight:600; }
     .rc-val{ font-weight:600; font-size:11px; margin-top:1.5px; color:#1B2420; line-height:1.25;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -502,9 +504,9 @@
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .rc-item-amt{ font-size:9.8px; font-family:'IBM Plex Mono', monospace; font-weight:600; color:#3F5C50; flex:none; }
 
-    .rc-cod-note{ text-align:center; font-size:8.3px; font-weight:700; text-transform:uppercase;
-      letter-spacing:.07em; color:#B8863E; background:#FCF3E3; border:1px solid #EAD3A3;
-      border-radius:5px; padding:2.5px 0; margin-bottom:3px; }
+    .rc-cod-badge{ flex:none; text-align:center; font-size:7.4px; font-weight:700; line-height:1.35;
+      text-transform:uppercase; letter-spacing:.03em; color:#B8863E; background:#FCF3E3;
+      border:1px solid #EAD3A3; border-radius:5px; padding:3px 7px; white-space:nowrap; margin-top:1px; }
 
     .rc-total{ display:flex; justify-content:space-between; align-items:center; margin-top:auto;
       background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:5px; padding:6px 8px; }
@@ -3278,18 +3280,20 @@ function receiptCardHTML(group){
       <div><div class="k">Date</div><div class="v">${fmtDate(first.date)}</div></div>
       <div><div class="k">Invoice</div><div class="v">${escapeHTML(invoiceNo)}</div></div>
     </div>
-    <div class="rc-section">
-      <div class="rc-label">Billed To</div>
-      <div class="rc-val">${escapeHTML(first.party || 'Walk-in Customer')}</div>
-      ${first.phone ? `<div class="rc-sub">Tel: ${escapeHTML(first.phone)}</div>` : ''}
-      ${first.address ? `<div class="rc-address">Address: ${escapeHTML(first.address)}</div>` : ''}
+    <div class="rc-section rc-section-row">
+      <div class="rc-billto-col">
+        <div class="rc-label">Billed To</div>
+        <div class="rc-val">${escapeHTML(first.party || 'Walk-in Customer')}</div>
+        ${first.phone ? `<div class="rc-sub">Tel: ${escapeHTML(first.phone)}</div>` : ''}
+        ${first.address ? `<div class="rc-address">Address: ${escapeHTML(first.address)}</div>` : ''}
+      </div>
+      ${isCOD ? `<div class="rc-cod-badge">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
     </div>
     <hr class="rc-divider">
     <div class="rc-section rc-item-box">
       <div class="rc-label">Product / Service</div>
       ${itemsHTML}
     </div>
-    ${isCOD ? `<div class="rc-cod-note">Cash on Delivery</div>` : ''}
     <div class="rc-total"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
     <div class="rc-barcode">
       <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="48"></canvas>
