@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#BEEACA">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MY SHOP">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -50,6 +50,14 @@
     --shadow-lift: 0 14px 32px rgba(15,40,34,0.14);
     --shadow-gold: 0 10px 24px rgba(184,134,62,0.35);
     --radius: 16px;
+    /* Light green + light orange blended brand chrome (replaces former black chrome) */
+    --blend-a:#A9E4B4;
+    --blend-b:#FFD8A8;
+    --blend-c:#FFC98A;
+    --blend-grad: linear-gradient(120deg, var(--blend-a) 0%, var(--blend-b) 55%, var(--blend-c) 130%);
+    --blend-grad-v: linear-gradient(180deg, #BEEACA 0%, #FFD29C 100%);
+    --blend-knob: linear-gradient(150deg, #6FBF8A 0%, #F0A85E 100%);
+    --blend-shadow: 0 10px 26px rgba(120,150,90,0.30);
   }
   /* Light mode (Drag mode): only the top bar and bottom nav bar switch from black to white */
   body.light-mode .topbar{
@@ -128,8 +136,8 @@
   #app{ display:none; max-width:520px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:84px; }
   .topbar{
     position:sticky; top:0; z-index:30;
-    background: linear-gradient(120deg, #000000 0%, #111111 55%, #1a1a1a 130%);
-    color:#fff;
+    background: var(--blend-grad);
+    color:var(--ink);
     padding:16px 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
     box-shadow: var(--shadow-lift);
@@ -155,14 +163,14 @@
     font-family:'Fraunces',serif; font-weight:700; color:var(--green-900); font-size:18px; flex:none;
   }
   .topbar .co-name{ font-size:17px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .topbar .co-sub{ font-size:10.5px; color:var(--gold-light); letter-spacing:.06em; text-transform:uppercase; }
+  .topbar .co-sub{ font-size:10.5px; color:var(--green-900); letter-spacing:.06em; text-transform:uppercase; opacity:.75; }
   .icon-btn{
-    background:rgba(255,255,255,0.12); border:none; color:#fff;
+    background:rgba(15,56,48,0.10); border:none; color:var(--ink);
     width:38px;height:38px;border-radius:11px;
     display:flex;align-items:center;justify-content:center; flex:none;
     transition:background .15s ease, transform .1s ease;
   }
-  .icon-btn:active{ background:rgba(255,255,255,0.24); transform:scale(0.94); }
+  .icon-btn:active{ background:rgba(15,56,48,0.20); transform:scale(0.94); }
   .icon-btn.orders-btn{
     width:46px; height:46px; border-radius:13px;
     background:linear-gradient(150deg, var(--gold-bright), var(--gold));
@@ -384,12 +392,12 @@
   }
   .bottomnav-bg{
     position:absolute; inset:0; z-index:0; border-radius:26px;
-    background:linear-gradient(180deg, #1c1c1c, #000000);
-    box-shadow:0 10px 28px rgba(0,0,0,0.45);
+    background:var(--blend-grad-v);
+    box-shadow:var(--blend-shadow);
     -webkit-mask-image: radial-gradient(circle 31px at var(--notch-x) 0px, transparent 30px, #000 32.5px);
             mask-image: radial-gradient(circle 31px at var(--notch-x) 0px, transparent 30px, #000 32.5px);
   }
-  .navbtn{ flex:1; background:none; border:none; color:rgba(255,255,255,0.5); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0 2px; position:relative; z-index:1; transition:color .2s ease; }
+  .navbtn{ flex:1; background:none; border:none; color:rgba(27,36,32,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0 2px; position:relative; z-index:1; transition:color .2s ease; }
   .navbtn .ico-wrap{
     width:26px; height:26px; display:flex; align-items:center; justify-content:center;
     border-radius:50%;
@@ -397,13 +405,14 @@
   }
   .navbtn svg{ width:20px;height:20px; }
   .navbtn span{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; }
-  .navbtn.active{ color:#fff; }
+  .navbtn.active{ color:var(--green-900); }
   .navbtn.active .ico-wrap{
     transform:translateY(-24px);
     width:54px; height:54px;
-    background:#000;
+    background:var(--blend-knob);
     border:3px solid #fff;
-    box-shadow:none;
+    color:#fff;
+    box-shadow:0 6px 14px rgba(60,90,50,0.35);
   }
   .navbtn.active svg{ width:22px; height:22px; }
   .dot-ind{ display:none; }
@@ -538,10 +547,10 @@
   /* ---------- Settings hamburger menu / subpages ---------- */
   .settings-nav-bar{ display:flex; align-items:center; gap:12px; margin:0 0 16px; }
   .settings-hamburger{
-    background:linear-gradient(155deg, #1a1a1a, #000000); border:1px solid rgba(224,172,83,0.35);
-    box-shadow:0 6px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
+    background:var(--blend-grad); border:1px solid rgba(15,56,48,0.15);
+    box-shadow:0 6px 16px rgba(120,150,90,0.28), inset 0 1px 0 rgba(255,255,255,0.35);
     width:44px; height:44px; border-radius:13px; flex:none;
-    display:flex; align-items:center; justify-content:center; color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center; color:var(--ink);
     transition:transform .12s ease;
   }
   .settings-hamburger:active{ transform:scale(0.92); }
@@ -554,37 +563,38 @@
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
   .settings-menu-drawer{
     position:fixed; top:0; left:0; bottom:0; width:82%; max-width:320px;
-    background:linear-gradient(165deg, #141414 0%, #000000 60%); z-index:50;
-    box-shadow:0 0 40px rgba(0,0,0,0.5);
+    background:var(--blend-grad-v); z-index:50;
+    box-shadow:0 0 40px rgba(120,150,90,0.35);
     transform:translateX(-105%); transition:transform .26s cubic-bezier(.2,.8,.2,1);
     padding:22px 14px; overflow-y:auto;
-    border-right:1px solid rgba(224,172,83,0.18);
+    border-right:1px solid rgba(15,56,48,0.12);
   }
   .settings-menu-drawer.open{ transform:translateX(0); }
   .settings-menu-drawer-title{
-    font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;
+    font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);
     padding:4px 10px 16px; margin-bottom:6px;
-    border-bottom:1px solid rgba(224,172,83,0.22);
+    border-bottom:1px solid rgba(15,56,48,0.18);
   }
   .settings-menu-item{
-    display:block; width:100%; text-align:left; background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,255,255,0.08); border-left-width:4px; border-radius:12px; padding:13px 14px 13px 12px; margin-bottom:8px;
-    font-size:13px; font-weight:600; color:rgba(255,255,255,0.82);
+    display:block; width:100%; text-align:left; background:#FFFFFF;
+    border:1px solid rgba(15,56,48,0.08); border-left-width:4px; border-radius:12px; padding:13px 14px 13px 12px; margin-bottom:8px;
+    font-size:13px; font-weight:600; color:var(--ink);
+    box-shadow:0 2px 8px rgba(15,56,48,0.06);
     transition:background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
   }
-  .settings-menu-item:active{ transform:scale(0.98); filter:brightness(1.25); }
-  /* Per-item accent colors so the drawer isn't a flat solid black list */
-  .settings-menu-item:nth-of-type(8n+1){ border-left-color:#E0AC53; background:linear-gradient(120deg, rgba(224,172,83,.16), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+2){ border-left-color:#3B9670; background:linear-gradient(120deg, rgba(59,150,112,.18), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+3){ border-left-color:#4C8DFF; background:linear-gradient(120deg, rgba(76,141,255,.16), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+4){ border-left-color:#E0637A; background:linear-gradient(120deg, rgba(224,99,122,.16), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+5){ border-left-color:#9B7FE0; background:linear-gradient(120deg, rgba(155,127,224,.17), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+6){ border-left-color:#E0973E; background:linear-gradient(120deg, rgba(224,151,62,.17), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+7){ border-left-color:#45B8E0; background:linear-gradient(120deg, rgba(69,184,224,.16), rgba(255,255,255,.03)); }
-  .settings-menu-item:nth-of-type(8n+8){ border-left-color:#E0735A; background:linear-gradient(120deg, rgba(224,115,90,.16), rgba(255,255,255,.03)); }
+  .settings-menu-item:active{ transform:scale(0.98); filter:brightness(0.97); }
+  /* Per-item accent colors kept, background stays white so the drawer list reads as clean white cards */
+  .settings-menu-item:nth-of-type(8n+1){ border-left-color:#E0AC53; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+2){ border-left-color:#3B9670; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+3){ border-left-color:#4C8DFF; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+4){ border-left-color:#E0637A; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+5){ border-left-color:#9B7FE0; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+6){ border-left-color:#E0973E; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+7){ border-left-color:#45B8E0; background:#FFFFFF; }
+  .settings-menu-item:nth-of-type(8n+8){ border-left-color:#E0735A; background:#FFFFFF; }
   .settings-menu-item.active{
-    border-color:var(--gold); border-left-color:var(--gold); color:#fff;
-    background:linear-gradient(155deg, rgba(224,172,83,0.28), rgba(184,134,62,0.10));
+    border-color:var(--gold); border-left-color:var(--gold); color:var(--ink);
+    background:linear-gradient(155deg, rgba(224,172,83,0.16), #FFFFFF);
     box-shadow:0 4px 12px rgba(184,134,62,0.22);
   }
   .settings-subpage{ display:none; }
@@ -3723,15 +3733,12 @@ function toggleSettingsMenu(){
   else{
     document.getElementById('settingsMenuOverlay').classList.add('open');
     drawer.classList.add('open');
+    animateMenuItems();
   }
 
   if(settingsMenuClickCount === 3){
     settingsMenuClickCount = 0;
     clearTimeout(menuClickTimer);
-    // Make sure the drawer is open so the animation is visible
-    document.getElementById('settingsMenuOverlay').classList.add('open');
-    drawer.classList.add('open');
-    animateMenuItems();
   }
 }
 
