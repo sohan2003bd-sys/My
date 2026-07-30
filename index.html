@@ -235,9 +235,6 @@
   .order-trx{ font-size:11.5px; color:var(--plum-800, var(--ink)); margin-top:6px; background:var(--paper-deep); border-radius:8px; padding:6px 9px; }
   .txn-actions{ display:flex; gap:6px; margin-top:4px; justify-content:flex-end; }
   .mini-btn{ border:none; background:var(--paper-deep); border-radius:7px; width:24px;height:24px; font-size:11px; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:background .12s; }
-  .photo-thumb-item{ position:relative; width:74px; height:74px; border-radius:10px; overflow:hidden; flex:none; box-shadow:var(--shadow); }
-  .photo-thumb-item img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .photo-thumb-item .mini-btn{ position:absolute; top:4px; right:4px; background:rgba(27,36,32,0.55); color:#fff; }
   .mini-btn:active{ background:var(--gold-light); }
   .txn-menu-wrap{ position:relative; margin-top:4px; display:flex; justify-content:flex-end; }
   .dots-btn{ font-size:15px; font-weight:700; letter-spacing:-1px; }
@@ -415,6 +412,39 @@
   /* ---------- Settings ---------- */
   .settings-block{ background:linear-gradient(170deg,#FFFFFF,#FBFAF6); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; margin-bottom:14px; border:1px solid rgba(15,56,48,0.06); }
   .settings-block h3{ font-size:14px; margin:0 0 12px; display:flex; align-items:center; gap:8px; }
+
+  /* ---------- Settings hamburger menu / subpages ---------- */
+  .settings-nav-bar{ display:flex; align-items:center; gap:12px; margin:0 0 16px; }
+  .settings-hamburger{
+    background:var(--card); border:1px solid var(--rule); box-shadow:var(--shadow);
+    width:42px; height:42px; border-radius:12px; flex:none;
+    display:flex; align-items:center; justify-content:center; color:var(--green-800);
+  }
+  .settings-hamburger:active{ transform:scale(0.94); }
+  .settings-nav-title{ font-size:15px; font-weight:600; color:var(--green-900); font-family:'Fraunces',serif; }
+  .settings-menu-overlay{
+    position:fixed; inset:0; background:rgba(15,40,34,0.38); z-index:49;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
+  .settings-menu-drawer{
+    position:fixed; top:0; left:0; bottom:0; width:80%; max-width:320px;
+    background:var(--paper); z-index:50; box-shadow:var(--shadow-lift);
+    transform:translateX(-105%); transition:transform .22s ease;
+    padding:18px 12px; overflow-y:auto;
+  }
+  .settings-menu-drawer.open{ transform:translateX(0); }
+  .settings-menu-drawer-title{ font-family:'Fraunces',serif; font-weight:600; font-size:17px; color:var(--green-900); padding:6px 8px 14px; }
+  .settings-menu-item{
+    display:block; width:100%; text-align:left; background:var(--card);
+    border:1px solid var(--rule); border-radius:12px; padding:12px 14px; margin-bottom:8px;
+    font-size:13px; font-weight:600; color:var(--ink); box-shadow:0 2px 6px rgba(15,40,34,0.06);
+  }
+  .settings-menu-item:active{ background:var(--paper-deep); }
+  .settings-menu-item.active{ border-color:var(--gold); background:linear-gradient(155deg,#FFF7E8,#FFFFFF); color:var(--green-900); }
+  .settings-subpage{ display:none; }
+  .settings-subpage.active{ display:block; }
+  .settings-empty-hint{ text-align:center; color:var(--muted); font-size:13px; padding:70px 24px; line-height:1.7; }
   .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
   .chip{ background:var(--tint-profit); border:1px solid rgba(15,56,48,0.08); border-radius:20px; padding:7px 10px 7px 13px; font-size:12.5px; display:flex; align-items:center; gap:7px; color:var(--green-800); font-weight:500; }
   .chip button{ border:none; background:rgba(15,56,48,0.12); width:16px;height:16px;border-radius:50%; font-size:9px; display:flex;align-items:center;justify-content:center; color:var(--green-800); }
@@ -769,7 +799,37 @@
     <!-- ============ SETTINGS PAGE ============ -->
     <section class="page" id="page-settings">
 
-      <div class="settings-block">
+      <div class="settings-nav-bar">
+        <button class="settings-hamburger" onclick="toggleSettingsMenu()" aria-label="Settings menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+        </button>
+        <div class="settings-nav-title" id="settingsNavTitle">মেনু থেকে একটি অপশন বেছে নিন</div>
+      </div>
+
+      <div class="settings-menu-overlay" id="settingsMenuOverlay" onclick="closeSettingsMenu()"></div>
+      <nav class="settings-menu-drawer" id="settingsMenuDrawer">
+        <div class="settings-menu-drawer-title">সেটিংস মেনু</div>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk1', this)">Business Profile</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk2', this)">🚚 Landing Page — Contact &amp; Delivery</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk3', this)">📇 Landing Page — ফুটার কনটাক্ট তথ্য</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk4', this)">💳 Landing Page — bKash / Nagad / Rocket / Bank</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk5', this)">🔔 অর্ডার নোটিফিকেশন (Telegram)</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk6', this)">Sales Categories</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk7', this)">Purchase Categories</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk8', this)">Expense Categories</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk9', this)">Payment Methods</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk10', this)">📄 Export Report (PDF)</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk11', this)">🔒 App Lock</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk12', this)">💾 Data Backup</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk13', this)">☁️ Cloud Account</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk14', this)">🔔 Order Notifications</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk15', this)">🛒 Products Catalog</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
+      </nav>
+
+      <div class="settings-empty-hint" id="settingsEmptyHint">👈 উপরে বাম পাশের ☰ মেনু বাটনে চাপ দিয়ে একটি সেটিংস অপশন বেছে নিন।</div>
+
+      <div class="settings-block settings-subpage" id="sblk1">
         <h3>Business Profile</h3>
         <div class="field">
           <label>Company Name</label>
@@ -796,7 +856,7 @@
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk2">
         <h3>🚚 Landing Page — Contact &amp; Delivery</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো আপনার নিজস্ব landing page-এ (WhatsApp/ফোন বাটন, ডেলিভারি চার্জ) দেখাবে — প্রতিটা দোকানের জন্য আলাদা।</div>
         <div class="field" style="margin-top:10px;">
@@ -816,7 +876,7 @@
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk3">
         <h3>📇 Landing Page — ফুটার কনটাক্ট তথ্য</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো landing page-এর একদম নিচে "Contact Info" ফুটার হিসেবে দেখাবে। খালি রাখলে সেই লাইনটা এমনিতেই লুকানো থাকবে। WhatsApp নম্বর উপরের "যোগাযোগ ও ডেলিভারি"-তে দেওয়া নম্বরটাই ব্যবহার করবে।</div>
         <div class="field" style="margin-top:10px;">
@@ -834,7 +894,7 @@
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk4">
         <h3>💳 Landing Page — bKash / Nagad / Rocket / Bank</h3>
         <div class="helper-text" style="margin-top:0;">কাস্টমার "ক্যাশ অন ডেলিভারি" ছাড়া অন্য পেমেন্ট বেছে নিলে এই নম্বরগুলো (কপি বাটনসহ) landing page-এ দেখানো হবে। খালি রাখলে উপরের WhatsApp/ফোন নম্বরটাই ব্যবহার হবে।</div>
         <div class="row2" style="margin-top:10px;">
@@ -858,7 +918,7 @@
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk5">
         <h3>🔔 অর্ডার নোটিফিকেশন (Telegram)</h3>
         <div class="helper-text" style="margin-top:0; line-height:1.7;">
           অনলাইন পেমেন্টের (bKash/Nagad/Rocket/Bank) অর্ডার সাবমিট হওয়ার সাথে সাথেই — কাস্টমারকে কোথাও না পাঠিয়ে, পেজ থেকে সরাসরি — আপনার Telegram-এ মেসেজ চলে আসবে।<br><br>
@@ -882,7 +942,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk6">
         <h3>Sales Categories</h3>
         <div class="chip-row" id="chipsSalesCat"></div>
         <div class="chip-add">
@@ -891,7 +951,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk7">
         <h3>Purchase Categories</h3>
         <div class="chip-row" id="chipsPurchaseCat"></div>
         <div class="chip-add">
@@ -900,7 +960,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk8">
         <h3>Expense Categories</h3>
         <div class="chip-row" id="chipsExpenseCat"></div>
         <div class="chip-add">
@@ -909,7 +969,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk9">
         <h3>Payment Methods</h3>
         <div class="chip-row" id="chipsPayment"></div>
         <div class="chip-add">
@@ -918,7 +978,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk10">
         <h3>📄 Export Report (PDF)</h3>
         <div class="field">
           <label>Period</label>
@@ -933,7 +993,7 @@
         <div class="helper-text">Opens your device's print dialog — choose "Save as PDF" to download, or print directly.</div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk11">
         <h3>🔒 App Lock</h3>
         <div class="toggle-row">
           <span class="k">Require PIN on open</span>
@@ -955,7 +1015,7 @@
         <button class="btn btn-ghost" style="margin-top:10px;" onclick="lockNow()">Lock App Now</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk12">
         <h3>💾 Data Backup</h3>
         <div class="helper-text" style="margin-top:0;">All your data lives only on this device's storage. Export a backup file regularly in case the browser data is ever cleared.</div>
         <button class="btn btn-primary" style="margin-top:12px;" onclick="exportBackup()">Export Backup (.json)</button>
@@ -963,7 +1023,7 @@
         <button class="btn btn-ghost" style="margin-top:10px;" onclick="document.getElementById('importFileInput').click()">Import Backup</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk13">
         <h3>☁️ Cloud Account</h3>
         <div class="helper-text" style="margin-top:0;">লগইন করা আছে: <strong id="cloudAccountEmail">—</strong></div>
         <div class="field" style="margin-top:12px;">
@@ -974,14 +1034,14 @@
         <button class="btn btn-danger" style="margin-top:10px;" onclick="logoutShop()">Log Out</button>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk14">
         <h3>🔔 Order Notifications</h3>
         <div class="helper-text" style="margin-top:0;">নতুন অর্ডার এলে এই ব্রাউজারে একটা নোটিফিকেশন দেখাবে (অ্যাপটা খোলা বা ব্যাকগ্রাউন্ড ট্যাবে থাকা অবস্থায়)।</div>
         <button class="btn btn-primary" style="margin-top:10px;" onclick="requestOrderNotifications()">নোটিফিকেশন চালু করুন</button>
         <div class="helper-text" id="notifyStatusText">এখনো চালু করা হয়নি।</div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk15">
         <h3>🛒 Products Catalog (shown on your Landing Page)</h3>
         <div class="helper-text" style="margin-top:0;">Add the products customers can order from your landing page, including a photo and a video link. Saving here pushes the list live to your shop link above.</div>
         <div id="productsListBox" style="margin-top:10px;"></div>
@@ -1027,7 +1087,7 @@
         </div>
       </div>
 
-      <div class="settings-block">
+      <div class="settings-block settings-subpage" id="sblk16">
         <h3>🎬 Info Videos (shown on Landing Page)</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো প্রডাক্ট না — সাধারণ তথ্য/ঘোষণা/অফার জানানোর ভিডিও, দাম থাকবে না। ল্যান্ডিং পেজে প্রডাক্টের নিচে আলাদা সেকশনে দেখাবে।</div>
         <div id="videosListBox" style="margin-top:10px;"></div>
@@ -1045,17 +1105,6 @@
           <button class="btn btn-primary" style="flex:1;" onclick="saveVideo()" id="videoSaveBtn">Add Video</button>
           <button class="btn btn-ghost" style="flex:1; display:none;" id="videoCancelBtn" onclick="cancelEditVideo()">Cancel</button>
         </div>
-      </div>
-
-      <div class="settings-block">
-        <h3>🖼️ Photo Collage (Landing Page, প্রডাক্ট সেকশনের উপরে দেখাবে)</h3>
-        <div class="helper-text" style="margin-top:0;">ছবির লিংক (URL) যোগ করুন — ল্যান্ডিং পেজে প্রডাক্ট সেকশনের ঠিক উপরে একটা কোলাজ হিসেবে ছবিগুলো ডান থেকে বামে অটো-স্লাইড হয়ে (ভিডিওর মতো) দেখাবে।</div>
-        <div id="photosListBox" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:10px;"></div>
-        <div class="field" style="margin-top:14px; margin-bottom:0;">
-          <label>Photo URL *</label>
-          <input type="url" id="newPhotoUrl" inputmode="url" autocomplete="off" placeholder="https://... ছবির লিংক" onkeydown="if(event.key==='Enter'){event.preventDefault(); addPhotoByUrl();}">
-        </div>
-        <button class="btn btn-primary" style="margin-top:14px;" onclick="addPhotoByUrl()">+ ছবি লিংক যোগ করুন</button>
       </div>
 
     </section>
@@ -2607,8 +2656,7 @@ const state = {
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
     products: [], // [{id, name, price}] — shown on the landing page
-    videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
-    photos: [] // [{id, imageUrl}] — photo collage shown above the product section on the landing page
+    videos: [] // [{id, caption, videoUrl}] — general info videos, not products (no price)
   },
   security: { pinEnabled: false, pin: "" },
   sales: [],
@@ -2701,7 +2749,6 @@ function loadShopData(uid){
     idCounter = d.idCounter || 1;
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
-    if(!state.settings.photos) state.settings.photos = [];
     saveState(); // caches locally too
   });
 }
@@ -3488,6 +3535,34 @@ function previewLogoUrl(){
     el.textContent = initial;
   }
 }
+function toggleSettingsMenu(){
+  const drawer = document.getElementById('settingsMenuDrawer');
+  if(drawer.classList.contains('open')){ closeSettingsMenu(); }
+  else{
+    document.getElementById('settingsMenuOverlay').classList.add('open');
+    drawer.classList.add('open');
+  }
+}
+function closeSettingsMenu(){
+  document.getElementById('settingsMenuOverlay').classList.remove('open');
+  document.getElementById('settingsMenuDrawer').classList.remove('open');
+}
+function openSettingsSection(id, btn){
+  document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('settingsEmptyHint').style.display = 'none';
+  document.querySelectorAll('.settings-menu-item').forEach(b => b.classList.remove('active'));
+  if(btn){ btn.classList.add('active'); document.getElementById('settingsNavTitle').textContent = btn.textContent.trim(); }
+  closeSettingsMenu();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function resetSettingsView(){
+  document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.settings-menu-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('settingsEmptyHint').style.display = 'block';
+  document.getElementById('settingsNavTitle').textContent = 'মেনু থেকে একটি অপশন বেছে নিন';
+  closeSettingsMenu();
+}
 function renderSettings(){
   document.getElementById('settingsCoName').value = state.company.name;
   document.getElementById('settingsLogoUrl').value = state.company.logoUrl || '';
@@ -3513,10 +3588,10 @@ function renderSettings(){
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
   renderProductsSettings();
   renderVideosSettings();
-  renderPhotosSettings();
   updateNotifyStatus();
   document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
   document.getElementById('shopLinkBox').value = buildShopLink();
+  resetSettingsView();
 }
 function buildShopLink(){
   if(!currentUid) return '';
@@ -3909,54 +3984,6 @@ function pushVideosToFirebase(){
     obj[v.id] = { caption: v.caption, videoUrl: v.videoUrl };
   });
   shopRef('videos').set(obj).catch(()=> showToast('Could not sync videos to Firebase'));
-}
-
-/* ---------------- PHOTO COLLAGE (added via image URL link, no price, no product) ---------------- */
-function renderPhotosSettings(){
-  const box = document.getElementById('photosListBox');
-  const list = state.settings.photos || [];
-  if(list.length === 0){
-    box.innerHTML = '<div class="helper-text" style="margin-top:0;">এখনো কোনো ছবি যোগ করা হয়নি।</div>';
-    return;
-  }
-  box.innerHTML = list.map((p,i) => `
-    <div class="photo-thumb-item">
-      <img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" onerror="this.style.opacity='0.25'; this.alt='লোড হয়নি';">
-      <button class="mini-btn" onclick="removePhoto(${i})" aria-label="Remove">✕</button>
-    </div>`).join('');
-}
-function addPhotoByUrl(){
-  const input = document.getElementById('newPhotoUrl');
-  const url = (input.value || '').trim();
-  if(!url){ showToast('ছবির লিংক লিখুন'); return; }
-  let parsed;
-  try{ parsed = new URL(url); }catch(err){ parsed = null; }
-  if(!parsed || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')){
-    showToast('সঠিক ছবির লিংক দিন (http:// বা https:// দিয়ে শুরু)');
-    return;
-  }
-  if(!state.settings.photos) state.settings.photos = [];
-  state.settings.photos.push({ id: 'ph' + Date.now() + Math.floor(Math.random()*1000), imageUrl: url });
-  input.value = '';
-  saveState();
-  renderPhotosSettings();
-  pushPhotosToFirebase();
-  showToast('ছবি যোগ হয়েছে');
-}
-function removePhoto(idx){
-  if(!confirm('এই ছবিটি মুছে ফেলবেন?')) return;
-  state.settings.photos.splice(idx, 1);
-  saveState();
-  renderPhotosSettings();
-  pushPhotosToFirebase();
-}
-function pushPhotosToFirebase(){
-  if(!fbDb || !currentUid) return;
-  const obj = {};
-  (state.settings.photos || []).forEach(p => {
-    obj[p.id] = { imageUrl: p.imageUrl };
-  });
-  shopRef('photos').set(obj).catch(()=> showToast('Could not sync photos to Firebase'));
 }
 
 function setFirebaseStatus(msg, connected){
