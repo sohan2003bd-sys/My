@@ -461,13 +461,13 @@
     .rc-accent{ position:absolute; top:0; left:0; right:0; height:3px;
       background:linear-gradient(90deg, #0F3830 0%, #1F5C4F 40%, #B8863E 75%, #E0AC53 100%); }
 
-    .rc-head{ display:flex; align-items:flex-start; gap:6px; padding-top:0; margin-bottom:3px; }
-    .rc-mark{ width:20px; height:20px; border-radius:6px; flex:none;
+    .rc-head{ display:flex; align-items:stretch; gap:6px; padding-top:0; margin-bottom:3px; }
+    .rc-mark{ width:20px; height:20px; border-radius:6px; flex:none; align-self:flex-start;
       background:linear-gradient(150deg,#E0AC53,#B8863E); overflow:hidden;
       display:flex; align-items:center; justify-content:center;
       font-family:'Fraunces', serif; font-weight:700; font-size:10.5px; color:#0F3830; }
     .rc-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-    .rc-headtext{ min-width:0; flex:1; }
+    .rc-headtext{ min-width:0; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
     /* QR code — top-right corner of the slip, above the Invoice line, in the
        empty space next to the shop name/logo. Encodes invoice no, phone and
        the grand total (incl. delivery) for a quick offline scan. */
@@ -478,11 +478,19 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .rc-tag{ font-size:8px; letter-spacing:.1em; color:#B8863E; text-transform:uppercase; font-weight:600; margin-top:1px; }
 
-    .rc-meta-strip{ display:flex; justify-content:space-between; background:#F6F5EF; border-radius:5px;
-      padding:3px 6px; margin-bottom:4px; }
-    .rc-meta-strip div:last-child{ text-align:right; }
-    .rc-meta-strip .k{ font-size:6.6px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
-    .rc-meta-strip .v{ font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-top:1px; }
+    /* Date/Invoice — packed into the same height-defining header row (next to
+       the logo) instead of a separate strip below it, so nothing pushes the
+       Billed To block further down than necessary. */
+    .rc-meta-inline{ display:flex; gap:14px; }
+    .rc-meta-inline .k{ display:block; font-size:6.4px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
+    .rc-meta-inline .v{ display:block; font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-top:1px; }
+
+    /* Cash-on-Delivery flag — sits in the header row's own spare height, to
+       the left of the QR code, vertically centered, instead of taking up a
+       whole extra row further down the slip. */
+    .rc-cod-inline{ flex:none; align-self:center; text-align:center; font-size:10.5px; font-weight:800; line-height:1.3;
+      text-transform:uppercase; letter-spacing:.03em; color:#B8863E; background:#FCF3E3;
+      border:1px solid #EAD3A3; border-radius:5px; padding:5px 9px; white-space:nowrap; }
 
     .rc-section{ margin-bottom:3px; min-width:0; }
     .rc-section-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
@@ -504,10 +512,6 @@
     .rc-item-name{ font-weight:600; font-size:9.8px; color:#1B2420; line-height:1.3; flex:1; min-width:0;
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .rc-item-amt{ font-size:9.8px; font-family:'IBM Plex Mono', monospace; font-weight:600; color:#3F5C50; flex:none; }
-
-    .rc-cod-badge{ flex:none; text-align:center; font-size:10px; font-weight:800; line-height:1.35;
-      text-transform:uppercase; letter-spacing:.03em; color:#B8863E; background:#FCF3E3;
-      border:1px solid #EAD3A3; border-radius:5px; padding:4px 8px; white-space:nowrap; margin-top:1px; }
 
     .rc-total{ display:flex; justify-content:space-between; align-items:center; margin-top:6px;
       background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:5px; padding:6px 8px; }
@@ -3278,12 +3282,13 @@ function receiptCardHTML(group){
       <div class="rc-headtext">
         <div class="rc-co">${escapeHTML(state.company.name)}</div>
         <div class="rc-tag">Sales Receipt</div>
+        <div class="rc-meta-inline">
+          <span><span class="k">Date</span><span class="v">${fmtDate(first.date)}</span></span>
+          <span><span class="k">Invoice</span><span class="v">${escapeHTML(invoiceNo)}</span></span>
+        </div>
       </div>
+      ${isCOD ? `<div class="rc-cod-inline">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
       <div class="rc-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
-    </div>
-    <div class="rc-meta-strip">
-      <div><div class="k">Date</div><div class="v">${fmtDate(first.date)}</div></div>
-      <div><div class="k">Invoice</div><div class="v">${escapeHTML(invoiceNo)}</div></div>
     </div>
     <div class="rc-section rc-section-row">
       <div class="rc-billto-col">
@@ -3292,7 +3297,6 @@ function receiptCardHTML(group){
         ${first.phone ? `<div class="rc-sub">Tel: ${escapeHTML(first.phone)}</div>` : ''}
         ${first.address ? `<div class="rc-address">Address: ${escapeHTML(first.address)}</div>` : ''}
       </div>
-      ${isCOD ? `<div class="rc-cod-badge">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
     </div>
     <hr class="rc-divider">
     <div class="rc-section rc-item-box">
