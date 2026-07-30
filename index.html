@@ -51,6 +51,45 @@
     --shadow-gold: 0 10px 24px rgba(184,134,62,0.35);
     --radius: 16px;
   }
+  body.light-mode {
+    --ink:#FFFFFF;
+    --paper:linear-gradient(135deg, #FF6B6B 0%, #FFA500 25%, #FFD700 50%, #4CAF50 75%, #00BCD4 100%);
+    --paper-deep:#FF9800;
+    --green-900:#FF1744;
+    --green-800:#D32F2F;
+    --green-700:#4CAF50;
+    --green-600:#2196F3;
+    --green-500:#00BCD4;
+    --gold:#FFD700;
+    --gold-light:#FFEB3B;
+    --gold-bright:#FFC107;
+    --rule:rgba(255,255,255,0.25);
+    --card:#FF9800;
+    --muted:#FFFFFF;
+    --loss:#9C27B0;
+    --loss-light:#E91E63;
+    --loss-bg:#FFF9C4;
+    --profit-bg:#C8E6C9;
+    --tint-sales: linear-gradient(160deg, #81C784 0%, #FFD700 55%);
+    --tint-purchase: linear-gradient(160deg, #FF9800 0%, #FFEB3B 55%);
+    --tint-expense: linear-gradient(160deg, #EF5350 0%, #FF6B6B 55%);
+    --tint-profit: linear-gradient(160deg, #4CAF50 0%, #8BC34A 55%);
+    --shadow: 0 8px 24px rgba(255, 107, 107, 0.35);
+    --shadow-lift: 0 14px 32px rgba(255, 152, 0, 0.35);
+    --shadow-gold: 0 10px 24px rgba(255, 215, 0, 0.45);
+  }
+  
+  /* Color options slide-in animation */
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -136,6 +175,65 @@
     box-shadow:0 4px 12px rgba(184,134,62,0.45), inset 0 1px 0 rgba(255,255,255,0.35);
   }
   .icon-btn.orders-btn:active{ background:linear-gradient(150deg, var(--gold-bright), var(--gold)); transform:scale(0.94); }
+
+  /* Drag mode toggle */
+  .drag-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid rgba(15,56,48,0.06);
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .drag-mode-toggle .label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .drag-mode-toggle .title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .drag-mode-toggle .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  /* Toggle switch */
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 30px;
+    background: #ccc;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .toggle-switch.active {
+    background: var(--green-600);
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+  }
+  .toggle-switch.active::after {
+    left: 24px;
+  }
 
   main{ padding:18px 16px 8px; }
   .page{ display:none; animation: fadeIn .25s ease; }
@@ -306,11 +404,11 @@
   .navbtn span{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; }
   .navbtn.active{ color:#fff; }
   .navbtn.active .ico-wrap{
-    transform:translateY(-27px);
+    transform:translateY(-24px);
     width:54px; height:54px;
     background:#000;
     border:3px solid #fff;
-    box-shadow:0 8px 16px rgba(0,0,0,0.5);
+    box-shadow:none;
   }
   .navbtn.active svg{ width:22px; height:22px; }
   .dot-ind{ display:none; }
@@ -475,15 +573,24 @@
   }
   .settings-menu-item{
     display:block; width:100%; text-align:left; background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:13px 14px; margin-bottom:8px;
-    font-size:13px; font-weight:600; color:rgba(255,255,255,0.75);
+    border:1px solid rgba(255,255,255,0.08); border-left-width:4px; border-radius:12px; padding:13px 14px 13px 12px; margin-bottom:8px;
+    font-size:13px; font-weight:600; color:rgba(255,255,255,0.82);
     transition:background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
   }
-  .settings-menu-item:active{ background:rgba(255,255,255,0.09); transform:scale(0.98); }
+  .settings-menu-item:active{ transform:scale(0.98); filter:brightness(1.25); }
+  /* Per-item accent colors so the drawer isn't a flat solid black list */
+  .settings-menu-item:nth-of-type(8n+1){ border-left-color:#E0AC53; background:linear-gradient(120deg, rgba(224,172,83,.16), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+2){ border-left-color:#3B9670; background:linear-gradient(120deg, rgba(59,150,112,.18), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+3){ border-left-color:#4C8DFF; background:linear-gradient(120deg, rgba(76,141,255,.16), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+4){ border-left-color:#E0637A; background:linear-gradient(120deg, rgba(224,99,122,.16), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+5){ border-left-color:#9B7FE0; background:linear-gradient(120deg, rgba(155,127,224,.17), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+6){ border-left-color:#E0973E; background:linear-gradient(120deg, rgba(224,151,62,.17), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+7){ border-left-color:#45B8E0; background:linear-gradient(120deg, rgba(69,184,224,.16), rgba(255,255,255,.03)); }
+  .settings-menu-item:nth-of-type(8n+8){ border-left-color:#E0735A; background:linear-gradient(120deg, rgba(224,115,90,.16), rgba(255,255,255,.03)); }
   .settings-menu-item.active{
-    border-color:var(--gold); color:#fff;
-    background:linear-gradient(155deg, rgba(224,172,83,0.22), rgba(184,134,62,0.08));
-    box-shadow:0 4px 12px rgba(184,134,62,0.18);
+    border-color:var(--gold); border-left-color:var(--gold); color:#fff;
+    background:linear-gradient(155deg, rgba(224,172,83,0.28), rgba(184,134,62,0.10));
+    box-shadow:0 4px 12px rgba(184,134,62,0.22);
   }
   .settings-subpage{ display:none; }
   .settings-subpage.active{ display:block; }
@@ -896,6 +1003,15 @@
             <option value="£">£ — British Pound</option>
           </select>
         </div>
+        
+        <div class="drag-mode-toggle" style="margin-top:16px;">
+          <div class="label">
+            <div class="title">Light Mode (Colorful Theme)</div>
+            <div class="subtitle">Enable rainbow colors mode</div>
+          </div>
+          <button class="toggle-switch" id="dragModeToggle" onclick="toggleDragModeUI()"></button>
+        </div>
+        
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
       </div>
 
@@ -2702,7 +2818,8 @@ const state = {
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
     products: [], // [{id, name, price}] — shown on the landing page
-    videos: [] // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    dragMode: false // Light mode with colorful theme
   },
   security: { pinEnabled: false, pin: "" },
   sales: [],
@@ -2716,6 +2833,7 @@ const state = {
 };
 
 let idCounter = 1;
+
 function toLocalISODate(d){
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
@@ -3609,12 +3727,29 @@ function closeSettingsMenu(){
 }
 function openSettingsSection(id, btn){
   document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const section = document.getElementById(id);
+  section.classList.add('active');
   document.getElementById('settingsEmptyHint').style.display = 'none';
   document.querySelectorAll('.settings-menu-item').forEach(b => b.classList.remove('active'));
   if(btn){ btn.classList.add('active'); document.getElementById('settingsNavTitle').textContent = btn.textContent.trim(); }
   closeSettingsMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  // Add slide-in animation to section elements
+  setTimeout(() => {
+    const elements = section.querySelectorAll('h3, .field, .row2, button, .helper-text');
+    elements.forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-40px)';
+      el.style.transition = 'none';
+      
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(0)';
+      }, index * 80);
+    });
+  }, 50);
 }
 function resetSettingsView(){
   document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
@@ -3623,6 +3758,44 @@ function resetSettingsView(){
   document.getElementById('settingsNavTitle').textContent = 'মেনু থেকে একটি অপশন বেছে নিন';
   closeSettingsMenu();
 }
+function toggleDragModeUI(){
+  const toggle = document.getElementById('dragModeToggle');
+  const newState = !state.settings.dragMode;
+  applyDragMode(newState);
+  updateDragModeToggleUI();
+}
+
+function updateDragModeToggleUI(){
+  const toggle = document.getElementById('dragModeToggle');
+  if(toggle){
+    if(state.settings.dragMode){
+      toggle.classList.add('active');
+    } else {
+      toggle.classList.remove('active');
+    }
+  }
+}
+
+function applyDragMode(enabled){
+  state.settings.dragMode = enabled;
+  saveState();
+  
+  const body = document.body;
+  if(enabled){
+    body.classList.add('light-mode');
+  } else {
+    body.classList.remove('light-mode');
+  }
+  
+  showToast(enabled ? '🌈 Light Mode Activated' : '🌙 Dark Mode Activated');
+}
+
+function initThemeMode(){
+  if(state.settings.dragMode){
+    document.body.classList.add('light-mode');
+  }
+}
+
 function renderSettings(){
   document.getElementById('settingsCoName').value = state.company.name;
   document.getElementById('settingsLogoUrl').value = state.company.logoUrl || '';
@@ -3642,6 +3815,7 @@ function renderSettings(){
   document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
+  updateDragModeToggleUI();
   renderChips('chipsSalesCat', state.settings.salesCategories, 'sales');
   renderChips('chipsPurchaseCat', state.settings.purchaseCategories, 'purchase');
   renderChips('chipsExpenseCat', state.settings.expenseCategories, 'expense');
@@ -4275,6 +4449,7 @@ function showToast(msg){
 
 /* ---------------- INIT ---------------- */
 function renderAll(){
+  initThemeMode();
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
   renderDashboard();
