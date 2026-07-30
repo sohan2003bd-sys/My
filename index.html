@@ -994,6 +994,17 @@
             <input type="number" id="newProductPrice" placeholder="0.00" step="0.01">
           </div>
         </div>
+        <div class="row2">
+          <div class="field" style="margin-bottom:0;">
+            <label>Original Price (optional)</label>
+            <input type="number" id="newProductOriginalPrice" placeholder="e.g. 6499 — shows as a discount badge" step="0.01">
+          </div>
+          <div class="field" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:flex-end;">
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:9px;">
+              <input type="checkbox" id="newProductHotDeal" style="width:auto;"> Mark as Hot Deal
+            </label>
+          </div>
+        </div>
         <div class="field">
           <label>Description (optional)</label>
           <textarea id="newProductDesc" rows="2" placeholder="Short details shown to customers — size, material, colour options, etc."></textarea>
@@ -3531,6 +3542,8 @@ function editProduct(idx){
   editingProductIdx = idx;
   document.getElementById('newProductName').value = p.name || '';
   document.getElementById('newProductPrice').value = p.price || '';
+  document.getElementById('newProductOriginalPrice').value = p.originalPrice || '';
+  document.getElementById('newProductHotDeal').checked = !!p.hotDeal;
   document.getElementById('newProductDesc').value = p.description || '';
   document.getElementById('newProductImage').value = p.imageUrl || '';
   document.getElementById('newProductVideo').value = p.videoUrl || '';
@@ -3543,6 +3556,8 @@ function cancelEditProduct(){
   editingProductIdx = null;
   document.getElementById('newProductName').value = '';
   document.getElementById('newProductPrice').value = '';
+  document.getElementById('newProductOriginalPrice').value = '';
+  document.getElementById('newProductHotDeal').checked = false;
   document.getElementById('newProductDesc').value = '';
   document.getElementById('newProductImage').value = '';
   document.getElementById('newProductVideo').value = '';
@@ -3769,16 +3784,18 @@ function saveProfile(){
 function saveProduct(){
   const name = document.getElementById('newProductName').value.trim();
   const price = parseFloat(document.getElementById('newProductPrice').value) || 0;
+  const originalPrice = parseFloat(document.getElementById('newProductOriginalPrice').value) || 0;
+  const hotDeal = document.getElementById('newProductHotDeal').checked;
   const description = document.getElementById('newProductDesc').value.trim();
   const imageUrl = document.getElementById('newProductImage').value.trim();
   const videoUrl = document.getElementById('newProductVideo').value.trim();
   if(!name){ showToast('Enter a product name'); return; }
   if(editingProductIdx !== null){
     const p = state.settings.products[editingProductIdx];
-    Object.assign(p, { name, price, description, imageUrl, videoUrl });
+    Object.assign(p, { name, price, originalPrice, hotDeal, description, imageUrl, videoUrl });
     showToast('Product updated');
   } else {
-    state.settings.products.push({ id: 'p' + Date.now() + Math.floor(Math.random()*1000), name, price, description, imageUrl, videoUrl });
+    state.settings.products.push({ id: 'p' + Date.now() + Math.floor(Math.random()*1000), name, price, originalPrice, hotDeal, description, imageUrl, videoUrl });
     showToast('Product added');
   }
   cancelEditProduct();
@@ -3797,7 +3814,7 @@ function pushProductsToFirebase(){
   if(!fbDb || !currentUid) return;
   const obj = {};
   state.settings.products.forEach(p => {
-    obj[p.id] = { name: p.name, price: p.price, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
+    obj[p.id] = { name: p.name, price: p.price, originalPrice: p.originalPrice || 0, hotDeal: !!p.hotDeal, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
   });
   shopRef('products').set(obj).catch(()=> showToast('Could not sync products to Firebase'));
 }

@@ -173,40 +173,69 @@
     display:flex; align-items:center; justify-content:center;
   }
   .pcard{
-    background:var(--card); border:1px solid var(--rule); border-radius:16px; overflow:hidden;
-    display:flex; flex-direction:column; box-shadow:0 4px 14px rgba(42,21,51,0.08);
+    background:var(--plum-900); border-radius:16px; overflow:hidden;
+    display:flex; flex-direction:column; box-shadow:0 6px 18px rgba(42,21,51,0.22);
     transition:transform .12s ease, box-shadow .12s ease;
   }
   .pcard:active{ transform:scale(0.97); }
-  .pcard .thumb{ position:relative; width:100%; aspect-ratio:4/5; background:var(--paper-deep); overflow:hidden; }
+  .pcard .thumb{ position:relative; width:100%; aspect-ratio:1/1; background:linear-gradient(160deg, var(--paper-deep), var(--paper)); overflow:hidden; }
   .pcard .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
   .pcard .thumb .noimg{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:30px; color:var(--muted); background:linear-gradient(160deg, var(--paper-deep), var(--paper)); }
-  .pcard .thumb::after{
-    content:""; position:absolute; left:0; right:0; bottom:0; height:46%;
-    background:linear-gradient(to top, rgba(33,23,38,0.55), transparent); pointer-events:none;
+  .pcard .badge-row{ position:absolute; top:8px; left:8px; right:8px; z-index:2; display:flex; justify-content:space-between; align-items:flex-start; gap:6px; pointer-events:none; }
+  .pcard .badge-hot{
+    background:var(--rust); color:#fff; font-size:9.5px; font-weight:700; letter-spacing:.03em;
+    text-transform:uppercase; padding:4px 8px; border-radius:6px; box-shadow:0 3px 8px rgba(0,0,0,0.25);
+  }
+  .pcard .badge-off{
+    background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
+    font-size:10px; font-weight:700; padding:4px 8px; border-radius:6px; box-shadow:0 3px 8px rgba(0,0,0,0.2);
   }
   .pcard .thumb .play-btn{
-    position:absolute; right:8px; top:8px; width:28px; height:28px; border-radius:50%; z-index:2;
+    position:absolute; right:8px; bottom:8px; width:28px; height:28px; border-radius:50%; z-index:2;
     background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
     border:none; display:flex; align-items:center; justify-content:center; font-size:11px; box-shadow:0 4px 10px rgba(0,0,0,0.3);
   }
-  .pcard .price-tag{
-    position:absolute; left:8px; bottom:8px; z-index:2;
-    background:rgba(198,147,62,0.95); color:var(--plum-900);
-    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600;
-    padding:4px 10px; border-radius:20px; letter-spacing:.01em;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  .pcard .heart-btn{
+    position:absolute; right:8px; top:8px; z-index:3; width:28px; height:28px; border-radius:50%;
+    background:rgba(255,255,255,0.92); border:none; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 8px rgba(0,0,0,0.2); color:var(--plum-800); font-size:13px;
   }
+  .pcard .heart-btn.saved{ color:var(--rust); }
+  .pcard .heart-btn:active{ transform:scale(0.9); }
   .pcard .body{ padding:11px 11px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
-  .pcard .pname{ font-size:13px; font-weight:600; line-height:1.3; color:var(--ink); }
-  .pcard .pdesc{ font-size:11px; color:var(--muted); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .pcard .add-btn{ margin-top:8px; border:none; background:var(--plum-800); color:#F8F1E6; border-radius:10px; padding:9px; font-size:12.5px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
-  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); }
+  .pcard .pname{ font-size:13px; font-weight:600; line-height:1.3; color:#F8F1E6; }
+  .pcard .pdesc{ font-size:11px; color:#B8AC9C; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .pcard .price-row{ display:flex; align-items:baseline; gap:8px; margin-top:2px; flex-wrap:wrap; }
+  .pcard .price-now{ font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700; color:var(--gold-light); }
+  .pcard .price-old{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8A7C6C; text-decoration:line-through; }
+  .pcard .action-row{ display:flex; gap:6px; margin-top:8px; }
+  .pcard .add-btn{
+    flex:1; border:none; background:linear-gradient(155deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+    color:var(--plum-900); border-radius:10px; padding:9px; font-size:12.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, #E3BE79, #C6933E); color:var(--plum-900); }
   .pcard .add-btn .plus{
     display:inline-flex; align-items:center; justify-content:center;
-    width:17px; height:17px; border-radius:50%; background:rgba(255,255,255,0.22); font-size:13px; line-height:1;
+    width:17px; height:17px; border-radius:50%; background:rgba(59,31,69,0.18); font-size:13px; line-height:1;
   }
-  .pcard .add-btn.in-cart .plus{ background:rgba(59,31,69,0.18); }
+  .pcard .view-btn{
+    flex:none; width:38px; border:1.5px solid rgba(227,190,121,0.35); background:none; color:#F8F1E6;
+    border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .pcard .view-btn:active{ background:rgba(227,190,121,0.12); }
+
+  /* ---------- Quick view modal ---------- */
+  .qv-overlay{ position:fixed; inset:0; background:rgba(20,10,26,0.86); z-index:95; display:none; align-items:flex-end; justify-content:center; }
+  .qv-overlay.open{ display:flex; }
+  .qv-sheet{ width:100%; max-width:520px; background:var(--paper); border-radius:20px 20px 0 0; max-height:88vh; overflow-y:auto; animation:qvUp .22s ease; }
+  @keyframes qvUp{ from{ transform:translateY(30px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+  .qv-sheet .qv-img{ width:100%; aspect-ratio:1/1; background:var(--paper-deep); }
+  .qv-sheet .qv-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .qv-body{ padding:16px 18px 22px; }
+  .qv-body h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0 0 6px; color:var(--plum-900); }
+  .qv-body p{ font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 12px; }
+  .qv-close{ position:sticky; top:10px; float:right; margin-right:10px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(20,10,26,0.55); color:#fff; font-size:15px; z-index:2; }
 
   .delivery-box{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
   .delivery-note{ font-size:11.5px; color:var(--ink-soft); margin:0 0 10px; line-height:1.6; }
@@ -510,6 +539,19 @@
   <div class="lightbox-box">
     <div id="lightboxContent"></div>
     <button type="button" class="lightbox-close" onclick="closeLightbox()">বন্ধ করুন</button>
+  </div>
+</div>
+
+<div class="qv-overlay" id="qvOverlay" onclick="if(event.target===this) closeQuickView()">
+  <div class="qv-sheet">
+    <button type="button" class="qv-close" onclick="closeQuickView()">✕</button>
+    <div class="qv-img" id="qvImgWrap"></div>
+    <div class="qv-body">
+      <h3 id="qvName"></h3>
+      <p id="qvDesc"></p>
+      <div class="price-row" id="qvPrice" style="margin-bottom:14px;"></div>
+      <button type="button" class="btn btn-primary" id="qvOrderBtn">Order now</button>
+    </div>
   </div>
 </div>
 
@@ -868,24 +910,67 @@ function renderCatalog(){
   grid.innerHTML = visible.map(p => {
     const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
     const thumbUrl = getThumbUrl(p);
+    const price = Number(p.price) || 0;
+    const original = Number(p.originalPrice) || 0;
+    const hasDiscount = original > price;
+    const pct = hasDiscount ? Math.round((1 - price / original) * 100) : 0;
+    const saved = !!wishlist[p.id];
     return `
     <div class="pcard">
       <div class="thumb">
         ${thumbUrl
           ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=noimg>🛍️</div>'">`
           : `<div class="noimg">🛍️</div>`}
+        <div class="badge-row">
+          <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
+          <span>${hasDiscount ? `<span class="badge-off">-${pct}%</span>` : ''}</span>
+        </div>
+        <button type="button" class="heart-btn ${saved ? 'saved' : ''}" onclick="toggleWishlist('${p.id}')" aria-label="Wishlist">${saved ? '♥' : '♡'}</button>
         ${p.videoUrl ? `<button type="button" class="play-btn" onclick="playVideo('${escapeHTML(p.videoUrl)}')" aria-label="ভিডিও দেখুন">▶</button>` : ''}
-        <span class="price-tag">৳${(Number(p.price) || 0).toFixed(2)}</span>
       </div>
       <div class="body">
         <div class="pname">${escapeHTML(p.name)}</div>
         ${p.description ? `<div class="pdesc">${escapeHTML(p.description)}</div>` : ''}
-        <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
-          ${inCartQty ? `কার্টে ${inCartQty}টি যুক্ত · আরও অর্ডার করুন <span class="plus">+</span>` : `অর্ডার করুন <span class="plus">+</span>`}
-        </button>
+        <div class="price-row">
+          <span class="price-now">৳${price.toFixed(0)}</span>
+          ${hasDiscount ? `<span class="price-old">৳${original.toFixed(0)}</span>` : ''}
+        </div>
+        <div class="action-row">
+          <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
+            ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : `Order now <span class="plus">+</span>`}
+          </button>
+          <button type="button" class="view-btn" onclick="openQuickView('${p.id}')" aria-label="Quick view">👁</button>
+        </div>
       </div>
     </div>`;
   }).join('');
+}
+
+let wishlist = {};
+function toggleWishlist(productId){
+  if(wishlist[productId]) delete wishlist[productId];
+  else wishlist[productId] = true;
+  renderCatalog();
+}
+
+function openQuickView(productId){
+  const p = products.find(x => x.id === productId);
+  if(!p) return;
+  const thumbUrl = getThumbUrl(p);
+  const price = Number(p.price) || 0;
+  const original = Number(p.originalPrice) || 0;
+  const hasDiscount = original > price;
+  document.getElementById('qvImgWrap').innerHTML = thumbUrl
+    ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" onerror="this.style.display='none'">`
+    : '';
+  document.getElementById('qvName').textContent = p.name;
+  document.getElementById('qvDesc').textContent = p.description || '';
+  document.getElementById('qvPrice').innerHTML = `<span class="price-now" style="color:var(--gold-deep);">৳${price.toFixed(0)}</span>${hasDiscount ? ` <span class="price-old">৳${original.toFixed(0)}</span>` : ''}`;
+  document.getElementById('qvOrderBtn').setAttribute('onclick', `addToCart('${p.id}'); closeQuickView();`);
+  document.getElementById('qvOverlay').classList.add('open');
+}
+function closeQuickView(){
+  document.getElementById('qvOverlay').classList.remove('open');
 }
 
 function addToCart(productId){
