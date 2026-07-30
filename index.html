@@ -814,6 +814,24 @@
       </div>
 
       <div class="settings-block">
+        <h3>📇 Landing Page — ফুটার কনটাক্ট তথ্য</h3>
+        <div class="helper-text" style="margin-top:0;">এগুলো landing page-এর একদম নিচে "Contact Info" ফুটার হিসেবে দেখাবে। খালি রাখলে সেই লাইনটা এমনিতেই লুকানো থাকবে। WhatsApp নম্বর উপরের "যোগাযোগ ও ডেলিভারি"-তে দেওয়া নম্বরটাই ব্যবহার করবে।</div>
+        <div class="field" style="margin-top:10px;">
+          <label>ঠিকানা</label>
+          <input type="text" id="settingsFooterAddress" placeholder="যেমনঃ Bakshiganj, Jamalpur, Bangladesh">
+        </div>
+        <div class="field">
+          <label>ইমেইল</label>
+          <input type="email" id="settingsFooterEmail" placeholder="info@example.com">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>ফেসবুক পেজ (নাম বা লিংক)</label>
+          <input type="text" id="settingsFooterFacebook" placeholder="যেমনঃ YourPageName অথবা https://facebook.com/YourPage">
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <div class="settings-block">
         <h3>💳 Landing Page — bKash / Nagad / Rocket / Bank</h3>
         <div class="helper-text" style="margin-top:0;">কাস্টমার "ক্যাশ অন ডেলিভারি" ছাড়া অন্য পেমেন্ট বেছে নিলে এই নম্বরগুলো (কপি বাটনসহ) landing page-এ দেখানো হবে। খালি রাখলে উপরের WhatsApp/ফোন নম্বরটাই ব্যবহার হবে।</div>
         <div class="row2" style="margin-top:10px;">
@@ -3449,6 +3467,9 @@ function renderSettings(){
   previewLogoUrl();
   document.getElementById('settingsCurrency').value = state.company.currency;
   document.getElementById('settingsContactPhone').value = state.company.contactPhone || '';
+  document.getElementById('settingsFooterAddress').value = state.company.footerAddress || '';
+  document.getElementById('settingsFooterEmail').value = state.company.footerEmail || '';
+  document.getElementById('settingsFooterFacebook').value = state.company.footerFacebook || '';
   document.getElementById('settingsDeliveryInside').value = state.company.deliveryInside || '';
   document.getElementById('settingsDeliveryOutside').value = state.company.deliveryOutside || '';
   document.getElementById('settingsBkashNumber').value = state.company.bkashNumber || '';
@@ -3726,6 +3747,9 @@ function saveProfile(){
   state.company.name = document.getElementById('settingsCoName').value.trim() || 'My Business';
   state.company.currency = document.getElementById('settingsCurrency').value;
   state.company.contactPhone = document.getElementById('settingsContactPhone').value.trim();
+  state.company.footerAddress = document.getElementById('settingsFooterAddress').value.trim();
+  state.company.footerEmail = document.getElementById('settingsFooterEmail').value.trim();
+  state.company.footerFacebook = document.getElementById('settingsFooterFacebook').value.trim();
   state.company.deliveryInside = parseFloat(document.getElementById('settingsDeliveryInside').value) || 0;
   state.company.deliveryOutside = parseFloat(document.getElementById('settingsDeliveryOutside').value) || 0;
   state.company.bkashNumber = document.getElementById('settingsBkashNumber').value.trim();
