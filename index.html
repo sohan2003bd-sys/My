@@ -467,23 +467,28 @@
       display:flex; align-items:center; justify-content:center;
       font-family:'Fraunces', serif; font-weight:700; font-size:10.5px; color:#0F3830; }
     .rc-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-    .rc-headtext{ min-width:0; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
-    /* QR code — top-right corner of the slip, above the Invoice line, in the
-       empty space next to the shop name/logo. Encodes invoice no, phone and
-       the grand total (incl. delivery) for a quick offline scan. */
-    .rc-qr{ flex:none; width:18mm; height:18mm; background:#fff;
+    .rc-headtext{ min-width:0; flex:1; }
+    /* QR code — top-right corner of the slip, with a small Invoice No. label
+       directly underneath it (instead of a separate strip lower down), so
+       the header stays self-contained. Encodes invoice no, total payable/paid
+       amount (incl. delivery) and phone for a quick offline scan. */
+    .rc-qr-wrap{ flex:none; display:flex; flex-direction:column; align-items:center; gap:1px; }
+    .rc-qr{ width:18mm; height:18mm; background:#fff;
       border:1px solid #EDEEE4; border-radius:3px; padding:0.8mm; box-sizing:border-box; }
     .rc-qr canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; }
+    .rc-invoice-under{ text-align:center; }
+    .rc-invoice-under .k{ display:block; font-size:5.3px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
+    .rc-invoice-under .v{ display:block; font-size:7.2px; font-weight:700; font-family:'IBM Plex Mono', monospace; margin-top:0.5px; }
     .rc-co{ font-family:'Fraunces', serif; font-weight:700; font-size:13.5px; line-height:1.15;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .rc-tag{ font-size:8px; letter-spacing:.1em; color:#B8863E; text-transform:uppercase; font-weight:600; margin-top:1px; }
 
-    /* Date/Invoice — packed into the same height-defining header row (next to
-       the logo) instead of a separate strip below it, so nothing pushes the
-       Billed To block further down than necessary. */
-    .rc-meta-inline{ display:flex; gap:14px; }
-    .rc-meta-inline .k{ display:block; font-size:6.4px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
-    .rc-meta-inline .v{ display:block; font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-top:1px; }
+    /* Date — kept right under the shop name/tag, but pulled left by the
+       logo's width so it starts at the same left edge as the Billed To name
+       below it (name and date fall in one visual column/serial). */
+    .rc-date-line{ margin-left:-26px; margin-top:3px; }
+    .rc-date-line .k{ display:inline; font-size:6.4px; text-transform:uppercase; letter-spacing:.05em; color:#8A9088; }
+    .rc-date-line .v{ display:inline; font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace; margin-left:5px; }
 
     /* Cash-on-Delivery flag — sits in the header row's own spare height, to
        the left of the QR code, vertically centered, instead of taking up a
@@ -515,8 +520,12 @@
 
     .rc-total{ display:flex; justify-content:space-between; align-items:center; margin-top:6px;
       background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:5px; padding:6px 8px; }
-    .rc-total .k{ font-size:8.5px; text-transform:uppercase; letter-spacing:.05em; color:#3F5C50; font-weight:600; }
+    .rc-total .k{ font-size:8.5px; text-transform:uppercase; letter-spacing:.05em; color:#3F5C50; font-weight:800; }
     .rc-total .v{ font-weight:700; font-size:16.5px; color:#0F3830; font-family:'IBM Plex Mono', monospace; }
+    /* Cash-on-Delivery total gets extra emphasis — bigger and bolder — since
+       it's the amount the customer still needs to pay on delivery. */
+    .rc-total-cod .k{ font-size:10.5px; font-weight:800; }
+    .rc-total-cod .v{ font-size:18.5px; font-weight:800; }
 
     .rc-barcode{ text-align:center; margin-top:6px; padding-top:5px; border-top:1px dashed #D3D6C9; }
     /* Centered, fixed 2-inch barcode label — like a printed product barcode
@@ -3263,9 +3272,9 @@ function receiptCardHTML(group){
   const rcMarkInner = rcLogo ? `<img src="${escapeHTML(rcLogo)}" alt="">` : escapeHTML(initial);
   const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
   // Cash-on-Delivery orders haven't been paid yet — the slip should say
-  // "পরিশোধ করতে হবে" (amount due) instead of "Total Paid" for those.
+  // "Total Payable Amount" instead of "Total Paid" for those.
   const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
-  const totalLabel = isCOD ? 'Amount Due' : 'Total Paid';
+  const totalLabel = isCOD ? 'Total Payable Amount' : 'Total Paid';
   const itemsHTML = rows.map(r => `
       <div class="rc-item-line">
         <span class="rc-item-name">${escapeHTML(r.name || '—')}${r.qty && r.qty > 1 ? ` × ${r.qty}` : ''}</span>
@@ -3274,7 +3283,7 @@ function receiptCardHTML(group){
   // QR payload — invoice no., grand total (incl. delivery charge) and the
   // customer's phone, in a simple readable "Label: value" format so any
   // generic QR scanner shows something meaningful, not just raw data.
-  const qrText = `Invoice: ${invoiceNo}\nTotal: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
   return `
   <div class="receipt-card">
     <div class="rc-accent"></div>
@@ -3282,13 +3291,13 @@ function receiptCardHTML(group){
       <div class="rc-headtext">
         <div class="rc-co">${escapeHTML(state.company.name)}</div>
         <div class="rc-tag">Sales Receipt</div>
-        <div class="rc-meta-inline">
-          <span><span class="k">Date</span><span class="v">${fmtDate(first.date)}</span></span>
-          <span><span class="k">Invoice</span><span class="v">${escapeHTML(invoiceNo)}</span></span>
-        </div>
+        <div class="rc-date-line"><span class="k">Date</span><span class="v">${fmtDate(first.date)}</span></div>
       </div>
       ${isCOD ? `<div class="rc-cod-inline">ক্যাশ অন<br>ডেলিভারি</div>` : ''}
-      <div class="rc-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
+      <div class="rc-qr-wrap">
+        <div class="rc-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
+        <div class="rc-invoice-under"><span class="k">Invoice</span><span class="v">${escapeHTML(invoiceNo)}</span></div>
+      </div>
     </div>
     <div class="rc-section rc-section-row">
       <div class="rc-billto-col">
@@ -3303,7 +3312,7 @@ function receiptCardHTML(group){
       <div class="rc-label">Product / Service</div>
       ${itemsHTML}
     </div>
-    <div class="rc-total"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
+    <div class="rc-total${isCOD ? ' rc-total-cod' : ''}"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
     <div class="rc-barcode">
       <div class="rc-barcode-box">
         <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="48"></canvas>
