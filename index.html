@@ -444,17 +444,17 @@
     @page{ size:A4; margin:10mm; }
     html, body{ margin:0; padding:0; background:#fff; }
     .receipt-page{
-      width:190mm; height:277mm; box-sizing:border-box;
-      display:grid; grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(3, 1fr);
+      width:190mm; box-sizing:border-box;
+      display:grid; grid-template-columns:repeat(2, 1fr); grid-auto-rows:auto;
       gap:4mm; page-break-after:always;
     }
     .receipt-page:last-child{ page-break-after:auto; }
 
     .receipt-card{
-      width:100%; height:100%; box-sizing:border-box;
+      width:100%; min-height:89mm; box-sizing:border-box;
       border:1px dashed #C7CBBB; border-radius:6px;
       padding:3.4mm 3.8mm 3mm; display:flex; flex-direction:column;
-      page-break-inside:avoid; position:relative; overflow:hidden;
+      page-break-inside:avoid; position:relative; overflow:visible;
       font-family:'IBM Plex Sans', sans-serif; color:#1B2420;
       background:#FFFFFF;
     }
@@ -471,8 +471,8 @@
     /* QR code — top-right corner of the slip, above the Invoice line, in the
        empty space next to the shop name/logo. Encodes invoice no, phone and
        the grand total (incl. delivery) for a quick offline scan. */
-    .rc-qr{ flex:none; width:13.5mm; height:13.5mm; background:#fff;
-      border:1px solid #EDEEE4; border-radius:3px; padding:0.6mm; box-sizing:border-box; }
+    .rc-qr{ flex:none; width:18mm; height:18mm; background:#fff;
+      border:1px solid #EDEEE4; border-radius:3px; padding:0.8mm; box-sizing:border-box; }
     .rc-qr canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; }
     .rc-co{ font-family:'Fraunces', serif; font-weight:700; font-size:13.5px; line-height:1.15;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1118,7 +1118,7 @@
     <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto;"></div>
   </div>
   <button class="btn btn-gold" onclick="printReceipts()">🧾 Generate &amp; Print Receipts</button>
-  <div class="helper-text" style="text-align:center;">Prints 9 receipts per A4 sheet (3 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
+  <div class="helper-text" style="text-align:center;">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
   <button class="btn btn-ghost" style="margin-top:10px;" onclick="closeReceiptSheet()">Cancel</button>
 </div>
 
@@ -3323,7 +3323,7 @@ function printReceipts(){
   });
 
   const pages = [];
-  for(let i = 0; i < groups.length; i += 9) pages.push(groups.slice(i, i + 9));
+  for(let i = 0; i < groups.length; i += 6) pages.push(groups.slice(i, i + 6));
   document.getElementById('printArea').innerHTML = pages
     .map(pageGroups => `<div class="receipt-page">${pageGroups.map(receiptCardHTML).join('')}</div>`)
     .join('');
