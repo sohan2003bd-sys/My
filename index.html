@@ -1926,9 +1926,31 @@ function printReceipts(){
     .map(pageGroups => `<div class="receipt-page">${pageGroups.map(receiptCardHTML).join('')}</div>`)
     .join('');
   document.querySelectorAll('#printArea .bc-canvas').forEach(cv => drawCode39(cv, cv.dataset.value));
-  document.querySelectorAll('#printArea .rc-qr').forEach(el => {
-    new QRCode(el, { text: el.dataset.qr, width: 136, height: 136, correctLevel: QRCode.CorrectLevel.M });
+  renderReceiptQRCodes(() => {
+    closeReceiptSheet();
+    setTimeout(()=> window.print(), 60);
   });
+}
+// The QR library loads from a CDN, so on a slow connection it may not be ready the
+// instant we need it. Poll for up to ~1.5s (handles slow networks) before giving up —
+// but never block printing: the receipts print with or without the QR either way.
+function renderReceiptQRCodes(done, attemptsLeft){
+  attemptsLeft = (attemptsLeft === undefined) ? 15 : attemptsLeft;
+  if(typeof QRCode === 'undefined' && attemptsLeft > 0){
+    setTimeout(()=> renderReceiptQRCodes(done, attemptsLeft - 1), 100);
+    return;
+  }
+  document.querySelectorAll('#printArea .rc-qr').forEach(el => {
+    try{
+      if(typeof QRCode !== 'undefined'){
+        new QRCode(el, { text: el.dataset.qr, width: 136, height: 136, correctLevel: QRCode.CorrectLevel.M });
+      }
+    }catch(e){ /* QR library unavailable — skip quietly, receipt still prints without it */ }
+  });
+  if(typeof QRCode === 'undefined'){
+    showToast('QR কোড লোড করা যায়নি (ইন্টারনেট চেক করুন) — স্লিপ QR ছাড়া প্রিন্ট হচ্ছে');
+  }
+  done();
   closeReceiptSheet();
   setTimeout(()=> window.print(), 60);
 }
