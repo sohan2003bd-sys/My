@@ -140,10 +140,10 @@
   .photo-collage-card{ padding:14px 0 16px; overflow:hidden; }
   .photo-collage-card .eyebrow, .photo-collage-card h2{ padding:0 16px; }
   .photo-collage-outer{ overflow:hidden; width:100%; -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
-  .photo-collage-track{ display:flex; width:max-content; animation:photoCollageScroll linear infinite; }
+  .photo-collage-track{ display:flex; width:max-content; animation:photoCollageScroll linear infinite; will-change:transform; backface-visibility:hidden; transform:translateZ(0); }
   .photo-collage-track img{
     width:150px; height:112px; object-fit:cover; border-radius:14px; margin-right:10px; flex:none;
-    box-shadow:0 6px 16px rgba(42,21,51,0.18);
+    box-shadow:0 6px 16px rgba(42,21,51,0.18); background:var(--paper-deep);
   }
   @keyframes photoCollageScroll{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
 
@@ -899,10 +899,10 @@ function renderPhotoCollage(){
   if(!collagePhotos.length){ section.style.display = 'none'; track.innerHTML = ''; return; }
   section.style.display = 'block';
   // ছবিগুলো দুইবার বসানো হয় যাতে স্ক্রল লুপ নিরবচ্ছিন্ন (seamless) দেখায়
-  const imgsHTML = collagePhotos.map(p => `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy">`).join('');
+  const imgsHTML = collagePhotos.map(p => `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';">`).join('');
   track.innerHTML = imgsHTML + imgsHTML;
   // প্রতিটা ছবির জন্য প্রায় ৩ সেকেন্ড করে সময় — ছবি ডান থেকে বামে ভিডিওর মতো মসৃণভাবে চলতে থাকবে
-  track.style.animationDuration = (collagePhotos.length * 3) + 's';
+  track.style.animationDuration = Math.max(collagePhotos.length * 3, 10) + 's';
 }
 
 function renderCatNav(){

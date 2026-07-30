@@ -1049,10 +1049,13 @@
 
       <div class="settings-block">
         <h3>🖼️ Photo Collage (Landing Page, প্রডাক্ট সেকশনের উপরে দেখাবে)</h3>
-        <div class="helper-text" style="margin-top:0;">ফোন থেকে সরাসরি ছবি আপলোড করুন — ল্যান্ডিং পেজে প্রডাক্ট সেকশনের ঠিক উপরে একটা কোলাজ হিসেবে ছবিগুলো ডান থেকে বামে অটো-স্লাইড হয়ে (ভিডিওর মতো) দেখাবে।</div>
+        <div class="helper-text" style="margin-top:0;">ছবির লিংক (URL) যোগ করুন — ল্যান্ডিং পেজে প্রডাক্ট সেকশনের ঠিক উপরে একটা কোলাজ হিসেবে ছবিগুলো ডান থেকে বামে অটো-স্লাইড হয়ে (ভিডিওর মতো) দেখাবে।</div>
         <div id="photosListBox" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:10px;"></div>
-        <input type="file" id="newPhotoFile" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
-        <button class="btn btn-primary" style="margin-top:14px;" onclick="document.getElementById('newPhotoFile').click()">+ ছবি আপলোড করুন</button>
+        <div class="field" style="margin-top:14px; margin-bottom:0;">
+          <label>Photo URL *</label>
+          <input type="url" id="newPhotoUrl" inputmode="url" autocomplete="off" placeholder="https://... ছবির লিংক" onkeydown="if(event.key==='Enter'){event.preventDefault(); addPhotoByUrl();}">
+        </div>
+        <button class="btn btn-primary" style="margin-top:14px;" onclick="addPhotoByUrl()">+ ছবি লিংক যোগ করুন</button>
       </div>
 
     </section>
@@ -3908,7 +3911,7 @@ function pushVideosToFirebase(){
   shopRef('videos').set(obj).catch(()=> showToast('Could not sync videos to Firebase'));
 }
 
-/* ---------------- PHOTO COLLAGE (uploaded from device, no price, no product) ---------------- */
+/* ---------------- PHOTO COLLAGE (added via image URL link, no price, no product) ---------------- */
 function renderPhotosSettings(){
   const box = document.getElementById('photosListBox');
   const list = state.settings.photos || [];
@@ -3918,41 +3921,27 @@ function renderPhotosSettings(){
   }
   box.innerHTML = list.map((p,i) => `
     <div class="photo-thumb-item">
-      <img src="${escapeHTML(p.imageUrl)}" alt="">
+      <img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" onerror="this.style.opacity='0.25'; this.alt='লোড হয়নি';">
       <button class="mini-btn" onclick="removePhoto(${i})" aria-label="Remove">✕</button>
     </div>`).join('');
 }
-function handlePhotoUpload(e){
-  const file = e.target.files && e.target.files[0];
-  e.target.value = '';
-  if(!file) return;
-  if(!file.type || !file.type.startsWith('image/')){ showToast('একটি ছবি ফাইল নির্বাচন করুন'); return; }
-  const reader = new FileReader();
-  reader.onload = function(evt){
-    const img = new Image();
-    img.onload = function(){
-      // ফোনের বড় ছবিকে ছোট করে (compress) রাখা হয় যাতে ক্লাউডে দ্রুত সিঙ্ক হয়
-      const MAX_W = 1000;
-      const scale = Math.min(1, MAX_W / img.width);
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
-      if(!state.settings.photos) state.settings.photos = [];
-      state.settings.photos.push({ id: 'ph' + Date.now() + Math.floor(Math.random()*1000), imageUrl: dataUrl });
-      saveState();
-      renderPhotosSettings();
-      pushPhotosToFirebase();
-      showToast('ছবি যোগ হয়েছে');
-    };
-    img.onerror = function(){ showToast('ছবি লোড করা যায়নি'); };
-    img.src = evt.target.result;
-  };
-  reader.onerror = function(){ showToast('ফাইল পড়া যায়নি'); };
-  reader.readAsDataURL(file);
+function addPhotoByUrl(){
+  const input = document.getElementById('newPhotoUrl');
+  const url = (input.value || '').trim();
+  if(!url){ showToast('ছবির লিংক লিখুন'); return; }
+  let parsed;
+  try{ parsed = new URL(url); }catch(err){ parsed = null; }
+  if(!parsed || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')){
+    showToast('সঠিক ছবির লিংক দিন (http:// বা https:// দিয়ে শুরু)');
+    return;
+  }
+  if(!state.settings.photos) state.settings.photos = [];
+  state.settings.photos.push({ id: 'ph' + Date.now() + Math.floor(Math.random()*1000), imageUrl: url });
+  input.value = '';
+  saveState();
+  renderPhotosSettings();
+  pushPhotosToFirebase();
+  showToast('ছবি যোগ হয়েছে');
 }
 function removePhoto(idx){
   if(!confirm('এই ছবিটি মুছে ফেলবেন?')) return;
