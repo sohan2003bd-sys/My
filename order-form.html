@@ -81,21 +81,6 @@
   .hero-datetime .d1{ font-size:11px; font-weight:700; color:var(--gold-light); margin-bottom:3px; }
   .hero-datetime .d2{ font-size:9.5px; color:#F8F1E6; margin-top:2px; line-height:1.5; }
 
-  /* ---------- Contact buttons (circular, real icons) ---------- */
-  .contact-card{ display:flex; gap:16px; align-items:flex-start; justify-content:center; }
-  .contact-btn{
-    display:flex; flex-direction:column; align-items:center; gap:6px; text-decoration:none;
-    font-family:'Hind Siliguri',sans-serif;
-  }
-  .contact-btn .circle{
-    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 18px rgba(42,21,51,0.22);
-  }
-  .contact-btn.whatsapp .circle{ background:#25D366; }
-  .contact-btn.phone .circle{ background:var(--plum-800); }
-  .contact-btn .circle svg{ width:28px; height:28px; }
-  .contact-btn .lbl{ font-size:11.5px; font-weight:600; color:var(--plum-800); }
-
   /* ---------- Category menu ---------- */
   .cat-nav{ display:flex; gap:8px; overflow-x:auto; padding:14px 16px 2px; scrollbar-width:none; -ms-overflow-style:none; }
   .cat-nav::-webkit-scrollbar{ display:none; }
@@ -326,6 +311,46 @@
   .pf-row a:active{ opacity:.8; }
   .pf-rule{ border:none; border-top:1px solid rgba(227,190,121,0.18); margin:16px 0; }
   .pf-bottom{ text-align:center; font-size:11px; color:#B8AC9C; line-height:1.7; }
+
+  /* ---------- Footer: merged "সরাসরি কথা বলুন" buttons ---------- */
+  .pf-contact-row{ display:flex; flex-wrap:wrap; gap:10px; margin:0 0 18px; }
+  .pf-contact-btn{
+    flex:1 1 130px; display:flex; align-items:center; gap:10px; text-decoration:none;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(227,190,121,0.25);
+    border-radius:12px; padding:10px 12px;
+  }
+  .pf-contact-btn .circle{
+    width:36px; height:36px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  }
+  .pf-contact-btn.whatsapp .circle{ background:#25D366; }
+  .pf-contact-btn.phone .circle{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); }
+  .pf-contact-btn .circle svg{ width:19px; height:19px; }
+  .pf-contact-btn .txt{ display:flex; flex-direction:column; min-width:0; }
+  .pf-contact-btn .txt .t1{ font-size:10px; color:#B8AC9C; text-transform:uppercase; letter-spacing:.05em; }
+  .pf-contact-btn .txt .t2{ font-size:13px; font-weight:700; color:#F8F1E6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* ---------- Floating WhatsApp / Call buttons (bottom-right, always visible) ---------- */
+  .fab-group{
+    position:fixed; right:14px; z-index:60;
+    bottom:calc(122px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .fab-btn{
+    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    text-decoration:none; box-shadow:0 8px 20px rgba(42,21,51,0.35);
+    transition:transform .15s ease;
+  }
+  .fab-btn:active{ transform:scale(0.92); }
+  .fab-btn.whatsapp{ background:#25D366; }
+  .fab-btn.phone{ background:var(--plum-800); border:1.5px solid rgba(227,190,121,0.5); }
+  .fab-btn svg{ width:26px; height:26px; }
+  @media (min-width:640px){
+    .fab-group{ right:calc(50% - 260px - 74px); }
+    .fab-btn{ width:58px; height:58px; }
+    .fab-btn svg{ width:29px; height:29px; }
+  }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js" defer></script>
@@ -468,25 +493,6 @@
         </div>
       </div>
 
-      <div class="card">
-        <span class="eyebrow">০৫ · যোগাযোগ করুন</span>
-        <h2>সরাসরি কথা বলুন</h2>
-        <div class="contact-card">
-          <a class="contact-btn whatsapp" id="whatsappLink" href="#" target="_blank" rel="noopener">
-            <span class="circle">
-              <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3C9.377 3 4 8.373 4 15c0 2.31.646 4.47 1.77 6.31L4 29l7.86-1.73A11.94 11.94 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm0 21.7c-1.93 0-3.73-.55-5.26-1.5l-.376-.224-4.664 1.026 1.006-4.542-.246-.39A9.66 9.66 0 0 1 5.29 15c0-5.9 4.81-10.7 10.714-10.7 5.902 0 10.71 4.8 10.71 10.7 0 5.9-4.808 10.7-10.71 10.7Zm5.87-8.01c-.32-.16-1.9-.94-2.194-1.047-.294-.108-.508-.16-.722.16-.213.322-.828 1.048-1.015 1.262-.187.214-.373.24-.694.08-.32-.16-1.352-.498-2.575-1.588-.952-.85-1.595-1.898-1.782-2.22-.187-.32-.02-.494.14-.653.144-.144.32-.373.48-.56.16-.187.213-.32.32-.534.107-.213.053-.4-.027-.56-.08-.16-.722-1.74-.99-2.383-.26-.626-.526-.54-.722-.55l-.615-.01c-.213 0-.56.08-.854.4-.293.32-1.12 1.096-1.12 2.673 0 1.578 1.147 3.102 1.307 3.316.16.214 2.257 3.446 5.468 4.833.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.9-.777 2.167-1.527.267-.75.267-1.393.187-1.527-.08-.133-.293-.213-.613-.373Z"/></svg>
-            </span>
-            <span class="lbl">WhatsApp</span>
-          </a>
-          <a class="contact-btn phone" id="phoneLink" href="#">
-            <span class="circle">
-              <svg viewBox="0 0 24 24" fill="#F8F1E6" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
-            </span>
-            <span class="lbl" id="phoneLinkLbl">—</span>
-          </a>
-        </div>
-      </div>
-
       <div class="order-footer">
         <div class="order-footer-inner">
           <div class="total-row">
@@ -501,16 +507,26 @@
 
   <!-- ---------- Footer: Contact Info (pulled live from the shop's Settings > Footer Contact Info) ---------- -->
   <footer class="page-footer" id="pageFooter" style="display:none;">
-    <h3 class="pf-title">Contact Info</h3>
+    <h3 class="pf-title">সরাসরি যোগাযোগ করুন</h3>
+
+    <div class="pf-contact-row">
+      <a class="pf-contact-btn whatsapp" id="whatsappLink" href="#" target="_blank" rel="noopener">
+        <span class="circle">
+          <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3C9.377 3 4 8.373 4 15c0 2.31.646 4.47 1.77 6.31L4 29l7.86-1.73A11.94 11.94 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm0 21.7c-1.93 0-3.73-.55-5.26-1.5l-.376-.224-4.664 1.026 1.006-4.542-.246-.39A9.66 9.66 0 0 1 5.29 15c0-5.9 4.81-10.7 10.714-10.7 5.902 0 10.71 4.8 10.71 10.7 0 5.9-4.808 10.7-10.71 10.7Zm5.87-8.01c-.32-.16-1.9-.94-2.194-1.047-.294-.108-.508-.16-.722.16-.213.322-.828 1.048-1.015 1.262-.187.214-.373.24-.694.08-.32-.16-1.352-.498-2.575-1.588-.952-.85-1.595-1.898-1.782-2.22-.187-.32-.02-.494.14-.653.144-.144.32-.373.48-.56.16-.187.213-.32.32-.534.107-.213.053-.4-.027-.56-.08-.16-.722-1.74-.99-2.383-.26-.626-.526-.54-.722-.55l-.615-.01c-.213 0-.56.08-.854.4-.293.32-1.12 1.096-1.12 2.673 0 1.578 1.147 3.102 1.307 3.316.16.214 2.257 3.446 5.468 4.833.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.9-.777 2.167-1.527.267-.75.267-1.393.187-1.527-.08-.133-.293-.213-.613-.373Z"/></svg>
+        </span>
+        <span class="txt"><span class="t1">WhatsApp</span><span class="t2">চ্যাট করুন</span></span>
+      </a>
+      <a class="pf-contact-btn phone" id="phoneLink" href="#">
+        <span class="circle">
+          <svg viewBox="0 0 24 24" fill="#2A1533" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
+        </span>
+        <span class="txt"><span class="t1">কল করুন</span><span class="t2" id="phoneLinkLbl">—</span></span>
+      </a>
+    </div>
 
     <div class="pf-row" id="pfAddressRow">
       <span class="pf-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#E3BE79" stroke-width="1.8"><path d="M12 22s7-7.58 7-12.5A7 7 0 0 0 5 9.5C5 14.42 12 22 12 22Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
       <span id="pfAddressText"></span>
-    </div>
-
-    <div class="pf-row" id="pfPhoneRow">
-      <span class="pf-ico"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.004 2C6.83 2 2.62 6.2 2.62 11.37c0 1.94.55 3.75 1.5 5.29L2 22l5.5-1.9a9.7 9.7 0 0 0 4.5 1.1c5.17 0 9.38-4.2 9.38-9.37S17.17 2 12 2Zm0 17.06c-1.62 0-3.14-.46-4.42-1.27l-.32-.19-3.28.86.9-3.2-.21-.33a7.94 7.94 0 0 1-1.24-4.24c0-4.4 3.58-7.98 7.98-7.98s7.98 3.58 7.98 7.98-3.58 7.98-7.98 7.98Z"/></svg></span>
-      <a id="pfPhoneText" href="#" target="_blank" rel="noopener"></a>
     </div>
 
     <div class="pf-row" id="pfEmailRow">
@@ -533,6 +549,15 @@
     <p>আপনার অর্ডারটি আমরা পেয়েছি। শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।</p>
     <button class="btn btn-primary" style="margin-top:18px;" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
   </div>
+</div>
+
+<div class="fab-group" id="fabGroup" style="display:none;">
+  <a class="fab-btn whatsapp" id="fabWhatsapp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3C9.377 3 4 8.373 4 15c0 2.31.646 4.47 1.77 6.31L4 29l7.86-1.73A11.94 11.94 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm0 21.7c-1.93 0-3.73-.55-5.26-1.5l-.376-.224-4.664 1.026 1.006-4.542-.246-.39A9.66 9.66 0 0 1 5.29 15c0-5.9 4.81-10.7 10.714-10.7 5.902 0 10.71 4.8 10.71 10.7 0 5.9-4.808 10.7-10.71 10.7Zm5.87-8.01c-.32-.16-1.9-.94-2.194-1.047-.294-.108-.508-.16-.722.16-.213.322-.828 1.048-1.015 1.262-.187.214-.373.24-.694.08-.32-.16-1.352-.498-2.575-1.588-.952-.85-1.595-1.898-1.782-2.22-.187-.32-.02-.494.14-.653.144-.144.32-.373.48-.56.16-.187.213-.32.32-.534.107-.213.053-.4-.027-.56-.08-.16-.722-1.74-.99-2.383-.26-.626-.526-.54-.722-.55l-.615-.01c-.213 0-.56.08-.854.4-.293.32-1.12 1.096-1.12 2.673 0 1.578 1.147 3.102 1.307 3.316.16.214 2.257 3.446 5.468 4.833.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.9-.777 2.167-1.527.267-.75.267-1.393.187-1.527-.08-.133-.293-.213-.613-.373Z"/></svg>
+  </a>
+  <a class="fab-btn phone" id="fabCall" href="#" aria-label="কল করুন">
+    <svg viewBox="0 0 24 24" fill="#F8F1E6" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
+  </a>
 </div>
 
 <div class="lightbox-overlay" id="lightboxOverlay" onclick="if(event.target===this) closeLightbox()">
@@ -715,16 +740,23 @@ function applyShopProfile(company){
   const wa = document.getElementById('whatsappLink');
   const tel = document.getElementById('phoneLink');
   const telLbl = document.getElementById('phoneLinkLbl');
+  const fabGroup = document.getElementById('fabGroup');
+  const fabWa = document.getElementById('fabWhatsapp');
+  const fabTel = document.getElementById('fabCall');
   if(phone){
     const digitsOnly = phone.replace(/\D/g, '');
     const intl = digitsOnly.startsWith('0') ? '88' + digitsOnly : digitsOnly;
     if(wa) wa.href = 'https://wa.me/' + intl;
     if(tel) tel.href = 'tel:' + digitsOnly;
     if(telLbl) telLbl.textContent = phone;
+    if(fabWa) fabWa.href = 'https://wa.me/' + intl;
+    if(fabTel) fabTel.href = 'tel:' + digitsOnly;
+    if(fabGroup) fabGroup.style.display = 'flex';
     shopWhatsAppIntl = intl;
   } else {
     if(wa) wa.style.display = 'none';
     if(tel) tel.style.display = 'none';
+    if(fabGroup) fabGroup.style.display = 'none';
     shopWhatsAppIntl = '';
   }
 
@@ -755,16 +787,6 @@ function applyFooterContactInfo(company, shopName){
   const addrRow = document.getElementById('pfAddressRow');
   if(address){ document.getElementById('pfAddressText').textContent = address; addrRow.style.display = 'flex'; }
   else addrRow.style.display = 'none';
-
-  const phoneRow = document.getElementById('pfPhoneRow');
-  if(phone){
-    const digitsOnly = phone.replace(/\D/g, '');
-    const intl = digitsOnly.startsWith('0') ? '88' + digitsOnly : digitsOnly;
-    const phoneLink = document.getElementById('pfPhoneText');
-    phoneLink.href = 'https://wa.me/' + intl;
-    phoneLink.textContent = phone;
-    phoneRow.style.display = 'flex';
-  } else phoneRow.style.display = 'none';
 
   const emailRow = document.getElementById('pfEmailRow');
   if(email){
