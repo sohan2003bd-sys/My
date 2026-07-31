@@ -2,8 +2,8 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0E5A34">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#62947B">
 <title>অর্ডার করুন — SOHAN SHOP BD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
 <style>
   :root{
     --ink:#16241A; --paper:#FAFBF3; --paper-deep:#EAF3E7;
-    --plum-900:#0E5A34; --plum-800:#12703F; --plum-700:#1C8A4E; --plum-600:#2FA766;
+    --plum-900:#62947B; --plum-800:#65A282; --plum-700:#6BB38C; --plum-600:#78C69C;
     --gold:#F2812B; --gold-light:#FFA857; --gold-deep:#D9691A;
     --rust:#C23B3B;
     --muted:#6E7568; --card:#FFFFFF; --rule:rgba(14,90,52,0.12);
@@ -21,17 +21,31 @@
     --shadow-lift: 0 18px 44px rgba(14,90,52,0.24);
     --radius: 18px;
   }
-  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ margin:0; padding:0; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  html,body{ margin:0; padding:0; overflow-x:hidden; width:100%; }
   body{
     background:var(--paper); color:var(--ink); font-family:'Hind Siliguri','IBM Plex Sans',sans-serif;
     min-height:100vh; -webkit-font-smoothing:antialiased;
   }
+  img{ max-width:100%; }
   h1,h2{ font-family:'Tiro Bangla', serif; font-weight:400; letter-spacing:0; }
   ::selection{ background:var(--gold-light); color:var(--plum-900); }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
   .wrap{ max-width:520px; margin:0 auto; padding:0 0 128px; min-height:100vh; position:relative; }
+
+  /* ---------- Laptop / desktop presentation ---------- */
+  @media (min-width:640px){
+    body{ background:var(--paper-deep); }
+    .wrap{
+      min-height:100vh; margin:0 auto; box-shadow:var(--shadow-lift);
+      border-left:1px solid var(--rule); border-right:1px solid var(--rule);
+    }
+  }
+  @media (min-width:640px) and (min-height:0){
+    .wrap{ margin-top:0; }
+  }
 
   /* ---------- Hero (designed business illustration) ---------- */
   .hero{
@@ -49,16 +63,16 @@
     padding:22px 18px 20px; max-width:72%;
   }
   .seal{
-    width:40px; height:40px; margin:0 0 10px; border-radius:50%; position:relative;
+    width:50px; height:50px; margin:0 0 10px; border-radius:50%; position:relative;
     display:flex; align-items:center; justify-content:center;
     background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
     box-shadow:0 6px 16px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.5);
   }
   .seal::before{ content:""; position:absolute; inset:-5px; border-radius:50%; border:1.5px dashed rgba(255,168,87,0.6); }
-  .seal span{ font-size:17px; color:var(--plum-900); }
+  .seal span{ font-size:21px; color:var(--plum-900); }
   .hero-top-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .hero h1{ font-size:21px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
-  .hero .tagline{ font-size:11.5px; margin:8px 0 0; color:#E9F7EC; letter-spacing:.01em; line-height:1.5; text-shadow:0 1px 8px rgba(0,0,0,0.5); }
+  .hero h1{ font-size:26px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  .hero .tagline{ font-size:17px; margin:8px 0 0; color:#E9F7EC; letter-spacing:.01em; line-height:1.5; text-shadow:0 1px 8px rgba(0,0,0,0.5); }
   .hero-datetime{
     position:absolute; top:14px; right:14px; z-index:3; text-align:right; max-width:44%;
     background:rgba(8,36,20,0.62); border:1px solid rgba(255,168,87,0.35);
@@ -67,13 +81,13 @@
 
   /* ---------- Marquee ---------- */
   .marquee-bar{
-    background:var(--plum-900); overflow:hidden; white-space:nowrap; padding:7px 0;
+    background:var(--gold); overflow:hidden; white-space:nowrap; padding:7px 0;
     border-bottom:1px solid rgba(255,168,87,0.25);
     position:sticky; top:0; z-index:40;
   }
   .marquee-track{ display:inline-flex; animation:marquee-scroll 22s linear infinite; }
   .marquee-track span{
-    display:inline-block; padding:0 28px; font-size:12px; font-weight:600; color:var(--gold-light);
+    display:inline-block; padding:0 28px; font-size:12px; font-weight:600; color:#FFFFFF;
     letter-spacing:.01em; font-family:'Hind Siliguri',sans-serif;
   }
   @keyframes marquee-scroll{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
@@ -193,7 +207,7 @@
     color:var(--plum-900); border-radius:10px; padding:9px; font-size:12.5px; font-weight:700;
     display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, #FFA857, #F2812B); color:var(--plum-900); }
+  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, #1C8A4E, #0E5A34); color:#fff; }
   .pcard .add-btn .plus{
     display:inline-flex; align-items:center; justify-content:center;
     width:17px; height:17px; border-radius:50%; background:rgba(18,112,63,0.18); font-size:13px; line-height:1;
@@ -478,6 +492,13 @@
     </form>
   </main>
 
+  <div id="successScreen">
+    <div class="seal big"><span>✓</span></div>
+    <h2>অর্ডার সম্পন্ন হয়েছে!</h2>
+    <p>আপনার অর্ডারটি আমরা পেয়েছি। শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।</p>
+    <button class="btn btn-primary" style="margin-top:18px;" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
+  </div>
+
   <!-- ---------- Footer: Contact Info (pulled live from the shop's Settings > Footer Contact Info) ---------- -->
   <footer class="page-footer" id="pageFooter" style="display:none;">
     <h3 class="pf-title">সরাসরি যোগাযোগ করুন</h3>
@@ -515,13 +536,6 @@
     <hr class="pf-rule">
     <div class="pf-bottom" id="pfBottom"></div>
   </footer>
-
-  <div id="successScreen">
-    <div class="seal big"><span>✓</span></div>
-    <h2>অর্ডার সম্পন্ন হয়েছে!</h2>
-    <p>আপনার অর্ডারটি আমরা পেয়েছি। শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।</p>
-    <button class="btn btn-primary" style="margin-top:18px;" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
-  </div>
 </div>
 
 
