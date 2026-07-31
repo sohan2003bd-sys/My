@@ -4303,10 +4303,32 @@ function notifyNewOrder(order){
   const title = '🛎️ নতুন অর্ডার এসেছে!';
   const body = `${order.customerName || 'কাস্টমার'} — ${fmtMoney(order.total || 0)}`;
   if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
-    try{
-      const n = new Notification(title, { body, tag: 'order-' + order.id });
-      n.onclick = () => { window.focus(); goPage('orders'); n.close(); };
-    }catch(err){ /* ignore — some browsers block Notification() outside a service worker */ }
+    // Service worker দিয়ে দেখালে বড় আইকন, স্ট্যাটাস-বার badge ও vibration সবই পাওয়া যায়,
+    // এবং শুধু 'new Notification()'-এর চেয়ে ব্যাকগ্রাউন্ড ট্যাবে বেশি রিলায়েবল।
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(title, {
+          body,
+          icon: './icon-192.png',
+          badge: './icon-192.png',
+          tag: 'order-' + order.id,
+          vibrate: [200, 100, 200],
+          data: { orderId: order.id },
+          renotify: true
+        }).catch(()=>{
+          try{ const n = new Notification(title, { body, tag: 'order-' + order.id }); n.onclick = () => { window.focus(); goPage('orders'); n.close(); }; }catch(e){}
+        });
+      });
+    } else {
+      try{
+        const n = new Notification(title, { body, tag: 'order-' + order.id });
+        n.onclick = () => { window.focus(); goPage('orders'); n.close(); };
+      }catch(err){ /* ignore */ }
+    }
+  }
+  // অ্যাপ আইকনের উপর নাম্বার ব্যাজ (হোমস্ক্রিন) — Chrome/Android সাপোর্ট করলে
+  if('setAppBadge' in navigator){
+    try{ navigator.setAppBadge(state.orders.filter(o => (o.status||'pending')==='pending').length); }catch(e){}
   }
   showToast(title + ' — ' + body);
 }
@@ -4339,12 +4361,20 @@ function updateNotifyStatus(){
 function updateOrdersBadge(){
   const count = state.orders.filter(o => (o.status || 'pending') === 'pending').length;
   const badge = document.getElementById('ordersBadge');
-  if(!badge) return;
-  if(count > 0){
-    badge.textContent = count > 99 ? '99+' : String(count);
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
+  if(badge){
+    if(count > 0){
+      badge.textContent = count > 99 ? '99+' : String(count);
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  // হোমস্ক্রিন অ্যাপ আইকনের উপর নাম্বার ব্যাজ — count 0 হলে মুছে দেয়
+  if('setAppBadge' in navigator){
+    try{
+      if(count > 0) navigator.setAppBadge(count);
+      else if('clearAppBadge' in navigator) navigator.clearAppBadge();
+    }catch(e){}
   }
 }
 
