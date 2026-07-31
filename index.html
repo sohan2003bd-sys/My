@@ -463,20 +463,21 @@
   .sheet-close{ position:absolute; right:16px; top:18px; background:none; border:none; font-size:20px; color:var(--muted); }
 
   /* ---------- Login (modern glass design) ---------- */
-  #onboardingScreen, #lockScreen{
+  #onboardingScreen, #lockScreen, #verifyEmailScreen{
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     position:relative; overflow:hidden;
     background: linear-gradient(160deg, #EAFBEA 0%, #FFF4E4 55%, #FFE6C4 100%);
   }
   #onboardingScreen::before, #onboardingScreen::after,
-  #lockScreen::before, #lockScreen::after{
+  #lockScreen::before, #lockScreen::after,
+  #verifyEmailScreen::before, #verifyEmailScreen::after{
     content:""; position:absolute; border-radius:50%; filter:blur(64px); z-index:0; opacity:.6; pointer-events:none;
   }
-  #onboardingScreen::before, #lockScreen::before{
+  #onboardingScreen::before, #lockScreen::before, #verifyEmailScreen::before{
     width:300px; height:300px; top:-100px; left:-90px;
     background:radial-gradient(circle, var(--blend-a), transparent 70%);
   }
-  #onboardingScreen::after, #lockScreen::after{
+  #onboardingScreen::after, #lockScreen::after, #verifyEmailScreen::after{
     width:280px; height:280px; bottom:-90px; right:-70px;
     background:radial-gradient(circle, var(--blend-c), transparent 70%);
   }
@@ -522,6 +523,33 @@
   }
   #lockScreen .keypad button:active{ background:var(--blend-b); }
   #lockScreen .lock-dots .d.filled{ background:var(--blend-knob); border-color:transparent; }
+
+  /* ---------- Verify screen (OTP) — modern look ---------- */
+  #verifyEmailScreen .field input, #verifyEmailScreen .field select{
+    background:rgba(255,255,255,0.75); border:1.5px solid rgba(60,120,70,0.16); border-radius:13px;
+  }
+  #verifyEmailScreen .field input:focus{
+    border-color:#45B074; background:#fff; box-shadow:0 0 0 4px rgba(69,176,116,0.16);
+  }
+  #verifyEmailScreen .btn-primary{
+    background:var(--blend-knob); box-shadow:0 10px 24px rgba(50,110,60,0.34); letter-spacing:.01em;
+  }
+  #verifyEmailScreen .btn-primary:active{ transform:scale(0.97); filter:brightness(0.96); }
+  #verifyEmailScreen .btn-ghost{
+    background:rgba(255,255,255,0.55); border:1.5px solid rgba(60,120,70,0.14); color:var(--green-900); font-weight:600;
+  }
+  #verifyEmailScreen .btn-ghost:active{ background:rgba(255,255,255,0.8); }
+  #otpCodeInput{
+    width:100%; padding:16px 10px; font-family:'IBM Plex Mono', monospace;
+    font-size:26px !important; font-weight:600; letter-spacing:12px !important; text-align:center;
+    color:var(--green-900); background:rgba(255,255,255,0.8);
+    border:1.5px solid rgba(60,120,70,0.18); border-radius:14px;
+  }
+  #otpCodeInput::placeholder{ letter-spacing:12px; color:rgba(107,114,104,0.4); }
+  #otpCodeInput:focus{
+    outline:none; border-color:#45B074; background:#fff;
+    box-shadow:0 0 0 5px rgba(69,176,116,0.16);
+  }
 
   .pin-row{ display:flex; gap:10px; justify-content:center; margin:6px 0 4px; }
   .pin-row input{
@@ -869,15 +897,17 @@
     <div class="login-mark">✉️</div>
     <h1 class="display">কোড দিয়ে ভেরিফাই করুন</h1>
     <div class="tag">আমরা <b id="verifyEmailAddress">আপনার ইমেইলে</b> একটা ৬-ডিজিটের কোড পাঠিয়েছি। কোডটা নিচে দিন।</div>
-    <div class="field">
+    <div class="field" style="margin-bottom:6px;">
       <label>৬-ডিজিট কোড</label>
-      <input type="text" id="otpCodeInput" inputmode="numeric" maxlength="6" pattern="[0-9]*" placeholder="••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+      <input type="text" id="otpCodeInput" inputmode="numeric" maxlength="6" pattern="[0-9]*" placeholder="••••••" autocomplete="one-time-code">
     </div>
-    <div class="login-error" id="verifyEmailError" style="display:none;"></div>
-    <button type="button" class="btn btn-primary" id="verifyContinueBtn" onclick="verifyOtpCode()">✅ ভেরিফাই করুন</button>
-    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="resendVerificationEmail(event)">কোড আবার পাঠান</button>
-    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="logoutShop()">অন্য একাউন্টে যান / লগ আউট</button>
+    <div class="login-error" id="verifyEmailError" style="display:none; margin-top:10px;"></div>
+    <button type="button" class="btn btn-primary" style="width:100%; margin-top:14px;" id="verifyContinueBtn" onclick="verifyOtpCode()">✅ ভেরিফাই করুন</button>
+    <button type="button" class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="resendVerificationEmail(event)">কোড আবার পাঠান</button>
     <div class="login-hint">ইমেইল না পেলে Spam/Junk ফোল্ডার চেক করুন। কোডের মেয়াদ ১০ মিনিট।</div>
+    <div style="margin-top:16px;">
+      <a href="javascript:void(0)" onclick="logoutShop()" style="font-size:12px; color:var(--muted); text-decoration:underline;">অন্য একাউন্টে যান / লগ আউট</a>
+    </div>
   </div>
 </div>
 
@@ -3017,10 +3047,23 @@ function showVerifyEmailScreen(email){
   document.getElementById('verifyEmailScreen').style.display = 'flex';
   document.getElementById('verifyEmailAddress').textContent = email || 'আপনার ইমেইলে';
   const otpInput = document.getElementById('otpCodeInput');
-  if(otpInput) otpInput.value = '';
+  if(otpInput){
+    otpInput.value = '';
+    setTimeout(()=> otpInput.focus(), 300);
+  }
   const errBox = document.getElementById('verifyEmailError');
   if(errBox) errBox.style.display = 'none';
 }
+
+// ৬ সংখ্যা ছাড়া আর কিছু লেখা যাবে না, আর ৬ ডিজিট হয়ে গেলেই অটোমেটিক ভেরিফাই ট্রাই করবে
+document.addEventListener('DOMContentLoaded', ()=>{
+  const otpInput = document.getElementById('otpCodeInput');
+  if(!otpInput) return;
+  otpInput.addEventListener('input', ()=>{
+    otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+    if(otpInput.value.length === 6) verifyOtpCode();
+  });
+});
 
 function generateOtp(){
   return String(Math.floor(100000 + Math.random() * 900000));
