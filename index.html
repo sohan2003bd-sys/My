@@ -81,6 +81,42 @@
     background: #fff;
     border: 3px solid #000;
   }
+
+  /* Home (dashboard) page only: top bar + bottom nav become a single light-green color instead of the green→orange gradient used elsewhere */
+  body.home-active .topbar{
+    background: #BFEACB;
+  }
+  body.home-active .bottomnav-bg{
+    background: #BFEACB;
+  }
+  /* Sales page: light orange */
+  body.sales-active .topbar{
+    background: #FBD9A8;
+  }
+  body.sales-active .bottomnav-bg{
+    background: #FBD9A8;
+  }
+  /* Purchase page: light red */
+  body.purchase-active .topbar{
+    background: #F5B8AE;
+  }
+  body.purchase-active .bottomnav-bg{
+    background: #F5B8AE;
+  }
+  /* Orders page: light blue */
+  body.orders-active .topbar{
+    background: #B7D9F2;
+  }
+  body.orders-active .bottomnav-bg{
+    background: #B7D9F2;
+  }
+  /* Settings page: light gray */
+  body.settings-active .topbar{
+    background: #DADDD8;
+  }
+  body.settings-active .bottomnav-bg{
+    background: #DADDD8;
+  }
   
   /* Color options slide-in animation */
   @keyframes slideInFromLeft {
@@ -467,6 +503,9 @@
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     position:relative; overflow:hidden;
     background: linear-gradient(160deg, #EAFBEA 0%, #FFF4E4 55%, #FFE6C4 100%);
+  }
+  #verifyEmailScreen{
+    background: #DFF5E3;
   }
   #onboardingScreen::before, #onboardingScreen::after,
   #lockScreen::before, #lockScreen::after,
@@ -883,6 +922,7 @@
     <div class="login-mark" id="lockMark">₿</div>
     <h1 class="display" id="lockCoName">Your Business</h1>
     <div class="tag">Enter your PIN to continue</div>
+    <button type="button" class="btn btn-ghost" id="bioRetryBtn" style="display:none; width:100%; margin-bottom:14px;" onclick="tryBiometricUnlock(false)">🔓 Unlock with Face/Fingerprint</button>
     <div class="lock-dots" id="lockDots">
       <span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span>
     </div>
@@ -1252,6 +1292,11 @@
           </div>
           <button class="btn btn-primary" onclick="savePinChange()">Save PIN</button>
         </div>
+        <div class="toggle-row" id="bioToggleRow" style="display:none; margin-top:10px;">
+          <span class="k">Unlock with Face/Fingerprint (this device)</span>
+          <label class="switch"><input type="checkbox" id="settingsBioToggle" onchange="onBioToggleChanged()"><span class="slider"></span></label>
+        </div>
+        <div class="helper-text" id="bioHelperText" style="display:none;">Uses your phone's built-in Face ID / fingerprint / screen-lock. PIN still works as a backup on this device or any other device.</div>
         <button class="btn btn-ghost" style="margin-top:10px;" onclick="lockNow()">Lock App Now</button>
       </div>
 
@@ -2908,7 +2953,7 @@ const state = {
     videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
     dragMode: false // Light mode with colorful theme
   },
-  security: { pinEnabled: false, pin: "" },
+  security: { pinEnabled: false, pin: "", bioEnabled: false },
   sales: [],
   purchases: [],
   expenses: [],
@@ -3269,6 +3314,7 @@ function bootApp(){
 function enterApp(){
   document.getElementById('onboardingScreen').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   renderAll();
   listenOrders();
@@ -3299,6 +3345,7 @@ let lockBuffer = '';
 function showLockScreen(){
   document.getElementById('app').style.display = 'none';
   document.getElementById('onboardingScreen').style.display = 'none';
+  document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'flex';
   document.getElementById('lockCoName').textContent = state.company.name;
   applyBrandMark();
@@ -3306,6 +3353,10 @@ function showLockScreen(){
   lockBuffer = '';
   updateLockDots();
   buildKeypad();
+  const canBio = state.security.bioEnabled && hasBioCredential() && bioSupported();
+  const bioBtn = document.getElementById('bioRetryBtn');
+  if(bioBtn) bioBtn.style.display = canBio ? 'block' : 'none';
+  if(canBio) setTimeout(()=> tryBiometricUnlock(true), 300);
 }
 function buildKeypad(){
   const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
@@ -3364,6 +3415,7 @@ function goPage(page){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  applyPageBarColor(page);
   updateNavNotch();
   const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings'};
   document.getElementById('topPageLabel').textContent = labels[page];
@@ -3374,6 +3426,14 @@ function goPage(page){
   if(page === 'expense') renderList('expense');
   if(page === 'orders') renderOrders();
   if(page === 'settings') renderSettings();
+}
+
+function applyPageBarColor(page){
+  document.body.classList.toggle('home-active', page === 'dashboard');
+  document.body.classList.toggle('sales-active', page === 'sales');
+  document.body.classList.toggle('purchase-active', page === 'purchase');
+  document.body.classList.toggle('orders-active', page === 'orders');
+  document.body.classList.toggle('settings-active', page === 'settings');
 }
 
 document.getElementById('orderTabs').addEventListener('click', (e)=>{
@@ -4035,6 +4095,7 @@ function renderSettings(){
   document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
+  updateBioSettingsUI();
   updateDragModeToggleUI();
   renderChips('chipsSalesCat', state.settings.salesCategories, 'sales');
   renderChips('chipsPurchaseCat', state.settings.purchaseCategories, 'purchase');
@@ -4121,10 +4182,12 @@ function onPinToggleChanged(){
     else { state.security.pinEnabled = true; saveState(); showToast('App Lock enabled'); }
   } else {
     state.security.pinEnabled = false;
+    state.security.bioEnabled = false;
     saveState();
     document.getElementById('pinChangeFields').style.display = 'none';
     showToast('App Lock disabled');
   }
+  updateBioSettingsUI();
 }
 function savePinChange(){
   const p1 = document.getElementById('newPin1').value;
@@ -4139,6 +4202,122 @@ function savePinChange(){
   document.getElementById('newPin1').value = '';
   document.getElementById('newPin2').value = '';
   showToast('PIN saved');
+  updateBioSettingsUI();
+  // Bank-app style: right after the PIN is set, offer the faster biometric option too.
+  if(bioSupported() && !state.security.bioEnabled){
+    setTimeout(()=>{
+      if(window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable){
+        PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(avail=>{
+          if(avail && confirm('Also unlock with Face/Fingerprint on this device for faster access?')){
+            enableBiometric();
+            updateBioSettingsUI();
+          }
+        });
+      }
+    }, 400);
+  }
+}
+
+/* ---------------- FACE / FINGERPRINT UNLOCK (WebAuthn platform authenticator) ----------------
+   The credential is registered on THIS device only (browsers never let a passkey
+   travel between devices via this API), so it's kept in localStorage rather than
+   synced to the cloud. state.security.bioEnabled is just the user's on/off
+   preference — if it syncs to a new device with no local credential, the app
+   simply skips the biometric prompt and falls back to the PIN keypad. */
+function bioSupported(){
+  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && navigator.credentials.get);
+}
+function getBioCredKey(){ return 'bioCred_' + (currentUid || 'local'); }
+function hasBioCredential(){ return !!localStorage.getItem(getBioCredKey()); }
+function abToB64(buf){
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function b64ToU8(b64){
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+function updateBioSettingsUI(){
+  const row = document.getElementById('bioToggleRow');
+  const helper = document.getElementById('bioHelperText');
+  if(!row) return;
+  if(!state.security.pinEnabled || !bioSupported()){
+    row.style.display = 'none';
+    if(helper) helper.style.display = 'none';
+    return;
+  }
+  const check = window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable
+    ? PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+    : Promise.resolve(false);
+  check.then(avail=>{
+    row.style.display = avail ? 'flex' : 'none';
+    if(helper) helper.style.display = avail ? 'block' : 'none';
+    const toggle = document.getElementById('settingsBioToggle');
+    if(toggle) toggle.checked = !!(state.security.bioEnabled && hasBioCredential());
+  }).catch(()=>{ row.style.display = 'none'; if(helper) helper.style.display = 'none'; });
+}
+function onBioToggleChanged(){
+  const on = document.getElementById('settingsBioToggle').checked;
+  if(on) enableBiometric(); else disableBiometric();
+}
+function enableBiometric(){
+  if(!state.security.pin){
+    document.getElementById('settingsBioToggle').checked = false;
+    showToast('Set a PIN first, then turn this on');
+    return;
+  }
+  if(!bioSupported()){
+    document.getElementById('settingsBioToggle').checked = false;
+    showToast('Face/Fingerprint unlock is not supported on this device');
+    return;
+  }
+  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  const userId = crypto.getRandomValues(new Uint8Array(16));
+  const accountLabel = (fbAuth && fbAuth.currentUser && fbAuth.currentUser.email) || state.company.name || 'shop-owner';
+  navigator.credentials.create({
+    publicKey: {
+      challenge,
+      rp: { name: state.company.name || 'MY SHOP' },
+      user: { id: userId, name: accountLabel, displayName: state.company.name || accountLabel },
+      pubKeyCredParams: [{ type:'public-key', alg:-7 }, { type:'public-key', alg:-257 }],
+      authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+      timeout: 60000
+    }
+  }).then(cred=>{
+    localStorage.setItem(getBioCredKey(), abToB64(cred.rawId));
+    state.security.bioEnabled = true;
+    saveState();
+    showToast('Face/Fingerprint unlock enabled');
+  }).catch(()=>{
+    document.getElementById('settingsBioToggle').checked = false;
+    showToast('Could not set up biometric unlock — try again');
+  });
+}
+function disableBiometric(){
+  localStorage.removeItem(getBioCredKey());
+  state.security.bioEnabled = false;
+  saveState();
+  showToast('Face/Fingerprint unlock turned off');
+}
+// silent=true (auto-prompt on lock screen open): stays quiet on failure/cancel so the keypad is the fallback.
+// silent=false (user tapped the retry button): shows a toast if it fails.
+function tryBiometricUnlock(silent){
+  const credIdB64 = localStorage.getItem(getBioCredKey());
+  if(!state.security.bioEnabled || !credIdB64 || !bioSupported()) return;
+  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  navigator.credentials.get({
+    publicKey: {
+      challenge,
+      allowCredentials: [{ type:'public-key', id: b64ToU8(credIdB64) }],
+      userVerification: 'required',
+      timeout: 60000
+    }
+  }).then(()=>{ enterApp(); })
+  .catch(()=>{ if(!silent) showToast('Biometric unlock failed — use your PIN'); });
 }
 
 /* ---------------- DATA BACKUP (export / import) ---------------- */
@@ -4702,6 +4881,7 @@ function renderAll(){
   initThemeMode();
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
+  applyPageBarColor(state.currentPage);
   renderDashboard();
   renderSettings();
   setTimeout(updateNavNotch, 0);
