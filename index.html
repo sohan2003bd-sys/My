@@ -3026,7 +3026,7 @@ function initFirebaseCore(){
       checkOwnVerificationStatus(currentUid).then(verified => {
         if(verified){
           loadShopData(currentUid).then(()=>{
-            if(state.security.pinEnabled) showLockScreen(); else enterApp();
+            enterOrLock();
           });
         } else {
           showVerifyEmailScreen(user.email);
@@ -3148,7 +3148,7 @@ function verifyOtpCode(){
     const rec = snap.val();
     if(!rec){
       // অন্য কোথাও থেকে আগেই ভেরিফাই হয়ে গেছে
-      loadShopData(currentUid).then(()=>{ if(state.security.pinEnabled) showLockScreen(); else enterApp(); });
+      loadShopData(currentUid).then(()=>{ enterOrLock(); });
       return;
     }
     if(Date.now() > rec.expiresAt){
@@ -3163,7 +3163,7 @@ function verifyOtpCode(){
     }
     fbDb.ref('shops/' + currentUid + '/emailVerification').remove().then(()=>{
       loadShopData(currentUid).then(()=>{
-        if(state.security.pinEnabled) showLockScreen(); else enterApp();
+        enterOrLock();
       });
     });
   }).catch(()=>{
@@ -3287,6 +3287,7 @@ function firebaseErrorBn(err){
 
 function logoutShop(){
   if(!confirm('লগ আউট করতে চান? এই ডিভাইসে থাকা ক্যাশও মুছে যাবে।')) return;
+  try{ sessionStorage.removeItem(tabUnlockKey()); }catch(e){}
   fbAuth.signOut().then(()=>{
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
@@ -3316,9 +3317,51 @@ function enterApp(){
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  markTabUnlocked();
   renderAll();
   listenOrders();
 }
+// A plain browser refresh reloads all the JS from scratch — there's no way to tell
+// that apart from a brand-new app open unless we leave a marker somewhere that
+// survives the reload but not a real close. sessionStorage is exactly that: it's
+// cleared when the tab/app is actually closed, but a refresh in the *same* tab
+// keeps it. So: refreshing right after unlocking skips the lock screen again;
+// actually closing and reopening the app still asks for PIN/biometric as normal.
+function tabUnlockKey(){ return 'shopUnlocked_' + (currentUid || 'local'); }
+function markTabUnlocked(){
+  try{ sessionStorage.setItem(tabUnlockKey(), '1'); }catch(e){}
+}
+function isTabAlreadyUnlocked(){
+  try{ return sessionStorage.getItem(tabUnlockKey()) === '1'; }catch(e){ return false; }
+}
+function enterOrLock(){
+  if(!state.security.pinEnabled || isTabAlreadyUnlocked()){
+    enterApp();
+  } else {
+    showLockScreen();
+  }
+}
+// Bank-app style re-lock: if the app was backgrounded (tab switched, phone
+// locked, another app opened) for 40+ seconds, ask for PIN/biometric again
+// when it comes back — even though the same-tab session hasn't fully reloaded.
+const BACKGROUND_RELOCK_MS = 40000;
+let hiddenAtTs = null;
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){
+    hiddenAtTs = Date.now();
+  } else {
+    const wasHiddenLongEnough = hiddenAtTs && (Date.now() - hiddenAtTs) >= BACKGROUND_RELOCK_MS;
+    hiddenAtTs = null;
+    if(!wasHiddenLongEnough) return;
+    if(!state.security.pinEnabled) return;
+    const appEl = document.getElementById('app');
+    const appVisible = appEl && appEl.style.display !== 'none';
+    if(appVisible){
+      try{ sessionStorage.removeItem(tabUnlockKey()); }catch(e){}
+      showLockScreen();
+    }
+  }
+});
 
 /* ---------------- ONBOARDING HELPERS ---------------- */
 function toggleObPinFields(){
@@ -3390,6 +3433,7 @@ function updateLockDots(){
 }
 function lockNow(){
   if(state.security.pinEnabled){
+    try{ sessionStorage.removeItem(tabUnlockKey()); }catch(e){}
     showLockScreen();
   } else {
     showToast('Enable App Lock first to use this');
