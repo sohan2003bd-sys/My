@@ -863,6 +863,24 @@
   </div>
 </div>
 
+<!-- ===================== EMAIL VERIFY SCREEN (OTP) ===================== -->
+<div id="verifyEmailScreen" style="display:none;">
+  <div class="login-card" style="text-align:center;">
+    <div class="login-mark">✉️</div>
+    <h1 class="display">কোড দিয়ে ভেরিফাই করুন</h1>
+    <div class="tag">আমরা <b id="verifyEmailAddress">আপনার ইমেইলে</b> একটা ৬-ডিজিটের কোড পাঠিয়েছি। কোডটা নিচে দিন।</div>
+    <div class="field">
+      <label>৬-ডিজিট কোড</label>
+      <input type="text" id="otpCodeInput" inputmode="numeric" maxlength="6" pattern="[0-9]*" placeholder="••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+    </div>
+    <div class="login-error" id="verifyEmailError" style="display:none;"></div>
+    <button type="button" class="btn btn-primary" id="verifyContinueBtn" onclick="verifyOtpCode()">✅ ভেরিফাই করুন</button>
+    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="resendVerificationEmail(event)">কোড আবার পাঠান</button>
+    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="logoutShop()">অন্য একাউন্টে যান / লগ আউট</button>
+    <div class="login-hint">ইমেইল না পেলে Spam/Junk ফোল্ডার চেক করুন। কোডের মেয়াদ ১০ মিনিট।</div>
+  </div>
+</div>
+
 <!-- ===================== APP SHELL ===================== -->
 <div id="app">
   <div class="topbar">
@@ -2843,6 +2861,12 @@ const FIREBASE_CONFIG = {
   appId: "1:375490913858:web:3596b25f007cc10be1efdb"
 };
 
+// ---- Email OTP (Google Apps Script দিয়ে ফ্রি ইমেইল পাঠানো) ----
+// Apps Script deploy করার পর নিচের দুইটা মান বসান — নাহলে কোড জেনারেট হবে
+// কিন্তু ইমেইল পাঠানো হবে না।
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2rHzCxlFhe3TCX941AXFU9qFx_GuNFzbPfF0dhidr6uj6EEVmsD7X-IChLr9lAuHa/exec";
+const APPS_SCRIPT_SECRET = "myshopreminder2447714563";
+
 const state = {
   company: { name: "My Business", currency: "৳" },
   settings: {
@@ -2914,6 +2938,7 @@ let fbApp = null, fbAuth = null, fbDb = null, currentUid = null;
 let cloudSyncTimer = null;
 
 let isSigningUp = false;
+let otpAutoSent = false;
 function initFirebaseCore(){
   if(fbApp) return;
   fbApp = firebase.initializeApp(FIREBASE_CONFIG);
@@ -2923,11 +2948,22 @@ function initFirebaseCore(){
     if(isSigningUp) return; // handleSignup() drives entry itself after the initial cloud write
     if(user){
       currentUid = user.uid;
-      loadShopData(currentUid).then(()=>{
-        if(state.security.pinEnabled) showLockScreen(); else enterApp();
+      checkOwnVerificationStatus(currentUid).then(verified => {
+        if(verified){
+          loadShopData(currentUid).then(()=>{
+            if(state.security.pinEnabled) showLockScreen(); else enterApp();
+          });
+        } else {
+          showVerifyEmailScreen(user.email);
+          if(!otpAutoSent){
+            otpAutoSent = true;
+            sendVerificationCode(currentUid, user.email);
+          }
+        }
       });
     } else {
       currentUid = null;
+      otpAutoSent = false;
       showAuthScreen();
     }
   });
@@ -2968,9 +3004,101 @@ function syncShopToCloud(){
 function showAuthScreen(){
   document.getElementById('app').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('onboardingScreen').style.display = 'flex';
   const hasLocalData = !!localStorage.getItem(STORAGE_KEY);
   document.getElementById('migrateNotice').style.display = hasLocalData ? 'block' : 'none';
+}
+
+function showVerifyEmailScreen(email){
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('onboardingScreen').style.display = 'none';
+  document.getElementById('verifyEmailScreen').style.display = 'flex';
+  document.getElementById('verifyEmailAddress').textContent = email || 'আপনার ইমেইলে';
+  const otpInput = document.getElementById('otpCodeInput');
+  if(otpInput) otpInput.value = '';
+  const errBox = document.getElementById('verifyEmailError');
+  if(errBox) errBox.style.display = 'none';
+}
+
+function generateOtp(){
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+// uid-এর emailVerification নোড ডাটাবেজে না থাকলে ধরে নেওয়া হয় ভেরিফাই করা আছে
+// (পুরনো একাউন্ট যারা এই ফিচার আসার আগেই সাইনআপ করেছিল, তারা আটকে যাবে না)
+function checkOwnVerificationStatus(uid){
+  return fbDb.ref('shops/' + uid + '/emailVerification').once('value').then(snap => !snap.exists());
+}
+
+function sendVerificationCode(uid, email){
+  const code = generateOtp();
+  const expiresAt = Date.now() + 10 * 60 * 1000;
+  return fbDb.ref('shops/' + uid + '/emailVerification').set({ code, email, expiresAt })
+    .then(()=>{
+      const url = APPS_SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code) + '&secret=' + encodeURIComponent(APPS_SCRIPT_SECRET);
+      // no-cors: রেসপন্স পড়া যাবে না, কিন্তু রিকোয়েস্টটা ঠিকই পাঠানো হবে
+      return fetch(url, { method: 'GET', mode: 'no-cors' }).catch(()=>{});
+    });
+}
+
+function verifyOtpCode(){
+  const btn = document.getElementById('verifyContinueBtn');
+  const errBox = document.getElementById('verifyEmailError');
+  const input = document.getElementById('otpCodeInput');
+  const entered = (input.value || '').trim();
+  errBox.style.display = 'none';
+  if(!/^\d{6}$/.test(entered)){
+    errBox.textContent = '৬ ডিজিটের সঠিক কোড দিন।';
+    errBox.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'চেক করা হচ্ছে…';
+  fbDb.ref('shops/' + currentUid + '/emailVerification').once('value').then(snap => {
+    btn.disabled = false; btn.textContent = '✅ ভেরিফাই করুন';
+    const rec = snap.val();
+    if(!rec){
+      // অন্য কোথাও থেকে আগেই ভেরিফাই হয়ে গেছে
+      loadShopData(currentUid).then(()=>{ if(state.security.pinEnabled) showLockScreen(); else enterApp(); });
+      return;
+    }
+    if(Date.now() > rec.expiresAt){
+      errBox.textContent = 'কোডের মেয়াদ শেষ হয়ে গেছে — "কোড আবার পাঠান" চাপুন।';
+      errBox.style.display = 'block';
+      return;
+    }
+    if(rec.code !== entered){
+      errBox.textContent = 'কোডটা মেলেনি — আবার চেষ্টা করুন।';
+      errBox.style.display = 'block';
+      return;
+    }
+    fbDb.ref('shops/' + currentUid + '/emailVerification').remove().then(()=>{
+      loadShopData(currentUid).then(()=>{
+        if(state.security.pinEnabled) showLockScreen(); else enterApp();
+      });
+    });
+  }).catch(()=>{
+    btn.disabled = false; btn.textContent = '✅ ভেরিফাই করুন';
+    errBox.textContent = 'সমস্যা হয়েছে — ইন্টারনেট কানেকশন চেক করুন।';
+    errBox.style.display = 'block';
+  });
+}
+
+function resendVerificationEmail(evt){
+  if(!currentUid) return;
+  const errBox = document.getElementById('verifyEmailError');
+  const email = document.getElementById('verifyEmailAddress').textContent;
+  const btn = evt ? evt.target : null;
+  if(btn){ btn.disabled = true; btn.textContent = 'পাঠানো হচ্ছে…'; }
+  sendVerificationCode(currentUid, email).then(()=>{
+    if(btn){ btn.disabled = false; btn.textContent = 'কোড আবার পাঠান'; }
+    showToast('নতুন কোড পাঠানো হয়েছে');
+  }).catch(()=>{
+    if(btn){ btn.disabled = false; btn.textContent = 'কোড আবার পাঠান'; }
+    errBox.textContent = 'কোড পাঠানো যায়নি — আবার চেষ্টা করুন।';
+    errBox.style.display = 'block';
+  });
 }
 
 function handleSignup(e){
@@ -3006,8 +3134,10 @@ function handleSignup(e){
 
   isSigningUp = true;
   initFirebaseCore();
+  let signedUpUser = null;
   fbAuth.createUserWithEmailAndPassword(email, password)
     .then(cred => {
+      signedUpUser = cred.user;
       currentUid = cred.user.uid;
       // brand-new shop: push current (possibly migrated) local state up as the initial cloud copy
       return shopRef().set({
@@ -3020,11 +3150,13 @@ function handleSignup(e){
         idCounter
       });
     })
+    .then(()=> sendVerificationCode(signedUpUser.uid, signedUpUser.email))
     .then(()=>{
       if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
       saveState(); // refresh local cache for this account
       isSigningUp = false;
-      if(state.security.pinEnabled) showLockScreen(); else enterApp();
+      otpAutoSent = true; // এইমাত্র পাঠানো হলো, onAuthStateChanged আবার পাঠাবে না
+      showVerifyEmailScreen(signedUpUser.email);
     })
     .catch(err => {
       isSigningUp = false;
