@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0E5A34">
+<meta name="theme-color" content="#0E2A5A">
 <title>অর্ডার করুন — SOHAN SHOP BD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,13 +12,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#16241A; --paper:#FAFBF3; --paper-deep:#EAF3E7;
-    --plum-900:#0E5A34; --plum-800:#12703F; --plum-700:#1C8A4E; --plum-600:#2FA766;
+    --ink:#16241A; --paper:#FAFBF3; --paper-deep:#E7ECF5;
+    --plum-900:#0E2A5A; --plum-800:#15357A; --plum-700:#1D4A9E; --plum-600:#3566C2;
     --gold:#F2812B; --gold-light:#FFA857; --gold-deep:#D9691A;
     --rust:#C23B3B;
-    --muted:#6E7568; --card:#FFFFFF; --rule:rgba(14,90,52,0.12);
-    --shadow: 0 10px 30px rgba(14,90,52,0.16);
-    --shadow-lift: 0 18px 44px rgba(14,90,52,0.24);
+    --muted:#6E7568; --card:#FFFFFF; --rule:rgba(14,42,90,0.12);
+    --shadow: 0 10px 30px rgba(14,42,90,0.16);
+    --shadow-lift: 0 18px 44px rgba(14,42,90,0.24);
     --radius: 18px;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
@@ -55,7 +55,7 @@
   .hero-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
   .hero::after{
     content:""; position:absolute; inset:0; z-index:1;
-    background:linear-gradient(100deg, rgba(8,36,20,0.72) 0%, rgba(8,36,20,0.42) 45%, rgba(8,36,20,0.20) 75%);
+    background:linear-gradient(100deg, rgba(8,20,36,0.72) 0%, rgba(8,20,36,0.42) 45%, rgba(8,20,36,0.20) 75%);
     pointer-events:none;
   }
   .hero-inner{
@@ -63,19 +63,18 @@
     padding:22px 18px 20px; max-width:72%;
   }
   .seal{
-    width:40px; height:40px; margin:0 0 10px; border-radius:50%; position:relative;
+    width:52px; height:52px; margin:0 0 10px; border-radius:50%; position:relative;
     display:flex; align-items:center; justify-content:center;
     background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
     box-shadow:0 6px 16px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.5);
   }
-  .seal::before{ content:""; position:absolute; inset:-5px; border-radius:50%; border:1.5px dashed rgba(255,168,87,0.6); }
-  .seal span{ font-size:17px; color:var(--plum-900); }
+  .seal span{ font-size:22px; color:var(--plum-900); }
   .hero-top-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .hero h1{ font-size:21px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  .hero h1{ font-size:26.25px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
   .hero .tagline{ font-size:11.5px; margin:8px 0 0; color:#E9F7EC; letter-spacing:.01em; line-height:1.5; text-shadow:0 1px 8px rgba(0,0,0,0.5); }
   .hero-datetime{
     position:absolute; top:14px; right:14px; z-index:3; text-align:right; max-width:44%;
-    background:rgba(8,36,20,0.62); border:1px solid rgba(255,168,87,0.35);
+    background:rgba(8,20,36,0.62); border:1px solid rgba(255,168,87,0.35);
     border-radius:10px; padding:6px 10px; backdrop-filter:blur(3px);
   }
 
@@ -111,7 +110,7 @@
   main{ padding:20px 16px 4px; }
 
   .eyebrow{ font-size:11px; color:var(--gold-deep); text-transform:uppercase; letter-spacing:.12em; font-weight:600; margin-bottom:4px; display:block; }
-  .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(14,90,52,0.05); padding:18px 16px; margin-bottom:16px; }
+  .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(14,42,90,0.05); padding:18px 16px; margin-bottom:16px; }
   .card h2{ font-size:17px; margin:0 0 14px; color:var(--plum-900); }
 
   .field{ margin-bottom:13px; }
@@ -162,12 +161,12 @@
   .video-play-btn{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
-    background:rgba(8,36,20,0.6); color:#fff; font-size:18px;
+    background:rgba(8,20,36,0.6); color:#fff; font-size:18px;
     display:flex; align-items:center; justify-content:center;
   }
   .pcard{
     background:var(--plum-900); border-radius:16px; overflow:hidden;
-    display:flex; flex-direction:column; box-shadow:0 6px 18px rgba(14,90,52,0.22);
+    display:flex; flex-direction:column; box-shadow:0 6px 18px rgba(14,42,90,0.22);
     transition:transform .12s ease, box-shadow .12s ease;
   }
   .pcard:active{ transform:scale(0.97); }
@@ -207,11 +206,12 @@
     color:var(--plum-900); border-radius:10px; padding:9px; font-size:12.5px; font-weight:700;
     display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, #FFA857, #F2812B); color:var(--plum-900); }
+  .pcard .add-btn.in-cart{ background:linear-gradient(155deg, #4ADE80, #16A34A 60%, #15803D); color:#fff; }
   .pcard .add-btn .plus{
     display:inline-flex; align-items:center; justify-content:center;
-    width:17px; height:17px; border-radius:50%; background:rgba(18,112,63,0.18); font-size:13px; line-height:1;
+    width:17px; height:17px; border-radius:50%; background:rgba(14,42,90,0.18); font-size:13px; line-height:1;
   }
+  .pcard .add-btn.in-cart .plus{ background:rgba(255,255,255,0.25); }
   .pcard .view-btn{
     flex:none; width:38px; border:1.5px solid rgba(255,168,87,0.35); background:none; color:#EEF8F0;
     border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px;
@@ -219,7 +219,7 @@
   .pcard .view-btn:active{ background:rgba(255,168,87,0.12); }
 
   /* ---------- Quick view modal ---------- */
-  .qv-overlay{ position:fixed; inset:0; background:rgba(8,36,20,0.86); z-index:95; display:none; align-items:flex-end; justify-content:center; }
+  .qv-overlay{ position:fixed; inset:0; background:rgba(8,20,36,0.86); z-index:95; display:none; align-items:flex-end; justify-content:center; }
   .qv-overlay.open{ display:flex; }
   .qv-sheet{ width:100%; max-width:520px; background:var(--paper); border-radius:20px 20px 0 0; max-height:88vh; overflow-y:auto; animation:qvUp .22s ease; }
   @keyframes qvUp{ from{ transform:translateY(30px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
@@ -228,7 +228,7 @@
   .qv-body{ padding:16px 18px 22px; }
   .qv-body h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0 0 6px; color:var(--plum-900); }
   .qv-body p{ font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 12px; }
-  .qv-close{ position:sticky; top:10px; float:right; margin-right:10px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(8,36,20,0.55); color:#fff; font-size:15px; z-index:2; }
+  .qv-close{ position:sticky; top:10px; float:right; margin-right:10px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(8,20,36,0.55); color:#fff; font-size:15px; z-index:2; }
 
   .delivery-box{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
   .delivery-note{ font-size:11.5px; color:var(--ink-soft); margin:0 0 10px; line-height:1.6; }
@@ -259,7 +259,7 @@
   .cart-rm{ border:none; background:none; color:var(--rust); font-size:15px; }
 
   /* ---------- Video lightbox ---------- */
-  .lightbox-overlay{ position:fixed; inset:0; background:rgba(8,36,20,0.90); z-index:90; display:none; align-items:center; justify-content:center; padding:20px; }
+  .lightbox-overlay{ position:fixed; inset:0; background:rgba(8,20,36,0.90); z-index:90; display:none; align-items:center; justify-content:center; padding:20px; }
   .lightbox-overlay.open{ display:flex; }
   .lightbox-box{ width:100%; max-width:480px; }
   .lightbox-box iframe, .lightbox-box video{ width:100%; aspect-ratio:16/9; border:none; border-radius:14px; background:var(--plum-900); }
@@ -269,7 +269,7 @@
   .order-footer{
     position:fixed; left:0; right:0; bottom:0; z-index:40;
     background:rgba(250,251,243,0.98);
-    border-top:1px solid var(--rule); box-shadow:0 -8px 24px rgba(14,90,52,0.10);
+    border-top:1px solid var(--rule); box-shadow:0 -8px 24px rgba(14,42,90,0.10);
     padding:12px 16px calc(12px + env(safe-area-inset-bottom));
   }
   .order-footer-inner{ max-width:520px; margin:0 auto; }
@@ -512,7 +512,7 @@
       </a>
       <a class="pf-contact-btn phone" id="phoneLink" href="#">
         <span class="circle">
-          <svg viewBox="0 0 24 24" fill="#0E5A34" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#0E2A5A" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.56.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.56 1 1 0 0 1-.25 1.02l-2.2 2.21Z"/></svg>
         </span>
         <span class="txt"><span class="t1">কল করুন</span><span class="t2" id="phoneLinkLbl">—</span></span>
       </a>
