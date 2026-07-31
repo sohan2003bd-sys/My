@@ -1,4 +1,4 @@
-const CACHE_NAME = "khatabook-cache-v2"; // bumped so every browser's stale cache gets cleared once
+const CACHE_NAME = "khatabook-cache-v3"; // bumped again so the sw.js update itself is picked up everywhere
 const ASSETS_TO_CACHE = [
   "./index.html",
   "./order-form.html",
@@ -67,6 +67,19 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => cached);
       return cached || fetchPromise;
+    })
+  );
+});
+
+// নোটিফিকেশনে ট্যাপ করলে অ্যাপ খুলে/ফোকাস করে Orders পেজে নিয়ে যায়
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((clientList) => {
+      for (const client of clientList) {
+        if ("focus" in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow("./");
     })
   );
 });
