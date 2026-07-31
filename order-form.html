@@ -86,7 +86,7 @@
   }
   .marquee-track{ display:inline-flex; animation:marquee-scroll 22s linear infinite; }
   .marquee-track span{
-    display:inline-block; padding:0 28px; font-size:12px; font-weight:700; color:#FFFFFF;
+    display:inline-block; padding:0 28px; font-size:12px; font-weight:600; color:#FFFFFF;
     letter-spacing:.01em; font-family:'Hind Siliguri',sans-serif;
   }
   @keyframes marquee-scroll{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
@@ -173,7 +173,7 @@
   .pcard:active{ transform:scale(0.97); }
   .pcard .thumb{ position:relative; width:100%; aspect-ratio:1/1; background:linear-gradient(160deg, var(--paper-deep), var(--paper)); overflow:hidden; }
   .pcard .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .pcard .thumb .noimg{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:30px; color:var(--muted); background:linear-gradient(160deg, var(--paper-deep), var(--paper)); }
+  .pcard .thumb .noimg{ width:100%; height:100%; background:linear-gradient(160deg, var(--paper-deep), var(--paper)); }
   .pcard .badge-row{ position:absolute; top:8px; left:8px; right:8px; z-index:2; display:flex; justify-content:space-between; align-items:flex-start; gap:6px; pointer-events:none; }
   .pcard .badge-hot{
     background:var(--rust); color:#fff; font-size:9.5px; font-weight:700; letter-spacing:.03em;
@@ -901,6 +901,43 @@ function selectCategory(cat){
   renderCatalog();
 }
 
+function buildCardHtml(p){
+  const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
+  const thumbUrl = getThumbUrl(p);
+  const price = Number(p.price) || 0;
+  const original = Number(p.originalPrice) || 0;
+  const hasDiscount = original > price;
+  const pct = hasDiscount ? Math.round((1 - price / original) * 100) : 0;
+  return `
+  <div class="pcard">
+    <div class="thumb">
+      ${thumbUrl
+        ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=noimg></div>'">`
+        : `<div class="noimg"></div>`}
+      <div class="badge-row">
+        <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
+        <span>${hasDiscount ? `<span class="badge-off">-${pct}%</span>` : ''}</span>
+      </div>
+      ${p.videoUrl ? `<button type="button" class="play-btn" onclick="playVideo('${escapeHTML(p.videoUrl)}')" aria-label="ভিডিও দেখুন">▶</button>` : ''}
+    </div>
+    <div class="body">
+      <div class="pname">${escapeHTML(p.name)}</div>
+      ${p.description ? `<div class="pdesc">${escapeHTML(p.description)}</div>` : ''}
+      <div class="price-row">
+        <span class="price-now">৳${price.toFixed(0)}</span>
+        ${hasDiscount ? `<span class="price-old">৳${original.toFixed(0)}</span>` : ''}
+      </div>
+      <div class="action-row">
+        <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
+          ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : `Order now <span class="plus">+</span>`}
+        </button>
+        <button type="button" class="view-btn" onclick="openQuickView('${p.id}')" aria-label="Quick view">👁</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let catalogRenderToken = 0;
 function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
   if(products.length === 0){
@@ -914,42 +951,28 @@ function renderCatalog(){
     grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</div>';
     return;
   }
-  grid.innerHTML = visible.map(p => {
-    const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
-    const thumbUrl = getThumbUrl(p);
-    const price = Number(p.price) || 0;
-    const original = Number(p.originalPrice) || 0;
-    const hasDiscount = original > price;
-    const pct = hasDiscount ? Math.round((1 - price / original) * 100) : 0;
-    const saved = !!wishlist[p.id];
-    return `
-    <div class="pcard">
-      <div class="thumb">
-        ${thumbUrl
-          ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=noimg>🛍️</div>'">`
-          : `<div class="noimg">🛍️</div>`}
-        <div class="badge-row">
-          <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
-          <span>${hasDiscount ? `<span class="badge-off">-${pct}%</span>` : ''}</span>
-        </div>
-        ${p.videoUrl ? `<button type="button" class="play-btn" onclick="playVideo('${escapeHTML(p.videoUrl)}')" aria-label="ভিডিও দেখুন">▶</button>` : ''}
-      </div>
-      <div class="body">
-        <div class="pname">${escapeHTML(p.name)}</div>
-        ${p.description ? `<div class="pdesc">${escapeHTML(p.description)}</div>` : ''}
-        <div class="price-row">
-          <span class="price-now">৳${price.toFixed(0)}</span>
-          ${hasDiscount ? `<span class="price-old">৳${original.toFixed(0)}</span>` : ''}
-        </div>
-        <div class="action-row">
-          <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
-            ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : `Order now <span class="plus">+</span>`}
-          </button>
-          <button type="button" class="view-btn" onclick="openQuickView('${p.id}')" aria-label="Quick view">👁</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  // প্রথমে উপরের ২টি (একটি সারি) সাথে সাথে দেখানো হয়, তারপর বাকি প্রডাক্ট
+  // ধাপে ধাপে (সারি অনুযায়ী) লোড হয় — এতে পেজ দ্রুত চোখে পড়ে এবং
+  // মূল থ্রেড একসাথে সব কার্ড আঁকার জন্য ব্লক হয় না।
+  const myToken = ++catalogRenderToken;
+  grid.innerHTML = '';
+  const rowSize = 2;
+  let idx = 0;
+  function appendRow(){
+    if(myToken !== catalogRenderToken) return; // মাঝপথে ক্যাটাগরি পাল্টালে পুরোনো রেন্ডার থেমে যাবে
+    const frag = document.createDocumentFragment();
+    const end = Math.min(idx + rowSize, visible.length);
+    for(; idx < end; idx++){
+      const holder = document.createElement('div');
+      holder.innerHTML = buildCardHtml(visible[idx]);
+      frag.appendChild(holder.firstElementChild);
+    }
+    grid.appendChild(frag);
+    if(idx < visible.length){
+      requestAnimationFrame(appendRow);
+    }
+  }
+  appendRow();
 }
 
 let wishlist = {};
