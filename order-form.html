@@ -856,29 +856,48 @@ function copyText(text){
   }
 }
 
+// এই পেজটা একটা নির্দিষ্ট দোকানের (SHOP_ID) ডেটা দেখায়। দোকানটা "সক্রিয়" (active)
+// কিনা সেটা প্রথমে যাচাই করা হয় — এই ফ্ল্যাগ শুধু অ্যাডমিন বদলাতে পারেন (Security Rules
+// দিয়ে সুরক্ষিত)। active না হলে কোনো প্রোডাক্ট/অর্ডার-ফর্ম লোডই করা হয় না।
+function showInactiveScreen(){
+  document.body.innerHTML = `
+    <div style="max-width:420px; margin:80px auto; text-align:center; padding:0 20px; font-family:sans-serif;">
+      <div style="font-size:40px; margin-bottom:14px;">🔒</div>
+      <h2>পেজটি বর্তমানে সক্রিয় নয়</h2>
+      <p style="color:#888; font-size:14px; line-height:1.6;">এই অর্ডার ফর্মটি এখনো চালু করা হয়নি। দয়া করে দোকানদারের সাথে যোগাযোগ করুন।</p>
+    </div>`;
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
 
-  db.ref('shops/' + SHOP_ID + '/company').once('value').then(snap => {
-    const company = snap.val() || {};
-    applyShopProfile(company);
-  });
+  db.ref('shop_status/' + SHOP_ID).once('value').then(snap => {
+    if(snap.val() !== true){
+      showInactiveScreen();
+      return;
+    }
 
-  db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
-    const val = snap.val() || {};
-    products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
-    renderCatNav();
-    renderCatalog();
-  });
+    db.ref('shops/' + SHOP_ID + '/company').once('value').then(snap => {
+      const company = snap.val() || {};
+      applyShopProfile(company);
+    });
 
-  // আলাদা "ভিডিও" সেকশনের জন্য — Firebase-এ একটা আলাদা "videos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
-  // প্রতিটা এন্ট্রিতে থাকবে: title (ঐচ্ছিক ক্যাপশন) ও videoUrl (ইউটিউব লিংক)
-  db.ref('shops/' + SHOP_ID + '/videos').on('value', snap => {
-    const val = snap.val() || {};
-    videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
-    renderVideos();
-  });
+    db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
+      const val = snap.val() || {};
+      products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+      renderCatNav();
+      renderCatalog();
+    });
+
+    // আলাদা "ভিডিও" সেকশনের জন্য — Firebase-এ একটা আলাদা "videos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
+    // প্রতিটা এন্ট্রিতে থাকবে: title (ঐচ্ছিক ক্যাপশন) ও videoUrl (ইউটিউব লিংক)
+    db.ref('shops/' + SHOP_ID + '/videos').on('value', snap => {
+      const val = snap.val() || {};
+      videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+      renderVideos();
+    });
+  }).catch(() => showInactiveScreen());
 });
 
 function renderCatNav(){
