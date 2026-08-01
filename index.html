@@ -3213,8 +3213,16 @@ function sendVerificationCode(uid, email){
   return fbDb.ref('shops/' + uid + '/emailVerification').set({ code, email, expiresAt })
     .then(()=>{
       const url = APPS_SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code) + '&secret=' + encodeURIComponent(APPS_SCRIPT_SECRET);
-      // no-cors: রেসপন্স পড়া যাবে না, কিন্তু রিকোয়েস্টটা ঠিকই পাঠানো হবে
-      return fetch(url, { method: 'GET', mode: 'no-cors' }).catch(()=>{});
+      // কিছু মোবাইল ব্রাউজার/ওয়েবভিউতে cross-domain fetch(no-cors) নীরবে ব্যর্থ হয় (redirect
+      // ঠিকমতো ফলো না করে)। তাই একটা লুকানো <img> রিকোয়েস্ট দিয়ে একই GET কল করা হচ্ছে —
+      // এটা ব্রাউজারের একদম মৌলিক ফিচার, তাই cross-domain/redirect নিয়ে সমস্যা প্রায় হয় না।
+      return new Promise(resolve => {
+        const pinger = new Image();
+        pinger.onload = resolve;
+        pinger.onerror = resolve; // অ্যাপস স্ক্রিপ্ট ছবি ফেরত দেয় না বলে এটাও স্বাভাবিক, তারপরও রিকোয়েস্টটা সার্ভারে পৌঁছে যায়
+        pinger.src = url;
+        setTimeout(resolve, 4000); // সেফটি টাইমআউট, যাতে কোনো কারণে রেসপন্স আটকে না থাকে
+      });
     });
 }
 
