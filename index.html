@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#BEEACA">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -96,7 +96,27 @@
     }
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-  html,body{margin:0;padding:0; touch-action:manipulation;}
+  html,body{
+    margin:0;padding:0;
+    touch-action: pan-x pan-y;
+    -ms-touch-action: pan-x pan-y;
+    overscroll-behavior: none;
+  }
+  /* লেখা সিলেক্ট বা কপি করা যাবে না — পুরো অ্যাপ জুড়ে */
+  html,body,*{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
+  }
+  /* ইনপুট/টেক্সটএরিয়ায় টাইপ করার জন্য সিলেকশন চালু রাখা হলো, নাহলে ফর্মে লেখা যাবে না */
+  input, textarea{
+    -webkit-user-select:text;
+    -moz-user-select:text;
+    -ms-user-select:text;
+    user-select:text;
+  }
   a, button, input, select, textarea, .navbtn, .icon-btn, .navtab, [onclick]{
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -3654,7 +3674,7 @@ function getListFor(type){
 }
 
 function renderListPage(type){
-  const fullList = getListFor(type).slice().sort((a,b)=> sortKey(b).localeCompare(sortKey(a)));
+  const fullList = getListFor(type).slice().sort((a,b)=> sortKey(a) < sortKey(b) ? 1 : -1);
   const total = getListFor(type).reduce((s,t)=>s+t.total,0);
   document.getElementById(type + 'TotalLbl').textContent = fmtMoney(total);
   const box = document.getElementById(type + 'List');
@@ -3862,7 +3882,7 @@ function closeReceiptSheet(){
 }
 function updateReceiptPreviewList(){
   const date = document.getElementById('receiptDate').value;
-  const list = state.sales.filter(s => s.date === date).sort((a,b)=> sortKey(a).localeCompare(sortKey(b)));
+  const list = state.sales.filter(s => s.date === date).sort((a,b)=> sortKey(a) < sortKey(b) ? -1 : 1);
   const box = document.getElementById('receiptSaleList');
   if(list.length === 0){
     box.innerHTML = emptyStateHTML('No sales on this date', 'Pick a different date to find sales to print.');
@@ -3962,7 +3982,7 @@ function receiptCardHTML(group){
 function printReceipts(){
   const checked = Array.from(document.querySelectorAll('.receiptChk:checked')).map(c => c.value);
   if(checked.length === 0){ showToast('Select at least one sale to print'); return; }
-  const rows = state.sales.filter(s => checked.includes(String(s.id))).sort((a,b)=> sortKey(a).localeCompare(sortKey(b)));
+  const rows = state.sales.filter(s => checked.includes(String(s.id))).sort((a,b)=> sortKey(a) < sortKey(b) ? -1 : 1);
 
   // Group rows into one slip per order (same invoice ref = same order),
   // so multiple products — and the delivery charge — from one order print
@@ -4481,9 +4501,9 @@ function exportPDF(period){
   const range = getPeriodRange(period);
   const periodLabels = { today:'Today', week:'This Week', month:'This Month', year:'This Year', all:'All Time' };
 
-  const salesRows = state.sales.filter(t => inRange(t.date, range)).sort((a,b)=> a.date.localeCompare(b.date));
-  const purchaseRows = state.purchases.filter(t => inRange(t.date, range)).sort((a,b)=> a.date.localeCompare(b.date));
-  const expenseRows = state.expenses.filter(t => inRange(t.date, range)).sort((a,b)=> a.date.localeCompare(b.date));
+  const salesRows = state.sales.filter(t => inRange(t.date, range)).sort((a,b)=> a.date < b.date ? -1 : (a.date > b.date ? 1 : 0));
+  const purchaseRows = state.purchases.filter(t => inRange(t.date, range)).sort((a,b)=> a.date < b.date ? -1 : (a.date > b.date ? 1 : 0));
+  const expenseRows = state.expenses.filter(t => inRange(t.date, range)).sort((a,b)=> a.date < b.date ? -1 : (a.date > b.date ? 1 : 0));
 
   const sales = salesRows.reduce((s,t)=>s+t.total,0);
   const purchase = purchaseRows.reduce((s,t)=>s+t.total,0);
@@ -5011,6 +5031,50 @@ if(document.readyState === 'loading'){
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   }
+</script>
+
+<script>
+  /* ===================== স্ক্রিন লক: জুম বন্ধ + কপি/সিলেক্ট বন্ধ ===================== */
+  (function(){
+    // ইনপুট/টেক্সটএরিয়া বাদে বাকি সবখানে সিলেক্ট/কপি/কাট/রাইট-ক্লিক বন্ধ
+    function isFormField(el){
+      return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+    }
+    ['copy','cut','contextmenu','selectstart','dragstart'].forEach(function(evt){
+      document.addEventListener(evt, function(e){
+        if(!isFormField(e.target)) e.preventDefault();
+      }, { passive:false });
+    });
+
+    // পিঞ্চ-জুম বন্ধ (iOS Safari gesture events)
+    document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
+    document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, { passive:false });
+    document.addEventListener('gestureend', function(e){ e.preventDefault(); }, { passive:false });
+
+    // দুই আঙুল দিয়ে টাচ করে জুম করা বন্ধ — Android/Chrome-এ এটা touch-action CSS দিয়েই
+    // হ্যান্ডেল হয় (উপরে html,body-তে সেট করা আছে), তাই এখানে আলাদা JS টাচমুভ লিসেনার
+    // লাগছে না — এভাবে স্ক্রল আরও মসৃণ থাকে (প্রতি ফ্রেমে JS না চলে)।
+
+    // ডাবল-ট্যাপ করে জুম করা বন্ধ
+    var lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e){
+      var now = Date.now();
+      if(now - lastTouchEnd <= 300) e.preventDefault();
+      lastTouchEnd = now;
+    }, { passive:false });
+
+    // Ctrl/Cmd + স্ক্রল হুইল দিয়ে ব্রাউজার জুম বন্ধ (ডেস্কটপে খুললে)
+    document.addEventListener('wheel', function(e){
+      if(e.ctrlKey) e.preventDefault();
+    }, { passive:false });
+
+    // কী-বোর্ড শর্টকাট দিয়ে জুম/সেভ/প্রিন্ট/সোর্স-ভিউ বন্ধ
+    document.addEventListener('keydown', function(e){
+      var k = e.key;
+      var blockCombo = (e.ctrlKey || e.metaKey) && ['+','-','=','0','p','s','u','c'].includes(k.toLowerCase());
+      if(blockCombo) e.preventDefault();
+    }, { passive:false });
+  })();
 </script>
 </body>
 </html>
