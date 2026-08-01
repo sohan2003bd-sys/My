@@ -270,9 +270,9 @@
   }
 
   main{ padding:18px 16px 8px; }
-  .page{ display:none; animation: fadeIn .25s ease; }
+  .page{ display:none; }
   .page.active{ display:block; }
-  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
 
   .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:22px 2px 10px; display:flex; align-items:center; justify-content:space-between;}
 
@@ -483,7 +483,7 @@
     position:fixed; left:0; right:0; bottom:0; z-index:61;
     max-width:520px; margin:0 auto; background:var(--paper);
     border-radius:22px 22px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom));
-    transform:translateY(110%); transition:transform .28s cubic-bezier(.2,.8,.2,1);
+    transform:translateY(110%); transition:transform 0s;
     max-height:88vh; overflow-y:auto;
     box-shadow:0 -20px 50px rgba(15,40,34,0.25);
     border-top:3px solid var(--gold);
@@ -654,7 +654,7 @@
   .settings-nav-title{ font-size:15px; font-weight:600; color:var(--green-900); font-family:'Fraunces',serif; }
   .settings-menu-overlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:49;
-    opacity:0; pointer-events:none; transition:opacity .2s ease;
+    opacity:0; pointer-events:none; transition:opacity 0s;
     backdrop-filter:blur(1px);
   }
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
@@ -662,7 +662,7 @@
     position:fixed; top:0; left:0; bottom:0; width:82%; max-width:320px;
     background:var(--blend-grad-v); z-index:50;
     box-shadow:0 0 40px rgba(120,150,90,0.35);
-    transform:translateX(-105%); transition:transform .26s cubic-bezier(.2,.8,.2,1);
+    transform:translateX(-105%); transition:transform 0s;
     padding:22px 14px; overflow-y:auto;
     border-right:1px solid rgba(15,56,48,0.12);
   }
@@ -3456,7 +3456,8 @@ function showLockScreen(){
   const canBio = state.security.bioEnabled && hasBioCredential() && bioSupported();
   const bioBtn = document.getElementById('bioRetryBtn');
   if(bioBtn) bioBtn.style.display = canBio ? 'block' : 'none';
-  if(canBio) setTimeout(()=> tryBiometricUnlock(true), 300);
+  // আগে থেকে অটো-প্রম্পট দেখানো হয় না — শুধু PIN স্ক্রিন দেখানো হবে, ইউজার
+  // "🔓 Unlock with Face/Fingerprint" বাটনে চাপ দিলে তখনই ফিঙ্গারপ্রিন্ট প্রম্পট আসবে।
   markScreenDecided();
 }
 function buildKeypad(){
