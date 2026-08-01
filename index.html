@@ -935,16 +935,6 @@
   </div>
 </div>
 
-<!-- ===================== ADMIN PANEL (authority-only) ===================== -->
-<div id="adminScreen" style="display:none; max-width:520px; margin:0 auto; padding:18px 16px 60px;">
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-    <h1 class="display" style="font-size:20px; margin:0;">🛠️ Admin Panel — সব দোকান</h1>
-    <button type="button" class="btn btn-ghost" style="width:auto; padding:8px 14px;" onclick="fbAuth.signOut()">লগ আউট</button>
-  </div>
-  <div class="helper-text" style="margin-bottom:14px;">টাকা পাওয়ার পর যে দোকানের লিংক চালু করতে চান তার পাশে "Activate" চাপুন। বন্ধ করতে চাইলে "Deactivate"।</div>
-  <div id="adminShopList"></div>
-</div>
-
 <!-- ===================== EMAIL VERIFY SCREEN (OTP) ===================== -->
 <div id="verifyEmailScreen" style="display:none;">
   <div class="login-card" style="text-align:center;">
@@ -1327,11 +1317,14 @@
         <div class="helper-text" style="margin-top:0;">লগইন করা আছে: <strong id="cloudAccountEmail">—</strong></div>
         <div class="field" style="margin-top:12px;">
           <label>আপনার দোকানের অর্ডার-ফর্ম লিংক (কাস্টমারদের শেয়ার করুন)</label>
-          <input type="text" id="shopLinkBox" readonly value="">
+          <input type="text" id="shopLinkBox" readonly value="🔒 লিংকটি সুরক্ষিত করা আছে">
         </div>
-        <div class="helper-text" id="shopLinkStatus" style="margin-top:2px;">স্ট্যাটাস: —</div>
-        <button class="btn btn-gold" style="margin-top:8px;" onclick="copyShopLink()">লিংক কপি করুন</button>
-        <div class="helper-text" style="margin-top:6px;">লিংকটি কপি করা গেলেও, এটি ততক্ষণ কাজ করবে না যতক্ষণ না অথরিটি এটি সক্রিয় করেন। সক্রিয় করার জন্য অথরিটির সাথে যোগাযোগ করুন।</div>
+        <div class="field" style="margin-top:8px;">
+          <label>পাসওয়ার্ড</label>
+          <input type="password" id="shopLinkPassInput" placeholder="পাসওয়ার্ড লিখুন" onkeydown="if(event.key==='Enter'){ event.preventDefault(); copyShopLink(); }">
+        </div>
+        <button class="btn btn-gold" onclick="copyShopLink()">লিংক কপি করুন</button>
+        <div class="helper-text" style="margin-top:6px;">লিংকটি কপি করতে চাইলে অথরিটির সাথে যোগাযোগ করুন</div>
         <button class="btn btn-danger" style="margin-top:10px;" onclick="logoutShop()">Log Out</button>
       </div>
 
@@ -2941,9 +2934,6 @@ var qrcode = function() {
    ========================================================= */
 const STORAGE_KEY = 'khatabook_v1';
 
-// Admin status is checked against the /admins node in Firebase (see Security Rules) —
-// not hardcoded here, so adding/removing an admin never requires a code change.
-
 // Shared Firebase project — every shop's data lives isolated under /shops/{uid}/
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCJOhYaGVS3OlMdpwHAYtNTnkc4cLNWlIU",
@@ -3048,24 +3038,18 @@ function initFirebaseCore(){
     if(isSigningUp) return; // handleSignup() drives entry itself after the initial cloud write
     if(user){
       currentUid = user.uid;
-      fbDb.ref('admins/' + currentUid).once('value').then(snap => {
-        if(snap.val() === true){
-          showAdminPanel();
-          return;
-        }
-        checkOwnVerificationStatus(currentUid).then(verified => {
-          if(verified){
-            loadShopData(currentUid).then(()=>{
-              enterOrLock();
-            });
-          } else {
-            showVerifyEmailScreen(user.email);
-            if(!otpAutoSent){
-              otpAutoSent = true;
-              sendVerificationCode(currentUid, user.email);
-            }
+      checkOwnVerificationStatus(currentUid).then(verified => {
+        if(verified){
+          loadShopData(currentUid).then(()=>{
+            enterOrLock();
+          });
+        } else {
+          showVerifyEmailScreen(user.email);
+          if(!otpAutoSent){
+            otpAutoSent = true;
+            sendVerificationCode(currentUid, user.email);
           }
-        });
+        }
       });
     } else {
       currentUid = null;
@@ -3111,70 +3095,16 @@ function showAuthScreen(){
   document.getElementById('app').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
-  document.getElementById('adminScreen').style.display = 'none';
   document.getElementById('onboardingScreen').style.display = 'flex';
   const hasLocalData = !!localStorage.getItem(STORAGE_KEY);
   document.getElementById('migrateNotice').style.display = hasLocalData ? 'block' : 'none';
   markScreenDecided();
 }
 
-/* ---------------- ADMIN PANEL (authority-only: toggle shops active/inactive) ----------------
-   Only a UID present (true) under /admins reaches this screen (checked in onAuthStateChanged).
-   The activation flag itself lives at a SEPARATE path, /shop_status/{uid} — not inside
-   /shops/{uid} — specifically so a shop owner's own broad write access to their /shops/{uid}
-   subtree can never reach it. Security Rules restrict /shop_status writes to admins only;
-   the client-side check here just decides which screen to show. */
-function showAdminPanel(){
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('lockScreen').style.display = 'none';
-  document.getElementById('verifyEmailScreen').style.display = 'none';
-  document.getElementById('onboardingScreen').style.display = 'none';
-  document.getElementById('adminScreen').style.display = 'block';
-  markScreenDecided();
-  renderAdminShopList();
-}
-function renderAdminShopList(){
-  const box = document.getElementById('adminShopList');
-  box.innerHTML = '<div class="helper-text">লোড হচ্ছে…</div>';
-  Promise.all([
-    fbDb.ref('shops').once('value'),
-    fbDb.ref('shop_status').once('value')
-  ]).then(([shopsSnap, statusSnap]) => {
-    const shops = shopsSnap.val() || {};
-    const statuses = statusSnap.val() || {};
-    const uids = Object.keys(shops);
-    if(uids.length === 0){ box.innerHTML = '<div class="helper-text">কোনো দোকান পাওয়া যায়নি।</div>'; return; }
-    box.innerHTML = uids.map(uid => {
-      const s = shops[uid] || {};
-      const name = (s.company && s.company.name) || 'নাম নেই';
-      const active = statuses[uid] === true;
-      return `
-      <div class="ledger-card" style="margin-top:8px; padding:13px 14px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-          <div style="min-width:0;">
-            <div class="txn-name">${escapeHTML(name)}</div>
-            <div class="txn-meta num">${escapeHTML(uid)}</div>
-          </div>
-          <span class="order-badge ${active ? 'confirmed' : 'cancelled'}">${active ? 'Active' : 'Inactive'}</span>
-        </div>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <button class="btn ${active ? 'btn-danger' : 'btn-primary'}" style="flex:1; padding:9px;" onclick="toggleShopActive('${uid}', ${!active})">${active ? 'Deactivate' : 'Activate'}</button>
-        </div>
-      </div>`;
-    }).join('');
-  }).catch(()=> { box.innerHTML = '<div class="helper-text">লোড করতে সমস্যা হয়েছে — Security Rules চেক করুন।</div>'; });
-}
-function toggleShopActive(uid, newValue){
-  fbDb.ref('shop_status/' + uid).set(newValue)
-    .then(()=>{ showToast(newValue ? 'দোকানটি সক্রিয় করা হয়েছে' : 'দোকানটি নিষ্ক্রিয় করা হয়েছে'); renderAdminShopList(); })
-    .catch(()=> showToast('আপডেট করা যায়নি — Security Rules চেক করুন'));
-}
-
 function showVerifyEmailScreen(email){
   document.getElementById('app').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('onboardingScreen').style.display = 'none';
-  document.getElementById('adminScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'flex';
   document.getElementById('verifyEmailAddress').textContent = email || 'আপনার ইমেইলে';
   const otpInput = document.getElementById('otpCodeInput');
@@ -3213,16 +3143,8 @@ function sendVerificationCode(uid, email){
   return fbDb.ref('shops/' + uid + '/emailVerification').set({ code, email, expiresAt })
     .then(()=>{
       const url = APPS_SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code) + '&secret=' + encodeURIComponent(APPS_SCRIPT_SECRET);
-      // কিছু মোবাইল ব্রাউজার/ওয়েবভিউতে cross-domain fetch(no-cors) নীরবে ব্যর্থ হয় (redirect
-      // ঠিকমতো ফলো না করে)। তাই একটা লুকানো <img> রিকোয়েস্ট দিয়ে একই GET কল করা হচ্ছে —
-      // এটা ব্রাউজারের একদম মৌলিক ফিচার, তাই cross-domain/redirect নিয়ে সমস্যা প্রায় হয় না।
-      return new Promise(resolve => {
-        const pinger = new Image();
-        pinger.onload = resolve;
-        pinger.onerror = resolve; // অ্যাপস স্ক্রিপ্ট ছবি ফেরত দেয় না বলে এটাও স্বাভাবিক, তারপরও রিকোয়েস্টটা সার্ভারে পৌঁছে যায়
-        pinger.src = url;
-        setTimeout(resolve, 4000); // সেফটি টাইমআউট, যাতে কোনো কারণে রেসপন্স আটকে না থাকে
-      });
+      // no-cors: রেসপন্স পড়া যাবে না, কিন্তু রিকোয়েস্টটা ঠিকই পাঠানো হবে
+      return fetch(url, { method: 'GET', mode: 'no-cors' }).catch(()=>{});
     });
 }
 
@@ -3412,7 +3334,6 @@ function enterApp(){
   document.getElementById('onboardingScreen').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
-  document.getElementById('adminScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   markTabUnlocked();
   renderAll();
@@ -4277,33 +4198,37 @@ function renderSettings(){
   renderVideosSettings();
   updateNotifyStatus();
   document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
-  refreshShopLinkStatus();
   resetSettingsView();
 }
 function buildShopLink(){
   if(!currentUid) return '';
   return location.href.replace(/[^\/]*$/, 'order-form.html') + '?shop=' + currentUid;
 }
-// লিংকটা নিজে গোপন রাখার কোনো মানে নেই (URL মাত্রই — একবার বের হলে যে কেউ খুলতে পারবে)।
-// আসল সুরক্ষা shops/{uid}/active ফ্ল্যাগে — এটা শুধু অ্যাডমিন বদলাতে পারেন (Security Rules
-// দিয়ে সুরক্ষিত), আর order-form.html এই ফ্ল্যাগ true না হলে কিছুই লোড করে না।
-function refreshShopLinkStatus(){
-  const box = document.getElementById('shopLinkBox');
-  const statusEl = document.getElementById('shopLinkStatus');
-  if(!box || !fbDb || !currentUid) return;
-  box.value = buildShopLink();
-  fbDb.ref('shop_status/' + currentUid).once('value').then(snap => {
-    const active = snap.val() === true;
-    if(statusEl) statusEl.textContent = active ? 'স্ট্যাটাস: ✅ সক্রিয়' : 'স্ট্যাটাস: 🔒 নিষ্ক্রিয় — অথরিটির অনুমোদনের অপেক্ষায়';
-  }).catch(()=>{ if(statusEl) statusEl.textContent = 'স্ট্যাটাস: জানা যাচ্ছে না'; });
-}
+// অথরিটি (দোকান মালিক) কর্তৃক নির্ধারিত পাসওয়ার্ড এখন আর কোডে লেখা থাকে না —
+// Firebase Database-এ shops/{uid}/linkPasscode পাথে সেভ থাকে, যেটা শুধু এই দোকানের
+// লগইন করা মালিকই (Firebase Auth uid মিলিয়ে) পড়তে/লিখতে পারবেন — Security Rules দিয়ে সুরক্ষিত।
 function copyShopLink(){
-  const link = buildShopLink();
-  if(!link){ showToast('লগইন করা নেই'); return; }
-  navigator.clipboard && navigator.clipboard.writeText(link).then(
-    () => showToast('লিংক কপি হয়েছে'),
-    () => showToast('কপি করতে সমস্যা হয়েছে — আবার চেষ্টা করুন')
-  );
+  const passInput = document.getElementById('shopLinkPassInput');
+  const entered = passInput ? passInput.value : '';
+  if(!fbDb || !currentUid){ showToast('লগইন করা নেই'); return; }
+  shopRef('linkPasscode').once('value').then(snap => {
+    let stored = snap.val();
+    if(!stored){
+      // প্রথমবার ব্যবহারের সময় ডিফল্ট পাসওয়ার্ডটা ডাটাবেজে সেভ হয়ে যায়
+      stored = 'Sohan360#';
+      shopRef('linkPasscode').set(stored);
+    }
+    if(entered !== stored){
+      showToast('ভুল পাসওয়ার্ড — লিংক কপি করা যায়নি');
+      return;
+    }
+    const link = buildShopLink();
+    navigator.clipboard && navigator.clipboard.writeText(link).then(
+      () => showToast('লিংক কপি হয়েছে'),
+      () => showToast('কপি করতে সমস্যা হয়েছে — আবার চেষ্টা করুন')
+    );
+    if(passInput) passInput.value = '';
+  }).catch(() => showToast('পাসওয়ার্ড যাচাই করতে সমস্যা হয়েছে — ইন্টারনেট চেক করুন'));
 }
 function renderProductsSettings(){
   const box = document.getElementById('productsListBox');
