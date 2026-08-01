@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.web.sohanshopbd.twa",
+    "sha256_cert_fingerprints": ["A6:FA:0D:CB:EE:CD:B8:2D:A6:5C:91:5F:40:16:BC:2E:96:80:19:37:CC:7F:AE:3F:6C:3B:1B:D7:54:4C:54:3C"]
+  }
+}]
