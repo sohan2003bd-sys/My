@@ -1,4 +1,4 @@
-const CACHE_NAME = "khatabook-cache-v3"; // bumped again so the sw.js update itself is picked up everywhere
+const CACHE_NAME = "khatabook-cache-v4"; // bumped again so the sw.js update itself is picked up everywhere
 const ASSETS_TO_CACHE = [
   "./index.html",
   "./order-form.html",
