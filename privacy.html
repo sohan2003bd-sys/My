@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — MY SHOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2420;
+    --paper:#F1F3EC;
+    --paper-deep:#E7EADD;
+    --green-900:#0F3830;
+    --green-800:#123832;
+    --green-700:#1F5C4F;
+    --green-600:#2E7D5B;
+    --gold:#B8863E;
+    --gold-light:#D9AF6B;
+    --gold-bright:#E0AC53;
+    --rule:rgba(15,56,48,0.12);
+    --card:#FFFFFF;
+    --muted:#6B7268;
+    --shadow: 0 8px 24px rgba(15,40,34,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif; line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .hero{
+    background: linear-gradient(150deg, var(--green-900) 0%, var(--green-700) 100%);
+    color:#fff; padding: 56px 24px 44px; text-align:center;
+    position:relative;
+  }
+  .hero::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
+    background:linear-gradient(90deg, transparent, var(--gold-light) 25%, var(--gold) 50%, var(--gold-light) 75%, transparent);
+  }
+  .hero .mark{
+    width:56px;height:56px;border-radius:15px; margin:0 auto 18px;
+    background:linear-gradient(145deg, var(--gold-bright), var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; color:var(--green-900); font-size:22px;
+    box-shadow:0 6px 16px rgba(184,134,62,0.4);
+  }
+  .hero h1{ font-family:'Fraunces',serif; font-weight:600; font-size: clamp(26px,5vw,34px); margin:0 0 8px; letter-spacing:-0.01em; }
+  .hero p.tag{ margin:0; opacity:.82; font-size:14.5px; }
+  .hero .updated{ margin-top:18px; display:inline-block; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; }
+
+  .toc{ max-width:700px; margin:-24px auto 0; padding:0 22px; position:relative; z-index:2; }
+  .toc-card{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:18px 22px; }
+  .toc-card h3{ margin:0 0 10px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  .toc-card ol{ margin:0; padding-left:18px; columns:2; gap:6px 20px; font-size:13.5px; }
+  .toc-card li{ margin-bottom:6px; }
+  .toc-card a{ color:var(--green-800); text-decoration:none; }
+
+  .wrap{ max-width:700px; margin:0 auto; padding: 30px 22px 90px; }
+  .card{ background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:28px 26px; margin-bottom:20px; scroll-margin-top:16px; }
+
+  .summary{
+    background: linear-gradient(160deg, #EAF6EF 0%, #FFFFFF 60%);
+    border:1px solid var(--rule);
+  }
+  .summary h2{ margin-top:0; }
+  .summary ul{ margin:14px 0 0; padding-left:0; list-style:none; }
+  .summary li{ display:flex; gap:12px; padding:9px 0; border-top:1px solid var(--rule); font-size:15px; }
+  .summary li:first-child{ border-top:none; }
+  .summary .ico{ flex:none; width:22px; height:22px; border-radius:7px; background:var(--green-600); color:#fff; display:flex;align-items:center;justify-content:center; font-size:13px; margin-top:1px; }
+
+  h2{ font-family:'Fraunces',serif; font-weight:600; font-size:20px; color:var(--green-900); letter-spacing:-0.01em; margin-top:0; }
+  h3{ font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:15.5px; color:var(--green-800); margin:22px 0 8px; }
+  h3:first-of-type{ margin-top:14px; }
+  p{ font-size:15px; color:var(--ink); }
+  .muted{ color:var(--muted); font-size:13.5px; }
+  ul.plain{ padding-left:20px; font-size:15px; }
+  ul.plain li{ margin-bottom:7px; }
+  .divider{ height:1px; background:var(--rule); margin:22px 0; }
+  .pill{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    background:var(--paper-deep); color:var(--green-800); padding:3px 9px; border-radius:6px;
+  }
+  .badge-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .badge{
+    font-size:12.5px; font-weight:600; color:var(--green-800); background:var(--paper-deep);
+    padding:7px 12px; border-radius:20px; display:flex; align-items:center; gap:6px;
+  }
+  table.data-table{ width:100%; border-collapse:collapse; margin-top:14px; font-size:14px; }
+  table.data-table th, table.data-table td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  table.data-table th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:600; }
+  .note{ background:var(--paper-deep); border-left:3px solid var(--gold); padding:12px 16px; border-radius:0 10px 10px 0; font-size:14px; margin-top:14px; }
+  a{ color:var(--green-700); font-weight:600; }
+  footer{ text-align:center; padding: 10px 0 40px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="mark">MS</div>
+  <h1>Privacy Policy</h1>
+  <p class="tag">MY SHOP — Business Ledger</p>
+  <span class="updated">Last updated: August 2, 2026</span>
+</div>
+
+<div class="toc">
+  <div class="toc-card">
+    <h3>On this page</h3>
+    <ol>
+      <li><a href="#s1">Who we are</a></li>
+      <li><a href="#s2">Data you enter</a></li>
+      <li><a href="#s3">Signing in</a></li>
+      <li><a href="#s4">Cloud sync (Firebase)</a></li>
+      <li><a href="#s5">Google Drive backup</a></li>
+      <li><a href="#s6">Local device storage</a></li>
+      <li><a href="#s7">What we automatically collect</a></li>
+      <li><a href="#s8">What we do NOT do</a></li>
+      <li><a href="#s9">Google API Data Policy</a></li>
+      <li><a href="#s10">Sharing &amp; third parties</a></li>
+      <li><a href="#s11">Retention &amp; deletion</a></li>
+      <li><a href="#s12">Security</a></li>
+      <li><a href="#s13">Your rights &amp; choices</a></li>
+      <li><a href="#s14">International transfer</a></li>
+      <li><a href="#s15">Children's privacy</a></li>
+      <li><a href="#s16">Changes</a></li>
+      <li><a href="#s17">Contact</a></li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="card summary">
+    <h2>In short</h2>
+    <ul>
+      <li><span class="ico">✓</span> Your ledger data is tied to your own account and protected by per-account access rules.</li>
+      <li><span class="ico">✓</span> Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere.</li>
+      <li><span class="ico">✓</span> No other user, app, or person can ever see your data or backup — not even our team, by design.</li>
+      <li><span class="ico">✓</span> We never sell your data, share it with advertisers, or run ads in the App.</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s1">
+    <h2>1. Who we are</h2>
+    <p>MY SHOP ("the App", "we", "us", "our") is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step.</p>
+    <p>This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup.</p>
+  </div>
+
+  <div class="card" id="s2">
+    <h2>2. Data you enter into the App</h2>
+    <p>The core of the App is the business ledger you build yourself. This includes:</p>
+    <table class="data-table">
+      <tr><th>Category</th><th>Examples</th></tr>
+      <tr><td>Sales records</td><td>Item, amount, date, payment method, buyer notes</td></tr>
+      <tr><td>Purchase records</td><td>Supplier, item, cost, date</td></tr>
+      <tr><td>Expense records</td><td>Category, amount, date, description</td></tr>
+      <tr><td>Shop profile</td><td>Business/company name, logo image, currency preference</td></tr>
+      <tr><td>Orders (if Live Orders is used)</td><td>Customer name/phone, ordered items, order status, timestamps</td></tr>
+    </table>
+    <p class="muted">You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction.</p>
+  </div>
+
+  <div class="card" id="s3">
+    <h2>3. Signing in to your account</h2>
+    <p>The App supports three ways to sign in, and you choose which one to use:</p>
+    <h3>Email &amp; password</h3>
+    <p>Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account.</p>
+    <h3>Phone number (SMS OTP)</h3>
+    <p>If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself.</p>
+    <h3>Google Sign-In</h3>
+    <p>If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does <strong>not</strong> by itself grant any access to your Google Drive.</p>
+    <h3>Device passkey / biometric unlock</h3>
+    <p>If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers.</p>
+  </div>
+
+  <div class="card" id="s4">
+    <h2>4. Cloud sync of your ledger (Firebase)</h2>
+    <p>To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App.</p>
+    <h3>How access is restricted</h3>
+    <p>Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly.</p>
+    <h3>Purpose</h3>
+    <p>This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page.</p>
+  </div>
+
+  <div class="card" id="s5">
+    <h2>5. Google Drive backup — how it works</h2>
+    <p>If you tap <strong>"Connect Drive"</strong>, the App requests one specific, narrow Google permission:</p>
+    <p style="text-align:center;"><span class="pill">https://www.googleapis.com/auth/drive.appdata</span></p>
+    <p>This is Google's <strong>Application Data</strong> scope, and it is deliberately limited:</p>
+    <ul class="plain">
+      <li>The App can only create and update <strong>one hidden backup file that it created itself</strong>.</li>
+      <li>This file lives in a special hidden area of your Drive that does <strong>not</strong> appear in your normal Drive file list, Drive search, or Drive mobile/web app — it cannot be browsed or opened directly by you or any other app.</li>
+      <li>The App has <strong>no access whatsoever</strong> to any other file, photo, or document already in your Google Drive, past or future.</li>
+      <li>No other app, including other apps you may have authorized, can read this backup file — it belongs exclusively to MY SHOP's connection with your account.</li>
+      <li>The backup counts against your own Google account's storage quota, and stays entirely within your own Google account — it is never copied to, or accessible from, any server we operate.</li>
+    </ul>
+    <div class="divider"></div>
+    <h3>What gets backed up</h3>
+    <p>A snapshot of the same ledger data described in Section 2 — sales, purchases, expenses, and your shop profile — saved as a single structured data file.</p>
+    <h3>When it happens</h3>
+    <p>Automatically a short while after you make a change (so backups stay current without excessive requests), and any time you tap the manual "Backup Now" option.</p>
+    <h3>Restoring on a new device</h3>
+    <p>When you reconnect Drive on a new device or after reinstalling, the App looks for the backup file it previously created (and only that file) to offer you the option to restore your data.</p>
+  </div>
+
+  <div class="card" id="s6">
+    <h2>6. Local device storage</h2>
+    <p>Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a `.json` file to your device at any time, and import it back in — this local export/import never leaves your device unless you choose to move the file yourself.</p>
+  </div>
+
+  <div class="card" id="s7">
+    <h2>7. What we automatically collect</h2>
+    <p>Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers, and does not use cookies for advertising or cross-site tracking.</p>
+  </div>
+
+  <div class="card" id="s8">
+    <h2>8. What we do NOT do</h2>
+    <div class="badge-row">
+      <span class="badge">🚫 No reading your Drive files beyond our own backup file</span>
+      <span class="badge">🚫 No selling or sharing data with third parties</span>
+      <span class="badge">🚫 No advertising or ad trackers</span>
+      <span class="badge">🚫 No cross-shop or cross-user data access</span>
+      <span class="badge">🚫 No storing your password in plain text</span>
+      <span class="badge">🚫 No accessing your Gmail, Contacts, Calendar, or Photos</span>
+    </div>
+  </div>
+
+  <div class="card" id="s9">
+    <h2>9. Google API Services User Data Policy</h2>
+    <p>MY SHOP's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. In practice, this means Drive data accessed through the <span class="pill">drive.appdata</span> scope is used solely to provide the backup-and-restore feature described in Section 5, is never used to train any AI/ML model, is never used for advertising, and is never read by human staff except as strictly necessary to respond to a support request you initiate.</p>
+  </div>
+
+  <div class="card" id="s10">
+    <h2>10. Sharing &amp; third parties</h2>
+    <p>We do not sell your data. We do not share it with advertisers or data brokers. The only outside parties involved in operating the App are the infrastructure providers that host it — Google Cloud / Firebase (authentication, database, and hosting) and, if you enable it, Google Drive (for your own backup). These providers process data on our behalf under their own security and confidentiality commitments; they do not use your data for their own purposes.</p>
+  </div>
+
+  <div class="card" id="s11">
+    <h2>11. Data retention &amp; deletion</h2>
+    <ul class="plain">
+      <li><strong>Local data</strong> is stored on your device until you clear your browser/app data or use the App's own reset option.</li>
+      <li><strong>Cloud-synced ledger data</strong> is retained for as long as your account remains active, and can be deleted by contacting us (Section 17) or through an in-App account-deletion option where available.</li>
+      <li><strong>Drive backups</strong> can be removed at any time from your Google Account's <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Third-party apps &amp; services</a> page — this both revokes the App's access and deletes the associated app data folder.</li>
+      <li>Disconnecting Drive within the App stops future backups but does not, by itself, delete a backup already saved; use the Google Account permissions page above for full removal.</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s12">
+    <h2>12. Security</h2>
+    <p>All communication between the App and our servers, and between the App and Google's servers, is encrypted in transit using HTTPS/TLS. Cloud-synced ledger data is protected by per-account Security Rules (Section 4). Google access tokens used for Drive backup are held only in memory during your active session and are never written to any server we operate. Passwords are never stored in plain text.</p>
+    <div class="note">No system is 100% immune to risk, but the App is designed so that even in the event of a broader security issue, no single account's data is directly reachable from another account's session.</div>
+  </div>
+
+  <div class="card" id="s13">
+    <h2>13. Your rights &amp; choices</h2>
+    <ul class="plain">
+      <li><strong>Access &amp; export:</strong> You can export your full ledger as a `.json` file at any time from Settings → Data Backup.</li>
+      <li><strong>Correction:</strong> You can edit or delete any sales, purchase, or expense entry directly in the App.</li>
+      <li><strong>Deletion:</strong> You can disconnect Drive, sign out, clear local data, or request deletion of your cloud account data by contacting us.</li>
+      <li><strong>Withdraw consent:</strong> You can revoke the App's Google permissions at any time from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account settings</a>, independent of this App.</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s14">
+    <h2>14. International data transfer</h2>
+    <p>Our infrastructure providers (Google Cloud / Firebase) may process and store data in data centers located in different countries as part of their standard global infrastructure. Your Google Drive backup, specifically, always remains within your own Google account and Google's own regional handling of your account — it is not moved to a separate location by us.</p>
+  </div>
+
+  <div class="card" id="s15">
+    <h2>15. Children's privacy</h2>
+    <p>MY SHOP is a business tool intended for shop owners and adult users managing a business, and is not directed at children. We do not knowingly collect personal data from children under 13 (or the relevant minimum age in your country).</p>
+  </div>
+
+  <div class="card" id="s16">
+    <h2>16. Changes to this policy</h2>
+    <p>If this policy changes in a meaningful way, the "Last updated" date at the top of this page will be revised, and where appropriate we will notify you within the App. Continued use of the App after changes take effect constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <div class="card" id="s17">
+    <h2>17. Contact</h2>
+    <p>Questions about this policy, or requests regarding your data, can be sent to:<br>
+    <a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></p>
+  </div>
+
+</div>
+
+<footer>© 2026 MY SHOP. All rights reserved.</footer>
+
+</body>
+</html>
