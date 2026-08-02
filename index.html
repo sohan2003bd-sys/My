@@ -899,6 +899,38 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%, 0); }
 
+  /* ---------- Pull-to-refresh indicator ---------- */
+  #ptrIndicator{
+    position:fixed; top:0; left:50%; z-index:9000;
+    width:42px; height:42px; margin-left:-21px;
+    transform:translateY(-60px);
+    background:#FFFFFF; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 20px rgba(15,40,34,0.22);
+    transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease;
+    opacity:0; pointer-events:none;
+  }
+  #ptrIndicator.visible{ opacity:1; }
+  #ptrIndicator svg{
+    width:20px; height:20px; color:var(--green-700);
+    transition:transform .1s linear;
+  }
+  #ptrIndicator.ready svg{ color:var(--gold); }
+  #ptrIndicator.spinning svg{ animation:ptrSpin .7s linear infinite; }
+  #ptrIndicator.snap{ transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease; }
+  @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
+
+  /* ---------- Offline banner ---------- */
+  #offlineBanner{
+    position:fixed; top:0; left:0; right:0; z-index:8000;
+    background:linear-gradient(90deg, var(--green-900), var(--green-700));
+    color:#F5EFDD; text-align:center; font-size:12px; font-weight:600;
+    padding:7px 12px; letter-spacing:.02em;
+    transform:translateY(-100%); transition:transform .3s ease;
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+  }
+  #offlineBanner.visible{ transform:translateY(0); }
+
   /* ---------- Splash screen (launch animation) ---------- */
   #splashScreen{
     position:fixed; inset:0; z-index:99999;
@@ -1049,6 +1081,14 @@
       <a href="javascript:void(0)" onclick="logoutShop()" style="font-size:12px; color:var(--muted); text-decoration:underline;">অন্য একাউন্টে যান / লগ আউট</a>
     </div>
   </div>
+</div>
+
+<!-- ===================== OFFLINE BANNER ===================== -->
+<div id="offlineBanner">📴 অফলাইন — ইন্টারনেট নেই, পরিবর্তন এই ডিভাইসে সেভ হচ্ছে</div>
+
+<!-- ===================== PULL-TO-REFRESH INDICATOR ===================== -->
+<div id="ptrIndicator">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>
 </div>
 
 <!-- ===================== APP SHELL ===================== -->
@@ -3080,6 +3120,7 @@ function toLocalISODate(d){
 const todayISO = () => toLocalISODate(new Date());
 
 /* ---------------- PERSISTENCE (local cache) ---------------- */
+let offlineEditsPending = false;
 function saveState(){
   // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
   // instead of waiting on the JSON.stringify + localStorage write to finish first.
@@ -3099,6 +3140,7 @@ function saveState(){
       showToast('Could not save — device storage may be full');
     }
   }, 0);
+  if(!navigator.onLine) offlineEditsPending = true; // অফলাইনে করা পরিবর্তন — কানেকশন ফিরলে ক্লাউডে পাঠাতে হবে
   syncShopToCloud();
 }
 function loadState(){
@@ -3134,10 +3176,24 @@ function initFirebaseCore(){
     if(isSigningUp) return; // handleSignup() drives entry itself after the initial cloud write
     if(user){
       currentUid = user.uid;
+      const pushOfflineEditsFirst = offlineEditsPending && !!localStorage.getItem(STORAGE_KEY);
       checkOwnVerificationStatus(currentUid).then(verified => {
         if(verified){
-          loadShopData(currentUid).then(()=>{
+          const pushStep = pushOfflineEditsFirst
+            ? shopRef().update({
+                company: state.company,
+                settings: state.settings,
+                security: state.security,
+                sales: state.sales,
+                purchases: state.purchases,
+                expenses: state.expenses,
+                idCounter
+              }).catch(()=>{})
+            : Promise.resolve();
+          pushStep.then(()=> loadShopData(currentUid)).then(()=>{
+            offlineEditsPending = false;
             enterOrLock();
+            if(pushOfflineEditsFirst) showToast('অফলাইনে করা পরিবর্তন ক্লাউডে সিঙ্ক হয়েছে ✅');
           });
         } else {
           showVerifyEmailScreen(user.email);
@@ -3183,7 +3239,12 @@ function syncShopToCloud(){
       purchases: state.purchases,
       expenses: state.expenses,
       idCounter
-    }).catch(()=> showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন'));
+    }).then(()=>{
+      offlineEditsPending = false;
+    }).catch(()=>{
+      offlineEditsPending = true;
+      if(navigator.onLine) showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন');
+    });
   }, 600);
 }
 
@@ -3576,10 +3637,51 @@ document.getElementById('authTabs').addEventListener('click', (e)=>{
 });
 
 /* ---------------- APP BOOT ---------------- */
+let bootFallbackTimer = null;
 function bootApp(){
   loadState(); // warm local cache immediately so onboarding can detect existing local data
   applyBrandMark(); // so the splash screen shows the right logo/initial right away
-  initFirebaseCore();
+  const hasLocalAccount = !!localStorage.getItem(STORAGE_KEY);
+  if(!navigator.onLine){
+    // ইন্টারনেট নেই — Firebase-এর জন্য অপেক্ষা না করে সরাসরি ক্যাশ করা ডাটা দিয়ে অ্যাপ খুলে দেওয়া
+    enterOfflineMode(hasLocalAccount);
+  } else {
+    initFirebaseCore();
+    // দুর্বল/আটকে থাকা নেটওয়ার্কে (যেমন captive portal) Firebase অনেকক্ষণ চুপ থাকতে পারে —
+    // এতক্ষণে সিদ্ধান্ত না এলে ক্যাশ করা ডাটা দিয়েই ঢুকিয়ে দেওয়া, পরে কানেকশন ঠিক হলে এমনিই সিঙ্ক হয়ে যাবে
+    bootFallbackTimer = setTimeout(()=>{
+      if(!splashScreenDecided) enterOfflineMode(hasLocalAccount);
+    }, 8000);
+  }
+  window.addEventListener('online', syncAfterReconnect);
+  window.addEventListener('offline', ()=> showOfflineBanner(true));
+  showOfflineBanner(!navigator.onLine);
+}
+function enterOfflineMode(hasLocalAccount){
+  if(bootFallbackTimer){ clearTimeout(bootFallbackTimer); bootFallbackTimer = null; }
+  showOfflineBanner(true);
+  if(hasLocalAccount && state.company && state.company.name){
+    enterOrLock();
+  } else {
+    // এই ডিভাইসে আগে কখনো লগইন/সাইন-আপ করা হয়নি — প্রথমবার একাউন্ট খুলতে ইন্টারনেট লাগবেই
+    document.getElementById('authTag').textContent = 'ইন্টারনেট কানেকশন পাওয়া যায়নি — প্রথমবার একাউন্ট খুলতে বা লগইন করতে ইন্টারনেট লাগবে।';
+    showAuthScreen();
+  }
+}
+function syncAfterReconnect(){
+  showOfflineBanner(false);
+  if(!fbApp){
+    // অফলাইনে বুট হয়েছিল বলে Firebase চালু করা হয়নি — এখন চালু করলে আগের সেশন (থাকলে) নিজে থেকেই ফিরে আসবে
+    initFirebaseCore();
+    return;
+  }
+  if(currentUid && offlineEditsPending){
+    syncShopToCloud(); // saveState()-এর ৬০০ms ডিবাউন্স পার হওয়ার অপেক্ষা না করে সাথে সাথে পাঠিয়ে দেওয়া
+  }
+}
+function showOfflineBanner(show){
+  const el = document.getElementById('offlineBanner');
+  if(el) el.classList.toggle('visible', !!show);
 }
 function enterApp(){
   document.getElementById('onboardingScreen').style.display = 'none';
@@ -3627,7 +3729,11 @@ function trySplashHide(){
   el.classList.add('splash-fade-out');
   setTimeout(()=>{ el.style.display = 'none'; }, 420);
 }
-function markScreenDecided(){ splashScreenDecided = true; trySplashHide(); }
+function markScreenDecided(){
+  if(bootFallbackTimer){ clearTimeout(bootFallbackTimer); bootFallbackTimer = null; }
+  splashScreenDecided = true;
+  trySplashHide();
+}
 setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 1300);
 // Bank-app style re-lock: if the app was backgrounded (tab switched, phone
 // locked, another app opened) for 40+ seconds, ask for PIN/biometric again
@@ -5243,6 +5349,114 @@ function renderAll(){
   renderSettings();
   setTimeout(updateNavNotch, 0);
 }
+
+/* ---------------- PULL-TO-REFRESH (drag down from the top of the screen) ---------------- */
+function refreshCurrentPageView(){
+  const page = state.currentPage;
+  if(page === 'dashboard') renderDashboard();
+  if(page === 'sales') renderList('sales');
+  if(page === 'purchase') renderList('purchase');
+  if(page === 'expense') renderList('expense');
+  if(page === 'orders') renderOrders();
+  if(page === 'settings') renderSettings();
+}
+
+(function initPullToRefresh(){
+  const PULL_THRESHOLD = 68;   // এতটুকু টানলে ছাড়লে রিফ্রেশ হবে
+  const MAX_PULL = 100;        // ইন্ডিকেটর সর্বোচ্চ কতদূর নামবে
+  const indicator = document.getElementById('ptrIndicator');
+  let startY = 0;
+  let pulling = false;
+  let dragging = false;
+  let refreshing = false;
+
+  function atTop(){
+    return (document.scrollingElement || document.documentElement).scrollTop <= 0;
+  }
+  function isPtrFormField(el){
+    return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+  }
+  function appVisible(){
+    return document.getElementById('app').style.display !== 'none';
+  }
+  function anyOverlayOpen(){
+    return !!document.querySelector('.overlay.open, .settings-menu-overlay.open, .txn-menu.open');
+  }
+
+  function setIndicator(dist, ready){
+    indicator.classList.add('visible');
+    indicator.classList.toggle('ready', ready);
+    indicator.style.transform = 'translateY(' + (dist - 60) + 'px) rotate(' + (dist * 2.4) + 'deg)';
+  }
+  function resetIndicator(){
+    indicator.classList.add('snap');
+    indicator.classList.remove('ready','spinning');
+    indicator.style.transform = 'translateY(-60px)';
+    indicator.classList.remove('visible');
+    setTimeout(()=> indicator.classList.remove('snap'), 260);
+  }
+  function startSpin(){
+    indicator.classList.add('visible','spinning');
+    indicator.classList.remove('ready');
+    indicator.style.transform = 'translateY(14px)';
+  }
+
+  function doRefresh(){
+    if(!currentUid || !fbDb){ resetIndicator(); return; }
+    refreshing = true;
+    startSpin();
+    loadShopData(currentUid)
+      .then(()=>{
+        renderAll();
+        refreshCurrentPageView();
+        showToast('ডাটা আপডেট হয়েছে ✅');
+      })
+      .catch(()=>{
+        showToast('রিফ্রেশ করা যায়নি — ইন্টারনেট চেক করুন');
+      })
+      .finally(()=>{
+        refreshing = false;
+        resetIndicator();
+      });
+  }
+
+  document.addEventListener('touchstart', function(e){
+    if(refreshing || !appVisible() || anyOverlayOpen() || !atTop()) { pulling = false; return; }
+    if(isPtrFormField(e.target)) { pulling = false; return; }
+    startY = e.touches[0].clientY;
+    pulling = true;
+    dragging = false;
+  }, { passive:true });
+
+  document.addEventListener('touchmove', function(e){
+    if(!pulling || refreshing) return;
+    const delta = e.touches[0].clientY - startY;
+    if(delta <= 0){ return; } // উপরের দিকে/স্ক্রল হলে কিছু করার দরকার নেই
+    if(!atTop()) { pulling = false; return; } // ততক্ষণে স্ক্রল হয়ে গেছে, বাতিল
+    dragging = true;
+    const dist = Math.min(MAX_PULL, delta * 0.45);
+    setIndicator(dist, dist >= PULL_THRESHOLD);
+    if(e.cancelable) e.preventDefault(); // পাতা লাফিয়ে যাওয়া/ব্রাউজার বাউন্স বন্ধ রাখা
+  }, { passive:false });
+
+  document.addEventListener('touchend', function(){
+    if(!pulling) return;
+    pulling = false;
+    if(!dragging){ return; }
+    dragging = false;
+    const currentDist = parseFloat((indicator.style.transform.match(/translateY\(([-\d.]+)px\)/) || [0,-60])[1]) + 60;
+    if(currentDist >= PULL_THRESHOLD){
+      doRefresh();
+    } else {
+      resetIndicator();
+    }
+  }, { passive:true });
+
+  document.addEventListener('touchcancel', function(){
+    pulling = false; dragging = false;
+    if(!refreshing) resetIndicator();
+  }, { passive:true });
+})();
 
 if(document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', bootApp);
