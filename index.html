@@ -1245,7 +1245,7 @@
         <button class="settings-menu-item" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
       </nav>
 
-      <div class="settings-empty-hint" id="settingsEmptyHint">👈 উপরে বাম পাশের ☰ মেনু বাটনে চাপ দিয়ে একটি সেটিংস অপশন বেছে নিন।</div>
+      <div class="settings-empty-hint" id="settingsEmptyHint"></div>
 
       <div class="settings-block settings-subpage" id="sblk1">
         <h3>Business Profile</h3>
@@ -5409,7 +5409,6 @@ function refreshCurrentPageView(){
       .then(()=>{
         renderAll();
         refreshCurrentPageView();
-        showToast('ডাটা আপডেট হয়েছে ✅');
       })
       .catch(()=>{
         showToast('রিফ্রেশ করা যায়নি — ইন্টারনেট চেক করুন');
