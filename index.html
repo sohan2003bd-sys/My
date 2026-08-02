@@ -652,8 +652,8 @@
   }
   #lockScreen .login-error{ text-align:center; margin-bottom:12px; }
   /* Buttons sized and packed tight (small gaps) to match the reference frame's keypad proportions;
-     margin-top:auto pushes the keypad down, recreating the large gap under "USE PASSWORD" in the reference */
-  #lockScreen .lock-keypad{ width:100%; max-width:280px; gap:9px; margin-top:auto; margin-bottom:4px; }
+     keypad now sits close under "USE PASSWORD" so its top row lands ~0.8in below the panel's top edge */
+  #lockScreen .lock-keypad{ width:100%; max-width:280px; gap:9px; margin-top:3px; margin-bottom:4px; }
   #lockScreen .lock-keypad button{
     background:radial-gradient(circle at 32% 26%, #35373D 0%, #202226 75%);
     color:#F1EFEA; box-shadow:0 8px 16px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.06);
