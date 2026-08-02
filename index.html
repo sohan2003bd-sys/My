@@ -432,6 +432,7 @@
   .navbtn .ico-wrap{
     width:26px; height:26px; display:flex; align-items:center; justify-content:center;
     border-radius:50%;
+    background:#000; color:#FFFFFF; border:3px solid transparent;
     transition:transform .32s cubic-bezier(.34,1.56,.64,1), width .32s cubic-bezier(.34,1.56,.64,1), height .32s cubic-bezier(.34,1.56,.64,1), background .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
   .navbtn svg{ width:20px;height:20px; stroke-width:2.6; }
@@ -440,9 +441,9 @@
   .navbtn.active .ico-wrap{
     transform:translateY(-12px);
     width:50px; height:50px;
-    background:#BFEACB;
+    background:#000;
     border:3px solid #fff;
-    color:var(--green-900);
+    color:#FFFFFF;
     box-shadow:0 4px 10px rgba(50,120,80,0.30);
   }
   .navbtn.active svg{ width:22px; height:22px; stroke-width:2.9; }
@@ -623,17 +624,17 @@
   .lock-top-label{ color:rgba(38,20,4,0.55); font-size:12px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; }
   .lock-shop-name{ color:rgba(38,20,4,0.7); font-size:12px; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .lock-pin-heading{ color:#FFF7EC; font-size:19px; font-weight:700; margin:10px 0 18px; font-family:'Fraunces', serif; }
-  .lock-top .lock-dots{ margin:0; gap:13px; }
+  .lock-top .lock-dots{ margin:0; margin-top:-10px; gap:12px; }
   .lock-top .lock-dots .d{
-    width:46px; height:46px; border-radius:50%; border:none;
+    width:41px; height:41px; border-radius:50%; border:none;
     background:radial-gradient(circle at 32% 26%, #35373D 0%, #1F2024 75%);
-    box-shadow:0 8px 16px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.08);
+    box-shadow:0 7px 14px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.08);
     display:flex; align-items:center; justify-content:center; position:relative;
   }
-  .lock-top .lock-dots .d::before{ content:"–"; color:#F1EFEA; font-size:22px; font-weight:600; line-height:1; }
+  .lock-top .lock-dots .d::before{ content:"–"; color:#F1EFEA; font-size:20px; font-weight:600; line-height:1; }
   .lock-top .lock-dots .d.filled{ transform:none; }
   .lock-top .lock-dots .d.filled::before{
-    content:""; width:11px; height:11px; border-radius:50%; background:#F1EFEA;
+    content:""; width:10px; height:10px; border-radius:50%; background:#F1EFEA;
   }
   .lock-panel{
     flex:1 1 70%; min-height:0; background:#26282D; border-radius:30px 30px 0 0;
