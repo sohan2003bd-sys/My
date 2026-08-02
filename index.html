@@ -628,7 +628,7 @@
     padding:0 26px; text-align:center;
   }
   .lock-top-label{ color:rgba(38,20,4,0.55); font-size:12px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; }
-  .lock-shop-name{ color:rgba(38,20,4,0.7); font-size:12px; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .lock-shop-name{ display:none; }
   .lock-pin-heading{ color:#FFF7EC; font-size:19px; font-weight:700; margin:10px 0 18px; font-family:'Fraunces', serif; }
   .lock-top .lock-dots{ margin:0; gap:11px; }
   .lock-top .lock-dots .d{
@@ -644,11 +644,12 @@
   .lock-top .lock-dots .d.filled{ background:radial-gradient(circle at 32% 26%, rgba(255,255,255,0.2) 0%, rgba(20,11,2,0.32) 70%); transform:scale(1.05); }
   .lock-top .lock-dots .d.filled::after{ content:"●"; font-size:15px; color:#2B1C0C; }
   .lock-panel{
-    flex:1 1 70%; min-height:0; background:#26282D;
+    flex:1 1 70%; min-height:0; background:#26282D; position:relative;
     border-radius:150px 34px 0 0 / 84px 34px 0 0;
     padding:18px 26px 20px; box-shadow:0 -18px 40px rgba(0,0,0,0.28);
     display:flex; flex-direction:column; align-items:center;
   }
+  .lock-sparkle{ position:absolute; right:22px; bottom:18px; width:20px; height:20px; color:rgba(245,239,221,0.28); pointer-events:none; }
   .lock-links{ text-align:center; margin-bottom:16px; }
   .lock-links .forgot{
     display:block; background:none; border:none; padding:0; margin:0 0 6px;
@@ -1060,7 +1061,7 @@
         <label>Password</label>
         <input type="password" id="signupPassword" placeholder="কমপক্ষে ৬ ক্যারেক্টার" required minlength="6">
       </div>
-      <div class="login-error" id="onboardingError">PIN must be 4 digits and match.</div>
+      <div class="login-error" id="onboardingError">PIN must be 5 digits and match.</div>
       <button type="submit" class="btn btn-primary" id="signupSubmitBtn">Create Account &amp; Get Started</button>
     </form>
 
@@ -1098,7 +1099,7 @@
       <div class="lock-shop-name" id="lockCoName">Your Business</div>
       <h1 class="lock-pin-heading">Enter Your PIN</h1>
       <div class="lock-dots" id="lockDots">
-        <span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span>
+        <span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span>
       </div>
     </div>
     <div class="lock-panel">
@@ -1108,6 +1109,7 @@
       </div>
       <div class="login-error" id="lockError">Incorrect PIN. Try again.</div>
       <div class="keypad lock-keypad" id="keypad"></div>
+      <svg class="lock-sparkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.2 1.8 5.4 6 6-4.2.6-5.4 1.8-6 6-.6-4.2-1.8-5.4-6-6 4.2-.6 5.4-1.8 6-6Z"></path></svg>
     </div>
   </div>
 </div>
@@ -1471,12 +1473,12 @@
         <div id="pinChangeFields" style="display:none; margin-top:10px;">
           <div class="row2">
             <div class="field">
-              <label>New 4-digit PIN</label>
-              <input type="password" id="newPin1" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="••••">
+              <label>New 5-digit PIN</label>
+              <input type="password" id="newPin1" inputmode="numeric" maxlength="5" pattern="[0-9]*" placeholder="•••••">
             </div>
             <div class="field">
               <label>Confirm PIN</label>
-              <input type="password" id="newPin2" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="••••">
+              <input type="password" id="newPin2" inputmode="numeric" maxlength="5" pattern="[0-9]*" placeholder="•••••">
             </div>
           </div>
           <button class="btn btn-primary" onclick="savePinChange()">Save PIN</button>
@@ -3854,10 +3856,10 @@ function buildKeypad(){
 }
 function keypadPress(k){
   if(k === '⌫'){ lockBuffer = lockBuffer.slice(0,-1); updateLockDots(); return; }
-  if(lockBuffer.length >= 4) return;
+  if(lockBuffer.length >= 5) return;
   lockBuffer += k;
   updateLockDots();
-  if(lockBuffer.length === 4){
+  if(lockBuffer.length === 5){
     setTimeout(()=>{
       if(lockBuffer === state.security.pin){
         enterApp();
@@ -4706,8 +4708,8 @@ function onPinToggleChanged(){
 function savePinChange(){
   const p1 = document.getElementById('newPin1').value;
   const p2 = document.getElementById('newPin2').value;
-  if(!/^\d{4}$/.test(p1) || p1 !== p2){
-    showToast('PIN must be 4 digits and match');
+  if(!/^\d{5}$/.test(p1) || p1 !== p2){
+    showToast('PIN must be 5 digits and match');
     return;
   }
   state.security.pin = p1;
