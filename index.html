@@ -610,20 +610,28 @@
     background:linear-gradient(160deg, #FFB25C 0%, #FF9142 45%, #F2701F 100%);
   }
   #lockScreen::before, #lockScreen::after{ content:none; }
-  .lock-wrap{ width:100%; max-width:420px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; position:relative; z-index:1; }
-  .lock-top{ padding:44px 26px 22px; text-align:center; }
+  .lock-wrap{
+    width:100%; max-width:420px; height:100vh; margin:0 auto;
+    display:flex; flex-direction:column; position:relative; z-index:1; overflow-y:auto;
+  }
+  /* Top orange section ≈ 30% of the frame height, bottom dark panel ≈ 70% — matches the reference proportions */
+  .lock-top{
+    flex:0 0 30%; min-height:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0 26px; text-align:center;
+  }
   .lock-top-label{ color:rgba(38,20,4,0.55); font-size:12px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; }
-  .lock-shop-name{ color:rgba(38,20,4,0.7); font-size:12.5px; font-weight:600; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .lock-pin-heading{ color:#FFF7EC; font-size:20px; font-weight:700; margin:12px 0 20px; font-family:'Fraunces', serif; }
+  .lock-shop-name{ color:rgba(38,20,4,0.7); font-size:12px; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .lock-pin-heading{ color:#FFF7EC; font-size:19px; font-weight:700; margin:10px 0 18px; font-family:'Fraunces', serif; }
   .lock-top .lock-dots{ margin:0; }
   .lock-top .lock-dots .d{ background:rgba(255,255,255,0.4); border:none; }
   .lock-top .lock-dots .d.filled{ background:#2B1C0C; transform:scale(1.05); }
   .lock-panel{
-    flex:1; background:#26282D; border-radius:30px 30px 0 0;
-    padding:20px 30px 28px; box-shadow:0 -18px 40px rgba(0,0,0,0.28);
+    flex:1 1 70%; min-height:0; background:#26282D; border-radius:30px 30px 0 0;
+    padding:22px 26px 20px; box-shadow:0 -18px 40px rgba(0,0,0,0.28);
     display:flex; flex-direction:column; align-items:center;
   }
-  .lock-links{ text-align:center; margin-bottom:18px; }
+  .lock-links{ text-align:center; margin-bottom:16px; }
   .lock-links .forgot{
     display:block; background:none; border:none; padding:0; margin:0 0 6px;
     color:rgba(245,239,221,0.4); font-size:12.5px; font-family:inherit;
@@ -632,21 +640,25 @@
     display:block; background:none; border:none; padding:0; margin:0;
     color:#F5EFDD; font-size:14.5px; font-weight:700; letter-spacing:.04em; font-family:inherit;
   }
-  #lockScreen .login-error{ text-align:center; }
-  #lockScreen .lock-keypad{ max-width:320px; gap:22px 24px; }
+  #lockScreen .login-error{ text-align:center; margin-bottom:12px; }
+  /* Buttons sized and packed tight (small gaps) to match the reference frame's keypad proportions;
+     margin-top:auto pushes the keypad down, recreating the large gap under "USE PASSWORD" in the reference */
+  #lockScreen .lock-keypad{ width:100%; max-width:280px; gap:9px; margin-top:auto; margin-bottom:4px; }
   #lockScreen .lock-keypad button{
     background:radial-gradient(circle at 32% 26%, #35373D 0%, #202226 75%);
     color:#F1EFEA; box-shadow:0 8px 16px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.06);
     display:flex; align-items:center; justify-content:center;
-    font-size:30px;
+    font-size:34px;
   }
   #lockScreen .lock-keypad button:active{ transform:scale(0.93); filter:brightness(1.15); }
   #lockScreen .lock-keypad button.key-fingerprint{ color:#E0AC53; background:radial-gradient(circle at 32% 26%, #3A3230 0%, #221C18 75%); }
   #lockScreen .lock-keypad button.key-fingerprint svg,
-  #lockScreen .lock-keypad button.key-back svg{ width:30px; height:30px; }
+  #lockScreen .lock-keypad button.key-back svg{ width:32px; height:32px; }
   #lockScreen .lock-keypad span.key-empty{ background:none; box-shadow:none; aspect-ratio:1; }
   #lockScreen h1.display{ color:#F5EFDD; }
   #lockScreen .tag{ color:rgba(245,239,221,0.68); }
+
+
 
   /* ---------- Verify screen (OTP) — premium look ---------- */
   #verifyEmailScreen .field input, #verifyEmailScreen .field select{
