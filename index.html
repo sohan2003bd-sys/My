@@ -1264,41 +1264,49 @@
         <button class="settings-hamburger" onclick="toggleSettingsMenu()" aria-label="Settings menu">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
-        <div class="settings-nav-title" id="settingsNavTitle">মেনু থেকে একটি অপশন বেছে নিন</div>
+        <div class="settings-nav-title" id="settingsNavTitle" data-i18n="settings_empty_hint">মেনু থেকে একটি অপশন বেছে নিন</div>
       </div>
 
       <div class="settings-menu-overlay" id="settingsMenuOverlay" onclick="closeSettingsMenu()"></div>
       <nav class="settings-menu-drawer" id="settingsMenuDrawer">
-        <div class="settings-menu-drawer-title">সেটিংস মেনু</div>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk1', this)">Business Profile</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk2', this)">🚚 Landing Page — Contact &amp; Delivery</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk3', this)">📇 Landing Page — ফুটার কনটাক্ট তথ্য</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk4', this)">💳 Landing Page — bKash / Nagad / Rocket / Bank</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk5', this)">🔔 অর্ডার নোটিফিকেশন (Telegram)</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk6', this)">Sales Categories</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk7', this)">Purchase Categories</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk8', this)">Expense Categories</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk9', this)">Payment Methods</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk10', this)">📄 Export Report (PDF)</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk11', this)">🔒 App Lock</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk12', this)">💾 Data Backup</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk13', this)">☁️ Cloud Account</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk14', this)">🔔 Order Notifications</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk15', this)">🛒 Products Catalog</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
+        <div class="settings-menu-drawer-title" data-i18n="settings_menu_title">সেটিংস মেনু</div>
+        <button class="settings-menu-item" data-i18n="menu_business_profile" onclick="openSettingsSection('sblk1', this)">Business Profile</button>
+        <button class="settings-menu-item" data-i18n="menu_landing_contact" onclick="openSettingsSection('sblk2', this)">🚚 Landing Page — Contact &amp; Delivery</button>
+        <button class="settings-menu-item" data-i18n="menu_landing_footer" onclick="openSettingsSection('sblk3', this)">📇 Landing Page — ফুটার কনটাক্ট তথ্য</button>
+        <button class="settings-menu-item" data-i18n="menu_landing_payment" onclick="openSettingsSection('sblk4', this)">💳 Landing Page — bKash / Nagad / Rocket / Bank</button>
+        <button class="settings-menu-item" data-i18n="menu_telegram" onclick="openSettingsSection('sblk5', this)">🔔 অর্ডার নোটিফিকেশন (Telegram)</button>
+        <button class="settings-menu-item" data-i18n="menu_sales_cat" onclick="openSettingsSection('sblk6', this)">Sales Categories</button>
+        <button class="settings-menu-item" data-i18n="menu_purchase_cat" onclick="openSettingsSection('sblk7', this)">Purchase Categories</button>
+        <button class="settings-menu-item" data-i18n="menu_expense_cat" onclick="openSettingsSection('sblk8', this)">Expense Categories</button>
+        <button class="settings-menu-item" data-i18n="menu_payment_methods" onclick="openSettingsSection('sblk9', this)">Payment Methods</button>
+        <button class="settings-menu-item" data-i18n="menu_export_pdf" onclick="openSettingsSection('sblk10', this)">📄 Export Report (PDF)</button>
+        <button class="settings-menu-item" data-i18n="menu_app_lock" onclick="openSettingsSection('sblk11', this)">🔒 App Lock</button>
+        <button class="settings-menu-item" data-i18n="menu_data_backup" onclick="openSettingsSection('sblk12', this)">💾 Data Backup</button>
+        <button class="settings-menu-item" data-i18n="menu_cloud_account" onclick="openSettingsSection('sblk13', this)">☁️ Cloud Account</button>
+        <button class="settings-menu-item" data-i18n="menu_order_notifications" onclick="openSettingsSection('sblk14', this)">🔔 Order Notifications</button>
+        <button class="settings-menu-item" data-i18n="menu_products_catalog" onclick="openSettingsSection('sblk15', this)">🛒 Products Catalog</button>
+        <button class="settings-menu-item" data-i18n="menu_info_videos" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
       </nav>
 
       <div class="settings-empty-hint" id="settingsEmptyHint"></div>
 
       <div class="settings-block settings-subpage" id="sblk1">
-        <h3>Business Profile</h3>
-        
+        <h3 data-i18n="h_business_profile">Business Profile</h3>
+
         <div class="field">
-          <label>Company Name</label>
+          <label data-i18n="label_select_language">Select Language</label>
+          <div class="segmented" id="langSwitcher" style="max-width:260px;">
+            <button type="button" id="langBtnBn" onclick="setLanguage('bn')">বাংলা</button>
+            <button type="button" id="langBtnEn" onclick="setLanguage('en')">English</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-i18n="label_company_name">Company Name</label>
           <input type="text" id="settingsCoName" placeholder="e.g. Karim Traders">
         </div>
         <div class="field">
-          <label>Logo Link (URL)</label>
+          <label data-i18n="label_logo_url">Logo Link (URL)</label>
           <div style="display:flex; align-items:center; gap:10px;">
             <div class="mark" id="settingsLogoPreview" style="width:46px;height:46px;border-radius:13px;">K</div>
             <input type="url" id="settingsLogoUrl" placeholder="https://example.com/logo.png" oninput="previewLogoUrl()" style="flex:1;">
@@ -1306,7 +1314,7 @@
           <div class="helper-text" style="margin-top:6px;">লোগোর ছবির লিংক দিন — টপবার, বিল/স্লিপ এবং PDF রিপোর্টে এটি অটো বসে যাবে। খালি রাখলে আগের মতো নামের প্রথম অক্ষর দেখাবে।</div>
         </div>
         <div class="field" style="margin-bottom:0;">
-          <label>Currency Symbol</label>
+          <label data-i18n="label_currency">Currency Symbol</label>
           <select id="settingsCurrency">
             <option value="৳">৳ — Bangladeshi Taka</option>
             <option value="$">$ — US Dollar</option>
@@ -1316,11 +1324,11 @@
           </select>
         </div>
         
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+        <button class="btn btn-primary" style="margin-top:16px;" data-i18n="btn_save_changes" onclick="saveProfile()">Save Changes</button>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk2">
-        <h3>🚚 Landing Page — Contact &amp; Delivery</h3>
+        <h3 data-i18n="h_landing_contact">🚚 Landing Page — Contact &amp; Delivery</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো আপনার নিজস্ব landing page-এ (WhatsApp/ফোন বাটন, ডেলিভারি চার্জ) দেখাবে — প্রতিটা দোকানের জন্য আলাদা।</div>
         <div class="field" style="margin-top:10px;">
           <label>WhatsApp / ফোন নম্বর (দেশের কোড ছাড়া, যেমনঃ 01629348284)</label>
@@ -1336,11 +1344,11 @@
             <input type="number" id="settingsDeliveryOutside" placeholder="120">
           </div>
         </div>
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk3">
-        <h3>📇 Landing Page — ফুটার কনটাক্ট তথ্য</h3>
+        <h3 data-i18n="h_landing_footer">📇 Landing Page — ফুটার কনটাক্ট তথ্য</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো landing page-এর একদম নিচে "Contact Info" ফুটার হিসেবে দেখাবে। খালি রাখলে সেই লাইনটা এমনিতেই লুকানো থাকবে। WhatsApp নম্বর উপরের "যোগাযোগ ও ডেলিভারি"-তে দেওয়া নম্বরটাই ব্যবহার করবে।</div>
         <div class="field" style="margin-top:10px;">
           <label>ঠিকানা</label>
@@ -1354,11 +1362,11 @@
           <label>ফেসবুক পেজ (নাম বা লিংক)</label>
           <input type="text" id="settingsFooterFacebook" placeholder="যেমনঃ YourPageName অথবা https://facebook.com/YourPage">
         </div>
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk4">
-        <h3>💳 Landing Page — bKash / Nagad / Rocket / Bank</h3>
+        <h3 data-i18n="h_landing_payment">💳 Landing Page — bKash / Nagad / Rocket / Bank</h3>
         <div class="helper-text" style="margin-top:0;">কাস্টমার "ক্যাশ অন ডেলিভারি" ছাড়া অন্য পেমেন্ট বেছে নিলে এই নম্বরগুলো (কপি বাটনসহ) landing page-এ দেখানো হবে। খালি রাখলে উপরের WhatsApp/ফোন নম্বরটাই ব্যবহার হবে।</div>
         <div class="row2" style="margin-top:10px;">
           <div class="field" style="margin-bottom:0;">
@@ -1378,11 +1386,11 @@
           <label>ব্যাংক অ্যাকাউন্ট তথ্য (Bank Transfer)</label>
           <textarea id="settingsBankDetails" rows="3" placeholder="Bank: ..., A/C Name: ..., A/C No: ..., Branch: ..."></textarea>
         </div>
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()">Save Changes</button>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk5">
-        <h3>🔔 অর্ডার নোটিফিকেশন (Telegram)</h3>
+        <h3 data-i18n="h_telegram">🔔 অর্ডার নোটিফিকেশন (Telegram)</h3>
         <div class="helper-text" style="margin-top:0; line-height:1.7;">
           অনলাইন পেমেন্টের (bKash/Nagad/Rocket/Bank) অর্ডার সাবমিট হওয়ার সাথে সাথেই — কাস্টমারকে কোথাও না পাঠিয়ে, পেজ থেকে সরাসরি — আপনার Telegram-এ মেসেজ চলে আসবে।<br><br>
           <b>সেটআপ (২ মিনিট):</b><br>
@@ -1400,13 +1408,13 @@
           <input type="text" id="settingsTelegramChatId" placeholder="987654321">
         </div>
         <div style="display:flex; gap:8px; margin-top:16px;">
-          <button class="btn btn-primary" style="flex:1;" onclick="saveProfile()">Save Changes</button>
+          <button class="btn btn-primary" style="flex:1;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
           <button class="btn btn-ghost" style="flex:1;" onclick="testTelegramNotification()">টেস্ট নোটিফিকেশন</button>
         </div>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk6">
-        <h3>Sales Categories</h3>
+        <h3 data-i18n="h_sales_cat">Sales Categories</h3>
         <div class="chip-row" id="chipsSalesCat"></div>
         <div class="chip-add">
           <input type="text" id="newSalesCat" placeholder="Add category">
@@ -1415,7 +1423,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk7">
-        <h3>Purchase Categories</h3>
+        <h3 data-i18n="h_purchase_cat">Purchase Categories</h3>
         <div class="chip-row" id="chipsPurchaseCat"></div>
         <div class="chip-add">
           <input type="text" id="newPurchaseCat" placeholder="Add category">
@@ -1424,7 +1432,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk8">
-        <h3>Expense Categories</h3>
+        <h3 data-i18n="h_expense_cat">Expense Categories</h3>
         <div class="chip-row" id="chipsExpenseCat"></div>
         <div class="chip-add">
           <input type="text" id="newExpenseCat" placeholder="Add category">
@@ -1433,7 +1441,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk9">
-        <h3>Payment Methods</h3>
+        <h3 data-i18n="h_payment_methods">Payment Methods</h3>
         <div class="chip-row" id="chipsPayment"></div>
         <div class="chip-add">
           <input type="text" id="newPayment" placeholder="Add payment method">
@@ -1442,7 +1450,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk10">
-        <h3>📄 Export Report (PDF)</h3>
+        <h3 data-i18n="h_export_pdf">📄 Export Report (PDF)</h3>
         <div class="field">
           <label>Period</label>
           <select id="reportPeriod">
@@ -1457,7 +1465,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk11">
-        <h3>🔒 App Lock</h3>
+        <h3 data-i18n="h_app_lock">🔒 App Lock</h3>
         <div class="toggle-row">
           <span class="k">Require PIN on open</span>
           <label class="switch"><input type="checkbox" id="settingsPinToggle" onchange="onPinToggleChanged()"><span class="slider"></span></label>
@@ -1484,24 +1492,24 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk12">
-        <h3>💾 Data Backup</h3>
-        <div class="helper-text" style="margin-top:0;">Connect your own Google Drive for a private, automatic backup — hidden and accessible only to you, like WhatsApp's chat backup.</div>
+        <h3 data-i18n="h_data_backup">💾 Data Backup</h3>
+        <div class="helper-text" style="margin-top:0;" data-i18n="drive_helper">Connect your own Google Drive for a private, automatic backup — hidden and accessible only to you, like WhatsApp's chat backup.</div>
 
         <div id="driveNotConnectedBlock">
-          <button class="btn btn-primary" style="margin-top:12px;" onclick="connectDrive()">🔗 Connect Drive</button>
+          <button class="btn btn-primary" style="margin-top:12px;" data-i18n="btn_connect_drive" onclick="connectDrive()">🔗 Connect Drive</button>
         </div>
 
         <div id="driveConnectedBlock" style="display:none; margin-top:12px;">
-          <div class="helper-text" style="margin-top:0;">Connected as <strong id="driveAccountEmailLabel">—</strong></div>
+          <div class="helper-text" style="margin-top:0;"><span data-i18n="label_connected_as">Connected as</span> <strong id="driveAccountEmailLabel">—</strong></div>
           <div class="helper-text" id="driveLastBackupLabel" style="margin-top:2px;">Last backup: —</div>
-          <button class="btn btn-primary" style="margin-top:10px;" onclick="backupToDriveNow()">☁️ Backup Now</button>
-          <button class="btn btn-ghost" style="margin-top:10px;" onclick="restoreFromDrive()">⬇️ Restore from Drive</button>
-          <button class="btn btn-ghost" style="margin-top:10px;" onclick="disconnectDrive()">Disconnect Drive</button>
+          <button class="btn btn-primary" style="margin-top:10px;" data-i18n="btn_backup_now" onclick="backupToDriveNow()">☁️ Backup Now</button>
+          <button class="btn btn-ghost" style="margin-top:10px;" data-i18n="btn_restore_drive" onclick="restoreFromDrive()">⬇️ Restore from Drive</button>
+          <button class="btn btn-ghost" style="margin-top:10px;" data-i18n="btn_disconnect_drive" onclick="disconnectDrive()">Disconnect Drive</button>
         </div>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk13">
-        <h3>☁️ Cloud Account</h3>
+        <h3 data-i18n="h_cloud_account">☁️ Cloud Account</h3>
         <div class="helper-text" style="margin-top:0;">লগইন করা আছে: <strong id="cloudAccountEmail">—</strong></div>
         <div class="field" style="margin-top:12px;">
           <label>আপনার দোকানের অর্ডার-ফর্ম লিংক (কাস্টমারদের শেয়ার করুন)</label>
@@ -1517,14 +1525,14 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk14">
-        <h3>🔔 Order Notifications</h3>
+        <h3 data-i18n="h_order_notifications">🔔 Order Notifications</h3>
         <div class="helper-text" style="margin-top:0;">নতুন অর্ডার এলে এই ব্রাউজারে একটা নোটিফিকেশন দেখাবে (অ্যাপটা খোলা বা ব্যাকগ্রাউন্ড ট্যাবে থাকা অবস্থায়)।</div>
         <button class="btn btn-primary" style="margin-top:10px;" onclick="requestOrderNotifications()">নোটিফিকেশন চালু করুন</button>
         <div class="helper-text" id="notifyStatusText">এখনো চালু করা হয়নি।</div>
       </div>
 
       <div class="settings-block settings-subpage" id="sblk15">
-        <h3>🛒 Products Catalog (shown on your Landing Page)</h3>
+        <h3 data-i18n="h_products_catalog">🛒 Products Catalog (shown on your Landing Page)</h3>
         <div class="helper-text" style="margin-top:0;">Add the products customers can order from your landing page, including a photo and a video link. Saving here pushes the list live to your shop link above.</div>
         <div id="productsListBox" style="margin-top:10px;"></div>
 
@@ -1570,7 +1578,7 @@
       </div>
 
       <div class="settings-block settings-subpage" id="sblk16">
-        <h3>🎬 Info Videos (shown on Landing Page)</h3>
+        <h3 data-i18n="h_info_videos">🎬 Info Videos (shown on Landing Page)</h3>
         <div class="helper-text" style="margin-top:0;">এগুলো প্রডাক্ট না — সাধারণ তথ্য/ঘোষণা/অফার জানানোর ভিডিও, দাম থাকবে না। ল্যান্ডিং পেজে প্রডাক্টের নিচে আলাদা সেকশনে দেখাবে।</div>
         <div id="videosListBox" style="margin-top:10px;"></div>
 
@@ -1602,27 +1610,27 @@
       <div class="bottomnav-bg"></div>
       <button class="navbtn active" data-page="dashboard" onclick="goPage('dashboard')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span>
-        <span>Dashboard</span>
+        <span data-i18n="nav_dashboard">Dashboard</span>
       </button>
       <button class="navbtn" data-page="sales" onclick="goPage('sales')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></span>
-        <span>Sales</span>
+        <span data-i18n="nav_sales">Sales</span>
       </button>
       <button class="navbtn" data-page="purchase" onclick="goPage('purchase')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></span>
-        <span>Purchase</span>
+        <span data-i18n="nav_purchase">Purchase</span>
       </button>
       <button class="navbtn" data-page="expense" onclick="goPage('expense')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></span>
-        <span>Expense</span>
+        <span data-i18n="nav_expense">Expense</span>
       </button>
       <button class="navbtn" data-page="orders" onclick="goPage('orders')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span>
-        <span>Orders</span>
+        <span data-i18n="nav_orders">Orders</span>
       </button>
       <button class="navbtn" data-page="settings" onclick="goPage('settings')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
-        <span>Settings</span>
+        <span data-i18n="nav_settings">Settings</span>
       </button>
     </nav>
   </div>
@@ -1693,7 +1701,7 @@
       <label>Notes</label>
       <textarea id="fNotes" rows="2" placeholder="Optional note"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Save Entry</button>
+    <button type="submit" class="btn btn-primary" data-i18n="btn_save_entry">Save Entry</button>
     <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="closeSheet()">Cancel</button>
   </form>
 </div>
@@ -3165,6 +3173,153 @@ let idCounter = 1;
 const LIST_PAGE_SIZE = 50;
 let listVisibleCounts = { sales: LIST_PAGE_SIZE, purchase: LIST_PAGE_SIZE, expense: LIST_PAGE_SIZE };
 
+/* ---------------- LANGUAGE / i18n ----------------
+   Core-UI translation system: elements carry data-i18n="key" and get their
+   textContent swapped from this dictionary. Extend I18N + tag more elements
+   with data-i18n to cover more screens later — the engine itself needs no changes. */
+const LANG_KEY = 'myshop_lang_v1';
+const I18N = {
+  bn: {
+    nav_dashboard: "ড্যাশবোর্ড", nav_sales: "বিক্রয়", nav_purchase: "ক্রয়", nav_expense: "খরচ", nav_orders: "অর্ডার", nav_settings: "সেটিংস",
+    settings_menu_title: "সেটিংস মেনু",
+    settings_empty_hint: "মেনু থেকে একটি অপশন বেছে নিন",
+    menu_business_profile: "বিজনেস প্রোফাইল",
+    menu_landing_contact: "🚚 ল্যান্ডিং পেজ — যোগাযোগ ও ডেলিভারি",
+    menu_landing_footer: "📇 ল্যান্ডিং পেজ — ফুটার কনটাক্ট তথ্য",
+    menu_landing_payment: "💳 ল্যান্ডিং পেজ — বিকাশ/নগদ/রকেট/ব্যাংক",
+    menu_telegram: "🔔 অর্ডার নোটিফিকেশন (Telegram)",
+    menu_sales_cat: "বিক্রয় ক্যাটাগরি",
+    menu_purchase_cat: "ক্রয় ক্যাটাগরি",
+    menu_expense_cat: "খরচ ক্যাটাগরি",
+    menu_payment_methods: "পেমেন্ট মেথড",
+    menu_export_pdf: "📄 রিপোর্ট এক্সপোর্ট (PDF)",
+    menu_app_lock: "🔒 অ্যাপ লক",
+    menu_data_backup: "💾 ডাটা ব্যাকআপ",
+    menu_cloud_account: "☁️ ক্লাউড একাউন্ট",
+    menu_order_notifications: "🔔 অর্ডার নোটিফিকেশন",
+    menu_products_catalog: "🛒 পণ্যের তালিকা",
+    menu_info_videos: "🎬 তথ্য ভিডিও",
+    h_business_profile: "বিজনেস প্রোফাইল",
+    h_landing_contact: "🚚 ল্যান্ডিং পেজ — যোগাযোগ ও ডেলিভারি",
+    h_landing_footer: "📇 ল্যান্ডিং পেজ — ফুটার কনটাক্ট তথ্য",
+    h_landing_payment: "💳 ল্যান্ডিং পেজ — বিকাশ/নগদ/রকেট/ব্যাংক",
+    h_telegram: "🔔 অর্ডার নোটিফিকেশন (Telegram)",
+    h_sales_cat: "বিক্রয় ক্যাটাগরি",
+    h_purchase_cat: "ক্রয় ক্যাটাগরি",
+    h_expense_cat: "খরচ ক্যাটাগরি",
+    h_payment_methods: "পেমেন্ট মেথড",
+    h_export_pdf: "📄 রিপোর্ট এক্সপোর্ট (PDF)",
+    h_app_lock: "🔒 অ্যাপ লক",
+    h_data_backup: "💾 ডাটা ব্যাকআপ",
+    h_cloud_account: "☁️ ক্লাউড একাউন্ট",
+    h_order_notifications: "🔔 অর্ডার নোটিফিকেশন",
+    h_products_catalog: "🛒 পণ্যের তালিকা (ল্যান্ডিং পেজে দেখাবে)",
+    h_info_videos: "🎬 তথ্য ভিডিও (ল্যান্ডিং পেজে দেখাবে)",
+    label_company_name: "কোম্পানির নাম",
+    label_logo_url: "লোগোর লিংক (URL)",
+    label_currency: "মুদ্রার প্রতীক",
+    label_select_language: "ভাষা নির্বাচন করুন",
+    btn_save_changes: "পরিবর্তন সংরক্ষণ করুন",
+    btn_save_entry: "এন্ট্রি সংরক্ষণ করুন",
+    drive_helper: "নিজের Google Drive সংযোগ করে প্রাইভেট, অটোমেটিক ব্যাকআপ নিন — WhatsApp-এর চ্যাট ব্যাকআপের মতোই এটা শুধু আপনার জন্য, হিডেন থাকবে।",
+    btn_connect_drive: "🔗 Drive সংযোগ করুন",
+    btn_backup_now: "☁️ এখনই ব্যাকআপ করুন",
+    btn_restore_drive: "⬇️ Drive থেকে ফিরিয়ে আনুন",
+    btn_disconnect_drive: "Drive সংযোগ বিচ্ছিন্ন করুন",
+    label_connected_as: "সংযুক্ত আছে:",
+    label_last_backup: "শেষ ব্যাকআপ:"
+  },
+  en: {
+    nav_dashboard: "Dashboard", nav_sales: "Sales", nav_purchase: "Purchase", nav_expense: "Expense", nav_orders: "Orders", nav_settings: "Settings",
+    settings_menu_title: "Settings Menu",
+    settings_empty_hint: "Choose an option from the menu",
+    menu_business_profile: "Business Profile",
+    menu_landing_contact: "🚚 Landing Page — Contact & Delivery",
+    menu_landing_footer: "📇 Landing Page — Footer Contact Info",
+    menu_landing_payment: "💳 Landing Page — bKash / Nagad / Rocket / Bank",
+    menu_telegram: "🔔 Order Notification (Telegram)",
+    menu_sales_cat: "Sales Categories",
+    menu_purchase_cat: "Purchase Categories",
+    menu_expense_cat: "Expense Categories",
+    menu_payment_methods: "Payment Methods",
+    menu_export_pdf: "📄 Export Report (PDF)",
+    menu_app_lock: "🔒 App Lock",
+    menu_data_backup: "💾 Data Backup",
+    menu_cloud_account: "☁️ Cloud Account",
+    menu_order_notifications: "🔔 Order Notifications",
+    menu_products_catalog: "🛒 Products Catalog",
+    menu_info_videos: "🎬 Info Videos",
+    h_business_profile: "Business Profile",
+    h_landing_contact: "🚚 Landing Page — Contact & Delivery",
+    h_landing_footer: "📇 Landing Page — Footer Contact Info",
+    h_landing_payment: "💳 Landing Page — bKash / Nagad / Rocket / Bank",
+    h_telegram: "🔔 Order Notification (Telegram)",
+    h_sales_cat: "Sales Categories",
+    h_purchase_cat: "Purchase Categories",
+    h_expense_cat: "Expense Categories",
+    h_payment_methods: "Payment Methods",
+    h_export_pdf: "📄 Export Report (PDF)",
+    h_app_lock: "🔒 App Lock",
+    h_data_backup: "💾 Data Backup",
+    h_cloud_account: "☁️ Cloud Account",
+    h_order_notifications: "🔔 Order Notifications",
+    h_products_catalog: "🛒 Products Catalog (shown on your Landing Page)",
+    h_info_videos: "🎬 Info Videos (shown on Landing Page)",
+    label_company_name: "Company Name",
+    label_logo_url: "Logo Link (URL)",
+    label_currency: "Currency Symbol",
+    label_select_language: "Select Language",
+    btn_save_changes: "Save Changes",
+    btn_save_entry: "Save Entry",
+    drive_helper: "Connect your own Google Drive for a private, automatic backup — hidden and accessible only to you, like WhatsApp's chat backup.",
+    btn_connect_drive: "🔗 Connect Drive",
+    btn_backup_now: "☁️ Backup Now",
+    btn_restore_drive: "⬇️ Restore from Drive",
+    btn_disconnect_drive: "Disconnect Drive",
+    label_connected_as: "Connected as",
+    label_last_backup: "Last backup:"
+  }
+};
+
+let currentLang = 'bn';
+try{ currentLang = localStorage.getItem(LANG_KEY) || 'bn'; }catch(e){}
+
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.bn[key] || key;
+}
+
+function applyLanguage(){
+  document.documentElement.lang = (currentLang === 'en') ? 'en' : 'bn';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-placeholder')));
+  });
+  updateLanguageSwitcherUI();
+  if(document.getElementById('driveNotConnectedBlock')) renderDriveSettingsUI();
+}
+
+function setLanguage(lang){
+  if(lang !== 'bn' && lang !== 'en') return;
+  currentLang = lang;
+  try{ localStorage.setItem(LANG_KEY, lang); }catch(e){}
+  applyLanguage();
+}
+
+function updateLanguageSwitcherUI(){
+  const bnBtn = document.getElementById('langBtnBn');
+  const enBtn = document.getElementById('langBtnEn');
+  if(!bnBtn || !enBtn) return;
+  bnBtn.classList.toggle('active', currentLang === 'bn');
+  enBtn.classList.toggle('active', currentLang === 'en');
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', applyLanguage);
+} else {
+  applyLanguage();
+}
+
 function toLocalISODate(d){
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
@@ -3173,7 +3328,7 @@ const todayISO = () => toLocalISODate(new Date());
 
 /* ---------------- PERSISTENCE (local cache) ---------------- */
 let offlineEditsPending = false;
-function saveState(){
+function saveState(skipDriveSchedule){
   // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
   // instead of waiting on the JSON.stringify + localStorage write to finish first.
   setTimeout(()=>{
@@ -3194,7 +3349,7 @@ function saveState(){
   }, 0);
   if(!navigator.onLine) offlineEditsPending = true; // অফলাইনে করা পরিবর্তন — কানেকশন ফিরলে ক্লাউডে পাঠাতে হবে
   syncShopToCloud();
-  scheduleAutoDriveBackup();
+  if(!skipDriveSchedule) scheduleAutoDriveBackup();
 }
 function loadState(){
   try{
@@ -3277,7 +3432,7 @@ function loadShopData(uid){
     idCounter = d.idCounter || 1;
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
-    saveState(); // caches locally too
+    saveState(true); // caches locally too — skip Drive auto-backup schedule; this fires on every app open, not on real edits
   });
 }
 function syncShopToCloud(){
@@ -4531,12 +4686,18 @@ function openSettingsSection(id, btn){
   if(btn){ btn.classList.add('active'); document.getElementById('settingsNavTitle').textContent = btn.textContent.trim(); }
   closeSettingsMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(id === 'sblk12'){
+    const meta = loadDriveMeta();
+    if(meta.connected && !(driveAccessToken && Date.now() < driveTokenExpiresAt - 30000)){
+      getValidDriveToken(() => {}); // refresh quietly now that we have a real user tap behind us
+    }
+  }
 }
 function resetSettingsView(){
   document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.settings-menu-item').forEach(b => b.classList.remove('active'));
   document.getElementById('settingsEmptyHint').style.display = 'block';
-  document.getElementById('settingsNavTitle').textContent = 'মেনু থেকে একটি অপশন বেছে নিন';
+  document.getElementById('settingsNavTitle').textContent = t('settings_empty_hint');
   closeSettingsMenu();
 }
 function toggleDragModeUI(){
@@ -4902,6 +5063,18 @@ function getValidDriveToken(onReady){
   requestDriveToken('', (ok) => onReady(ok));
 }
 
+// Used only for automatic background backups (no button click behind them). Never calls
+// Google's token UI — if the in-memory token has expired it just skips this cycle instead
+// of forcing the account-chooser screen. A valid token gets refreshed next time the user
+// taps a Drive button or opens the Data Backup settings tab (both real gestures).
+function getValidDriveTokenSilent(onReady){
+  if(driveAccessToken && Date.now() < driveTokenExpiresAt - 30000){
+    onReady(true);
+  } else {
+    onReady(false);
+  }
+}
+
 function connectDrive(){
   requestDriveToken('consent', (ok) => {
     if(!ok){ showToast('Drive সংযোগ করা যায়নি'); return; }
@@ -4910,7 +5083,16 @@ function connectDrive(){
     saveDriveMeta(meta);
     fetchDriveUserEmail();
     findExistingDriveBackupFile(() => {
-      backupToDriveNow();
+      const m2 = loadDriveMeta();
+      renderDriveSettingsUI();
+      if(m2.fileId){
+        // একটা আগের backup পাওয়া গেছে (অন্য ডিভাইস/আগের ইনস্টল থেকে) — এই ডিভাইসের
+        // (হয়তো খালি) ডাটা দিয়ে সেটা overwrite না করে, ইউজারকে Restore করতে বলি।
+        showToast('এই একাউন্টে আগের একটি ব্যাকআপ পাওয়া গেছে — ফিরিয়ে আনতে "Restore from Drive" চাপুন');
+      } else {
+        // সত্যিকারের প্রথমবার — Drive-এ কিছুই নেই, তাই বর্তমান ডাটা নিরাপদে ব্যাকআপ করা যায়।
+        backupToDriveNow();
+      }
     });
   });
 }
@@ -4954,11 +5136,12 @@ function buildDriveBackupPayload(){
   };
 }
 
-function backupToDriveNow(){
+function backupToDriveNow(isAuto){
   const meta0 = loadDriveMeta();
-  if(!meta0.connected){ showToast('আগে Drive সংযোগ করুন'); return; }
+  if(!meta0.connected){ if(!isAuto) showToast('আগে Drive সংযোগ করুন'); return; }
   if(driveBackupInFlight) return;
-  getValidDriveToken((ok) => {
+  const checkToken = isAuto ? getValidDriveTokenSilent : getValidDriveToken;
+  checkToken((ok) => {
     if(!ok) return;
     driveBackupInFlight = true;
     const meta = loadDriveMeta();
@@ -4988,11 +5171,11 @@ function backupToDriveNow(){
         saveDriveMeta(meta);
         renderDriveSettingsUI();
       } else {
-        showToast('Drive ব্যাকআপ ব্যর্থ হয়েছে');
+        if(!isAuto) showToast('Drive ব্যাকআপ ব্যর্থ হয়েছে');
       }
     }).catch(() => {
       driveBackupInFlight = false;
-      showToast('Drive ব্যাকআপ ব্যর্থ হয়েছে — ইন্টারনেট চেক করুন');
+      if(!isAuto) showToast('Drive ব্যাকআপ ব্যর্থ হয়েছে — ইন্টারনেট চেক করুন');
     });
   });
 }
@@ -5049,7 +5232,7 @@ function scheduleAutoDriveBackup(){
   const meta = loadDriveMeta();
   if(!meta.connected) return;
   clearTimeout(driveAutoBackupTimer);
-  driveAutoBackupTimer = setTimeout(() => { backupToDriveNow(); }, DRIVE_AUTOBACKUP_DELAY_MS);
+  driveAutoBackupTimer = setTimeout(() => { backupToDriveNow(true); }, DRIVE_AUTOBACKUP_DELAY_MS);
 }
 
 function renderDriveSettingsUI(){
@@ -5062,7 +5245,7 @@ function renderDriveSettingsUI(){
     connected.style.display = 'block';
     document.getElementById('driveAccountEmailLabel').textContent = meta.email || '—';
     document.getElementById('driveLastBackupLabel').textContent =
-      'Last backup: ' + (meta.lastBackupAt ? new Date(meta.lastBackupAt).toLocaleString() : '—');
+      t('label_last_backup') + ' ' + (meta.lastBackupAt ? new Date(meta.lastBackupAt).toLocaleString() : '—');
   } else {
     notConnected.style.display = 'block';
     connected.style.display = 'none';
