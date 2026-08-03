@@ -1,20 +1,40 @@
-const CACHE_NAME = "khatabook-cache-v4"; // bumped again so the sw.js update itself is picked up everywhere
+const CACHE_NAME = "khatabook-cache-v8"; // bumped: add /privacy to precache + network-first list
+
 const ASSETS_TO_CACHE = [
-  "./index.html",
-  "./order-form.html",
+  "./",
+  "./order-form",
+  "./privacy",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png"
 ];
-// index.html / order-form.html change often (new features/fixes) — these must
-// always be fetched fresh from the network when possible, only falling back
-// to the cached copy when offline. Static assets rarely change, so those stay
-// cache-first for speed.
-const NETWORK_FIRST = ["/index.html", "/order-form.html", "/"];
+
+// index.html / order-form / privacy change occasionally (new features/fixes,
+// policy updates) — these must always be preferred fresh from the network,
+// falling back to cache only when offline or when the network is too slow to
+// be worth waiting on.
+// firebase.json has cleanUrls: true, so the real URLs Firebase serves have no
+// .html extension ("/", "/order-form", "/privacy") — precaching or matching
+// the .html versions instead would mean fetching a URL that gets
+// 301-redirected, and a redirected response served through respondWith() for
+// a navigation fails outright on Safari/iOS ("Response served by service
+// worker has redirections") and can error in Chrome too. The .html names are
+// kept here as a defensive fallback only, in case cleanUrls is ever turned off.
+const NETWORK_FIRST_FILES = ["order-form", "privacy", "index.html", "order-form.html", "privacy.html"];
+
+// If the network hasn't answered within this window, stop making the user
+// wait and serve the cached copy instantly instead — the network request
+// keeps running in the background and still updates the cache for next time.
+const NETWORK_TIMEOUT_MS = 3500;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) =>
+      // Cache each asset independently (not cache.addAll) so one missing or
+      // renamed file can't fail the whole install and leave the app with
+      // zero offline cache.
+      Promise.allSettled(ASSETS_TO_CACHE.map((url) => cache.add(url)))
+    )
   );
   self.skipWaiting();
 });
@@ -37,39 +57,69 @@ self.addEventListener("fetch", (event) => {
   }
 
   const url = new URL(event.request.url);
-  const isNetworkFirst = NETWORK_FIRST.includes(url.pathname) || event.request.mode === "navigate";
+  const isNetworkFirst =
+    event.request.mode === "navigate" ||
+    NETWORK_FIRST_FILES.some((f) => url.pathname.endsWith("/" + f));
 
-  if (isNetworkFirst) {
-    // Network-first: always try to get the latest file from the server first,
-    // so new deployments show up immediately. Only use the cached copy if the
-    // device is offline (fetch fails).
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // Cache-first for static assets (icons, manifest) — these rarely change, so
-  // serving instantly from cache (with a background refresh) is fine.
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
-  );
+  event.respondWith(isNetworkFirst ? networkFirst(event) : cacheFirst(event));
 });
+
+// Network-first with a timeout fallback: race the network against a short
+// clock. Whichever is ready first wins — but the network fetch is never
+// cancelled, so a slow-but-successful response still updates the cache for
+// next visit even after the timeout has already served the cached copy.
+async function networkFirst(event) {
+  // ignoreSearch: true — order-form links carry a per-shop "?shop=UID" query
+  // string, but the underlying cached page is the same regardless of which
+  // shop's link it was. Without this, a cache lookup for "order-form?shop=abc"
+  // would never match the precached "order-form" entry.
+  const cachedPromise = caches.match(event.request, { ignoreSearch: true });
+
+  // cache: "no-store" bypasses the browser's own HTTP cache entirely — needed
+  // because Firebase Hosting sets a default Cache-Control: max-age=3600 on
+  // deployed files unless firebase.json overrides it, which would otherwise
+  // let the browser silently serve a stale index.html for up to an hour
+  // without this fetch() ever reaching the network.
+  const networkRequest = new Request(event.request, { cache: "no-store" });
+
+  const networkPromise = fetch(networkRequest).then((response) => {
+    if (response && response.ok) {
+      const clone = response.clone();
+      event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)));
+    }
+    return response;
+  });
+
+  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve("timeout"), NETWORK_TIMEOUT_MS));
+
+  const first = await Promise.race([networkPromise, timeoutPromise]).catch(() => "timeout");
+  if (first && first !== "timeout") return first; // network answered in time — freshest copy
+
+  // Network was slow or already failed — serve the cached copy immediately if we have one.
+  const cached = await cachedPromise;
+  if (cached) return cached;
+
+  // No cache yet (e.g. very first visit while offline) — nothing left but to
+  // wait on the network result, success or failure.
+  return networkPromise;
+}
+
+// Cache-first for static assets (icons, manifest) — these rarely change, so
+// serving instantly from cache is fine, with a background refresh in case
+// they ever do change.
+async function cacheFirst(event) {
+  const cached = await caches.match(event.request, { ignoreSearch: true });
+  const fetchPromise = fetch(event.request)
+    .then((response) => {
+      if (response && response.ok) {
+        const clone = response.clone();
+        event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)));
+      }
+      return response;
+    })
+    .catch(() => cached);
+  return cached || fetchPromise;
+}
 
 // নোটিফিকেশনে ট্যাপ করলে অ্যাপ খুলে/ফোকাস করে Orders পেজে নিয়ে যায়
 self.addEventListener("notificationclick", (event) => {
