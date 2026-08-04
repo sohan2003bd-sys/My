@@ -7325,13 +7325,10 @@ async function runReceiptScan(){
     document.getElementById('rsStepResult').style.display = 'block';
   }catch(err){
     console.error('Receipt scan failed:', err);
-    const msgStr = String((err && err.message) || err || '').toLowerCase();
-    let msg = 'স্ক্যান ব্যর্থ হয়েছে — আবার চেষ্টা করুন';
-    if(msgStr.includes('no_site_key')) msg = 'reCAPTCHA Site Key সেট করা নেই (Settings)';
-    else if(msgStr.includes('appcheck') || msgStr.includes('app check') || msgStr.includes('403')) msg = 'App Check যাচাই ব্যর্থ — Firebase Console-এ সাইট কী/ডোমেইন চেক করুন';
-    else if(msgStr.includes('fetch') || msgStr.includes('network')) msg = 'ইন্টারনেট সংযোগ চেক করুন';
-    else if(msgStr.includes('json')) msg = 'ছবিটি স্পষ্ট বোঝা যায়নি — আরেকটু স্পষ্ট ছবি দিয়ে চেষ্টা করুন';
-    showToast(msg);
+    // TEMPORARY DEBUG: showing the raw error text so the exact cause can be
+    // identified. Revert to the friendly categorized message once fixed.
+    const rawMsg = String((err && err.message) || err || 'unknown error');
+    showToast('DEBUG: ' + rawMsg);
   }finally{
     document.getElementById('rsLoading').style.display = 'none';
     document.getElementById('rsScanBtn').disabled = false;
