@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#BEEACA">
+<meta name="theme-color" content="#E8792E">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -27,13 +27,18 @@
 <style>
   :root{
     --ink:#1B2420;
-    --paper:#F1F3EC;
-    --paper-deep:#E7EADD;
+    --paper:#FAF7F0;
+    --paper-deep:#F1EADA;
     --green-900:#0F3830;
     --green-800:#123832;
     --green-700:#1F5C4F;
     --green-600:#2E7D5B;
     --green-500:#3B9670;
+    --blue-900:#0F2A63;
+    --blue-800:#163F94;
+    --blue-700:#1E56C7;
+    --blue-600:#2F6FED;
+    --blue-500:#5C93FF;
     --gold:#B8863E;
     --gold-light:#D9AF6B;
     --gold-bright:#E0AC53;
@@ -73,6 +78,10 @@
     color: var(--ink);
   }
   body.light-mode .icon-btn:active{ background: rgba(0,0,0,0.16); }
+  body.light-mode .icon-btn.orders-btn,
+  body.light-mode .icon-btn.inventory-btn{ color: inherit; }
+  body.light-mode .icon-btn.orders-btn{ background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%); color:#F5F9FF; }
+  body.light-mode .icon-btn.inventory-btn{ background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%); color:#3B2412; }
   body.light-mode .bottomnav-bg{
     background: linear-gradient(180deg, #FFFFFF, #F0F0F0);
     box-shadow: 0 10px 28px rgba(0,0,0,0.15);
@@ -169,7 +178,7 @@
   #app{ display:none; max-width:520px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:84px; }
   .topbar{
     position:sticky; top:0; z-index:30;
-    background: #BFEACB;
+    background: linear-gradient(120deg, #F2985A 0%, #E8792E 55%, #D9691E 100%);
     color:var(--ink);
     padding:16px 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
@@ -196,7 +205,7 @@
     font-family:'Fraunces',serif; font-weight:700; color:var(--green-900); font-size:18px; flex:none;
   }
   .topbar .co-name{ font-size:17px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .topbar .co-sub{ font-size:10.5px; color:var(--green-900); letter-spacing:.06em; text-transform:uppercase; opacity:.75; }
+  .topbar .co-sub{ font-size:10.5px; color:#6E4A1F; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
   .icon-btn{
     background:rgba(15,56,48,0.10); border:none; color:var(--ink);
     width:38px;height:38px;border-radius:11px;
@@ -206,11 +215,18 @@
   .icon-btn:active{ background:rgba(15,56,48,0.20); transform:scale(0.94); }
   .icon-btn.orders-btn{
     width:46px; height:46px; border-radius:13px;
-    background:linear-gradient(150deg, var(--gold-bright), var(--gold));
-    color:var(--green-900);
-    box-shadow:0 4px 12px rgba(184,134,62,0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+    background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%);
+    color:#F5F9FF;
+    box-shadow:0 4px 12px rgba(47,111,237,0.45), inset 0 1px 0 rgba(255,255,255,0.35);
   }
-  .icon-btn.orders-btn:active{ background:linear-gradient(150deg, var(--gold-bright), var(--gold)); transform:scale(0.94); }
+  .icon-btn.orders-btn:active{ background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%); transform:scale(0.94); }
+  .icon-btn.inventory-btn{
+    width:46px; height:46px; border-radius:13px;
+    background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%);
+    color:#3B2412;
+    box-shadow:0 4px 12px rgba(181,114,60,0.42), inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .icon-btn.inventory-btn:active{ background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%); transform:scale(0.94); }
 
   /* Drag mode toggle */
   .drag-mode-toggle {
@@ -254,7 +270,7 @@
     flex-shrink: 0;
   }
   .toggle-switch.active {
-    background: var(--green-600);
+    background: var(--blue-600);
   }
   .toggle-switch::after {
     content: '';
@@ -289,7 +305,7 @@
     transition:all .18s ease;
   }
   .segmented button.active{
-    background:linear-gradient(155deg, var(--green-700), var(--green-800));
+    background:linear-gradient(155deg, var(--blue-700), var(--blue-800));
     color:#fff; box-shadow:0 4px 10px rgba(15,56,48,0.28);
   }
 
@@ -345,15 +361,81 @@
   .chart-card h3{ font-size:15px; margin:0 0 12px; }
   .legend{ display:flex; gap:14px; font-size:11px; color:var(--muted); margin-bottom:6px; }
   .legend span{ display:inline-flex; align-items:center; gap:5px; }
+
+  /* ---------- Dashboard AI Insights card ---------- */
+  .dashboard-ai-card{
+    display:flex; align-items:center; gap:14px;
+    background:linear-gradient(150deg, #6E4FE0 0%, #A15CE8 60%, #C86EE0 100%);
+    border:1px solid rgba(80,40,140,0.18);
+    box-shadow:0 8px 20px rgba(120,70,200,0.32), inset 0 1px 0 rgba(255,255,255,0.35);
+    border-radius:var(--radius); padding:16px; margin-top:16px;
+    cursor:pointer; transition:transform .12s ease;
+  }
+  .dashboard-ai-card:active{ transform:scale(0.98); }
+  .dashboard-ai-card .ai-card-icon{
+    width:44px; height:44px; border-radius:13px; flex:none;
+    background:rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; color:#fff;
+  }
+  .dashboard-ai-card .ai-card-text{ flex:1; color:#fff; }
+  .dashboard-ai-card .ai-card-text .t1{ font-size:15px; font-weight:600; font-family:'Fraunces',serif; }
+  .dashboard-ai-card .ai-card-text .t2{ font-size:12px; opacity:0.85; margin-top:2px; }
+  .dashboard-ai-card .ai-card-arrow{ color:rgba(255,255,255,0.85); flex:none; }
   .dot{ width:8px;height:8px;border-radius:50%; display:inline-block; }
+
+  /* ---------- Quick actions shortcut row (common to Sales/Purchase/Expense pages) ---------- */
+  .quick-actions-card{
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    border:1px solid rgba(15,56,48,0.06); padding:14px 10px 6px; margin-top:2px;
+  }
+  .quick-actions-row{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 4px;
+  }
+  .quick-actions-row.qa-5{ grid-template-columns:repeat(5, 1fr); }
+  .qa-ico.qa-scan{ background:linear-gradient(150deg,#F1E9FC,#D9C3F5); color:#6B3FA0; }
+  .quick-action-btn{
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    gap:7px; background:none; border:none; padding:2px 2px 8px; color:var(--ink);
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .quick-action-btn:active{ transform:scale(0.93); opacity:.75; }
+  .quick-action-btn .qa-ico{
+    width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(15,40,34,0.10);
+  }
+  .quick-action-btn .qa-ico svg{ width:20px; height:20px; }
+  .quick-action-btn .qa-lbl{ font-size:10.5px; font-weight:600; text-align:center; line-height:1.25; color:var(--ink); max-width:74px; }
+  .qa-ico.qa-search{ background:linear-gradient(150deg,#EAF6EF,#CDEBD9); color:var(--green-700); }
+  .qa-ico.qa-sort{ background:linear-gradient(150deg,#FCF3E3,#F5DFB0); color:var(--gold); }
+  .qa-ico.qa-export{ background:linear-gradient(150deg,#E3F1FC,#B9DDF5); color:#2E6B96; }
+  .qa-ico.qa-print{ background:linear-gradient(150deg,#FCEAE5,#F5C7B8); color:var(--loss); }
+
+  /* ---------- List filter/search bar ---------- */
+  .list-search-wrap{ display:none; margin-top:10px; }
+  .list-search-wrap.open{ display:block; }
+  .list-search-box{
+    display:flex; align-items:center; gap:8px; background:var(--card); border-radius:14px;
+    padding:10px 14px; box-shadow:var(--shadow); border:1px solid rgba(15,56,48,0.06);
+  }
+  .list-search-box svg{ width:16px; height:16px; color:var(--muted); flex:none; }
+  .list-search-box input{ border:none; outline:none; background:none; font-size:13.5px; flex:1; color:var(--ink); }
+  .list-summary-row{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding:0 2px; font-size:12px; color:var(--muted); }
+  .list-summary-row b{ color:var(--ink); font-weight:600; }
 
   /* ---------- Ledger list rows ---------- */
   .ledger-card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(15,56,48,0.06); overflow:hidden; margin-top:8px; }
-  .txn-row{ display:flex; align-items:center; padding:12px 14px; border-bottom:1px solid var(--rule); gap:11px; transition:background .12s ease; }
+  .txn-row{ display:flex; align-items:center; padding:12px 14px; border-bottom:1px solid var(--rule); gap:11px; transition:background .12s ease; content-visibility:auto; contain-intrinsic-size: 0 64px; }
   .txn-row:active{ background:var(--paper); }
   .txn-row:last-child{ border-bottom:none; }
-  .txn-icon{ width:36px; height:36px; border-radius:11px; flex:none; display:flex; align-items:center; justify-content:center; }
+  .txn-icon{ width:40px; height:40px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; }
   .txn-icon svg{ width:16px; height:16px; }
+  .txn-icon.avatar{ font-family:'IBM Plex Sans',sans-serif; font-weight:700; font-size:14.5px; }
+  .txn-icon.avatar.pal-0{ background:#D9F2DE; color:#1F7A46; }
+  .txn-icon.avatar.pal-1{ background:#FCEFC2; color:#8A6A16; }
+  .txn-icon.avatar.pal-2{ background:#D7E8FB; color:#295E92; }
+  .txn-icon.avatar.pal-3{ background:#FBDDE0; color:#A13B4C; }
+  .txn-icon.avatar.pal-4{ background:#E6DFFA; color:#5C4A9E; }
+  .txn-icon.avatar.pal-5{ background:#D9F2DE; color:#1F7A46; }
   .txn-icon.sales{ background:rgba(46,125,91,0.14); color:var(--green-600); }
   .txn-icon.purchase{ background:rgba(184,134,62,0.16); color:var(--gold); }
   .txn-icon.expense{ background:rgba(179,67,45,0.14); color:var(--loss); }
@@ -365,6 +447,8 @@
   .txn-amt.sales{ color:var(--green-600); }
   .txn-amt.purchase{ color:var(--gold); }
   .txn-amt.expense{ color:var(--loss); }
+  .txn-chevron{ color:var(--muted); opacity:.6; flex:none; margin-left:2px; }
+  .txn-chevron svg{ width:15px; height:15px; }
   .order-badge{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:4px 9px; border-radius:20px; white-space:nowrap; flex:none; }
   .order-badge.cod{ background:rgba(46,125,91,0.14); color:var(--green-700); }
   .order-badge.verify{ background:rgba(179,67,45,0.14); color:var(--loss); }
@@ -397,14 +481,14 @@
   .empty-state .hint{ font-size:12.5px; margin-top:4px; }
 
   .fab{
-    position:fixed; right:calc(50% - 260px + 20px); bottom:96px; z-index:25;
-    width:58px;height:58px;border-radius:19px;
+    position:fixed; right:calc(50% - 260px + 20px); bottom:112px; z-index:25;
+    width:50px;height:50px;border-radius:16px;
     background:linear-gradient(150deg, var(--gold-bright), var(--gold) 70%); color:var(--green-900); border:none;
     box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,0.4);
     display:flex; align-items:center; justify-content:center;
     transition:transform .12s ease;
   }
-  .fab svg{ width:24px; height:24px; }
+  .fab svg{ width:21px; height:21px; }
   .fab:active{ transform:scale(0.92); }
   @media (max-width:560px){ .fab{ right:20px; } }
 
@@ -425,7 +509,7 @@
   }
   .bottomnav-bg{
     position:absolute; inset:0; z-index:0; border-radius:26px;
-    background:#000000;
+    background:#E8792E;
     box-shadow:0 8px 20px rgba(50,120,80,0.20);
     -webkit-mask-image: radial-gradient(circle 27px at var(--notch-x) 4px, transparent 26px, #000 28.5px);
             mask-image: radial-gradient(circle 27px at var(--notch-x) 4px, transparent 26px, #000 28.5px);
@@ -433,20 +517,22 @@
   .navbtn{ flex:1; background:none; border:none; color:rgba(27,36,32,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0 2px; position:relative; z-index:1; transition:color .2s ease; }
   .navbtn .ico-wrap{
     width:26px; height:26px; display:flex; align-items:center; justify-content:center;
-    border-radius:50%;
-    background:#000; color:#FFFFFF; border:3px solid transparent;
+    border-radius:50%; position:relative;
+    background:transparent; color:#FFFFFF; border:3px solid transparent;
     transition:transform .32s cubic-bezier(.34,1.56,.64,1), width .32s cubic-bezier(.34,1.56,.64,1), height .32s cubic-bezier(.34,1.56,.64,1), background .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
   .navbtn svg{ width:20px;height:20px; stroke-width:2.6; }
-  .navbtn span{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; }
-  .navbtn.active{ color:var(--green-900); }
+  .navbtn span[data-i18n]{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .2s ease; opacity:0; }
+  .navbtn.active{ color:#FFFFFF; }
+  .navbtn .ico-wrap svg{ display:block; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); margin:0; }
+  .navbtn.active span[data-i18n]{ font-size:8.5px; transform:translateY(-11px); display:inline-block; opacity:1; }
   .navbtn.active .ico-wrap{
     transform:translateY(-12px);
     width:50px; height:50px;
-    background:#000;
+    background:var(--blue-600);
     border:3px solid #fff;
     color:#FFFFFF;
-    box-shadow:0 4px 10px rgba(50,120,80,0.30);
+    box-shadow:0 4px 10px rgba(47,111,237,0.40);
   }
   .navbtn.active svg{ width:22px; height:22px; stroke-width:2.9; }
   .dot-ind{ display:none; }
@@ -473,8 +559,9 @@
     transition:transform .1s ease, box-shadow .15s ease;
   }
   .btn:active{ transform:scale(0.98); }
-  .btn-primary{ background:linear-gradient(135deg, var(--green-700), var(--green-900)); color:#fff; box-shadow:0 8px 18px rgba(15,56,48,0.28); }
-  .btn-primary:active{ background:var(--green-900); }
+  .btn:disabled{ opacity:0.6; pointer-events:none; }
+  .btn-primary{ background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; box-shadow:0 8px 18px rgba(15,56,48,0.28); }
+  .btn-primary:active{ background:var(--blue-900); }
   .btn-gold{ background:linear-gradient(135deg, var(--gold-bright), var(--gold)); color:var(--green-900); box-shadow:var(--shadow-gold); }
   .btn-ghost{ background:transparent; color:var(--muted); border:1.5px solid var(--paper-deep); }
   .btn-danger{ background:var(--loss-bg); color:var(--loss); }
@@ -716,7 +803,7 @@
   .switch input{ opacity:0; width:0; height:0; }
   .slider{ position:absolute; inset:0; background:var(--paper-deep); border-radius:20px; transition:.2s; cursor:pointer; }
   .slider::before{ content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
-  .switch input:checked + .slider{ background:var(--green-700); }
+  .switch input:checked + .slider{ background:var(--blue-700); }
   .switch input:checked + .slider::before{ transform:translateX(18px); }
   .lock-dots{ display:flex; gap:14px; justify-content:center; margin:18px 0 22px; }
   .lock-dots .d{ width:14px; height:14px; border-radius:50%; background:var(--paper-deep); border:1.5px solid var(--paper-deep); transition:.15s; }
@@ -733,8 +820,14 @@
   /* ---------- Print / PDF report ---------- */
   #printArea{ display:none; }
   @media print{
+    /* @page margin:0 removes the reserved space the browser draws its own
+       header (page title, top-left) and footer (URL/date, bottom) into —
+       that browser-injected text is what showed up as stray lines at the
+       top of every printed page. Padding on #printArea below replaces the
+       margin so the content itself still isn't flush against the paper edge. */
+    @page{ margin:0; }
     body > *:not(#printArea){ display:none !important; }
-    #printArea{ display:block !important; padding:0; margin:0; }
+    #printArea{ display:block !important; padding:15mm; margin:0; }
     .rpt-header{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #123832; padding-bottom:14px; margin-bottom:18px; }
     .rpt-header h1{ font-size:22px; margin:0 0 4px; font-family:'Fraunces', serif; }
     .rpt-brand{ display:flex; align-items:center; gap:10px; }
@@ -821,7 +914,7 @@
   .chip button{ border:none; background:rgba(15,56,48,0.12); width:16px;height:16px;border-radius:50%; font-size:9px; display:flex;align-items:center;justify-content:center; color:var(--green-800); }
   .chip-add{ display:flex; gap:8px; }
   .chip-add input{ flex:1; }
-  .chip-add button{ padding:0 14px; border-radius:10px; border:none; background:linear-gradient(135deg, var(--green-700), var(--green-900)); color:#fff; font-size:13px; font-weight:600; }
+  .chip-add button{ padding:0 14px; border-radius:10px; border:none; background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; font-size:13px; font-weight:600; }
   .field-inline{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--rule); }
   .field-inline:last-child{ border-bottom:none; }
   .field-inline .k{ font-size:13.5px; color:var(--ink); font-weight:500; }
@@ -829,11 +922,11 @@
   .helper-text{ font-size:11.5px; color:var(--muted); line-height:1.5; margin-top:6px; }
 
   .receipt-btn{
-    border:none; background:var(--green-800); color:#fff; width:26px;height:26px;border-radius:8px;
+    border:none; background:var(--blue-800); color:#fff; width:26px;height:26px;border-radius:8px;
     display:flex; align-items:center; justify-content:center; font-size:13px; flex:none;
     transition:transform .1s ease, background .12s ease;
   }
-  .receipt-btn:active{ background:var(--green-900); transform:scale(0.92); }
+  .receipt-btn:active{ background:var(--blue-900); transform:scale(0.92); }
 
   .receipt-check-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid var(--rule); font-size:13px; }
   .receipt-check-row:last-child{ border-bottom:none; }
@@ -845,10 +938,14 @@
 
   /* ---------- Printable sales receipts — 3×3 grid per A4 sheet ---------- */
   @media print{
-    @page{ size:A4; margin:8mm; }
+    /* @page margin:0 removes the reserved space for the browser's own print
+       header/footer (page title top-left, date top-right) — the same fix as
+       the report print block above. The visual 8mm margin is recreated below
+       as a CSS margin on .receipt-page itself instead of a page margin. */
+    @page{ size:A4; margin:0; }
     html, body{ margin:0; padding:0; background:#fff; }
     .receipt-page{
-      width:194mm; height:281mm; box-sizing:border-box;
+      width:194mm; height:281mm; box-sizing:border-box; margin:8mm;
       display:grid; grid-template-columns:repeat(2, 1fr); grid-template-rows:repeat(3, 1fr);
       gap:3mm; page-break-after:always; page-break-inside:avoid; overflow:hidden;
     }
@@ -1145,6 +1242,9 @@
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
+      <button class="icon-btn inventory-btn" onclick="goPage('inventory')" aria-label="Inventory" title="ইনভেন্টরি">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      </button>
       <button class="icon-btn orders-btn" onclick="goPage('orders')" aria-label="Live Orders" style="position:relative;">
         <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         <span id="ordersBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:var(--loss); color:#fff; font-size:9.5px; font-weight:700; min-width:17px; height:17px; border-radius:9px; align-items:center; justify-content:center; padding:0 3px; box-shadow:0 0 0 2px var(--green-800);">0</span>
@@ -1163,7 +1263,7 @@
           <button data-period="month">Monthly</button>
           <button data-period="year">Yearly</button>
         </div>
-        <button class="icon-btn" style="background:var(--green-800); color:#fff;" onclick="exportPDF(state.currentPeriod === 'today' ? 'week' : state.currentPeriod)" aria-label="Export PDF" title="Export current period as PDF">
+        <button class="icon-btn" style="background:var(--blue-800); color:#fff;" onclick="exportPDF(state.currentPeriod === 'today' ? 'week' : state.currentPeriod)" aria-label="Export PDF" title="Export current period as PDF">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="9 15 12 18 15 15"></polyline></svg>
         </button>
       </div>
@@ -1204,20 +1304,45 @@
         </div>
       </div>
 
-      <div class="chart-card">
-        <h3>Monthly Trend — <span id="chartYear"></span></h3>
-        <div class="legend">
-          <span><i class="dot" style="background:var(--green-600)"></i>Sales</span>
-          <span><i class="dot" style="background:var(--gold)"></i>Purchase</span>
-          <span><i class="dot" style="background:var(--loss)"></i>Expense</span>
+      <div class="dashboard-ai-card" onclick="openAiInsights()" role="button" aria-label="AI Insights">
+        <div class="ai-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l1.9 4.6 4.6 1.9-4.6 1.9L12 15.5l-1.9-4.6-4.6-1.9 4.6-1.9L12 2.5z"></path><path d="M19 15l.9 2.1 2.1.9-2.1.9L19 21l-.9-2.1-2.1-.9 2.1-.9L19 15z"></path></svg>
         </div>
-        <svg id="trendChart" width="100%" height="150" viewBox="0 0 480 150"></svg>
+        <div class="ai-card-text">
+          <div class="t1">AI Insights</div>
+          <div class="t2">আপনার ব্যবসার স্মার্ট বিশ্লেষণ দেখুন</div>
+        </div>
+        <div class="ai-card-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
       </div>
 
     </section>
 
     <!-- ============ SALES PAGE ============ -->
     <section class="page" id="page-sales">
+      <div class="quick-actions-card">
+        <div class="quick-actions-row">
+          <button class="quick-action-btn" onclick="toggleListSearch('sales')" aria-label="Search">
+            <span class="qa-ico qa-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><span class="qa-lbl">খোঁজ</span>
+          </button>
+          <button class="quick-action-btn" onclick="cycleListSort('sales')" aria-label="Sort">
+            <span class="qa-ico qa-sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="15" y2="7"></line><line x1="4" y1="12" x2="12" y2="12"></line><line x1="4" y1="17" x2="9" y2="17"></line><path d="M17 6v13"></path><polyline points="14 16 17 19 20 16"></polyline></svg></span><span class="qa-lbl" id="salesSortLbl">সাজান</span>
+          </button>
+          <button class="quick-action-btn" onclick="exportListCSV('sales')" aria-label="Export">
+            <span class="qa-ico qa-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span class="qa-lbl">এক্সপোর্ট</span>
+          </button>
+          <button class="quick-action-btn" onclick="openReceiptSheet()" aria-label="Print">
+            <span class="qa-ico qa-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></span><span class="qa-lbl">রিসিট প্রিন্ট</span>
+          </button>
+        </div>
+        <div class="list-search-wrap" id="salesSearchWrap">
+          <div class="list-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="salesSearchInput" placeholder="নাম বা কাস্টমার দিয়ে খোঁজ করুন" oninput="onListSearchInput('sales', this.value)">
+          </div>
+        </div>
+      </div>
       <div class="section-title">
         <span>Sales Ledger</span>
         <div style="display:flex; align-items:center; gap:8px;">
@@ -1230,12 +1355,62 @@
 
     <!-- ============ PURCHASE PAGE ============ -->
     <section class="page" id="page-purchase">
+      <div class="quick-actions-card">
+        <div class="quick-actions-row qa-5">
+          <button class="quick-action-btn" onclick="toggleListSearch('purchase')" aria-label="Search">
+            <span class="qa-ico qa-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><span class="qa-lbl">খোঁজ</span>
+          </button>
+          <button class="quick-action-btn" onclick="cycleListSort('purchase')" aria-label="Sort">
+            <span class="qa-ico qa-sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="15" y2="7"></line><line x1="4" y1="12" x2="12" y2="12"></line><line x1="4" y1="17" x2="9" y2="17"></line><path d="M17 6v13"></path><polyline points="14 16 17 19 20 16"></polyline></svg></span><span class="qa-lbl" id="purchaseSortLbl">সাজান</span>
+          </button>
+          <button class="quick-action-btn" onclick="exportListCSV('purchase')" aria-label="Export">
+            <span class="qa-ico qa-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span class="qa-lbl">এক্সপোর্ট</span>
+          </button>
+          <button class="quick-action-btn" onclick="printListPage('purchase')" aria-label="Print">
+            <span class="qa-ico qa-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></span><span class="qa-lbl">প্রিন্ট লিস্ট</span>
+          </button>
+          <button class="quick-action-btn" onclick="openReceiptScanSheet('purchase')" aria-label="AI Scan">
+            <span class="qa-ico qa-scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></span><span class="qa-lbl">AI স্ক্যান</span>
+          </button>
+        </div>
+        <div class="list-search-wrap" id="purchaseSearchWrap">
+          <div class="list-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="purchaseSearchInput" placeholder="নাম বা সাপ্লায়ার দিয়ে খোঁজ করুন" oninput="onListSearchInput('purchase', this.value)">
+          </div>
+        </div>
+      </div>
       <div class="section-title">Purchase Ledger <span class="num" id="purchaseTotalLbl">৳0.00</span></div>
       <div class="ledger-card" id="purchaseList"></div>
     </section>
 
     <!-- ============ EXPENSE PAGE ============ -->
     <section class="page" id="page-expense">
+      <div class="quick-actions-card">
+        <div class="quick-actions-row qa-5">
+          <button class="quick-action-btn" onclick="toggleListSearch('expense')" aria-label="Search">
+            <span class="qa-ico qa-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><span class="qa-lbl">খোঁজ</span>
+          </button>
+          <button class="quick-action-btn" onclick="cycleListSort('expense')" aria-label="Sort">
+            <span class="qa-ico qa-sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="15" y2="7"></line><line x1="4" y1="12" x2="12" y2="12"></line><line x1="4" y1="17" x2="9" y2="17"></line><path d="M17 6v13"></path><polyline points="14 16 17 19 20 16"></polyline></svg></span><span class="qa-lbl" id="expenseSortLbl">সাজান</span>
+          </button>
+          <button class="quick-action-btn" onclick="exportListCSV('expense')" aria-label="Export">
+            <span class="qa-ico qa-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span class="qa-lbl">এক্সপোর্ট</span>
+          </button>
+          <button class="quick-action-btn" onclick="printListPage('expense')" aria-label="Print">
+            <span class="qa-ico qa-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></span><span class="qa-lbl">প্রিন্ট লিস্ট</span>
+          </button>
+          <button class="quick-action-btn" onclick="openReceiptScanSheet('expense')" aria-label="AI Scan">
+            <span class="qa-ico qa-scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></span><span class="qa-lbl">AI স্ক্যান</span>
+          </button>
+        </div>
+        <div class="list-search-wrap" id="expenseSearchWrap">
+          <div class="list-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="expenseSearchInput" placeholder="বিবরণ দিয়ে খোঁজ করুন" oninput="onListSearchInput('expense', this.value)">
+          </div>
+        </div>
+      </div>
       <div class="section-title">Expense Ledger <span class="num" id="expenseTotalLbl">৳0.00</span></div>
       <div class="ledger-card" id="expenseList"></div>
     </section>
@@ -1286,6 +1461,8 @@
         <button class="settings-menu-item" data-i18n="menu_order_notifications" onclick="openSettingsSection('sblk14', this)">🔔 Order Notifications</button>
         <button class="settings-menu-item" data-i18n="menu_products_catalog" onclick="openSettingsSection('sblk15', this)">🛒 Products Catalog</button>
         <button class="settings-menu-item" data-i18n="menu_info_videos" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk17', this)">📦 ইনভেন্টরি ক্যাটেগরি</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk18', this)">🤖 AI রিসিট স্ক্যানার</button>
       </nav>
 
       <div class="settings-empty-hint" id="settingsEmptyHint"></div>
@@ -1496,7 +1673,7 @@
         <div class="helper-text" style="margin-top:0;" data-i18n="drive_helper">Connect your own Google Drive for a private, automatic backup — hidden and accessible only to you, like WhatsApp's chat backup.</div>
 
         <div id="driveNotConnectedBlock">
-          <button class="btn btn-primary" style="margin-top:12px;" data-i18n="btn_connect_drive" onclick="connectDrive()">🔗 Connect Drive</button>
+          <button class="btn btn-primary" style="margin-top:12px;" id="connectDriveBtn" data-i18n="btn_connect_drive" onclick="connectDrive()">🔗 Connect Drive</button>
         </div>
 
         <div id="driveConnectedBlock" style="display:none; margin-top:12px;">
@@ -1597,11 +1774,70 @@
         </div>
       </div>
 
+      <div class="settings-block settings-subpage" id="sblk17">
+        <h3>📦 ইনভেন্টরি ক্যাটেগরি</h3>
+        <div class="helper-text" style="margin-top:0;">ইনভেন্টরি পেজে দোকানের পণ্য যেসব ক্যাটেগরিতে ভাগ করে সাজাতে চান (যেমন ইলেকট্রনিক্স, কসমেটিক্স, খাদ্যপণ্য) — এখান থেকে নতুন যোগ বা মুছে ফেলা যাবে।</div>
+        <div class="chip-row" id="chipsInvCat"></div>
+        <div class="chip-add">
+          <input type="text" id="newInvCat" placeholder="নতুন ক্যাটেগরি যোগ করুন">
+          <button onclick="addCategory('inv')">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-block settings-subpage" id="sblk18">
+        <h3>🤖 AI রিসিট স্ক্যানার</h3>
+        <div class="helper-text" style="margin-top:0;">ক্যামেরা দিয়ে ক্রয়/খরচের রিসিট ছবি তুলে Gemini AI দিয়ে অটো এন্ট্রি ফর্ম পূরণ করার ফিচার। এটি চালু করতে Firebase Console-এ AI Logic এনাবল ও App Check (reCAPTCHA v3) সেটআপ করা থাকতে হবে — এরপর নিচে সেই reCAPTCHA v3 Site Key বসান।</div>
+        <div class="field" style="margin-top:10px;">
+          <label>reCAPTCHA v3 Site Key (App Check)</label>
+          <input type="text" id="settingsAiSiteKey" placeholder="6Lxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+        </div>
+        <div class="helper-text">এই কী ছাড়া রিসিট স্ক্যান বাটন কাজ করবে না — ডেটা কখনো আপনার ডিভাইস ছাড়া অন্য কোথাও সেভ হয় না, শুধু স্ক্যানের সময় ছবিটি Gemini-তে পাঠানো হয়।</div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
+      </div>
+
+    </section>
+
+    <!-- ============ INVENTORY PAGE ============ -->
+    <section class="page" id="page-inventory">
+      <div class="quick-actions-card">
+        <div class="quick-actions-row">
+          <button class="quick-action-btn" onclick="toggleItemSearch()" aria-label="Search">
+            <span class="qa-ico qa-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><span class="qa-lbl">খোঁজ</span>
+          </button>
+          <button class="quick-action-btn" onclick="cycleItemSort()" aria-label="Sort">
+            <span class="qa-ico qa-sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="15" y2="7"></line><line x1="4" y1="12" x2="12" y2="12"></line><line x1="4" y1="17" x2="9" y2="17"></line><path d="M17 6v13"></path><polyline points="14 16 17 19 20 16"></polyline></svg></span><span class="qa-lbl" id="itemSortLbl">সাজান</span>
+          </button>
+          <button class="quick-action-btn" onclick="goPage('stockalerts')" aria-label="Stock Alerts">
+            <span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span><span class="qa-lbl">রিমাইন্ডার</span>
+          </button>
+        </div>
+        <div class="list-search-wrap" id="itemSearchWrap">
+          <div class="list-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="itemSearchInput" placeholder="নাম বা কোড দিয়ে খোঁজ করুন" oninput="onItemSearchInput(this.value)">
+          </div>
+        </div>
+      </div>
+      <div class="segmented" id="itemCatTabs" style="margin:10px 0;">
+        <button data-cat="__all__" class="active" onclick="setItemCatFilter('__all__', this)">সব</button>
+      </div>
+      <div class="section-title">
+        <span>ইনভেন্টরি</span>
+        <span class="num" id="itemsCountLbl">0</span>
+      </div>
+      <div class="ledger-card" id="itemsList"></div>
+    </section>
+
+    <!-- ============ STOCK ALERTS PAGE ============ -->
+    <section class="page" id="page-stockalerts">
+      <div class="section-title"><span>স্টক রিমাইন্ডার</span></div>
+      <div class="helper-text" style="margin:0 0 10px;">যেসব পণ্যের স্টক রিমাইন্ডার সীমার নিচে নেমে গেছে বা শেষ হয়ে গেছে, সেগুলো সবচেয়ে কম স্টক অনুযায়ী সাজানো — সবচেয়ে জরুরিটা সবার উপরে।</div>
+      <div class="ledger-card" id="stockAlertsList"></div>
     </section>
 
   </main>
 
-  <button class="fab" id="fabAdd" onclick="openAddSheet()">
+  <button class="fab" id="fabAdd" onclick="handleFabClick()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
   </button>
 
@@ -1706,6 +1942,78 @@
   </form>
 </div>
 
+<!-- ===================== ADD/EDIT INVENTORY ITEM SHEET ===================== -->
+<div class="overlay" id="itemOverlay" onclick="closeItemSheet()"></div>
+<div class="sheet" id="itemSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closeItemSheet()">✕</button>
+  <h2 id="itemSheetTitle">নতুন পণ্য যোগ করুন</h2>
+  <form id="itemForm" onsubmit="return saveItem(event)">
+    <div class="field">
+      <label>পণ্যের নাম *</label>
+      <input type="text" id="iName" placeholder="যেমন: স্যামসাং ফ্রিজ / লাক্স সাবান" required>
+    </div>
+    <div class="field">
+      <label>ক্যাটেগরি *</label>
+      <select id="iCategory" required></select>
+    </div>
+    <div class="field">
+      <label>পণ্যের ছবি</label>
+      <input type="file" id="iPhoto" accept="image/*" onchange="onItemPhotoChange(event)">
+      <img id="iPhotoPreview" style="display:none; margin-top:8px; max-width:140px; border-radius:10px; border:1px solid var(--rule);">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>ক্রয় মূল্য (প্রতি পিস)</label>
+        <input type="number" id="iCostPrice" min="0" step="any" placeholder="0.00">
+      </div>
+      <div class="field">
+        <label>বিক্রয় মূল্য (প্রতি পিস)</label>
+        <input type="number" id="iSellPrice" min="0" step="any" placeholder="0.00">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>বর্তমান স্টক (পিস)</label>
+        <input type="number" id="iStockQty" min="0" step="any" placeholder="0">
+      </div>
+      <div class="field">
+        <label>স্টক রিমাইন্ডার (এর নিচে নামলে সতর্ক করবে)</label>
+        <input type="number" id="iLowStock" min="0" step="any" placeholder="যেমন: 5">
+      </div>
+    </div>
+    <div class="field">
+      <label>কেনার তারিখ</label>
+      <input type="date" id="iPurchaseDate">
+    </div>
+    <div class="field">
+      <label>সাপ্লায়ার / দোকানের নাম (কোথা থেকে কেনা হয়েছে)</label>
+      <input type="text" id="iSupplierName" placeholder="যেমন: ঢাকা হোলসেল মার্কেট">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>সাপ্লায়ারের ফোন নম্বর</label>
+        <input type="tel" id="iSupplierPhone" placeholder="e.g. 01XXXXXXXXX">
+      </div>
+      <div class="field">
+        <label>পণ্য কোড / SKU (ঐচ্ছিক)</label>
+        <input type="text" id="iSku" placeholder="যেমন: SKU-1001">
+      </div>
+    </div>
+    <div class="field">
+      <label>সাপ্লায়ারের ঠিকানা</label>
+      <input type="text" id="iSupplierAddress" placeholder="ঠিকানা (ঐচ্ছিক)">
+    </div>
+    <div class="field">
+      <label>নোট</label>
+      <textarea id="iNotes" rows="2" placeholder="বাড়তি কোনো তথ্য"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="closeItemSheet()">Cancel</button>
+    <button type="button" class="btn btn-ghost" style="margin-top:10px; color:var(--loss); display:none;" id="itemDeleteBtn" onclick="deleteItemFromSheet()">🗑 Delete</button>
+  </form>
+</div>
+
 <!-- ===================== PRINT RECEIPTS SHEET ===================== -->
 <div class="overlay" id="receiptOverlay" onclick="closeReceiptSheet()"></div>
 <div class="sheet" id="receiptSheet">
@@ -1727,6 +2035,136 @@
   <div class="helper-text" style="text-align:center;">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
   <button class="btn btn-ghost" style="margin-top:10px;" onclick="closeReceiptSheet()">Cancel</button>
 </div>
+
+<!-- ===================== AI INSIGHTS SHEET (Inventory + Sales Assistant) ===================== -->
+<div class="overlay" id="aiInsightsOverlay" onclick="closeAiInsights()"></div>
+<div class="sheet" id="aiInsightsSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closeAiInsights()">✕</button>
+  <h2>✨ AI Business Insights</h2>
+  <div class="segmented" id="aiInsightsTabs">
+    <button data-aitab="inventory" class="active" onclick="switchAiTab('inventory')">📦 Inventory</button>
+    <button data-aitab="sales" onclick="switchAiTab('sales')">📈 Sales</button>
+    <button data-aitab="finance" onclick="switchAiTab('finance')">💰 Finance</button>
+    <button data-aitab="fraud" onclick="switchAiTab('fraud')">🚨 Fraud</button>
+  </div>
+
+  <div id="aiTabInventory" class="ai-tab-panel">
+    <div class="section-title" style="margin-top:16px;">স্টক সতর্কতা (Low Stock)</div>
+    <div class="ledger-card" id="aiLowStockList"></div>
+    <div class="section-title">Fast Moving পণ্য (গত ৩০ দিন)</div>
+    <div class="ledger-card" id="aiFastMovingList"></div>
+    <div class="section-title">Slow / Dead Stock</div>
+    <div class="ledger-card" id="aiSlowMovingList"></div>
+  </div>
+
+  <div id="aiTabSales" class="ai-tab-panel" style="display:none;">
+    <div class="segmented" id="aiSalesPeriodTabs" style="margin-top:16px;">
+      <button data-aiperiod="1" class="active" onclick="switchAiSalesPeriod(1)">আজ</button>
+      <button data-aiperiod="7" onclick="switchAiSalesPeriod(7)">এই সপ্তাহ</button>
+      <button data-aiperiod="30" onclick="switchAiSalesPeriod(30)">এই মাস</button>
+    </div>
+    <div class="kpi-grid" id="aiSalesKpis" style="margin-top:12px;"></div>
+    <div class="section-title">সবচেয়ে বেশি বিক্রি হওয়া পণ্য</div>
+    <div class="ledger-card" id="aiTopProducts"></div>
+    <div class="section-title">সবচেয়ে কম বিক্রি হওয়া পণ্য</div>
+    <div class="ledger-card" id="aiBottomProducts"></div>
+    <div class="helper-text" style="text-align:center; margin-top:10px;">এই বিশ্লেষণ সম্পূর্ণভাবে আপনার নিজের ডিভাইসে হিসাব হয় — কোনো তথ্য বাইরে পাঠানো হয় না।</div>
+  </div>
+
+  <div id="aiTabFinance" class="ai-tab-panel" style="display:none;">
+    <div class="segmented" id="aiFinPeriodTabs" style="margin-top:16px;">
+      <button data-finperiod="7" onclick="switchAiFinPeriod(7)">৭ দিন</button>
+      <button data-finperiod="30" class="active" onclick="switchAiFinPeriod(30)">৩০ দিন</button>
+      <button data-finperiod="90" onclick="switchAiFinPeriod(90)">৯০ দিন</button>
+    </div>
+    <div class="kpi-grid" id="aiFinKpis" style="margin-top:12px;"></div>
+    <div class="section-title">নগদ প্রবাহ — পেমেন্ট মেথড অনুযায়ী</div>
+    <div class="ledger-card" id="aiFinCashFlowList"></div>
+    <div class="section-title">সবচেয়ে বড় খরচের খাত</div>
+    <div class="ledger-card" id="aiFinExpenseBreakdown"></div>
+    <div class="section-title">দৈনিক লাভ/ক্ষতি প্রবণতা (সাম্প্রতিক)</div>
+    <div class="ledger-card" id="aiFinTrend"></div>
+    <div class="helper-text" style="text-align:center; margin-top:10px;">বিদ্যমান বিক্রয়/ক্রয়/খরচ ডেটা থেকে হিসাব করা হয়েছে — কোনো নতুন এন্ট্রি লাগবে না।</div>
+  </div>
+
+  <div id="aiTabFraud" class="ai-tab-panel" style="display:none;">
+    <div class="section-title" style="margin-top:16px;">ডুপ্লিকেট ইনভয়েস নাম্বার</div>
+    <div class="ledger-card" id="aiFraudDuplicates"></div>
+    <div class="section-title">অস্বাভাবিক ছাড় / মূল্য গরমিল</div>
+    <div class="ledger-card" id="aiFraudDiscounts"></div>
+    <div class="helper-text" style="text-align:center; margin-top:10px;">নির্ধারিত পণ্যমূল্যের চেয়ে ১৫%+ কম দামে বিক্রি বা একই ইনভয়েস নাম্বার একাধিকবার ব্যবহার হলে এখানে দেখাবে। ভুল টাইপ বা বাল্ক ছাড়ের ক্ষেত্রেও দেখাতে পারে — নিশ্চিত জালিয়াতি নয়, শুধু পর্যালোচনার জন্য।</div>
+  </div>
+</div>
+
+<!-- ===================== RECEIPT SCANNER SHEET (Gemini AI, Phase 5) ===================== -->
+<div class="overlay" id="receiptScanOverlay" onclick="closeReceiptScanSheet()"></div>
+<div class="sheet" id="receiptScanSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closeReceiptScanSheet()">✕</button>
+  <h2 id="rsTitle">📷 রিসিট স্ক্যান (AI)</h2>
+
+  <div id="rsStepCapture" style="margin-top:14px;">
+    <div class="helper-text" style="margin-top:0;">রিসিট বা ইনভয়েসের একটি স্পষ্ট ছবি তুলুন বা আপলোড করুন — AI নিজে থেকে তারিখ, সাপ্লায়ার, আইটেম ও দাম বের করে ফর্মে বসিয়ে দেবে।</div>
+    <img id="rsPreview" style="display:none; width:100%; max-height:260px; object-fit:contain; border-radius:14px; margin:10px 0; background:var(--paper-deep);">
+    <label class="btn btn-gold" style="display:block; text-align:center; cursor:pointer;">
+      📷 ছবি তুলুন / বাছাই করুন
+      <input type="file" id="rsFileInput" accept="image/*" capture="environment" style="display:none;" onchange="onRsFileChange(event)">
+    </label>
+    <button class="btn btn-primary" id="rsScanBtn" style="margin-top:10px;" disabled onclick="runReceiptScan()">✨ AI দিয়ে স্ক্যান করুন</button>
+    <div id="rsLoading" style="display:none; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:13px; color:var(--muted);">
+      <span class="spinner" style="width:16px; height:16px; border:2px solid var(--paper-deep); border-top-color:var(--green-600); border-radius:50%; display:inline-block; animation:rsspin .7s linear infinite;"></span>
+      স্ক্যান করা হচ্ছে... একটু অপেক্ষা করুন
+    </div>
+  </div>
+
+  <div id="rsStepResult" style="display:none; margin-top:14px;">
+    <div class="row2">
+      <div class="field" style="margin-bottom:0;">
+        <label>তারিখ</label>
+        <input type="date" id="rsDate">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>পেমেন্ট মেথড</label>
+        <select id="rsPayment"></select>
+      </div>
+    </div>
+    <div class="field">
+      <label id="rsPartyLabel">সাপ্লায়ার</label>
+      <input type="text" id="rsParty" placeholder="নাম">
+    </div>
+    <div class="row2">
+      <div class="field" style="margin-bottom:0;">
+        <label>ফোন (ঐচ্ছিক)</label>
+        <input type="text" id="rsPhone">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>রেফারেন্স নং (ঐচ্ছিক)</label>
+        <input type="text" id="rsRef">
+      </div>
+    </div>
+    <div class="field">
+      <label>ক্যাটেগরি</label>
+      <div id="rsCatWrap"></div>
+    </div>
+
+    <div class="section-title">আইটেম তালিকা <span class="num" id="rsItemsTotal">৳0.00</span></div>
+    <div id="rsItemsList" class="ledger-card"></div>
+    <button type="button" class="btn btn-ghost" style="margin-top:8px;" onclick="addRsItem()">+ আইটেম যোগ করুন</button>
+    <div class="helper-text" style="text-align:center; margin-top:10px;">প্রতিটি আইটেম আলাদা এন্ট্রি হিসেবে সেভ হবে। সেভ করার আগে চাইলে যেকোনো ঘর ঠিক করে নিন।</div>
+
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="saveRsEntries()">✅ সব এন্ট্রি সেভ করুন</button>
+    <button class="btn btn-ghost" style="margin-top:10px;" onclick="closeReceiptScanSheet()">Cancel</button>
+  </div>
+</div>
+
+<style>
+@keyframes rsspin{ to{ transform:rotate(360deg); } }
+.rs-item-row{ display:grid; grid-template-columns:1.6fr 0.7fr 0.8fr 0.8fr auto; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(15,56,48,0.06); }
+.rs-item-row:last-child{ border-bottom:none; }
+.rs-item-row input{ width:100%; min-width:0; border:1px solid rgba(15,56,48,0.12); border-radius:8px; padding:6px 6px; font-size:12.5px; background:var(--paper); color:var(--ink); }
+.rs-item-row.rs-item-expense{ grid-template-columns:1.6fr 0.9fr auto; }
+</style>
 
 <div class="toast" id="toast"></div>
 
@@ -3156,22 +3594,55 @@ const state = {
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
     products: [], // [{id, name, price}] — shown on the landing page
     videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    invCategories: ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"], // Inventory: product categories
     dragMode: false // Light mode with colorful theme
   },
   security: { pinEnabled: false, pin: "", bioEnabled: false },
   sales: [],
   purchases: [],
   expenses: [],
+  invItems: [], // Inventory: [{id, name, category, photo, costPrice, sellPrice, purchaseDate, supplierName, supplierPhone, supplierAddress, stockQty, lowStock, sku, notes}]
   orders: [], // live mirror of Firebase "orders" node for this shop
   currentPage: "dashboard",
   currentPeriod: "today",
   currentOrderTab: "cod",
-  editing: null // {type, id}
+  editing: null, // {type, id}
+  editingItemId: null
 };
+let itemSearchQuery = '';
+let itemCatFilter = '__all__';
+const ITEM_SORT_MODES = [
+  { key:'stock_asc', lbl:'কম স্টক আগে' },
+  { key:'name_asc',   lbl:'নাম (A-Z)' },
+  { key:'newest',     lbl:'নতুন আগে' }
+];
+let itemSortMode = 0;
 
 let idCounter = 1;
 const LIST_PAGE_SIZE = 50;
 let listVisibleCounts = { sales: LIST_PAGE_SIZE, purchase: LIST_PAGE_SIZE, expense: LIST_PAGE_SIZE };
+let listSearchQuery = { sales:'', purchase:'', expense:'' };
+
+// ---------- Per-page "dirty" flags ----------
+// goPage() used to fully re-render whichever page you tapped into, every
+// single time, even when nothing about that page's data had changed since
+// your last visit (e.g. Dashboard → Sales → Dashboard with no edits in
+// between) — that unconditional rebuild work is what made nav taps feel
+// delayed. Now a page only re-renders when it's actually marked dirty;
+// otherwise the page you're switching to just becomes visible as-is (it was
+// never destroyed — .page{display:none} only hides it, the DOM stays intact)
+// while every other page does zero work in the background.
+let dirtyPages = { dashboard:true, sales:true, purchase:true, expense:true, orders:true, settings:true, inventory:true, stockalerts:true };
+function markAllPagesDirty(){
+  Object.keys(dirtyPages).forEach(k => dirtyPages[k] = true);
+}
+const SORT_MODES = [
+  { key:'date_desc', lbl:'সাজান' },
+  { key:'date_asc',  lbl:'পুরোনো আগে' },
+  { key:'amt_desc',  lbl:'বেশি টাকা' },
+  { key:'amt_asc',   lbl:'কম টাকা' }
+];
+let listSortMode = { sales:0, purchase:0, expense:0 };
 
 /* ---------------- LANGUAGE / i18n ----------------
    Core-UI translation system: elements carry data-i18n="key" and get their
@@ -3329,6 +3800,7 @@ const todayISO = () => toLocalISODate(new Date());
 /* ---------------- PERSISTENCE (local cache) ---------------- */
 let offlineEditsPending = false;
 function saveState(skipDriveSchedule){
+  markAllPagesDirty(); // any data write can affect what a page would show — force fresh renders on next visit
   // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
   // instead of waiting on the JSON.stringify + localStorage write to finish first.
   setTimeout(()=>{
@@ -3340,6 +3812,7 @@ function saveState(skipDriveSchedule){
         sales: state.sales,
         purchases: state.purchases,
         expenses: state.expenses,
+        invItems: state.invItems,
         idCounter
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -3362,6 +3835,7 @@ function loadState(){
     state.sales = d.sales || [];
     state.purchases = d.purchases || [];
     state.expenses = d.expenses || [];
+    state.invItems = d.invItems || [];
     idCounter = d.idCounter || 1;
     return true;
   }catch(err){
@@ -3395,6 +3869,7 @@ function initFirebaseCore(){
                 sales: state.sales,
                 purchases: state.purchases,
                 expenses: state.expenses,
+                invItems: state.invItems,
                 idCounter
               }).catch(()=>{})
             : Promise.resolve();
@@ -3429,9 +3904,11 @@ function loadShopData(uid){
     state.sales = d.sales ? Object.values(d.sales) : [];
     state.purchases = d.purchases ? Object.values(d.purchases) : [];
     state.expenses = d.expenses ? Object.values(d.expenses) : [];
+    state.invItems = d.invItems ? Object.values(d.invItems) : [];
     idCounter = d.idCounter || 1;
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
+    if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories = ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"];
     saveState(true); // caches locally too — skip Drive auto-backup schedule; this fires on every app open, not on real edits
   });
 }
@@ -3446,6 +3923,7 @@ function syncShopToCloud(){
       sales: state.sales,
       purchases: state.purchases,
       expenses: state.expenses,
+      invItems: state.invItems,
       idCounter
     }).then(()=>{
       offlineEditsPending = false;
@@ -3604,6 +4082,7 @@ function handleSignup(e){
         sales: state.sales,
         purchases: state.purchases,
         expenses: state.expenses,
+        invItems: state.invItems,
         idCounter
       });
     })
@@ -3669,6 +4148,7 @@ function handleGoogleAuth(){
           sales: state.sales,
           purchases: state.purchases,
           expenses: state.expenses,
+          invItems: state.invItems,
           idCounter
         }).then(()=>{
           if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
@@ -3801,6 +4281,7 @@ function verifyPhoneAuthCode(){
           sales: state.sales,
           purchases: state.purchases,
           expenses: state.expenses,
+          invItems: state.invItems,
           idCounter
         }).then(()=>{
           if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
@@ -4052,25 +4533,46 @@ function updateNavNotch(){
   const centerX = (btnRect.left - navRect.left) + (btnRect.width / 2);
   nav.style.setProperty('--notch-x', centerX + 'px');
 }
-window.addEventListener('resize', updateNavNotch);
-window.addEventListener('orientationchange', () => setTimeout(updateNavNotch, 150));
+let navNotchRAF = null;
+function scheduleNavNotchUpdate(){
+  if(navNotchRAF) return; // coalesce bursts (resize drags, rapid taps) into a single frame
+  navNotchRAF = requestAnimationFrame(()=>{ navNotchRAF = null; updateNavNotch(); });
+}
+window.addEventListener('resize', scheduleNavNotchUpdate);
+window.addEventListener('orientationchange', () => setTimeout(scheduleNavNotchUpdate, 150));
 
 function goPage(page){
   state.currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  // Inventory / Stock Alerts are opened via a topbar icon and have no matching
+  // bottom-nav button — leave the bottom nav's current highlight untouched
+  // instead of clearing it (which used to make the last-active icon shrink back down).
+  const hasNavBtn = !!document.querySelector('.navbtn[data-page="' + page + '"]');
+  if(hasNavBtn){
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  }
   applyPageBarColor(page);
-  updateNavNotch();
-  const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings'};
+  const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings', inventory:'ইনভেন্টরি', stockalerts:'স্টক রিমাইন্ডার'};
   document.getElementById('topPageLabel').textContent = labels[page];
-  document.getElementById('fabAdd').style.display = (page === 'settings' || page === 'dashboard' || page === 'orders') ? 'none' : 'flex';
-  if(page === 'dashboard') renderDashboard();
-  if(page === 'sales'){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); }
-  if(page === 'purchase'){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); }
-  if(page === 'expense'){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); }
-  if(page === 'orders') renderOrders();
-  if(page === 'settings') renderSettings();
+  const fabHiddenPages = ['settings','dashboard','orders','stockalerts'];
+  document.getElementById('fabAdd').style.display = fabHiddenPages.includes(page) ? 'none' : 'flex';
+  // Each render*() call below rebuilds a chunk of DOM (lists, chips, dashboard
+  // cards, etc.) — real work, not just a page-visibility toggle. Skipping it
+  // when the page's data hasn't changed since last time is what actually cuts
+  // the per-tap delay; the plain show/hide above is already cheap.
+  if(page === 'dashboard' && dirtyPages.dashboard){ renderDashboard(); dirtyPages.dashboard = false; }
+  if(page === 'sales' && dirtyPages.sales){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
+  if(page === 'purchase' && dirtyPages.purchase){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
+  if(page === 'expense' && dirtyPages.expense){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
+  if(page === 'orders' && dirtyPages.orders){ renderOrders(); dirtyPages.orders = false; }
+  if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
+  if(page === 'inventory' && dirtyPages.inventory){ renderItems(); dirtyPages.inventory = false; }
+  if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
+  // Notch position read happens after all DOM writes above, batched into the next
+  // animation frame — avoids forced-synchronous-layout (read/write interleaving)
+  // during page transitions, which was the main jank source when switching tabs.
+  if(hasNavBtn) scheduleNavNotchUpdate();
 }
 
 function applyPageBarColor(page){
@@ -4154,6 +4656,8 @@ function renderDashboard(){
 }
 
 function renderTrendChart(){
+  const svgCheck = document.getElementById('trendChart');
+  if(!svgCheck) return; // Monthly Trend card removed from dashboard
   const now = new Date();
   const year = now.getFullYear();
   document.getElementById('chartYear').textContent = year;
@@ -4216,14 +4720,43 @@ function getListFor(type){
   return state.expenses;
 }
 
+const _debounceTimers = {};
+function debounceRender(key, fn, delay){
+  clearTimeout(_debounceTimers[key]);
+  _debounceTimers[key] = setTimeout(fn, delay);
+}
+function applyListSort(list, type){
+  const mode = SORT_MODES[listSortMode[type] || 0].key;
+  const arr = list.slice();
+  if(mode === 'date_desc') arr.sort((a,b)=> sortKey(a) < sortKey(b) ? 1 : -1);
+  else if(mode === 'date_asc') arr.sort((a,b)=> sortKey(a) > sortKey(b) ? 1 : -1);
+  else if(mode === 'amt_desc') arr.sort((a,b)=> (b.total||0) - (a.total||0));
+  else if(mode === 'amt_asc') arr.sort((a,b)=> (a.total||0) - (b.total||0));
+  return arr;
+}
+function applyListSearch(list, type){
+  const q = (listSearchQuery[type] || '').trim().toLowerCase();
+  if(!q) return list;
+  return list.filter(t=>{
+    const hay = [t.name, t.category, t.party, t.notes, t.ref].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
 function renderListPage(type){
-  const fullList = getListFor(type).slice().sort((a,b)=> sortKey(a) < sortKey(b) ? 1 : -1);
   const total = getListFor(type).reduce((s,t)=>s+t.total,0);
   document.getElementById(type + 'TotalLbl').textContent = fmtMoney(total);
   const box = document.getElementById(type + 'List');
-  if(fullList.length === 0){
+  let fullList = applyListSort(getListFor(type), type);
+  fullList = applyListSearch(fullList, type);
+  const sortLbl = document.getElementById(type + 'SortLbl');
+  if(sortLbl) sortLbl.textContent = SORT_MODES[listSortMode[type] || 0].lbl;
+  if(getListFor(type).length === 0){
     const msg = { sales:'No sales recorded yet.', purchase:'No purchases recorded yet.', expense:'No expenses recorded yet.' }[type];
     box.innerHTML = emptyStateHTML(msg, 'Tap the + button to add your first entry.');
+    return;
+  }
+  if(fullList.length === 0){
+    box.innerHTML = emptyStateHTML('কোনো ফলাফল পাওয়া যায়নি', 'অন্য শব্দ দিয়ে খোঁজ করে দেখুন।');
     return;
   }
   const visibleCount = Math.min(listVisibleCounts[type] || LIST_PAGE_SIZE, fullList.length);
@@ -4242,6 +4775,73 @@ function loadMoreList(type){
 // overwrite renderList with the real implementation
 renderList = renderListPage;
 
+/* ---------------- Quick-action row: search / sort / export / print ---------------- */
+function toggleListSearch(type){
+  const wrap = document.getElementById(type + 'SearchWrap');
+  if(!wrap) return;
+  wrap.classList.toggle('open');
+  if(wrap.classList.contains('open')){
+    const input = document.getElementById(type + 'SearchInput');
+    if(input) setTimeout(()=> input.focus(), 50);
+  } else {
+    listSearchQuery[type] = '';
+    const input = document.getElementById(type + 'SearchInput');
+    if(input) input.value = '';
+    renderListPage(type);
+  }
+}
+function onListSearchInput(type, val){
+  listSearchQuery[type] = val;
+  listVisibleCounts[type] = LIST_PAGE_SIZE;
+  debounceRender('list_' + type, ()=> renderListPage(type), 140);
+}
+function cycleListSort(type){
+  listSortMode[type] = ((listSortMode[type] || 0) + 1) % SORT_MODES.length;
+  renderListPage(type);
+  showToast(SORT_MODES[listSortMode[type]].lbl);
+}
+function exportListCSV(type){
+  let list = applyListSearch(applyListSort(getListFor(type), type), type);
+  if(list.length === 0){ showToast('এক্সপোর্ট করার মতো কোনো তথ্য নেই'); return; }
+  const headers = ['Date','Name','Category','Party','Payment','Amount','Notes'];
+  const rows = list.map(t => [
+    t.date || '', t.name || '', t.category || '', t.party || '', t.payment || '', t.total || 0, t.notes || ''
+  ]);
+  const csvEsc = v => `"${String(v).replace(/"/g,'""')}"`;
+  const csv = [headers.map(csvEsc).join(','), ...rows.map(r => r.map(csvEsc).join(','))].join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = type + '-ledger-' + todayISO() + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSV ডাউনলোড হচ্ছে');
+}
+function printListPage(type){
+  let list = applyListSearch(applyListSort(getListFor(type), type), type);
+  const titleMap = { sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger' };
+  const total = list.reduce((s,t)=>s+(t.total||0),0);
+  const rows = list.map(t => `<tr><td>${escapeHTML(fmtDate(t.date))}</td><td>${escapeHTML(t.name||t.category||'—')}</td><td>${escapeHTML(t.party||'')}</td><td style="text-align:right">${fmtMoney(t.total)}</td></tr>`).join('');
+  const printArea = document.getElementById('printArea');
+  printArea.innerHTML = `
+    <div style="padding:20px;font-family:sans-serif;">
+      <h2>${escapeHTML(state.company.name)} — ${titleMap[type]}</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="border-bottom:2px solid #333;text-align:left;">
+          <th style="padding:6px 4px;">Date</th><th style="padding:6px 4px;">Name</th><th style="padding:6px 4px;">Party</th><th style="padding:6px 4px;text-align:right;">Amount</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr style="border-top:2px solid #333;font-weight:bold;">
+          <td colspan="3" style="padding:6px 4px;">Total</td><td style="padding:6px 4px;text-align:right;">${fmtMoney(total)}</td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+  window.print();
+}
+
 function emptyStateHTML(title, hint){
   return `<div class="empty-state"><div class="glyph">🗒️</div><div>${title}</div><div class="hint">${hint}</div></div>`;
 }
@@ -4251,12 +4851,20 @@ const TXN_ICONS = {
   purchase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>',
   expense: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>'
 };
+const CHEVRON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+function avatarPaletteIndex(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) >>> 0;
+  return h % 5;
+}
 function txnRowHTML(t, kind, withActions){
   const metaBits = [];
   metaBits.push(fmtDate(t.date));
   if(t.category) metaBits.push(t.category);
   if(t.party) metaBits.push(t.party);
   const name = t.name || t.category || '—';
+  const avatarLetter = (t.party || name || '?').trim().charAt(0).toUpperCase() || '?';
+  const palIdx = avatarPaletteIndex(t.party || name || 'x');
   const menuId = 'menu-' + kind + '-' + t.id;
   const actions = withActions ? `
     <div class="txn-menu-wrap">
@@ -4268,13 +4876,14 @@ function txnRowHTML(t, kind, withActions){
     </div>` : '';
   return `
   <div class="txn-row">
-    <div class="txn-icon ${kind}">${TXN_ICONS[kind]}</div>
+    <div class="txn-icon avatar pal-${palIdx}">${escapeHTML(avatarLetter)}</div>
     <div class="txn-left">
       <div class="txn-name">${escapeHTML(name)}</div>
       <div class="txn-meta">${escapeHTML(metaBits.join(' · '))}</div>
     </div>
-    <div class="txn-right">
+    <div class="txn-right" style="display:flex; align-items:center; gap:4px;">
       <div class="txn-amt ${kind}">${fmtMoney(t.total)}</div>
+      <span class="txn-chevron">${CHEVRON_ICON}</span>
       ${actions}
     </div>
   </div>`;
@@ -4291,6 +4900,32 @@ function toggleTxnMenu(e, menuId){
 }
 document.addEventListener('click', closeAllTxnMenus);
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ---------------- AUTO STOCK DEDUCTION (Sales & confirmed Orders auto-reduce Inventory) ---------------- */
+// ক্যাটাগরি অনুযায়ী মিলিয়ে ইনভেন্টরি আইটেম খোঁজা হয় (নাম + ক্যাটেগরি দুটোই মিললে সবচেয়ে নির্ভুল ম্যাচ,
+// না মিললে শুধু নাম দিয়ে চেষ্টা করা হয় — অনলাইন অর্ডারের আইটেমে ক্যাটেগরি থাকে না বলে)
+function findInvItemForDeduction(name, category){
+  const nm = String(name || '').trim().toLowerCase();
+  if(!nm) return null;
+  if(category){
+    const exact = state.invItems.find(x => String(x.name||'').trim().toLowerCase() === nm && x.category === category);
+    if(exact) return exact;
+  }
+  return state.invItems.find(x => String(x.name||'').trim().toLowerCase() === nm) || null;
+}
+// qtyDelta: ঋণাত্মক (negative) = বিক্রি হয়েছে (স্টক থেকে বিয়োগ), ধনাত্মক (positive) = ফেরত/সংশোধন (স্টকে যোগ)
+function adjustInvStock(name, category, qtyDelta){
+  if(!qtyDelta) return;
+  const item = findInvItemForDeduction(name, category);
+  if(!item || item.stockQty == null) return; // এই পণ্যের স্টক গণনা করা হয় না — বাদ দেওয়া হলো
+  const before = item.stockQty;
+  const after = before + qtyDelta;
+  item.stockQty = Math.max(0, after);
+  if(qtyDelta < 0 && after < 0){
+    showToast(`⚠️ "${item.name}" — স্টকে যা আছে তার চেয়ে বেশি বিক্রি দেখানো হয়েছে`);
+  }
+  if(state.currentPage === 'inventory'){ renderItems(); renderStockAlerts(); }
+}
 
 /* ---------------- ADD / EDIT TRANSACTION SHEET ---------------- */
 function openAddSheet(){
@@ -4328,7 +4963,17 @@ function editTxn(type, id){
 function deleteTxn(type, id){
   const list = getListFor(type);
   const idx = list.findIndex(x => String(x.id) === String(id));
-  if(idx > -1){ list.splice(idx,1); saveState(); showToast('Entry deleted'); renderList(type); renderDashboard(); }
+  if(idx > -1){
+    const t = list[idx];
+    if(type === 'sales'){
+      adjustInvStock(t.name, t.category, t.qty || 0); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
+    }
+    list.splice(idx,1);
+    saveState();
+    showToast('Entry deleted');
+    renderList(type);
+    renderDashboard();
+  }
 }
 function configureSheetForType(type){
   const isExpense = type === 'expense';
@@ -4387,20 +5032,51 @@ function saveTxn(e){
     total
   };
   const list = getListFor(type);
+  let fraudWarning = '';
   if(id){
     const t = list.find(x => String(x.id) === String(id));
+    const oldQty = t.qty, oldName = t.name, oldCategory = t.category;
     Object.assign(t, payload);
-    showToast('Entry updated');
+    if(type === 'sales'){
+      // আগের এন্ট্রির পরিমাণ স্টকে ফেরত দিয়ে, নতুন পরিমাণ আবার বিয়োগ করা হচ্ছে —
+      // এতে এন্ট্রি এডিট করলেও ইনভেন্টরির হিসাব সঠিক থাকবে
+      adjustInvStock(oldName, oldCategory, oldQty || 0);
+      adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+      fraudWarning = checkTxnFraudFlags(t, list);
+    }
+    showToast(fraudWarning || 'Entry updated');
   } else {
     payload.id = idCounter++;
     list.push(payload);
-    showToast('Entry saved');
+    if(type === 'sales'){
+      adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+      fraudWarning = checkTxnFraudFlags(payload, list);
+    }
+    showToast(fraudWarning || 'Entry saved');
   }
   saveState();
   closeSheet();
   renderList(type);
   renderDashboard();
   return false;
+}
+
+/* এন্ট্রি সেভ করার সময় সাথে সাথে ডুপ্লিকেট ইনভয়েস বা অস্বাভাবিক ছাড় থাকলে সংক্ষিপ্ত সতর্কতা দেখানো হয় —
+   এন্ট্রি ব্লক করা হয় না, শুধু সচেতন করা হয়; বিস্তারিত তালিকা AI Insights > Fraud ট্যাবে পাওয়া যাবে। */
+function checkTxnFraudFlags(entry, salesList){
+  const ref = String(entry.ref || '').trim();
+  if(ref){
+    const dupCount = salesList.filter(x => String(x.ref || '').trim() === ref).length;
+    if(dupCount > 1) return `⚠️ সতর্কতা: ইনভয়েস #${ref} ইতিমধ্যে ব্যবহৃত হয়েছে`;
+  }
+  if(entry.name && entry.price){
+    const item = state.invItems.find(it => String(it.name || '').trim().toLowerCase() === String(entry.name).trim().toLowerCase());
+    if(item && item.sellPrice != null && item.sellPrice > 0){
+      const diffPct = (item.sellPrice - entry.price) / item.sellPrice * 100;
+      if(diffPct >= 15) return `⚠️ সতর্কতা: নির্ধারিত মূল্যের চেয়ে ${Math.round(diffPct)}% কমে বিক্রি হয়েছে`;
+    }
+  }
+  return '';
 }
 
 function openSheetEl(){
@@ -4410,6 +5086,237 @@ function openSheetEl(){
 function closeSheet(){
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('txnSheet').classList.remove('open');
+}
+
+/* ---------------- FAB (context-aware add button) ---------------- */
+function handleFabClick(){
+  if(state.currentPage === 'inventory') openItemSheet();
+  else openAddSheet();
+}
+
+/* ---------------- INVENTORY ITEMS (shop stock / product tracker) ---------------- */
+function populateItemCategorySelect(){
+  const sel = document.getElementById('iCategory');
+  const cats = state.settings.invCategories || [];
+  sel.innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+}
+function onItemPhotoChange(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  compressImageFile(file, 640, 0.6, (dataUrl)=>{
+    const prev = document.getElementById('iPhotoPreview');
+    prev.src = dataUrl;
+    prev.style.display = 'block';
+    prev.dataset.value = dataUrl;
+  });
+}
+function compressImageFile(file, maxDim, quality, cb, onError){
+  const reader = new FileReader();
+  reader.onerror = () => { if(onError) onError('read'); };
+  reader.onload = (ev)=>{
+    const img = new Image();
+    img.onerror = () => { if(onError) onError('decode'); }; // e.g. HEIC/unsupported format the browser can't decode
+    img.onload = ()=>{
+      let w = img.width, h = img.height;
+      if(w > maxDim || h > maxDim){
+        if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function openItemSheet(id){
+  populateItemCategorySelect();
+  document.getElementById('itemForm').reset();
+  document.getElementById('iPhotoPreview').style.display = 'none';
+  document.getElementById('iPhotoPreview').removeAttribute('data-value');
+  if(id){
+    const item = state.invItems.find(x => String(x.id) === String(id));
+    if(!item) return;
+    state.editingItemId = id;
+    document.getElementById('itemSheetTitle').textContent = 'পণ্য এডিট করুন';
+    document.getElementById('iName').value = item.name || '';
+    document.getElementById('iCategory').value = item.category || '';
+    document.getElementById('iCostPrice').value = item.costPrice != null ? item.costPrice : '';
+    document.getElementById('iSellPrice').value = item.sellPrice != null ? item.sellPrice : '';
+    document.getElementById('iStockQty').value = item.stockQty != null ? item.stockQty : '';
+    document.getElementById('iLowStock').value = item.lowStock != null ? item.lowStock : '';
+    document.getElementById('iPurchaseDate').value = item.purchaseDate || '';
+    document.getElementById('iSupplierName').value = item.supplierName || '';
+    document.getElementById('iSupplierPhone').value = item.supplierPhone || '';
+    document.getElementById('iSupplierAddress').value = item.supplierAddress || '';
+    document.getElementById('iSku').value = item.sku || '';
+    document.getElementById('iNotes').value = item.notes || '';
+    if(item.photo){
+      const prev = document.getElementById('iPhotoPreview');
+      prev.src = item.photo;
+      prev.style.display = 'block';
+      prev.dataset.value = item.photo;
+    }
+    document.getElementById('itemDeleteBtn').style.display = 'block';
+  } else {
+    state.editingItemId = null;
+    document.getElementById('itemSheetTitle').textContent = 'নতুন পণ্য যোগ করুন';
+    document.getElementById('itemDeleteBtn').style.display = 'none';
+  }
+  document.getElementById('itemOverlay').classList.add('open');
+  document.getElementById('itemSheet').classList.add('open');
+}
+function closeItemSheet(){
+  document.getElementById('itemOverlay').classList.remove('open');
+  document.getElementById('itemSheet').classList.remove('open');
+}
+function saveItem(e){
+  e.preventDefault();
+  const name = document.getElementById('iName').value.trim();
+  const category = document.getElementById('iCategory').value;
+  if(!name || !category){ showToast('নাম ও ক্যাটেগরি দিতে হবে'); return false; }
+  const photoEl = document.getElementById('iPhotoPreview');
+  const num = (id) => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
+  const item = {
+    id: state.editingItemId || (idCounter++),
+    name,
+    category,
+    photo: photoEl.dataset.value || '',
+    costPrice: num('iCostPrice'),
+    sellPrice: num('iSellPrice'),
+    stockQty: num('iStockQty'),
+    lowStock: num('iLowStock'),
+    purchaseDate: document.getElementById('iPurchaseDate').value || '',
+    supplierName: document.getElementById('iSupplierName').value.trim(),
+    supplierPhone: document.getElementById('iSupplierPhone').value.trim(),
+    supplierAddress: document.getElementById('iSupplierAddress').value.trim(),
+    sku: document.getElementById('iSku').value.trim(),
+    notes: document.getElementById('iNotes').value.trim()
+  };
+  if(!state.editingItemId) item.createdAt = Date.now();
+  if(state.editingItemId){
+    const idx = state.invItems.findIndex(x => String(x.id) === String(state.editingItemId));
+    if(idx > -1) state.invItems[idx] = Object.assign({}, state.invItems[idx], item);
+  } else {
+    state.invItems.push(item);
+  }
+  saveState();
+  closeItemSheet();
+  renderItems();
+  showToast('সেভ হয়েছে');
+  return false;
+}
+function deleteItemFromSheet(){
+  if(!state.editingItemId) return;
+  deleteItem(state.editingItemId);
+  closeItemSheet();
+}
+function deleteItem(id){
+  if(!confirm('এই পণ্যটা মুছে ফেলতে চান?')) return;
+  state.invItems = state.invItems.filter(x => String(x.id) !== String(id));
+  saveState();
+  renderItems();
+  renderStockAlerts();
+  showToast('মুছে ফেলা হয়েছে');
+}
+function stockStatus(item){
+  const qty = item.stockQty;
+  if(qty == null) return null;
+  const threshold = item.lowStock != null ? item.lowStock : 0;
+  if(qty <= 0) return { label: 'স্টক শেষ', cls: 'expired', qty };
+  if(qty <= threshold) return { label: `স্টক কম — ${qty} পিস বাকি`, cls: 'urgent', qty };
+  if(threshold > 0 && qty <= threshold * 2) return { label: `${qty} পিস আছে`, cls: 'soon', qty };
+  return { label: `${qty} পিস আছে`, cls: 'ok', qty };
+}
+function fmtDateBn(dateStr){
+  if(!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('bn-BD', { day:'numeric', month:'short', year:'numeric' });
+}
+function toggleItemSearch(){
+  const wrap = document.getElementById('itemSearchWrap');
+  wrap.classList.toggle('open');
+  if(wrap.classList.contains('open')) setTimeout(()=> document.getElementById('itemSearchInput').focus(), 100);
+}
+function onItemSearchInput(v){
+  itemSearchQuery = v.trim().toLowerCase();
+  debounceRender('items', renderItems, 140);
+}
+function cycleItemSort(){
+  itemSortMode = (itemSortMode + 1) % ITEM_SORT_MODES.length;
+  document.getElementById('itemSortLbl').textContent = ITEM_SORT_MODES[itemSortMode].lbl;
+  renderItems();
+}
+function setItemCatFilter(cat, btn){
+  itemCatFilter = cat;
+  document.querySelectorAll('#itemCatTabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderItems();
+}
+function renderItemCatTabs(){
+  const wrap = document.getElementById('itemCatTabs');
+  const cats = state.settings.invCategories || [];
+  wrap.innerHTML = `<button data-cat="__all__" class="${itemCatFilter==='__all__'?'active':''}" onclick="setItemCatFilter('__all__', this)">সব</button>` +
+    cats.map(c => `<button data-cat="${escapeHTML(c)}" class="${itemCatFilter===c?'active':''}" onclick="setItemCatFilter('${escapeHTML(c).replace(/'/g,"\\'")}', this)">${escapeHTML(c)}</button>`).join('');
+}
+function getFilteredSortedItems(){
+  let list = state.invItems.slice();
+  if(itemCatFilter !== '__all__') list = list.filter(x => x.category === itemCatFilter);
+  if(itemSearchQuery) list = list.filter(x => (x.name||'').toLowerCase().includes(itemSearchQuery) || (x.sku||'').toLowerCase().includes(itemSearchQuery) || (x.supplierName||'').toLowerCase().includes(itemSearchQuery));
+  const mode = ITEM_SORT_MODES[itemSortMode].key;
+  if(mode === 'name_asc') list.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+  else if(mode === 'newest') list.sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+  else { // stock_asc — lowest stock first, items with no stock qty recorded go last
+    list.sort((a,b)=>{
+      const qa = a.stockQty != null ? a.stockQty : Infinity;
+      const qb = b.stockQty != null ? b.stockQty : Infinity;
+      return qa - qb;
+    });
+  }
+  return list;
+}
+function itemCardHTML(item){
+  const st = stockStatus(item);
+  const badgeColor = st ? { expired:'var(--loss)', urgent:'var(--loss-light)', soon:'var(--gold)', ok:'var(--green-600)' }[st.cls] : 'var(--muted)';
+  const priceBit = item.sellPrice != null ? `৳${item.sellPrice}` : '';
+  return `
+    <div class="txn-row" onclick="openItemSheet(${JSON.stringify(item.id)})" style="cursor:pointer;">
+      ${item.photo ? `<img src="${item.photo}" style="width:40px; height:40px; border-radius:9px; object-fit:cover; flex:none; margin-right:8px;">` : ''}
+      <div style="min-width:0; flex:1;">
+        <div style="font-weight:600; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(item.name)}</div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">${escapeHTML(item.category)}${priceBit ? ' · ' + priceBit : ''}${item.supplierName ? ' · ' + escapeHTML(item.supplierName) : ''}</div>
+      </div>
+      ${st ? `<span style="flex:none; font-size:10.5px; font-weight:700; color:#fff; background:${badgeColor}; padding:4px 8px; border-radius:8px; white-space:nowrap;">${st.label}</span>` : ''}
+    </div>`;
+}
+function renderItems(){
+  renderItemCatTabs();
+  const list = getFilteredSortedItems();
+  document.getElementById('itemsCountLbl').textContent = list.length;
+  document.getElementById('itemsList').innerHTML = list.length
+    ? list.map(itemCardHTML).join('')
+    : `<div class="empty-state">এখনো কোনো পণ্য যোগ করা হয়নি — নিচের + বাটনে চেপে শুরু করুন</div>`;
+}
+function renderStockAlerts(){
+  const list = state.invItems
+    .filter(x => x.stockQty != null && x.lowStock != null && x.stockQty <= x.lowStock)
+    .map(x => Object.assign({}, x, { _status: stockStatus(x) }))
+    .sort((a,b)=> a.stockQty - b.stockQty);
+  document.getElementById('stockAlertsList').innerHTML = list.length
+    ? list.map(item => {
+        const badgeColor = { expired:'var(--loss)', urgent:'var(--loss-light)', soon:'var(--gold)', ok:'var(--green-600)' }[item._status.cls];
+        return `
+          <div class="txn-row" onclick="openItemSheet(${JSON.stringify(item.id)})" style="cursor:pointer;">
+            <div style="min-width:0; flex:1;">
+              <div style="font-weight:600; font-size:13.5px;">${escapeHTML(item.name)}</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">${escapeHTML(item.category)}</div>
+            </div>
+            <span style="flex:none; font-size:10.5px; font-weight:700; color:#fff; background:${badgeColor}; padding:4px 8px; border-radius:8px; white-space:nowrap;">${item._status.label}</span>
+          </div>`;
+      }).join('')
+    : `<div class="empty-state">এখনো কোনো পণ্যের স্টক রিমাইন্ডার সীমার নিচে নামেনি</div>`;
 }
 
 /* ---------------- SALES RECEIPTS / BARCODE PRINTING ---------------- */
@@ -4755,6 +5662,7 @@ function renderSettings(){
   document.getElementById('settingsBankDetails').value = state.company.bankDetails || '';
   document.getElementById('settingsTelegramBotToken').value = state.company.telegramBotToken || '';
   document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
+  document.getElementById('settingsAiSiteKey').value = state.company.aiRecaptchaSiteKey || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
   updateBioSettingsUI();
@@ -4764,6 +5672,7 @@ function renderSettings(){
   renderChips('chipsPurchaseCat', state.settings.purchaseCategories, 'purchase');
   renderChips('chipsExpenseCat', state.settings.expenseCategories, 'expense');
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
+  renderChips('chipsInvCat', state.settings.invCategories, 'inv');
   renderProductsSettings();
   renderVideosSettings();
   updateNotifyStatus();
@@ -4772,7 +5681,13 @@ function renderSettings(){
 }
 function buildShopLink(){
   if(!currentUid) return '';
-  return location.href.replace(/[^\/]*$/, 'order-form.html') + '?shop=' + currentUid;
+  // Uses the clean URL directly (no .html) since firebase.json has
+  // cleanUrls: true — Firebase Hosting would 301-redirect "order-form.html"
+  // to "order-form" anyway, and a redirected navigation response served
+  // through the service worker fails outright on Safari/iOS
+  // ("Response served by service worker has redirections"). Generating the
+  // clean URL up front avoids that redirect entirely.
+  return location.href.replace(/[^\/]*$/, 'order-form') + '?shop=' + currentUid;
 }
 // অথরিটি (দোকান মালিক) কর্তৃক নির্ধারিত পাসওয়ার্ড এখন আর কোডে লেখা থাকে না —
 // Firebase Database-এ shops/{uid}/linkPasscode পাথে সেভ থাকে, যেটা শুধু এই দোকানের
@@ -5037,19 +5952,36 @@ function ensureDriveTokenClient(){
 }
 
 // promptMode: 'consent' (first-time / re-auth) or '' (silent refresh if already granted)
+// A 20s safety timeout guards every caller of this function: Google's OAuth
+// popup can silently fail to open (blocked by the browser, or in some
+// installed-PWA/webview environments) and driveTokenClient.callback then
+// never fires — without this timeout the caller's onDone() is simply never
+// called, which is what made "Connect Drive" (and Backup/Restore, which also
+// go through here via getValidDriveToken) feel permanently stuck with no
+// error and no way to retry.
 function requestDriveToken(promptMode, onDone){
   if(!ensureDriveTokenClient()){
     showToast('Google সার্ভিস লোড হচ্ছে — একটু পর আবার চেষ্টা করুন');
     onDone(false);
     return;
   }
+  let settled = false;
+  const finish = (...args) => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    onDone(...args);
+  };
+  const timeoutId = setTimeout(() => {
+    finish(false, 'timeout');
+  }, 20000);
   driveTokenClient.callback = (resp) => {
     if(resp && resp.access_token){
       driveAccessToken = resp.access_token;
       driveTokenExpiresAt = Date.now() + (resp.expires_in ? resp.expires_in * 1000 : 3000 * 1000);
-      onDone(true);
+      finish(true);
     } else {
-      onDone(false, resp && resp.error);
+      finish(false, resp && resp.error);
     }
   };
   driveTokenClient.requestAccessToken({ prompt: promptMode });
@@ -5076,8 +6008,18 @@ function getValidDriveTokenSilent(onReady){
 }
 
 function connectDrive(){
-  requestDriveToken('consent', (ok) => {
-    if(!ok){ showToast('Drive সংযোগ করা যায়নি'); return; }
+  const btn = document.getElementById('connectDriveBtn');
+  if(btn) btn.disabled = true; // visible feedback the tap registered — and blocks double-taps while the popup is open
+  const resetBtn = () => { if(btn) btn.disabled = false; };
+
+  requestDriveToken('consent', (ok, err) => {
+    resetBtn();
+    if(!ok){
+      showToast(err === 'timeout'
+        ? 'সংযোগ করতে অনেক সময় লাগছে — পপ-আপ ব্লক হয়ে থাকতে পারে, ব্রাউজারের পপ-আপ সেটিংস চেক করে আবার চেষ্টা করুন'
+        : 'Drive সংযোগ করা যায়নি');
+      return;
+    }
     const meta = loadDriveMeta();
     meta.connected = true;
     saveDriveMeta(meta);
@@ -5131,6 +6073,7 @@ function buildDriveBackupPayload(){
     settings: state.settings,
     security: { pinEnabled: state.security.pinEnabled, pin: state.security.pin },
     sales: state.sales, purchases: state.purchases, expenses: state.expenses,
+    invItems: state.invItems,
     idCounter,
     exportedAt: new Date().toISOString()
   };
@@ -5142,7 +6085,7 @@ function backupToDriveNow(isAuto){
   if(driveBackupInFlight) return;
   const checkToken = isAuto ? getValidDriveTokenSilent : getValidDriveToken;
   checkToken((ok) => {
-    if(!ok) return;
+    if(!ok){ if(!isAuto) showToast('Drive সংযোগ যাচাই করা যায়নি — আবার চেষ্টা করুন'); return; }
     driveBackupInFlight = true;
     const meta = loadDriveMeta();
     const payload = buildDriveBackupPayload();
@@ -5185,7 +6128,7 @@ function restoreFromDrive(){
   if(!meta.connected){ showToast('আগে Drive সংযোগ করুন'); return; }
   if(!confirm('এটি এই ডিভাইসের বর্তমান সব ডাটা Drive-এর ব্যাকআপ দিয়ে প্রতিস্থাপন করবে। এগোতে চান?')) return;
   getValidDriveToken((ok) => {
-    if(!ok) return;
+    if(!ok){ showToast('Drive সংযোগ যাচাই করা যায়নি — আবার চেষ্টা করুন'); return; }
     const doFetch = (fileId) => {
       fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
         headers: { Authorization: 'Bearer ' + driveAccessToken }
@@ -5196,6 +6139,7 @@ function restoreFromDrive(){
         state.sales = d.sales || [];
         state.purchases = d.purchases || [];
         state.expenses = d.expenses || [];
+        state.invItems = d.invItems || [];
         idCounter = d.idCounter || 1;
         saveState();
         renderAll();
@@ -5337,10 +6281,11 @@ function renderChips(elId, arr, key){
 }
 function keyToArray(key){
   return { sales: state.settings.salesCategories, purchase: state.settings.purchaseCategories,
-           expense: state.settings.expenseCategories, payment: state.settings.paymentMethods }[key];
+           expense: state.settings.expenseCategories, payment: state.settings.paymentMethods,
+           inv: state.settings.invCategories }[key];
 }
 function addCategory(key){
-  const inputIdMap = { sales:'newSalesCat', purchase:'newPurchaseCat', expense:'newExpenseCat', payment:'newPayment' };
+  const inputIdMap = { sales:'newSalesCat', purchase:'newPurchaseCat', expense:'newExpenseCat', payment:'newPayment', inv:'newInvCat' };
   const input = document.getElementById(inputIdMap[key]);
   const val = input.value.trim();
   if(!val) return;
@@ -5385,6 +6330,7 @@ function saveProfile(){
   state.company.bankDetails = document.getElementById('settingsBankDetails').value.trim();
   state.company.telegramBotToken = document.getElementById('settingsTelegramBotToken').value.trim();
   state.company.telegramChatId = document.getElementById('settingsTelegramChatId').value.trim();
+  state.company.aiRecaptchaSiteKey = document.getElementById('settingsAiSiteKey').value.trim();
   state.company.logoUrl = document.getElementById('settingsLogoUrl').value.trim();
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
@@ -5533,7 +6479,8 @@ function listenOrders(){
     knownOrderIds = currentIds;
 
     updateOrdersBadge();
-    if(state.currentPage === 'orders') renderOrders();
+    dirtyPages.orders = true;
+    if(state.currentPage === 'orders'){ renderOrders(); dirtyPages.orders = false; }
   });
   pushProductsToFirebase();
   pushVideosToFirebase();
@@ -5617,6 +6564,285 @@ function updateOrdersBadge(){
       else if('clearAppBadge' in navigator) navigator.clearAppBadge();
     }catch(e){}
   }
+}
+
+/* ---------------- AI BUSINESS INSIGHTS (local-only, no API — Inventory + Sales Assistant) ---------------- */
+let aiInsightsTab = 'inventory';
+let aiSalesPeriodDays = 1;
+let aiFinPeriodDays = 30;
+
+function openAiInsights(){
+  switchAiTab(aiInsightsTab, true);
+  document.getElementById('aiInsightsOverlay').classList.add('open');
+  document.getElementById('aiInsightsSheet').classList.add('open');
+}
+function closeAiInsights(){
+  document.getElementById('aiInsightsOverlay').classList.remove('open');
+  document.getElementById('aiInsightsSheet').classList.remove('open');
+}
+function switchAiTab(tab, silent){
+  aiInsightsTab = tab;
+  document.querySelectorAll('#aiInsightsTabs button').forEach(b => b.classList.toggle('active', b.dataset.aitab === tab));
+  document.getElementById('aiTabInventory').style.display = tab === 'inventory' ? '' : 'none';
+  document.getElementById('aiTabSales').style.display = tab === 'sales' ? '' : 'none';
+  document.getElementById('aiTabFinance').style.display = tab === 'finance' ? '' : 'none';
+  document.getElementById('aiTabFraud').style.display = tab === 'fraud' ? '' : 'none';
+  if(tab === 'inventory') renderAiInventoryTab();
+  else if(tab === 'sales') renderAiSalesTab();
+  else if(tab === 'finance') renderAiFinanceTab();
+  else if(tab === 'fraud') renderAiFraudTab();
+}
+function switchAiSalesPeriod(days){
+  aiSalesPeriodDays = days;
+  document.querySelectorAll('#aiSalesPeriodTabs button').forEach(b => b.classList.toggle('active', Number(b.dataset.aiperiod) === days));
+  renderAiSalesTab();
+}
+function switchAiFinPeriod(days){
+  aiFinPeriodDays = days;
+  document.querySelectorAll('#aiFinPeriodTabs button').forEach(b => b.classList.toggle('active', Number(b.dataset.finperiod) === days));
+  renderAiFinanceTab();
+}
+
+// ছোট্ট টেবিল-রো হেল্পার — Inventory/Sales তালিকায় ব্যবহার হয়
+function aiRowHTML(title, subtitle, badgeText, badgeColor){
+  return `
+    <div class="txn-row">
+      <div style="min-width:0; flex:1;">
+        <div style="font-weight:600; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(title)}</div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">${escapeHTML(subtitle)}</div>
+      </div>
+      ${badgeText ? `<span style="flex:none; font-size:10.5px; font-weight:700; color:#fff; background:${badgeColor}; padding:4px 8px; border-radius:8px; white-space:nowrap;">${escapeHTML(badgeText)}</span>` : ''}
+    </div>`;
+}
+
+/* --- Inventory tab: low stock, fast moving, slow/dead stock --- */
+function aiSalesQtyByProductSince(days){
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().slice(0,10);
+  const map = {};
+  state.sales.forEach(s => {
+    if(!s.date || s.date < cutoffStr) return;
+    const key = (s.name || 'অজানা পণ্য').trim();
+    if(!map[key]) map[key] = { qty:0, revenue:0 };
+    map[key].qty += (s.qty || 0);
+    map[key].revenue += (s.total || 0);
+  });
+  return map;
+}
+function renderAiInventoryTab(){
+  // Low stock
+  const lowStockItems = state.invItems
+    .filter(x => x.stockQty != null && x.lowStock != null && x.stockQty <= x.lowStock)
+    .sort((a,b)=> a.stockQty - b.stockQty);
+  const lowStockBox = document.getElementById('aiLowStockList');
+  if(lowStockItems.length === 0){
+    lowStockBox.innerHTML = emptyStateHTML('স্টক ঠিক আছে', 'কোনো পণ্যের স্টক এখনো সতর্কতা সীমার নিচে নামেনি।');
+  } else {
+    const sold30 = aiSalesQtyByProductSince(30);
+    lowStockBox.innerHTML = lowStockItems.map(item => {
+      const dailyRate = (sold30[item.name]?.qty || 0) / 30;
+      const suggestQty = Math.max(item.lowStock || 5, Math.ceil(dailyRate * 14)); // ২ সপ্তাহের সাপ্লাই
+      const sub = dailyRate > 0
+        ? `মজুদ ${item.stockQty} পিস · প্রায় ${suggestQty} পিস অর্ডার করুন`
+        : `মজুদ ${item.stockQty} পিস · সতর্কতা সীমা ${item.lowStock}`;
+      return aiRowHTML(item.name, sub, item.stockQty <= 0 ? 'স্টক শেষ' : 'কম স্টক', item.stockQty <= 0 ? 'var(--loss)' : 'var(--loss-light)');
+    }).join('');
+  }
+
+  // Fast / slow moving based on last 30 days sales quantity
+  const sold30 = aiSalesQtyByProductSince(30);
+  const productNames = state.invItems.length
+    ? state.invItems.map(x => x.name)
+    : Object.keys(sold30);
+  const ranked = productNames
+    .map(name => ({ name, qty: sold30[name]?.qty || 0 }))
+    .sort((a,b)=> b.qty - a.qty);
+
+  const fastBox = document.getElementById('aiFastMovingList');
+  const fastList = ranked.filter(x => x.qty > 0).slice(0, 5);
+  fastBox.innerHTML = fastList.length
+    ? fastList.map(x => aiRowHTML(x.name, 'গত ৩০ দিনে বিক্রি', `${x.qty} পিস`, 'var(--green-600)')).join('')
+    : emptyStateHTML('তথ্য নেই', 'গত ৩০ দিনে কোনো বিক্রয় পাওয়া যায়নি।');
+
+  const slowBox = document.getElementById('aiSlowMovingList');
+  const slowList = ranked.filter(x => x.qty === 0).slice(0, 8);
+  slowBox.innerHTML = slowList.length
+    ? slowList.map(x => aiRowHTML(x.name, 'গত ৩০ দিনে একবারও বিক্রি হয়নি', 'Dead Stock', 'var(--gold)')).join('')
+    : emptyStateHTML('চমৎকার!', 'সব পণ্যই গত ৩০ দিনে অন্তত একবার বিক্রি হয়েছে।');
+}
+
+/* --- Sales tab: daily/weekly/monthly summary + top/bottom products --- */
+function renderAiSalesTab(){
+  const days = aiSalesPeriodDays;
+  const agg = aiSalesQtyByProductSince(days);
+  const entries = Object.keys(agg).map(name => ({ name, qty: agg[name].qty, revenue: agg[name].revenue }));
+  const totalRevenue = entries.reduce((s,e)=> s + e.revenue, 0);
+  const totalQty = entries.reduce((s,e)=> s + e.qty, 0);
+
+  document.getElementById('aiSalesKpis').innerHTML = `
+    <div class="kpi-card accent-sales">
+      <div class="lbl">মোট বিক্রয়</div>
+      <div class="val num">${fmtMoney(totalRevenue)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="lbl">মোট পিস</div>
+      <div class="val num">${totalQty}</div>
+    </div>`;
+
+  const topBox = document.getElementById('aiTopProducts');
+  const bottomBox = document.getElementById('aiBottomProducts');
+  if(entries.length === 0){
+    const msg = emptyStateHTML('কোনো বিক্রয় নেই', 'এই সময়সীমায় কোনো বিক্রয় রেকর্ড পাওয়া যায়নি।');
+    topBox.innerHTML = msg;
+    bottomBox.innerHTML = msg;
+    return;
+  }
+  const byQtyDesc = entries.slice().sort((a,b)=> b.qty - a.qty);
+  const top5 = byQtyDesc.slice(0, 5);
+  const bottom5 = byQtyDesc.slice(-5).reverse();
+
+  topBox.innerHTML = top5.map(e => aiRowHTML(e.name, `${e.qty} পিস বিক্রি`, fmtMoney(e.revenue), 'var(--green-600)')).join('');
+  bottomBox.innerHTML = bottom5.map(e => aiRowHTML(e.name, `${e.qty} পিস বিক্রি`, fmtMoney(e.revenue), 'var(--muted)')).join('');
+}
+
+/* --- helper: is a date-string (YYYY-MM-DD) within the last N days --- */
+function aiInRangeDays(dateStr, days){
+  if(!dateStr) return false;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return dateStr >= cutoff.toISOString().slice(0,10);
+}
+function aiPaymentBreakdown(list){
+  const map = {};
+  list.forEach(t => {
+    const m = t.payment || 'অজানা';
+    map[m] = (map[m] || 0) + (t.total || 0);
+  });
+  return map;
+}
+
+/* --- Finance tab: cash flow, expense breakdown, profit/loss trend --- */
+function renderAiFinanceTab(){
+  const days = aiFinPeriodDays;
+  const salesR = state.sales.filter(t => aiInRangeDays(t.date, days));
+  const purR = state.purchases.filter(t => aiInRangeDays(t.date, days));
+  const expR = state.expenses.filter(t => aiInRangeDays(t.date, days));
+
+  const cashIn = salesR.reduce((s,t)=> s + (t.total || 0), 0);
+  const cashOutP = purR.reduce((s,t)=> s + (t.total || 0), 0);
+  const cashOutE = expR.reduce((s,t)=> s + (t.total || 0), 0);
+  const cashOut = cashOutP + cashOutE;
+  const net = cashIn - cashOut;
+  const margin = cashIn > 0 ? (net / cashIn * 100) : 0;
+
+  document.getElementById('aiFinKpis').innerHTML = `
+    <div class="kpi-card accent-sales">
+      <div class="lbl">নগদ আয় (${days} দিন)</div>
+      <div class="val num">${fmtMoney(cashIn)}</div>
+    </div>
+    <div class="kpi-card accent-expense">
+      <div class="lbl">নগদ ব্যয়</div>
+      <div class="val num">${fmtMoney(cashOut)}</div>
+    </div>
+    <div class="kpi-card accent-profit ${net>=0?'profit':'loss'}">
+      <div class="lbl">নীট ক্যাশ ফ্লো</div>
+      <div class="val num">${fmtMoney(net)}</div>
+    </div>
+    <div class="kpi-card accent-profit ${net>=0?'profit':'loss'}">
+      <div class="lbl">লাভের হার</div>
+      <div class="val num">${margin.toFixed(1)}%</div>
+    </div>`;
+
+  const inByMethod = aiPaymentBreakdown(salesR);
+  const outByMethod = aiPaymentBreakdown([...purR, ...expR]);
+  const methods = Array.from(new Set([...Object.keys(inByMethod), ...Object.keys(outByMethod)]));
+  const cfBox = document.getElementById('aiFinCashFlowList');
+  cfBox.innerHTML = methods.length
+    ? methods.map(m => {
+        const inV = inByMethod[m] || 0, outV = outByMethod[m] || 0, netV = inV - outV;
+        return aiRowHTML(m, `আয় ${fmtMoney(inV)} · ব্যয় ${fmtMoney(outV)}`, fmtMoney(netV), netV >= 0 ? 'var(--green-600)' : 'var(--loss)');
+      }).join('')
+    : emptyStateHTML('তথ্য নেই', 'এই সময়সীমায় কোনো লেনদেন পাওয়া যায়নি।');
+
+  const expByCat = {};
+  expR.forEach(t => {
+    const c = t.category || 'অন্যান্য';
+    expByCat[c] = (expByCat[c] || 0) + (t.total || 0);
+  });
+  const totalExp = Object.values(expByCat).reduce((s,v)=> s+v, 0);
+  const catList = Object.keys(expByCat).map(c => ({ name:c, amt:expByCat[c] })).sort((a,b)=> b.amt - a.amt).slice(0,6);
+  document.getElementById('aiFinExpenseBreakdown').innerHTML = catList.length
+    ? catList.map(c => aiRowHTML(c.name, totalExp > 0 ? `মোট খরচের ${Math.round(c.amt/totalExp*100)}%` : '', fmtMoney(c.amt), 'var(--loss)')).join('')
+    : emptyStateHTML('কোনো খরচ নেই', 'এই সময়সীমায় কোনো খরচ রেকর্ড পাওয়া যায়নি।');
+
+  const trendDays = Math.min(days, 14);
+  const rows = [];
+  for(let i = trendDays - 1; i >= 0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dStr = d.toISOString().slice(0,10);
+    const daySales = state.sales.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
+    const dayPur = state.purchases.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
+    const dayExp = state.expenses.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
+    rows.push({ date: dStr, profit: daySales - dayPur - dayExp });
+  }
+  const maxAbs = Math.max(1, ...rows.map(r => Math.abs(r.profit)));
+  document.getElementById('aiFinTrend').innerHTML = rows.map(r => {
+    const pct = Math.min(100, Math.abs(r.profit) / maxAbs * 100);
+    const color = r.profit >= 0 ? 'var(--green-600)' : 'var(--loss)';
+    return `
+      <div class="txn-row" style="flex-direction:column; align-items:stretch; gap:4px;">
+        <div style="display:flex; justify-content:space-between; font-size:12px;">
+          <span style="color:var(--muted);">${fmtDate(r.date)}</span>
+          <span style="font-weight:600; color:${color};">${fmtMoney(r.profit)}</span>
+        </div>
+        <div style="height:6px; background:var(--paper-deep); border-radius:4px; overflow:hidden;">
+          <div style="height:100%; width:${pct}%; background:${color}; border-radius:4px;"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* --- Fraud tab: duplicate invoice numbers + abnormal discount/price mismatches --- */
+function aiDetectDuplicateInvoices(){
+  const map = {};
+  state.sales.forEach(s => {
+    const ref = String(s.ref || '').trim();
+    if(!ref) return;
+    if(!map[ref]) map[ref] = [];
+    map[ref].push(s);
+  });
+  return Object.keys(map).filter(k => map[k].length > 1).map(k => ({ ref:k, entries:map[k] }));
+}
+function aiDetectPriceAnomalies(){
+  const itemMap = {};
+  state.invItems.forEach(it => { itemMap[String(it.name || '').trim().toLowerCase()] = it; });
+  const anomalies = [];
+  state.sales.forEach(s => {
+    if(!s.name || !s.price) return;
+    const item = itemMap[String(s.name).trim().toLowerCase()];
+    if(!item || item.sellPrice == null || item.sellPrice <= 0) return;
+    const diffPct = (item.sellPrice - s.price) / item.sellPrice * 100;
+    if(diffPct >= 15) anomalies.push({ sale:s, expected:item.sellPrice, diffPct });
+  });
+  return anomalies.sort((a,b)=> b.diffPct - a.diffPct);
+}
+function renderAiFraudTab(){
+  const dups = aiDetectDuplicateInvoices();
+  document.getElementById('aiFraudDuplicates').innerHTML = dups.length
+    ? dups.map(d => aiRowHTML(`ইনভয়েস #${d.ref}`, `${d.entries.length} বার ব্যবহৃত হয়েছে · ${d.entries.map(e=>e.name).join(', ')}`, 'পুনরাবৃত্তি', 'var(--loss)')).join('')
+    : emptyStateHTML('কোনো ডুপ্লিকেট নেই', 'সব ইনভয়েস নাম্বার ইউনিক।');
+
+  const anomalies = aiDetectPriceAnomalies();
+  document.getElementById('aiFraudDiscounts').innerHTML = anomalies.length
+    ? anomalies.slice(0,15).map(a => aiRowHTML(
+        a.sale.name,
+        `${fmtDate(a.sale.date)} · বিক্রি ৳${a.sale.price} (নির্ধারিত ৳${a.expected}) · ইনভয়েস ${a.sale.ref || '—'}`,
+        `-${Math.round(a.diffPct)}%`,
+        'var(--loss)'
+      )).join('')
+    : emptyStateHTML('স্বাভাবিক', 'কোনো অস্বাভাবিক ছাড়ের প্রবণতা পাওয়া যায়নি।');
 }
 
 /* ---------------- ORDERS PAGE ---------------- */
@@ -5712,6 +6938,9 @@ function confirmOrder(orderId){
       notes: order.notes || '',
       total: (it.qty || 1) * (it.price || 0)
     });
+    // অর্ডার কনফার্ম হওয়ার সাথে সাথে সেই প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
+    // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
+    adjustInvStock(it.name, null, -(it.qty || 1));
   });
   // Delivery charge: order.total may include a delivery/shipping charge on top of
   // the item prices. Add the difference as its own sales line so Sales/print slip
@@ -5939,6 +7168,253 @@ if(document.readyState === 'loading'){
       if(blockCombo) e.preventDefault();
     }, { passive:false });
   })();
+</script>
+
+<!-- ===================== PHASE 5: AI RECEIPT SCANNER (Gemini via Firebase AI Logic) =====================
+     সম্পূর্ণ client-side। App Check (reCAPTCHA v3) + AI Logic দিয়ে সরাসরি Firebase থেকে Gemini কল করা হয় —
+     কোনো নিজস্ব ব্যাকএন্ড/সার্ভার লাগে না। রিসিটের ছবি শুধু স্ক্যানের সময় Google-এ পাঠানো হয়, অন্য কোথাও
+     সেভ থাকে না। ব্যবহারের আগে Settings > 🤖 AI রিসিট স্ক্যানার-এ reCAPTCHA v3 Site Key বসাতে হবে। -->
+<script>
+const AI_SDK_VERSION = '12.15.0';
+// Public reCAPTCHA v3 site key (App Check) for sohanshopbd.web.app — this is
+// meant to live in client code (it's the counterpart to a secret key kept
+// only in Firebase Console), and applies app-wide since App Check validates
+// by domain, not per-shop. Settings > AI রিসিট স্ক্যানার can still override
+// this per-shop if ever needed; this is only the fallback when that's empty.
+const DEFAULT_AI_RECAPTCHA_SITE_KEY = '6LeR7HMtAAAAAAodSHjJpg28JFCh3jV2vQ2AgD1p';
+let __aiModel = null;
+let receiptScanState = { type: 'purchase', imageDataUrl: null, parsed: null };
+
+async function ensureAiModel(){
+  if(__aiModel) return __aiModel;
+  const siteKey = (state.company.aiRecaptchaSiteKey || DEFAULT_AI_RECAPTCHA_SITE_KEY || '').trim();
+  if(!siteKey) throw new Error('NO_SITE_KEY');
+  const [{ initializeApp }, { initializeAppCheck, ReCaptchaV3Provider }, { getAI, getGenerativeModel, GoogleAIBackend, Schema }] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-app-check.js`),
+    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-ai.js`)
+  ]);
+  const aiApp = initializeApp(FIREBASE_CONFIG, 'aiScanApp');
+  initializeAppCheck(aiApp, { provider: new ReCaptchaV3Provider(siteKey), isTokenAutoRefreshEnabled: true });
+  const ai = getAI(aiApp, { backend: new GoogleAIBackend() });
+  const receiptSchema = Schema.object({
+    properties: {
+      date: Schema.string(),
+      partyName: Schema.string(),
+      phone: Schema.string(),
+      refNo: Schema.string(),
+      paymentMethod: Schema.string(),
+      totalAmount: Schema.number(),
+      items: Schema.array({
+        items: Schema.object({
+          properties: {
+            name: Schema.string(),
+            qty: Schema.number(),
+            price: Schema.number(),
+            total: Schema.number()
+          }
+        })
+      })
+    }
+  });
+  __aiModel = getGenerativeModel(ai, {
+    model: 'gemini-3.6-flash',
+    generationConfig: { responseMimeType: 'application/json', responseSchema: receiptSchema }
+  });
+  return __aiModel;
+}
+
+async function scanReceiptImage(dataUrl){
+  const model = await ensureAiModel();
+  const base64 = dataUrl.split(',')[1];
+  const prompt = 'You are a receipt/invoice OCR assistant for a small Bangladeshi shop\'s bookkeeping app. '
+    + 'Carefully read the attached receipt/invoice/memo photo and extract structured data.\n'
+    + 'Rules:\n'
+    + '- date: convert to YYYY-MM-DD format if a date is visible, else leave empty.\n'
+    + '- partyName: the supplier/vendor/shop name printed on the receipt.\n'
+    + '- phone: any phone number visible, else empty string.\n'
+    + '- refNo: invoice/memo/receipt number if visible, else empty string.\n'
+    + '- paymentMethod: your best guess, one of: Cash, Bank, bKash, Nagad, Rocket, Card, Cheque. Default Cash if unclear.\n'
+    + '- items: line items with name, qty (default 1 if not itemized), unit price, and line total. '
+    + 'If the receipt has no itemized list, return exactly one item using a short description and the grand total.\n'
+    + '- totalAmount: the grand total amount on the receipt.\n'
+    + 'Keep item names in the same language as printed on the receipt. Respond with data matching the schema only.';
+  const result = await model.generateContent([
+    { inlineData: { mimeType: 'image/jpeg', data: base64 } },
+    { text: prompt }
+  ]);
+  return JSON.parse(result.response.text());
+}
+
+function normalizeParsedReceipt(p){
+  const items = (Array.isArray(p.items) && p.items.length)
+    ? p.items.map(it => {
+        const qty = parseFloat(it.qty) || 1;
+        const price = parseFloat(it.price) || 0;
+        return {
+          name: (it.name || '').toString().trim() || 'Item',
+          qty, price,
+          total: parseFloat(it.total) || (qty * price)
+        };
+      })
+    : [{ name: (p.partyName || 'Item').toString().trim() || 'Item', qty: 1, price: parseFloat(p.totalAmount) || 0, total: parseFloat(p.totalAmount) || 0 }];
+  let date = (p.date || '').toString().trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = todayISO();
+  const paymentMethod = state.settings.paymentMethods.includes(p.paymentMethod) ? p.paymentMethod : 'Cash';
+  return {
+    date,
+    partyName: (p.partyName || '').toString().trim(),
+    phone: (p.phone || '').toString().trim(),
+    refNo: (p.refNo || '').toString().trim(),
+    paymentMethod,
+    items
+  };
+}
+
+function openReceiptScanSheet(type){
+  if(!(state.company.aiRecaptchaSiteKey || DEFAULT_AI_RECAPTCHA_SITE_KEY || '').trim()){
+    showToast('আগে Settings > 🤖 AI রিসিট স্ক্যানার থেকে reCAPTCHA Site Key বসান');
+    return;
+  }
+  receiptScanState = { type, imageDataUrl: null, parsed: null };
+  document.getElementById('rsTitle').textContent = type === 'expense' ? '📷 রিসিট স্ক্যান — খরচ' : '📷 রিসিট স্ক্যান — ক্রয়';
+  document.getElementById('rsPartyLabel').textContent = type === 'expense' ? 'কাকে দেওয়া হয়েছে' : 'সাপ্লায়ার';
+  document.getElementById('rsStepCapture').style.display = 'block';
+  document.getElementById('rsStepResult').style.display = 'none';
+  document.getElementById('rsPreview').style.display = 'none';
+  document.getElementById('rsFileInput').value = '';
+  document.getElementById('rsScanBtn').disabled = true;
+  document.getElementById('rsLoading').style.display = 'none';
+  document.getElementById('receiptScanOverlay').classList.add('open');
+  document.getElementById('receiptScanSheet').classList.add('open');
+}
+function closeReceiptScanSheet(){
+  document.getElementById('receiptScanOverlay').classList.remove('open');
+  document.getElementById('receiptScanSheet').classList.remove('open');
+}
+function onRsFileChange(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const btn = document.getElementById('rsScanBtn');
+  if(btn) btn.disabled = true; // stays disabled until we know compression actually succeeded
+  compressImageFile(file, 1280, 0.72, (dataUrl) => {
+    receiptScanState.imageDataUrl = dataUrl;
+    const prev = document.getElementById('rsPreview');
+    prev.src = dataUrl;
+    prev.style.display = 'block';
+    if(btn) btn.disabled = false;
+  }, (reason) => {
+    // Previously this failure was silent — the scan button just stayed
+    // disabled forever with no explanation, which looked like "nothing
+    // happens" when tapped. Most common real cause: an iPhone photo saved as
+    // HEIC, which browsers can't decode via the Image element.
+    showToast(reason === 'decode'
+      ? 'এই ছবিটি খোলা যায়নি — iPhone হলে ক্যামেরা সেটিংসে "Most Compatible" (JPEG) ফরম্যাট বেছে নিন, অথবা অন্য একটি ছবি ব্যবহার করুন'
+      : 'ছবিটি পড়া যায়নি — আবার চেষ্টা করুন');
+  });
+}
+async function runReceiptScan(){
+  if(!receiptScanState.imageDataUrl) return;
+  try{
+    document.getElementById('rsLoading').style.display = 'flex';
+    document.getElementById('rsScanBtn').disabled = true;
+    const parsed = await scanReceiptImage(receiptScanState.imageDataUrl);
+    receiptScanState.parsed = normalizeParsedReceipt(parsed);
+    renderRsResult();
+    document.getElementById('rsStepCapture').style.display = 'none';
+    document.getElementById('rsStepResult').style.display = 'block';
+  }catch(err){
+    console.error('Receipt scan failed:', err);
+    const msgStr = String((err && err.message) || err || '').toLowerCase();
+    let msg = 'স্ক্যান ব্যর্থ হয়েছে — আবার চেষ্টা করুন';
+    if(msgStr.includes('no_site_key')) msg = 'reCAPTCHA Site Key সেট করা নেই (Settings)';
+    else if(msgStr.includes('appcheck') || msgStr.includes('app check') || msgStr.includes('403')) msg = 'App Check যাচাই ব্যর্থ — Firebase Console-এ সাইট কী/ডোমেইন চেক করুন';
+    else if(msgStr.includes('fetch') || msgStr.includes('network')) msg = 'ইন্টারনেট সংযোগ চেক করুন';
+    else if(msgStr.includes('json')) msg = 'ছবিটি স্পষ্ট বোঝা যায়নি — আরেকটু স্পষ্ট ছবি দিয়ে চেষ্টা করুন';
+    showToast(msg);
+  }finally{
+    document.getElementById('rsLoading').style.display = 'none';
+    document.getElementById('rsScanBtn').disabled = false;
+  }
+}
+
+function renderRsResult(){
+  const p = receiptScanState.parsed;
+  document.getElementById('rsDate').value = p.date;
+  document.getElementById('rsParty').value = p.partyName;
+  document.getElementById('rsPhone').value = p.phone;
+  document.getElementById('rsRef').value = p.refNo;
+  const paySel = document.getElementById('rsPayment');
+  paySel.innerHTML = state.settings.paymentMethods.map(m => `<option value="${escapeHTML(m)}" ${m === p.paymentMethod ? 'selected' : ''}>${escapeHTML(m)}</option>`).join('');
+  const catList = receiptScanState.type === 'expense' ? state.settings.expenseCategories : state.settings.purchaseCategories;
+  document.getElementById('rsCatWrap').innerHTML = `<select id="rsCategory">${catList.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('')}</select>`;
+  renderRsItems();
+}
+function renderRsItems(){
+  const box = document.getElementById('rsItemsList');
+  const isExpense = receiptScanState.type === 'expense';
+  box.innerHTML = receiptScanState.parsed.items.map((it, i) => `
+    <div class="rs-item-row${isExpense ? ' rs-item-expense' : ''}" data-idx="${i}">
+      <input type="text" value="${escapeHTML(it.name)}" placeholder="নাম" oninput="updateRsItem(${i},'name',this.value)">
+      ${isExpense ? '' : `<input type="number" value="${it.qty}" placeholder="পরিমাণ" oninput="updateRsItem(${i},'qty',this.value)">
+      <input type="number" value="${it.price}" placeholder="দাম" oninput="updateRsItem(${i},'price',this.value)">`}
+      <input type="number" value="${it.total}" placeholder="মোট" oninput="updateRsItem(${i},'total',this.value)">
+      <button type="button" class="mini-btn" onclick="removeRsItem(${i})" aria-label="Remove">✕</button>
+    </div>`).join('');
+  const totalSum = receiptScanState.parsed.items.reduce((s, it) => s + (parseFloat(it.total) || 0), 0);
+  document.getElementById('rsItemsTotal').textContent = fmtMoney(totalSum);
+}
+function updateRsItem(i, field, val){
+  const it = receiptScanState.parsed.items[i];
+  if(!it) return;
+  if(field === 'name'){ it.name = val; return; }
+  it[field] = parseFloat(val) || 0;
+  if(field === 'qty' || field === 'price'){ it.total = (it.qty || 0) * (it.price || 0); }
+  renderRsItems();
+}
+function removeRsItem(i){
+  receiptScanState.parsed.items.splice(i, 1);
+  if(receiptScanState.parsed.items.length === 0) receiptScanState.parsed.items.push({ name:'', qty:1, price:0, total:0 });
+  renderRsItems();
+}
+function addRsItem(){
+  receiptScanState.parsed.items.push({ name:'', qty:1, price:0, total:0 });
+  renderRsItems();
+}
+function saveRsEntries(){
+  const p = receiptScanState.parsed;
+  if(!p) return;
+  const type = receiptScanState.type;
+  const date = document.getElementById('rsDate').value || todayISO();
+  const party = document.getElementById('rsParty').value.trim();
+  const payment = document.getElementById('rsPayment').value;
+  const category = document.getElementById('rsCategory').value;
+  const refBase = document.getElementById('rsRef').value.trim();
+  const validItems = p.items.filter(it => it.name && it.name.trim() && (parseFloat(it.total) || 0) > 0);
+  if(validItems.length === 0){ showToast('অন্তত একটি বৈধ আইটেম দরকার (নাম ও মোট টাকা)'); return; }
+  const list = getListFor(type);
+  validItems.forEach((it, idx) => {
+    const payload = {
+      id: idCounter++,
+      date,
+      ref: validItems.length > 1 ? `${refBase}${refBase ? '-' : ''}${idx + 1}` : refBase,
+      name: it.name.trim(),
+      category,
+      qty: type !== 'expense' ? (it.qty || 1) : undefined,
+      price: type !== 'expense' ? (it.price || it.total) : undefined,
+      party,
+      payment,
+      notes: 'AI রিসিট স্ক্যান থেকে যোগ করা হয়েছে',
+      total: parseFloat(it.total) || 0
+    };
+    list.push(payload);
+  });
+  saveState();
+  closeReceiptScanSheet();
+  renderList(type);
+  renderDashboard();
+  showToast(`${validItems.length}টি এন্ট্রি সেভ হয়েছে`);
+}
 </script>
 </body>
 </html>
