@@ -1462,7 +1462,6 @@
         <button class="settings-menu-item" data-i18n="menu_products_catalog" onclick="openSettingsSection('sblk15', this)">🛒 Products Catalog</button>
         <button class="settings-menu-item" data-i18n="menu_info_videos" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
         <button class="settings-menu-item" onclick="openSettingsSection('sblk17', this)">📦 ইনভেন্টরি ক্যাটেগরি</button>
-        <button class="settings-menu-item" onclick="openSettingsSection('sblk18', this)">🤖 AI রিসিট স্ক্যানার</button>
       </nav>
 
       <div class="settings-empty-hint" id="settingsEmptyHint"></div>
@@ -1782,17 +1781,6 @@
           <input type="text" id="newInvCat" placeholder="নতুন ক্যাটেগরি যোগ করুন">
           <button onclick="addCategory('inv')">Add</button>
         </div>
-      </div>
-
-      <div class="settings-block settings-subpage" id="sblk18">
-        <h3>🤖 AI রিসিট স্ক্যানার</h3>
-        <div class="helper-text" style="margin-top:0;">ক্যামেরা দিয়ে ক্রয়/খরচের রিসিট ছবি তুলে Gemini AI দিয়ে অটো এন্ট্রি ফর্ম পূরণ করার ফিচার। এটি চালু করতে Google AI Studio / Google Cloud Console থেকে একটি Gemini API Key বসান।</div>
-        <div class="field" style="margin-top:10px;">
-          <label>Gemini API Key</label>
-          <input type="text" id="settingsAiApiKey" placeholder="AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-        </div>
-        <div class="helper-text">এই কী ছাড়া রিসিট স্ক্যান বাটন কাজ করবে না — ডেটা কখনো আপনার ডিভাইস ছাড়া অন্য কোথাও সেভ হয় না, শুধু স্ক্যানের সময় ছবিটি Gemini-তে পাঠানো হয়।</div>
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
       </div>
 
     </section>
@@ -5661,7 +5649,6 @@ function renderSettings(){
   document.getElementById('settingsBankDetails').value = state.company.bankDetails || '';
   document.getElementById('settingsTelegramBotToken').value = state.company.telegramBotToken || '';
   document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
-  document.getElementById('settingsAiApiKey').value = state.company.aiGeminiApiKey || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
   updateBioSettingsUI();
@@ -6329,7 +6316,6 @@ function saveProfile(){
   state.company.bankDetails = document.getElementById('settingsBankDetails').value.trim();
   state.company.telegramBotToken = document.getElementById('settingsTelegramBotToken').value.trim();
   state.company.telegramChatId = document.getElementById('settingsTelegramChatId').value.trim();
-  state.company.aiGeminiApiKey = document.getElementById('settingsAiApiKey').value.trim();
   state.company.logoUrl = document.getElementById('settingsLogoUrl').value.trim();
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
@@ -7176,6 +7162,9 @@ if(document.readyState === 'loading'){
      Settings > 🤖 AI রিসিট স্ক্যানার-এ একটা Gemini API Key বসাতে হবে। -->
 <script>
 let receiptScanState = { type: 'purchase', imageDataUrl: null, parsed: null };
+// বিল্ট-ইন ডিফল্ট Gemini API Key — Settings > AI রিসিট স্ক্যানার-এ খালি রাখলে এটা ব্যবহার হবে।
+// প্রতিটা shop চাইলে নিজের key দিয়ে এটা override করতে পারবে।
+const DEFAULT_AI_GEMINI_API_KEY = 'AIzaSyCEshgjUXAHDdDxiE-Vlk-4G1n0CAtZD8U';
 
 const RECEIPT_SCHEMA = {
   type: 'OBJECT',
@@ -7202,8 +7191,7 @@ const RECEIPT_SCHEMA = {
 };
 
 async function scanReceiptImage(dataUrl){
-  const apiKey = (state.company.aiGeminiApiKey || '').trim();
-  if(!apiKey) throw new Error('NO_API_KEY');
+  const apiKey = DEFAULT_AI_GEMINI_API_KEY;
   const base64 = dataUrl.split(',')[1];
   const prompt = 'You are a receipt/invoice OCR assistant for a small Bangladeshi shop\'s bookkeeping app. '
     + 'Carefully read the attached receipt/invoice/memo photo and extract structured data.\n'
@@ -7276,10 +7264,6 @@ function normalizeParsedReceipt(p){
 }
 
 function openReceiptScanSheet(type){
-  if(!(state.company.aiGeminiApiKey || '').trim()){
-    showToast('আগে Settings > 🤖 AI রিসিট স্ক্যানার থেকে Gemini API Key বসান');
-    return;
-  }
   receiptScanState = { type, imageDataUrl: null, parsed: null };
   document.getElementById('rsTitle').textContent = type === 'expense' ? '📷 রিসিট স্ক্যান — খরচ' : '📷 রিসিট স্ক্যান — ক্রয়';
   document.getElementById('rsPartyLabel').textContent = type === 'expense' ? 'কাকে দেওয়া হয়েছে' : 'সাপ্লায়ার';
