@@ -2107,11 +2107,10 @@
   <div id="rsStepCapture" style="margin-top:14px;">
     <div class="helper-text" style="margin-top:0;">রিসিট বা ইনভয়েসের একটি স্পষ্ট ছবি তুলুন বা আপলোড করুন — AI নিজে থেকে তারিখ, সাপ্লায়ার, আইটেম ও দাম বের করে ফর্মে বসিয়ে দেবে।</div>
     <img id="rsPreview" style="display:none; width:100%; max-height:260px; object-fit:contain; border-radius:14px; margin:10px 0; background:var(--paper-deep);">
-    <label class="btn btn-gold" style="display:block; text-align:center; cursor:pointer;">
-      📷 ছবি তুলুন / বাছাই করুন
+    <label class="btn btn-primary" style="display:block; text-align:center; cursor:pointer;">
+      ✨ AI দিয়ে স্ক্যান করুন
       <input type="file" id="rsFileInput" accept="image/*" capture="environment" style="display:none;" onchange="onRsFileChange(event)">
     </label>
-    <button class="btn btn-primary" id="rsScanBtn" style="margin-top:10px;" disabled onclick="runReceiptScan()">✨ AI দিয়ে স্ক্যান করুন</button>
     <div id="rsLoading" style="display:none; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:13px; color:var(--muted);">
       <span class="spinner" style="width:16px; height:16px; border:2px solid var(--paper-deep); border-top-color:var(--green-600); border-radius:50%; display:inline-block; animation:rsspin .7s linear infinite;"></span>
       স্ক্যান করা হচ্ছে... একটু অপেক্ষা করুন
@@ -7283,7 +7282,6 @@ function openReceiptScanSheet(type){
   document.getElementById('rsStepResult').style.display = 'none';
   document.getElementById('rsPreview').style.display = 'none';
   document.getElementById('rsFileInput').value = '';
-  document.getElementById('rsScanBtn').disabled = true;
   document.getElementById('rsLoading').style.display = 'none';
   document.getElementById('receiptScanOverlay').classList.add('open');
   document.getElementById('receiptScanSheet').classList.add('open');
@@ -7295,14 +7293,12 @@ function closeReceiptScanSheet(){
 function onRsFileChange(e){
   const file = e.target.files && e.target.files[0];
   if(!file) return;
-  const btn = document.getElementById('rsScanBtn');
-  if(btn) btn.disabled = true; // stays disabled until we know compression actually succeeded
   compressImageFile(file, 1280, 0.72, (dataUrl) => {
     receiptScanState.imageDataUrl = dataUrl;
     const prev = document.getElementById('rsPreview');
     prev.src = dataUrl;
     prev.style.display = 'block';
-    if(btn) btn.disabled = false;
+    runReceiptScan(); // ছবি বাছাই হওয়ার সাথে সাথেই স্বয়ংক্রিয়ভাবে স্ক্যান শুরু হবে
   }, (reason) => {
     // Previously this failure was silent — the scan button just stayed
     // disabled forever with no explanation, which looked like "nothing
@@ -7317,7 +7313,6 @@ async function runReceiptScan(){
   if(!receiptScanState.imageDataUrl) return;
   try{
     document.getElementById('rsLoading').style.display = 'flex';
-    document.getElementById('rsScanBtn').disabled = true;
     const parsed = await scanReceiptImage(receiptScanState.imageDataUrl);
     receiptScanState.parsed = normalizeParsedReceipt(parsed);
     renderRsResult();
@@ -7332,7 +7327,6 @@ async function runReceiptScan(){
     alert('DEBUG ERROR:\n\n' + rawMsg);
   }finally{
     document.getElementById('rsLoading').style.display = 'none';
-    document.getElementById('rsScanBtn').disabled = false;
   }
 }
 
