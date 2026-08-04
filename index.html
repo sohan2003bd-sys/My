@@ -7325,10 +7325,11 @@ async function runReceiptScan(){
     document.getElementById('rsStepResult').style.display = 'block';
   }catch(err){
     console.error('Receipt scan failed:', err);
-    // TEMPORARY DEBUG: showing the raw error text so the exact cause can be
-    // identified. Revert to the friendly categorized message once fixed.
+    // TEMPORARY DEBUG: showing the raw error text in a blocking alert (not a
+    // toast) so it stays on screen and can be fully read/screenshotted.
+    // Revert to the friendly categorized message once fixed.
     const rawMsg = String((err && err.message) || err || 'unknown error');
-    showToast('DEBUG: ' + rawMsg);
+    alert('DEBUG ERROR:\n\n' + rawMsg);
   }finally{
     document.getElementById('rsLoading').style.display = 'none';
     document.getElementById('rsScanBtn').disabled = false;
