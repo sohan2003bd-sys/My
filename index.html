@@ -1786,10 +1786,10 @@
 
       <div class="settings-block settings-subpage" id="sblk18">
         <h3>🤖 AI রিসিট স্ক্যানার</h3>
-        <div class="helper-text" style="margin-top:0;">ক্যামেরা দিয়ে ক্রয়/খরচের রিসিট ছবি তুলে Gemini AI দিয়ে অটো এন্ট্রি ফর্ম পূরণ করার ফিচার। এটি চালু করতে Firebase Console-এ AI Logic এনাবল ও App Check (reCAPTCHA v3) সেটআপ করা থাকতে হবে — এরপর নিচে সেই reCAPTCHA v3 Site Key বসান।</div>
+        <div class="helper-text" style="margin-top:0;">ক্যামেরা দিয়ে ক্রয়/খরচের রিসিট ছবি তুলে Gemini AI দিয়ে অটো এন্ট্রি ফর্ম পূরণ করার ফিচার। এটি চালু করতে Google AI Studio / Google Cloud Console থেকে একটি Gemini API Key বসান।</div>
         <div class="field" style="margin-top:10px;">
-          <label>reCAPTCHA v3 Site Key (App Check)</label>
-          <input type="text" id="settingsAiSiteKey" placeholder="6Lxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+          <label>Gemini API Key</label>
+          <input type="text" id="settingsAiApiKey" placeholder="AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
         </div>
         <div class="helper-text">এই কী ছাড়া রিসিট স্ক্যান বাটন কাজ করবে না — ডেটা কখনো আপনার ডিভাইস ছাড়া অন্য কোথাও সেভ হয় না, শুধু স্ক্যানের সময় ছবিটি Gemini-তে পাঠানো হয়।</div>
         <button class="btn btn-primary" style="margin-top:16px;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
@@ -5661,7 +5661,7 @@ function renderSettings(){
   document.getElementById('settingsBankDetails').value = state.company.bankDetails || '';
   document.getElementById('settingsTelegramBotToken').value = state.company.telegramBotToken || '';
   document.getElementById('settingsTelegramChatId').value = state.company.telegramChatId || '';
-  document.getElementById('settingsAiSiteKey').value = state.company.aiRecaptchaSiteKey || '';
+  document.getElementById('settingsAiApiKey').value = state.company.aiGeminiApiKey || '';
   document.getElementById('settingsPinToggle').checked = state.security.pinEnabled;
   document.getElementById('pinChangeFields').style.display = state.security.pinEnabled ? 'block' : 'none';
   updateBioSettingsUI();
@@ -6329,7 +6329,7 @@ function saveProfile(){
   state.company.bankDetails = document.getElementById('settingsBankDetails').value.trim();
   state.company.telegramBotToken = document.getElementById('settingsTelegramBotToken').value.trim();
   state.company.telegramChatId = document.getElementById('settingsTelegramChatId').value.trim();
-  state.company.aiRecaptchaSiteKey = document.getElementById('settingsAiSiteKey').value.trim();
+  state.company.aiGeminiApiKey = document.getElementById('settingsAiApiKey').value.trim();
   state.company.logoUrl = document.getElementById('settingsLogoUrl').value.trim();
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
@@ -7169,62 +7169,41 @@ if(document.readyState === 'loading'){
   })();
 </script>
 
-<!-- ===================== PHASE 5: AI RECEIPT SCANNER (Gemini via Firebase AI Logic) =====================
-     সম্পূর্ণ client-side। App Check (reCAPTCHA v3) + AI Logic দিয়ে সরাসরি Firebase থেকে Gemini কল করা হয় —
-     কোনো নিজস্ব ব্যাকএন্ড/সার্ভার লাগে না। রিসিটের ছবি শুধু স্ক্যানের সময় Google-এ পাঠানো হয়, অন্য কোথাও
-     সেভ থাকে না। ব্যবহারের আগে Settings > 🤖 AI রিসিট স্ক্যানার-এ reCAPTCHA v3 Site Key বসাতে হবে। -->
+<!-- ===================== PHASE 5: AI RECEIPT SCANNER (Gemini Developer API, direct) =====================
+     সম্পূর্ণ client-side। ব্রাউজার থেকে সরাসরি Gemini API-তে (generativelanguage.googleapis.com) একটা
+     API Key দিয়ে কল করা হয় — কোনো Firebase App Check/reCAPTCHA বা নিজস্ব ব্যাকএন্ড/সার্ভার লাগে না।
+     রিসিটের ছবি শুধু স্ক্যানের সময় Google-এ পাঠানো হয়, অন্য কোথাও সেভ থাকে না। ব্যবহারের আগে
+     Settings > 🤖 AI রিসিট স্ক্যানার-এ একটা Gemini API Key বসাতে হবে। -->
 <script>
-const AI_SDK_VERSION = '12.15.0';
-// Public reCAPTCHA v3 site key (App Check) for sohanshopbd.web.app — this is
-// meant to live in client code (it's the counterpart to a secret key kept
-// only in Firebase Console), and applies app-wide since App Check validates
-// by domain, not per-shop. Settings > AI রিসিট স্ক্যানার can still override
-// this per-shop if ever needed; this is only the fallback when that's empty.
-const DEFAULT_AI_RECAPTCHA_SITE_KEY = '6LeR7HMtAAAAAAodSHjJpg28JFCh3jV2vQ2AgD1p';
-let __aiModel = null;
 let receiptScanState = { type: 'purchase', imageDataUrl: null, parsed: null };
 
-async function ensureAiModel(){
-  if(__aiModel) return __aiModel;
-  const siteKey = (state.company.aiRecaptchaSiteKey || DEFAULT_AI_RECAPTCHA_SITE_KEY || '').trim();
-  if(!siteKey) throw new Error('NO_SITE_KEY');
-  const [{ initializeApp }, { initializeAppCheck, ReCaptchaV3Provider }, { getAI, getGenerativeModel, GoogleAIBackend, Schema }] = await Promise.all([
-    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-app.js`),
-    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-app-check.js`),
-    import(`https://www.gstatic.com/firebasejs/${AI_SDK_VERSION}/firebase-ai.js`)
-  ]);
-  const aiApp = initializeApp(FIREBASE_CONFIG, 'aiScanApp');
-  initializeAppCheck(aiApp, { provider: new ReCaptchaV3Provider(siteKey), isTokenAutoRefreshEnabled: true });
-  const ai = getAI(aiApp, { backend: new GoogleAIBackend() });
-  const receiptSchema = Schema.object({
-    properties: {
-      date: Schema.string(),
-      partyName: Schema.string(),
-      phone: Schema.string(),
-      refNo: Schema.string(),
-      paymentMethod: Schema.string(),
-      totalAmount: Schema.number(),
-      items: Schema.array({
-        items: Schema.object({
-          properties: {
-            name: Schema.string(),
-            qty: Schema.number(),
-            price: Schema.number(),
-            total: Schema.number()
-          }
-        })
-      })
+const RECEIPT_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    date: { type: 'STRING' },
+    partyName: { type: 'STRING' },
+    phone: { type: 'STRING' },
+    refNo: { type: 'STRING' },
+    paymentMethod: { type: 'STRING' },
+    totalAmount: { type: 'NUMBER' },
+    items: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          name: { type: 'STRING' },
+          qty: { type: 'NUMBER' },
+          price: { type: 'NUMBER' },
+          total: { type: 'NUMBER' }
+        }
+      }
     }
-  });
-  __aiModel = getGenerativeModel(ai, {
-    model: 'gemini-3.6-flash',
-    generationConfig: { responseMimeType: 'application/json', responseSchema: receiptSchema }
-  });
-  return __aiModel;
-}
+  }
+};
 
 async function scanReceiptImage(dataUrl){
-  const model = await ensureAiModel();
+  const apiKey = (state.company.aiGeminiApiKey || '').trim();
+  if(!apiKey) throw new Error('NO_API_KEY');
   const base64 = dataUrl.split(',')[1];
   const prompt = 'You are a receipt/invoice OCR assistant for a small Bangladeshi shop\'s bookkeeping app. '
     + 'Carefully read the attached receipt/invoice/memo photo and extract structured data.\n'
@@ -7238,12 +7217,38 @@ async function scanReceiptImage(dataUrl){
     + 'If the receipt has no itemized list, return exactly one item using a short description and the grand total.\n'
     + '- totalAmount: the grand total amount on the receipt.\n'
     + 'Keep item names in the same language as printed on the receipt. Respond with data matching the schema only.';
-  const result = await model.generateContent([
-    { inlineData: { mimeType: 'image/jpeg', data: base64 } },
-    { text: prompt }
-  ]);
-  return JSON.parse(result.response.text());
+
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        parts: [
+          { inlineData: { mimeType: 'image/jpeg', data: base64 } },
+          { text: prompt }
+        ]
+      }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: RECEIPT_SCHEMA
+      }
+    })
+  });
+  if(!res.ok){
+    let detail = '';
+    try{ const errJson = await res.json(); detail = (errJson && errJson.error && errJson.error.message) || ''; }
+    catch(e){ try{ detail = await res.text(); }catch(e2){} }
+    throw new Error(`Gemini API [${res.status}] ${detail}`.trim());
+  }
+  const data = await res.json();
+  const text = data && data.candidates && data.candidates[0] && data.candidates[0].content
+    && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
+    && data.candidates[0].content.parts[0].text;
+  if(!text) throw new Error('Gemini API থেকে খালি উত্তর এসেছে');
+  return JSON.parse(text);
 }
+
 
 function normalizeParsedReceipt(p){
   const items = (Array.isArray(p.items) && p.items.length)
@@ -7271,8 +7276,8 @@ function normalizeParsedReceipt(p){
 }
 
 function openReceiptScanSheet(type){
-  if(!(state.company.aiRecaptchaSiteKey || DEFAULT_AI_RECAPTCHA_SITE_KEY || '').trim()){
-    showToast('আগে Settings > 🤖 AI রিসিট স্ক্যানার থেকে reCAPTCHA Site Key বসান');
+  if(!(state.company.aiGeminiApiKey || '').trim()){
+    showToast('আগে Settings > 🤖 AI রিসিট স্ক্যানার থেকে Gemini API Key বসান');
     return;
   }
   receiptScanState = { type, imageDataUrl: null, parsed: null };
