@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
+<link rel="preconnect" href="https://sohan2003bd-sys.github.io" crossorigin>
 <link rel="preconnect" href="https://sohanshopbd-default-rtdb.firebaseio.com">
 <link rel="dns-prefetch" href="https://img.youtube.com">
 <link rel="dns-prefetch" href="https://api.telegram.org">
@@ -85,7 +86,7 @@
 
   /* ---------- Marquee (pinned to top of viewport, always visible while scrolling) ---------- */
   .marquee-bar{
-    background:var(--plum-900); overflow:hidden; white-space:nowrap; padding:7px 0;
+    background:#0E2A5A; overflow:hidden; white-space:nowrap; padding:7px 0;
     border-bottom:1px solid rgba(255,168,87,0.25);
     position:fixed; top:0; left:50%; transform:translateX(-50%);
     width:100%; max-width:520px; z-index:40;
@@ -154,6 +155,21 @@
   
   /* Hide submit button by default */
   #submitBtn{ display:none; }
+  #submitBtn.show-anim{
+    animation: orderBtnIn .5s cubic-bezier(.2,1.4,.4,1) both, orderBtnJiggle 1s ease-in-out .5s 3;
+  }
+  @keyframes orderBtnIn{
+    0%{ transform:translateY(46px); opacity:0; }
+    60%{ transform:translateY(-8px); opacity:1; }
+    80%{ transform:translateY(3px); }
+    100%{ transform:translateY(0); opacity:1; }
+  }
+  @keyframes orderBtnJiggle{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-7px); }
+  }
+  /* Remove the leftover bottom gap reserved for the sticky footer once the order is placed */
+  .wrap.order-complete{ padding-bottom:0; }
 
   /* ---------- Product catalog ---------- */
   .catalog-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
@@ -428,7 +444,7 @@
         </div>
         <div class="field">
           <label>মোবাইল নম্বর *</label>
-          <input type="tel" id="custPhone" required placeholder="01XXXXXXXXX">
+          <input type="tel" id="custPhone" required placeholder="01XXXXXXXXX" inputmode="numeric" pattern="[0-9]{11}" maxlength="11" autocomplete="tel" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11); checkOrderButtonVisibility();">
         </div>
         <div class="field" style="margin-bottom:0;">
           <label>সম্পূর্ণ ঠিকানা *</label>
@@ -498,7 +514,7 @@
             <span class="k">সর্বমোট</span>
             <span class="v" id="totalDisplay">৳0.00</span>
           </div>
-          <button type="submit" class="btn btn-primary" id="submitBtn">অর্ডার নিশ্চিত করুন</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">অর্ডার কনফার্ম করুন</button>
         </div>
       </div>
     </form>
@@ -915,18 +931,23 @@ function selectCategory(cat){
   renderCatalog();
 }
 
-function buildCardHtml(p){
+function buildCardHtml(p, isPriority){
   const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
   const thumbUrl = getThumbUrl(p);
   const price = Number(p.price) || 0;
   const original = Number(p.originalPrice) || 0;
   const hasDiscount = original > price;
   const pct = hasDiscount ? Math.round((1 - price / original) * 100) : 0;
+  // প্রথম সারির (উপরে যা সাথে সাথে চোখে পড়ে) ছবিগুলো lazy না করে সরাসরি,
+  // বেশি প্রায়োরিটি দিয়ে লোড করানো হয় — যাতে প্রথম দর্শনেই ছবি দ্রুত দেখা যায়
+  const imgAttrs = isPriority
+    ? `loading="eager" fetchpriority="high" decoding="async"`
+    : `loading="lazy" decoding="async"`;
   return `
   <div class="pcard">
     <div class="thumb">
       ${thumbUrl
-        ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=noimg></div>'">`
+        ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" ${imgAttrs} onerror="this.outerHTML='<div class=noimg></div>'">`
         : `<div class="noimg"></div>`}
       <div class="badge-row">
         <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
@@ -978,7 +999,7 @@ function renderCatalog(){
     const end = Math.min(idx + rowSize, visible.length);
     for(; idx < end; idx++){
       const holder = document.createElement('div');
-      holder.innerHTML = buildCardHtml(visible[idx]);
+      holder.innerHTML = buildCardHtml(visible[idx], idx < rowSize);
       frag.appendChild(holder.firstElementChild);
     }
     grid.appendChild(frag);
@@ -1069,6 +1090,7 @@ function getDeliveryChoice(){
   const el = document.querySelector('input[name="deliveryArea"]:checked');
   return el ? { charge: Number(el.value), label: el.dataset.label } : null;
 }
+let isSubmitting = false;
 function updateTotal(){
   const items = collectItems();
   const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
@@ -1079,6 +1101,10 @@ function updateTotal(){
   if(subtotalEl) subtotalEl.textContent = '৳' + subtotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   if(deliveryEl) deliveryEl.textContent = delivery ? '৳' + delivery.charge.toFixed(2) + ' (' + delivery.label + ')' : '— (এলাকা নির্বাচন করুন)';
   document.getElementById('totalDisplay').textContent = '৳' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const submitBtn = document.getElementById('submitBtn');
+  if(submitBtn && !isSubmitting){
+    submitBtn.textContent = 'অর্ডার কনফার্ম করুন — ৳' + total.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+  }
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
@@ -1086,16 +1112,28 @@ function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;',
 function checkOrderButtonVisibility(){
   const submitBtn = document.getElementById('submitBtn');
   if(!submitBtn) return;
-  
+
   const items = collectItems();
   const custName = document.getElementById('custName').value.trim();
   const custAddress = document.getElementById('custAddress').value.trim();
-  
-  // Show button only if: at least 1 item selected AND name is filled AND address is filled
-  if(items.length > 0 && custName.length > 0 && custAddress.length > 0){
+  const custPhoneEl = document.getElementById('custPhone');
+  const custPhone = custPhoneEl ? custPhoneEl.value.trim() : '';
+  const phoneValid = /^[0-9]{11}$/.test(custPhone);
+
+  const wasVisible = submitBtn.style.display === 'block';
+
+  // Show button only if: at least 1 item selected AND name, address, and a valid 11-digit phone are filled
+  if(items.length > 0 && custName.length > 0 && custAddress.length > 0 && phoneValid){
     submitBtn.style.display = 'block';
+    if(!wasVisible){
+      // এইমাত্র বাটনটি প্রথমবার ভেসে উঠল — হালকা লাফানো (bounce) অ্যানিমেশন চালানো হবে
+      submitBtn.classList.remove('show-anim');
+      void submitBtn.offsetWidth; // reflow — অ্যানিমেশন পুনরায় শুরু করার জন্য
+      submitBtn.classList.add('show-anim');
+    }
   } else {
     submitBtn.style.display = 'none';
+    submitBtn.classList.remove('show-anim');
   }
 }
 
@@ -1110,6 +1148,10 @@ function initOrderButtonVisibility(){
   // Listen for changes on address field
   const custAddress = document.getElementById('custAddress');
   if(custAddress) custAddress.addEventListener('input', checkOrderButtonVisibility);
+
+  // Listen for changes on phone field (digit-stripping is handled inline via oninput)
+  const custPhone = document.getElementById('custPhone');
+  if(custPhone) custPhone.addEventListener('input', checkOrderButtonVisibility);
 }
 
 /* ---------------- VIDEO LIGHTBOX ---------------- */
@@ -1213,6 +1255,11 @@ function submitOrder(e){
   if(items.length === 0){ showToast('অন্তত একটি পণ্য নির্বাচন করুন'); return false; }
   const delivery = getDeliveryChoice();
   if(!delivery){ showToast('ডেলিভারি এলাকা নির্বাচন করুন (ঢাকা / ঢাকার বাইরে)'); return false; }
+  const phone = document.getElementById('custPhone').value.trim();
+  if(!/^[0-9]{11}$/.test(phone)){
+    showToast('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন');
+    return false;
+  }
   const paymentMethod = document.getElementById('custPayment').value;
   const isCOD = paymentMethod === 'Cash on Delivery';
   if(!isCOD && !document.getElementById('custTrxId').value.trim()){
@@ -1239,7 +1286,9 @@ function submitOrder(e){
     createdAt: Date.now()
   };
   const btn = document.getElementById('submitBtn');
+  isSubmitting = true;
   btn.disabled = true;
+  btn.classList.remove('show-anim');
   btn.textContent = 'পাঠানো হচ্ছে…';
   db.ref('shops/' + SHOP_ID + '/orders').push(order)
     .then(()=>{
@@ -1247,11 +1296,14 @@ function submitOrder(e){
       document.getElementById('orderWrap').querySelector('main').style.display = 'none';
       document.querySelector('.hero').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
+      // অর্ডার সম্পন্ন হওয়ার পর নিচের ফাঁকা (footer-এর জন্য রাখা) জায়গাটি সরিয়ে ফেলা হলো
+      document.getElementById('orderWrap').classList.add('order-complete');
     })
     .catch(err => {
       showToast('অর্ডার পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+      isSubmitting = false;
       btn.disabled = false;
-      btn.textContent = 'অর্ডার নিশ্চিত করুন';
+      updateTotal();
     });
   return false;
 }
