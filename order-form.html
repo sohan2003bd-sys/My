@@ -9,7 +9,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="preconnect" href="https://sohanshopbd-default-rtdb.firebaseio.com">
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<link rel="dns-prefetch" href="https://img.youtube.com">
+<link rel="dns-prefetch" href="https://api.telegram.org">
+<link rel="preload" as="image" fetchpriority="high" href="https://images.unsplash.com/photo-1604118464816-5e2bd7b863c2?fm=jpg&q=45&w=500&auto=format&fit=crop">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet"></noscript>
 <style>
   :root{
     --ink:#16241A; --paper:#FAFBF3; --paper-deep:#E7ECF5;
@@ -33,7 +38,7 @@
   ::selection{ background:var(--gold-light); color:var(--plum-900); }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
-  .wrap{ max-width:520px; margin:0 auto; padding:0 0 128px; min-height:100vh; position:relative; }
+  .wrap{ max-width:520px; margin:0 auto; padding:34px 0 128px; min-height:100vh; position:relative; }
 
   /* ---------- Laptop / desktop presentation ---------- */
   @media (min-width:640px){
@@ -78,13 +83,15 @@
     border-radius:10px; padding:6px 10px; backdrop-filter:blur(3px);
   }
 
-  /* ---------- Marquee ---------- */
+  /* ---------- Marquee (pinned to top of viewport, always visible while scrolling) ---------- */
   .marquee-bar{
     background:var(--plum-900); overflow:hidden; white-space:nowrap; padding:7px 0;
     border-bottom:1px solid rgba(255,168,87,0.25);
-    position:sticky; top:0; z-index:40;
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:520px; z-index:40;
+    box-shadow:0 4px 14px rgba(8,20,36,0.25);
   }
-  .marquee-track{ display:inline-flex; animation:marquee-scroll 22s linear infinite; }
+  .marquee-track{ display:inline-flex; animation:marquee-scroll 22s linear infinite; will-change:transform; }
   .marquee-track span{
     display:inline-block; padding:0 28px; font-size:12px; font-weight:600; color:#FFFFFF;
     letter-spacing:.01em; font-family:'Hind Siliguri',sans-serif;
@@ -144,6 +151,9 @@
   .item-row .qty{ width:70px; }
   .item-row .rm{ border:none; background:var(--paper-deep); width:38px; height:41px; border-radius:10px; font-size:15px; color:var(--rust); flex:none; }
   .add-item-btn{ background:none; border:1.5px dashed var(--gold); color:var(--gold-deep); border-radius:11px; padding:9px; width:100%; font-size:13px; font-weight:600; }
+  
+  /* Hide submit button by default */
+  #submitBtn{ display:none; }
 
   /* ---------- Product catalog ---------- */
   .catalog-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
@@ -311,6 +321,7 @@
   /* ---------- Page footer (contact info — editable from the Khatabook app's Settings) ---------- */
   .page-footer{
     background:var(--plum-900); color:#E7EEE6; padding:28px 18px 22px; margin-top:6px;
+    content-visibility:auto; contain-intrinsic-size:1px 420px;
   }
   .page-footer .pf-title{ font-family:'Tiro Bangla', serif; font-size:16px; color:var(--gold-light); margin:0 0 14px; }
   .pf-row{ display:flex; align-items:flex-start; gap:10px; padding:7px 0; font-size:13px; line-height:1.6; color:#D7E3D5; }
@@ -879,6 +890,9 @@ document.addEventListener('DOMContentLoaded', function(){
     videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderVideos();
   });
+  
+  // Initialize order button visibility and event listeners
+  initOrderButtonVisibility();
 });
 
 function renderCatNav(){
@@ -1046,6 +1060,7 @@ function renderCart(){
       <button type="button" class="cart-rm" onclick="removeFromCart('${it.productId}')">✕</button>
     </div>`).join('');
   updateTotal();
+  checkOrderButtonVisibility();
 }
 function collectItems(){
   return Object.values(cart);
@@ -1066,6 +1081,36 @@ function updateTotal(){
   document.getElementById('totalDisplay').textContent = '৳' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ---------- Order button visibility control ---------- */
+function checkOrderButtonVisibility(){
+  const submitBtn = document.getElementById('submitBtn');
+  if(!submitBtn) return;
+  
+  const items = collectItems();
+  const custName = document.getElementById('custName').value.trim();
+  const custAddress = document.getElementById('custAddress').value.trim();
+  
+  // Show button only if: at least 1 item selected AND name is filled AND address is filled
+  if(items.length > 0 && custName.length > 0 && custAddress.length > 0){
+    submitBtn.style.display = 'block';
+  } else {
+    submitBtn.style.display = 'none';
+  }
+}
+
+// Run check on page load
+function initOrderButtonVisibility(){
+  checkOrderButtonVisibility();
+  
+  // Listen for changes on name field
+  const custName = document.getElementById('custName');
+  if(custName) custName.addEventListener('input', checkOrderButtonVisibility);
+  
+  // Listen for changes on address field
+  const custAddress = document.getElementById('custAddress');
+  if(custAddress) custAddress.addEventListener('input', checkOrderButtonVisibility);
+}
 
 /* ---------------- VIDEO LIGHTBOX ---------------- */
 function getYouTubeEmbed(url){
