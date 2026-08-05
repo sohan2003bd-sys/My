@@ -39,7 +39,7 @@
   ::selection{ background:var(--gold-light); color:var(--plum-900); }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
-  .wrap{ max-width:520px; margin:0 auto; padding:34px 0 128px; min-height:100vh; position:relative; }
+  .wrap{ max-width:520px; margin:0 auto; padding:34px 0 24px; min-height:100vh; position:relative; }
 
   /* ---------- Laptop / desktop presentation ---------- */
   @media (min-width:640px){
@@ -169,7 +169,8 @@
     50%{ transform:translateY(-7px); }
   }
   /* Remove the leftover bottom gap reserved for the sticky footer once the order is placed */
-  .wrap.order-complete{ padding-bottom:0; }
+  /* সফল অর্ডারের পর wrap-কে জোর করে পুরো ভিউপোর্ট উচ্চতা (100vh) না রেখে শুধু আসল কনটেন্ট যতটুকু, ততটুকুই রাখা হলো — এতে নিচে অহেতুক ফাঁকা সাদা জায়গা থাকবে না */
+  .wrap.order-complete{ padding-bottom:0; min-height:0; }
 
   /* ---------- Product catalog ---------- */
   .catalog-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
@@ -292,12 +293,11 @@
   .lightbox-box iframe, .lightbox-box video{ width:100%; aspect-ratio:16/9; border:none; border-radius:14px; background:var(--plum-900); }
   .lightbox-close{ display:block; margin:14px auto 0; background:var(--gold); color:var(--plum-900); border:none; border-radius:20px; padding:9px 20px; font-size:13px; font-weight:700; }
 
-  /* ---------- Sticky order footer (total + submit) ---------- */
+  /* ---------- Order footer (in normal page flow — right after Payment, above the Contact section) ---------- */
   .order-footer{
-    position:fixed; left:0; right:0; bottom:0; z-index:40;
-    background:rgba(250,251,243,0.98);
-    border-top:1px solid var(--rule); box-shadow:0 -8px 24px rgba(14,42,90,0.10);
-    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    border:1px solid rgba(14,42,90,0.05);
+    padding:16px; margin:0 16px 16px;
   }
   .order-footer-inner{ max-width:520px; margin:0 auto; }
   .total-row{ display:flex; justify-content:space-between; align-items:center; padding:0 2px 10px; position:relative; }
