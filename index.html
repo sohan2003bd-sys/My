@@ -572,7 +572,7 @@
   .btn-danger{ background:var(--loss-bg); color:var(--loss); }
 
   /* ---------- Modal / bottom sheet ---------- */
-  .overlay{ position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60; display:none; backdrop-filter:blur(1px); }
+  .overlay{ position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60; display:none; backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); }
   .overlay.open{ display:block; }
   .sheet{
     position:fixed; left:0; right:0; bottom:0; z-index:61;
@@ -871,7 +871,7 @@
   .settings-menu-overlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:49;
     opacity:0; pointer-events:none; transition:opacity 0s;
-    backdrop-filter:blur(1px);
+    backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
   }
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
   .settings-menu-drawer{
