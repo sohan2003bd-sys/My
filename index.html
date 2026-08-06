@@ -22,6 +22,7 @@
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js"></script>
 <!-- Google Identity Services — used only for the separate, narrow Google Drive appDataFolder backup permission -->
 <script defer src="https://accounts.google.com/gsi/client"></script>
 <style>
@@ -82,16 +83,6 @@
   body.light-mode .icon-btn.inventory-btn{ color: inherit; }
   body.light-mode .icon-btn.orders-btn{ background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%); color:#F5F9FF; }
   body.light-mode .icon-btn.inventory-btn{ background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%); color:#3B2412; }
-  body.light-mode .bottomnav-bg{
-    background: linear-gradient(180deg, #FFFFFF, #F0F0F0);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
-  }
-  body.light-mode .navbtn{ color: rgba(0,0,0,0.45); }
-  body.light-mode .navbtn.active{ color: #000; }
-  body.light-mode .navbtn.active .ico-wrap{
-    background: #fff;
-    border: 3px solid #000;
-  }
 
   /* Top bar and bottom nav: always a single flat light-green color across every page (no gradient, no per-page tint) */
   
@@ -463,6 +454,8 @@
   .txn-actions{ display:flex; gap:6px; margin-top:4px; justify-content:flex-end; }
   .mini-btn{ border:none; background:var(--paper-deep); border-radius:7px; width:24px;height:24px; font-size:11px; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:background .12s; }
   .mini-btn:active{ background:var(--gold-light); }
+  .call-btn{ background:var(--green-600); color:#fff; text-decoration:none; font-size:12px; width:26px; height:26px; }
+  .call-btn:active{ background:var(--green-700); }
   .txn-menu-wrap{ position:relative; margin-top:4px; display:flex; justify-content:flex-end; }
   .dots-btn{ font-size:15px; font-weight:700; letter-spacing:-1px; }
   .txn-menu{
@@ -506,40 +499,38 @@
   }
   .bottomnav{
     position:relative; pointer-events:auto;
-    --notch-x:50%;
-    display:flex; overflow:visible;
-    border-radius:26px;
-    padding:0;
+    display:flex; align-items:center; overflow:visible;
+    border-radius:24px;
+    padding:6px 6px;
     height:66px;
+    background:#FFFFFF;
+    box-shadow:0 -1px 0 rgba(15,40,34,0.04), 0 10px 30px rgba(15,40,34,0.12);
+    border:1px solid rgba(15,40,34,0.06);
   }
-  .bottomnav-bg{
-    position:absolute; inset:0; z-index:0; border-radius:26px;
-    background:var(--gold);
-    box-shadow:0 8px 20px rgba(50,120,80,0.20);
-    -webkit-mask-image: radial-gradient(circle 27px at var(--notch-x) 4px, transparent 26px, #000 28.5px);
-            mask-image: radial-gradient(circle 27px at var(--notch-x) 4px, transparent 26px, #000 28.5px);
+  .navbtn{
+    flex:1; background:none; border:none; color:var(--blue-600);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; padding:6px 2px; position:relative; z-index:1;
+    border-radius:16px;
+    transition:color .15s ease, transform .12s ease;
   }
-  .navbtn{ flex:1; background:none; border:none; color:rgba(27,36,32,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0 2px; position:relative; z-index:1; transition:color .12s ease; }
   .navbtn .ico-wrap{
-    width:26px; height:26px; display:flex; align-items:center; justify-content:center;
-    border-radius:50%; position:relative;
-    background:transparent; color:#FFFFFF; border:3px solid transparent;
-    transition:transform .16s cubic-bezier(.34,1.56,.64,1), width .16s cubic-bezier(.34,1.56,.64,1), height .16s cubic-bezier(.34,1.56,.64,1), background .14s ease, border-color .14s ease, box-shadow .14s ease;
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    border-radius:13px; position:relative;
+    background:transparent; color:var(--blue-600);
+    transition:background .18s cubic-bezier(.34,1.56,.64,1), color .15s ease, transform .18s cubic-bezier(.34,1.56,.64,1);
   }
-  .navbtn svg{ width:20px;height:20px; stroke-width:2.6; }
-  .navbtn span[data-i18n]{ font-size:9.5px; font-weight:600; letter-spacing:.02em; transition:opacity .12s ease; opacity:0; }
-  .navbtn.active{ color:#FFFFFF; }
-  .navbtn .ico-wrap svg{ display:block; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); margin:0; }
-  .navbtn.active span[data-i18n]{ font-size:8.5px; transform:translateY(-11px); display:inline-block; opacity:1; }
+  .navbtn svg{ width:21px;height:21px; stroke-width:2.3; }
+  .navbtn span[data-i18n]{ font-size:9px; font-weight:600; letter-spacing:.02em; color:var(--muted); transition:color .15s ease, opacity .15s ease; opacity:0.9; }
+  .navbtn:active .ico-wrap{ transform:scale(0.90); }
+  .navbtn.active{ color:var(--green-600); }
   .navbtn.active .ico-wrap{
-    transform:translateY(-12px);
-    width:50px; height:50px;
-    background:var(--blue-600);
-    border:3px solid #fff;
-    color:#FFFFFF;
-    box-shadow:0 4px 10px rgba(47,111,237,0.40);
+    background:rgba(46,125,91,0.13);
+    color:var(--green-600);
+    transform:translateY(-3px);
   }
-  .navbtn.active svg{ width:22px; height:22px; stroke-width:2.9; }
+  .navbtn.active span[data-i18n]{ color:var(--green-600); opacity:1; }
+  .navbtn.active svg{ stroke-width:2.5; }
   .dot-ind{ display:none; }
 
   /* ---------- Forms / inputs ---------- */
@@ -846,8 +837,8 @@
     .rpt-summary .lbl{ font-size:9.5px; text-transform:uppercase; color:#777; }
     .rpt-summary .val{ font-size:15px; font-weight:700; font-family:'IBM Plex Mono', monospace; margin-top:3px; }
     .rpt-section h2{ font-size:14px; border-bottom:1.5px solid #123832; padding-bottom:4px; margin:20px 0 8px; font-family:'Fraunces', serif; }
-    table.rpt-table{ width:100%; border-collapse:collapse; font-size:10.5px; }
-    table.rpt-table th, table.rpt-table td{ border:1px solid #ddd; padding:5px 7px; text-align:left; }
+    table.rpt-table{ width:100%; border-collapse:collapse; font-size:9.5px; table-layout:fixed; }
+    table.rpt-table th, table.rpt-table td{ border:1px solid #ddd; padding:5px 5px; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     table.rpt-table th{ background:#f0f0f0; }
     table.rpt-table td.num, table.rpt-table th.num{ text-align:right; font-family:'IBM Plex Mono', monospace; }
     .rpt-footer{ margin-top:24px; font-size:9.5px; color:#999; text-align:center; }
@@ -1685,7 +1676,7 @@
 
       <div class="settings-block settings-subpage" id="sblk14">
         <h3 data-i18n="h_order_notifications">🔔 Order Notifications</h3>
-        <div class="helper-text" style="margin-top:0;">নতুন অর্ডার এলে এই ব্রাউজারে একটা নোটিফিকেশন দেখাবে (অ্যাপটা খোলা বা ব্যাকগ্রাউন্ড ট্যাবে থাকা অবস্থায়)।</div>
+        <div class="helper-text" style="margin-top:0;">নতুন অর্ডার এলে নোটিফিকেশন দেখাবে — অ্যাপ খোলা/ব্যাকগ্রাউন্ডে থাকলে তো বটেই, VAPID key সেটআপ করা থাকলে অ্যাপ পুরো বন্ধ থাকলেও।</div>
         <button class="btn btn-primary" style="margin-top:10px;" onclick="requestOrderNotifications()">নোটিফিকেশন চালু করুন</button>
         <div class="helper-text" id="notifyStatusText">এখনো চালু করা হয়নি।</div>
       </div>
@@ -1829,7 +1820,6 @@
 
   <div class="bottomnav-wrap">
     <nav class="bottomnav" id="bottomNav">
-      <div class="bottomnav-bg"></div>
       <button class="navbtn active" data-page="dashboard" onclick="goPage('dashboard')">
         <span class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span>
         <span data-i18n="nav_dashboard">Dashboard</span>
@@ -2092,10 +2082,21 @@
 
   <div id="rsStepCapture" style="margin-top:14px;">
     <div class="helper-text" style="margin-top:0;">রিসিট বা ইনভয়েসের একটি স্পষ্ট ছবি তুলুন বা আপলোড করুন — AI নিজে থেকে তারিখ, সাপ্লায়ার, আইটেম ও দাম বের করে ফর্মে বসিয়ে দেবে।</div>
-    <img id="rsPreview" style="display:none; width:100%; max-height:260px; object-fit:contain; border-radius:14px; margin:10px 0; background:var(--paper-deep);">
+    <div class="rs-preview-wrap" id="rsPreviewWrap" style="display:none;">
+      <img id="rsPreview" style="width:100%; max-height:260px; object-fit:contain; display:block;">
+      <div class="rs-scan-overlay" id="rsScanOverlay" style="display:none;">
+        <div class="rs-scan-glow"></div>
+        <div class="rs-scan-center">
+          <div class="rs-scan-ring">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>
+          </div>
+          <div class="rs-scan-text">AI দিয়ে স্ক্যান হচ্ছে...</div>
+        </div>
+      </div>
+    </div>
     <label class="btn btn-primary" style="display:block; text-align:center; cursor:pointer;">
       ✨ AI দিয়ে স্ক্যান করুন
-      <input type="file" id="rsFileInput" accept="image/*" capture="environment" style="display:none;" onchange="onRsFileChange(event)">
+      <input type="file" id="rsFileInput" accept="image/*" style="display:none;" onchange="onRsFileChange(event)">
     </label>
     <div id="rsLoading" style="display:none; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:13px; color:var(--muted);">
       <span class="spinner" style="width:16px; height:16px; border:2px solid var(--paper-deep); border-top-color:var(--green-600); border-radius:50%; display:inline-block; animation:rsspin .7s linear infinite;"></span>
@@ -2145,6 +2146,36 @@
 
 <style>
 @keyframes rsspin{ to{ transform:rotate(360deg); } }
+.rs-preview-wrap{ position:relative; margin:10px 0; border-radius:14px; overflow:hidden; background:var(--paper-deep); line-height:0; }
+.rs-scan-overlay{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.rs-scan-glow{
+  position:absolute; left:0; right:0; bottom:0; height:0%;
+  background:linear-gradient(to top, rgba(16,185,129,0.45) 0%, rgba(16,185,129,0.22) 55%, rgba(16,185,129,0) 100%);
+  border-top:2px solid rgba(255,255,255,0.9);
+  box-shadow:0 -2px 16px 3px rgba(52,255,214,0.85), 0 0 24px 6px rgba(52,255,214,0.45);
+  animation:rsScanSweep 3.6s cubic-bezier(.45,0,.55,1) infinite;
+}
+@keyframes rsScanSweep{
+  0%{ height:0%; opacity:0.95; }
+  45%{ height:100%; opacity:1; }
+  50%{ height:100%; opacity:0; }
+  50.1%{ height:0%; opacity:0; }
+  55%{ opacity:0.95; }
+  100%{ height:0%; opacity:0.95; }
+}
+.rs-scan-center{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  background:rgba(6,20,30,0.22);
+}
+.rs-scan-ring{
+  width:52px; height:52px; border-radius:50%;
+  border:3px solid rgba(255,255,255,0.28); border-top-color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle, rgba(52,255,214,0.18), transparent 70%);
+  animation:rsspin 1.6s linear infinite;
+}
+.rs-scan-ring svg{ width:22px; height:22px; color:#34ffd6; filter:drop-shadow(0 0 5px rgba(52,255,214,0.9)); }
+.rs-scan-text{ color:#fff; font-size:13px; font-weight:600; text-shadow:0 1px 4px rgba(0,0,0,0.55); }
 .rs-item-row{ display:grid; grid-template-columns:1.6fr 0.7fr 0.8fr 0.8fr auto; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(15,56,48,0.06); }
 .rs-item-row:last-child{ border-bottom:none; }
 .rs-item-row input{ width:100%; min-width:0; border:1px solid rgba(15,56,48,0.12); border-radius:8px; padding:6px 6px; font-size:12.5px; background:var(--paper); color:var(--ink); }
@@ -3564,6 +3595,12 @@ const FIREBASE_CONFIG = {
   appId: "1:375490913858:web:3596b25f007cc10be1efdb"
 };
 
+// ---- Push Notifications (Firebase Cloud Messaging — সম্পূর্ণ ফ্রি) ----
+// এই একটা মান নিজে বসাতে হবে, নাহলে পুশ কাজ করবে না (লোকাল নোটিফিকেশন আগের মতোই চলবে):
+// Firebase Console → এই প্রজেক্ট (sohanshopbd) → ⚙️ Project settings → Cloud Messaging ট্যাব →
+// "Web Push certificates" সেকশনে "Generate key pair" চাপুন → যে কী-টা আসবে সেটা এখানে বসান।
+const FCM_VAPID_KEY = "BLGPUPzz9B_rk5h_Ugn_Z9B8M-PLVYeRddGEDTcXDXeQogyTRf2-qyAZvPF1AzAWQAFNwByxa8fwSpv_qpMR8Uw";
+
 // ---- Email OTP (Google Apps Script দিয়ে ফ্রি ইমেইল পাঠানো) ----
 // Apps Script deploy করার পর নিচের দুইটা মান বসান — নাহলে কোড জেনারেট হবে
 // কিন্তু ইমেইল পাঠানো হবে না।
@@ -4508,23 +4545,6 @@ function lockNow(){
 }
 
 /* ---------------- NAVIGATION ---------------- */
-function updateNavNotch(){
-  const nav = document.getElementById('bottomNav');
-  if(!nav) return;
-  const activeBtn = nav.querySelector('.navbtn.active');
-  if(!activeBtn) return;
-  const navRect = nav.getBoundingClientRect();
-  const btnRect = activeBtn.getBoundingClientRect();
-  const centerX = (btnRect.left - navRect.left) + (btnRect.width / 2);
-  nav.style.setProperty('--notch-x', centerX + 'px');
-}
-let navNotchRAF = null;
-function scheduleNavNotchUpdate(){
-  if(navNotchRAF) return; // coalesce bursts (resize drags, rapid taps) into a single frame
-  navNotchRAF = requestAnimationFrame(()=>{ navNotchRAF = null; updateNavNotch(); });
-}
-window.addEventListener('resize', scheduleNavNotchUpdate);
-window.addEventListener('orientationchange', () => setTimeout(scheduleNavNotchUpdate, 150));
 
 function goPage(page){
   state.currentPage = page;
@@ -4554,10 +4574,6 @@ function goPage(page){
   if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
   if(page === 'inventory' && dirtyPages.inventory){ renderItems(); dirtyPages.inventory = false; }
   if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
-  // Notch position read happens after all DOM writes above, batched into the next
-  // animation frame — avoids forced-synchronous-layout (read/write interleaving)
-  // during page transitions, which was the main jank source when switching tabs.
-  if(hasNavBtn) scheduleNavNotchUpdate();
 }
 
 function applyPageBarColor(page){
@@ -4839,6 +4855,8 @@ function txnRowHTML(t, kind, withActions){
         <button onclick="closeAllTxnMenus(); deleteTxn('${kind}','${t.id}')">✕ <span>Delete</span></button>
       </div>
     </div>` : '';
+  // ফোন নাম্বার থাকলে সরাসরি কল করার বাটন — ট্যাপ করলে ফোনের ডায়ালার খুলবে
+  const callBtn = t.phone ? `<a class="mini-btn call-btn" href="tel:${escapeHTML(String(t.phone).trim())}" onclick="event.stopPropagation()" aria-label="Call ${escapeHTML(String(t.phone).trim())}">📞</a>` : '';
   return `
   <div class="txn-row">
     <div class="txn-icon avatar pal-${palIdx}">${escapeHTML(avatarLetter)}</div>
@@ -4847,6 +4865,7 @@ function txnRowHTML(t, kind, withActions){
       <div class="txn-meta">${escapeHTML(metaBits.join(' · '))}</div>
     </div>
     <div class="txn-right" style="display:flex; align-items:center; gap:4px;">
+      ${callBtn}
       <div class="txn-amt ${kind}">${fmtMoney(t.total)}</div>
       <span class="txn-chevron">${CHEVRON_ICON}</span>
       ${actions}
@@ -6212,6 +6231,7 @@ function exportPDF(period){
     {label:'Product/Service', get:r=>r.name||''},
     {label:'Category', get:r=>r.category||''},
     {label:'Customer', get:r=>r.party||''},
+    {label:'Mobile Number', get:r=>r.phone||''},
     {label:'Payment', get:r=>r.payment||''},
     {label:'Amount', num:true, get:r=>fmtMoney(r.total)},
     {label:'Invoice/ID', get:r=>r.ref||''}
@@ -6450,6 +6470,12 @@ function setFirebaseStatus(msg, connected){
 let knownOrderIds = null; // null = not loaded yet (first snapshot won't notify)
 function listenOrders(){
   if(!fbDb || !currentUid) return;
+  // এই ডিভাইসে আগে থেকে নোটিফিকেশন পারমিশন দেওয়া থাকলে, লগইনের পর FCM টোকেন
+  // (রি)রেজিস্টার করে নেওয়া হয় — টোকেন মাঝেমধ্যে বদলাতে পারে বলে এটা দরকার।
+  initFCMForegroundHandler();
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+    registerPushToken();
+  }
   shopRef('orders').on('value', snapshot => {
     const val = snapshot.val() || {};
     state.orders = Object.keys(val).map(id => Object.assign({ id }, val[id]));
@@ -6515,8 +6541,12 @@ function requestOrderNotifications(){
   }
   Notification.requestPermission().then(perm => {
     updateNotifyStatus();
-    if(perm === 'granted') showToast('নোটিফিকেশন চালু হয়েছে');
-    else showToast('নোটিফিকেশন অনুমতি দেওয়া হয়নি');
+    if(perm === 'granted'){
+      showToast('নোটিফিকেশন চালু হয়েছে');
+      registerPushToken(); // অ্যাপ বন্ধ থাকলেও নোটিফিকেশন পাওয়ার জন্য FCM টোকেন রেজিস্টার করা
+    } else {
+      showToast('নোটিফিকেশন অনুমতি দেওয়া হয়নি');
+    }
   });
 }
 function updateNotifyStatus(){
@@ -6525,12 +6555,56 @@ function updateNotifyStatus(){
   if(typeof Notification === 'undefined'){
     el.textContent = 'এই ব্রাউজারে সাপোর্ট নেই।';
   } else if(Notification.permission === 'granted'){
-    el.textContent = '✅ চালু আছে — অ্যাপ খোলা থাকলে নতুন অর্ডারে নোটিফিকেশন আসবে।';
+    el.textContent = FCM_VAPID_KEY
+      ? '✅ চালু আছে — অ্যাপ পুরো বন্ধ থাকলেও নতুন অর্ডারে নোটিফিকেশন আসবে।'
+      : '✅ চালু আছে — অ্যাপ খোলা/ব্যাকগ্রাউন্ডে থাকলে নোটিফিকেশন আসবে। (অ্যাপ পুরো বন্ধ থাকলেও আসার জন্য এখনো একটা সেটআপ বাকি — ডেভেলপারকে জানান)';
   } else if(Notification.permission === 'denied'){
     el.textContent = '❌ বন্ধ করা আছে — ব্রাউজার সেটিংস থেকে চালু করতে হবে।';
   } else {
     el.textContent = 'এখনো চালু করা হয়নি।';
   }
+}
+
+/* ================= Push Notifications (FCM) =================
+   এটা "requestOrderNotifications"-এর পাশাপাশি চলে। লোকাল নোটিফিকেশন (উপরে)
+   শুধু ব্রাউজার/অ্যাপ প্রসেস চালু থাকা অবস্থায় কাজ করে। FCM push কাজ করে
+   অ্যাপ পুরোপুরি বন্ধ বা ফোন লক থাকা অবস্থায়ও — কারণ এটা Google-এর সার্ভার
+   থেকে সরাসরি অপারেটিং সিস্টেমে পাঠানো হয়। */
+let fcmMessaging = null;
+function registerPushToken(){
+  if(!FCM_VAPID_KEY){
+    // VAPID key বসানো হয়নি — এই ফাংশন চুপচাপ কিছু করবে না, লোকাল নোটিফিকেশন যথারীতি কাজ করবে।
+    return;
+  }
+  if(!('serviceWorker' in navigator) || typeof firebase === 'undefined' || !firebase.messaging){
+    return;
+  }
+  navigator.serviceWorker.register('./firebase-messaging-sw.js')
+    .then(reg => {
+      if(!fcmMessaging) fcmMessaging = firebase.messaging();
+      return fcmMessaging.getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg });
+    })
+    .then(token => {
+      if(!token || !currentUid) return;
+      // এই ডিভাইসের টোকেন দোকানের নিজস্ব শাখায় সেভ হলো — পরে সার্ভার/Cloud Function
+      // থেকে এই টোকেনে পুশ পাঠানো যাবে যখনই নতুন অর্ডার আসবে।
+      shopRef('fcmTokens/' + token).set({ createdAt: Date.now(), ua: navigator.userAgent.slice(0,120) }).catch(()=>{});
+    })
+    .catch(err => { console.warn('FCM token নেওয়া যায়নি:', err); });
+}
+// অ্যাপ খোলা/ফোরগ্রাউন্ডে থাকা অবস্থায় পুশ এলে ব্রাউজারের ডিফল্ট পপআপের বদলে
+// অ্যাপের নিজস্ব টোস্ট + লোকাল নোটিফিকেশন স্টাইলে দেখানো হয়।
+function initFCMForegroundHandler(){
+  if(!FCM_VAPID_KEY || typeof firebase === 'undefined' || !firebase.messaging) return;
+  try{
+    if(!fcmMessaging) fcmMessaging = firebase.messaging();
+    fcmMessaging.onMessage(payload => {
+      const title = (payload.notification && payload.notification.title) || '🛎️ নতুন অর্ডার এসেছে!';
+      const body = (payload.notification && payload.notification.body) || '';
+      showToast(title + (body ? ' — ' + body : ''));
+      updateOrdersBadge();
+    });
+  }catch(e){ /* messaging সাপোর্ট না থাকলে চুপচাপ স্কিপ */ }
 }
 
 function updateOrdersBadge(){
@@ -6888,7 +6962,10 @@ function orderCardHTML(o){
         <div class="txn-name">${escapeHTML(o.customerName || 'Unknown customer')}</div>
         <div class="txn-meta">${escapeHTML(o.phone || '')}${o.phone && o.address ? ' · ' : ''}${escapeHTML(o.address || '')}</div>
       </div>
-      <span class="order-badge ${badgeClass}">${escapeHTML(badgeLabel)}</span>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+        ${o.phone ? `<a class="mini-btn call-btn" style="width:28px;height:28px;font-size:13px;" href="tel:${escapeHTML(String(o.phone).trim())}" aria-label="Call ${escapeHTML(String(o.phone).trim())}">📞</a>` : ''}
+        <span class="order-badge ${badgeClass}">${escapeHTML(badgeLabel)}</span>
+      </div>
     </div>
     <div class="txn-meta" style="margin-top:8px;">${itemsText || '—'}</div>
     ${o.notes ? `<div class="txn-meta" style="margin-top:2px; font-style:italic;">Note: ${escapeHTML(o.notes)}</div>` : ''}
@@ -6987,7 +7064,6 @@ function renderAll(){
   applyPageBarColor(state.currentPage);
   renderDashboard();
   renderSettings();
-  setTimeout(updateNavNotch, 0);
 }
 
 /* ---------------- PULL-TO-REFRESH (drag down from the top of the screen) ---------------- */
@@ -7271,7 +7347,8 @@ function openReceiptScanSheet(type){
   document.getElementById('rsPartyLabel').textContent = type === 'expense' ? 'কাকে দেওয়া হয়েছে' : 'সাপ্লায়ার';
   document.getElementById('rsStepCapture').style.display = 'block';
   document.getElementById('rsStepResult').style.display = 'none';
-  document.getElementById('rsPreview').style.display = 'none';
+  document.getElementById('rsPreviewWrap').style.display = 'none';
+  document.getElementById('rsScanOverlay').style.display = 'none';
   document.getElementById('rsFileInput').value = '';
   document.getElementById('rsLoading').style.display = 'none';
   document.getElementById('receiptScanOverlay').classList.add('open');
@@ -7288,7 +7365,7 @@ function onRsFileChange(e){
     receiptScanState.imageDataUrl = dataUrl;
     const prev = document.getElementById('rsPreview');
     prev.src = dataUrl;
-    prev.style.display = 'block';
+    document.getElementById('rsPreviewWrap').style.display = 'block';
     runReceiptScan(); // ছবি বাছাই হওয়ার সাথে সাথেই স্বয়ংক্রিয়ভাবে স্ক্যান শুরু হবে
   }, (reason) => {
     // Previously this failure was silent — the scan button just stayed
@@ -7304,6 +7381,7 @@ async function runReceiptScan(){
   if(!receiptScanState.imageDataUrl) return;
   try{
     document.getElementById('rsLoading').style.display = 'flex';
+    document.getElementById('rsScanOverlay').style.display = 'block';
     const parsed = await scanReceiptImage(receiptScanState.imageDataUrl);
     receiptScanState.parsed = normalizeParsedReceipt(parsed);
     renderRsResult();
@@ -7320,6 +7398,7 @@ async function runReceiptScan(){
     showToast(friendly);
   }finally{
     document.getElementById('rsLoading').style.display = 'none';
+    document.getElementById('rsScanOverlay').style.display = 'none';
   }
 }
 
