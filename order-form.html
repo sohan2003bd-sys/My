@@ -5,11 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0E2A5A">
 <title>অর্ডার করুন — SOHAN SHOP BD</title>
+<script>
+/* সবার আগে চলে (head-এর একদম শুরুতে) — আগের ভিজিটের localStorage ক্যাশ থেকে
+   সবচেয়ে উপরের পণ্যের ছবিটা সাথে সাথে খুঁজে বের করে preload করে দেয়, যাতে
+   বাকি HTML/CSS/JS পার্স হওয়ার সাথে সাথেই সেই ছবিটা ব্যাকগ্রাউন্ডে ডাউনলোড
+   হতে শুরু করে — পেজ খোলা মাত্রই সবচেয়ে উপরের ছবি সবচেয়ে দ্রুত দেখা যায়।
+   নিচের IMAGE_BASE_URL মূল <script> ব্লকে থাকা কনফিগের সাথেই মিলিয়ে রাখতে হবে। */
+(function(){
+  try{
+    var shopId = new URLSearchParams(location.search).get('shop');
+    if(!shopId) return;
+    var raw = localStorage.getItem('sohanshop_cache_' + shopId);
+    if(!raw) return;
+    var data = JSON.parse(raw);
+    var p = data && data.products && data.products[0];
+    var url = p && p.imageUrl;
+    if(!url) return;
+    var u = String(url).trim();
+    if(!/^(https?:)?\/\//i.test(u) && u.indexOf('data:') !== 0){
+      u = 'https://sohan2003bd-sys.github.io/My/' + u.replace(/^\/+/, '');
+    }
+    var link = document.createElement('link');
+    link.rel = 'preload'; link.as = 'image'; link.href = u;
+    link.setAttribute('fetchpriority', 'high');
+    document.head.appendChild(link);
+  } catch(e){ /* ক্যাশ না থাকলে বা পার্স করা না গেলে চুপচাপ বাদ দেওয়া হলো */ }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="preconnect" href="https://sohan2003bd-sys.github.io" crossorigin>
 <link rel="preconnect" href="https://sohanshopbd-default-rtdb.firebaseio.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://img.youtube.com">
 <link rel="dns-prefetch" href="https://api.telegram.org">
 <link rel="preload" as="image" fetchpriority="high" href="https://images.unsplash.com/photo-1604118464816-5e2bd7b863c2?fm=jpg&q=45&w=500&auto=format&fit=crop">
@@ -76,7 +104,6 @@
     box-shadow:0 6px 16px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.5);
   }
   .seal span{ font-size:22px; color:var(--plum-900); }
-  .hero-top-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
   .hero h1{ font-size:26.25px; margin:0; line-height:1.25; color:#fff; letter-spacing:.01em; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
   .hero .tagline{ font-size:11.5px; margin:8px 0 0; color:#E9F7EC; letter-spacing:.01em; line-height:1.5; text-shadow:0 1px 8px rgba(0,0,0,0.5); }
   .hero-datetime{
@@ -152,11 +179,6 @@
   .copy-btn:active{ transform:scale(0.95); }
   .pay-panel-note{ font-size:11.5px; color:var(--plum-700); line-height:1.6; margin:10px 0 0; }
 
-  .item-row{ display:flex; gap:8px; align-items:flex-end; margin-bottom:10px; }
-  .item-row .grow{ flex:1; }
-  .item-row .qty{ width:70px; }
-  .item-row .rm{ border:none; background:var(--paper-deep); width:38px; height:41px; border-radius:10px; font-size:15px; color:var(--rust); flex:none; }
-  .add-item-btn{ background:none; border:1.5px dashed var(--gold); color:var(--gold-deep); border-radius:11px; padding:9px; width:100%; font-size:13px; font-weight:600; }
   
   /* অর্ডার বাটন সবসময় দৃশ্যমান থাকবে — ফর্ম পূরণ না করা পর্যন্ত লুকানো থাকবে না */
   #submitBtn{ display:block; }
@@ -220,13 +242,6 @@
     background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
     border:none; display:flex; align-items:center; justify-content:center; font-size:11px; box-shadow:0 4px 10px rgba(0,0,0,0.3);
   }
-  .pcard .heart-btn{
-    position:absolute; right:8px; top:8px; z-index:3; width:28px; height:28px; border-radius:50%;
-    background:rgba(255,255,255,0.92); border:none; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 3px 8px rgba(0,0,0,0.2); color:var(--plum-800); font-size:13px;
-  }
-  .pcard .heart-btn.saved{ color:var(--rust); }
-  .pcard .heart-btn:active{ transform:scale(0.9); }
   .pcard .body{ padding:11px 11px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .pcard .pname{ font-size:13px; font-weight:600; line-height:1.3; color:#EEF8F0; }
   .pcard .pdesc{ font-size:11px; color:#8C9A88; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -264,7 +279,7 @@
   .qv-close{ position:sticky; top:10px; float:right; margin-right:10px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(8,20,36,0.55); color:#fff; font-size:15px; z-index:2; }
 
   .delivery-box{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
-  .delivery-note{ font-size:11.5px; color:var(--ink-soft); margin:0 0 10px; line-height:1.6; }
+  .delivery-note{ font-size:11.5px; color:var(--muted); margin:0 0 10px; line-height:1.6; }
   .delivery-options{ display:flex; gap:8px; margin-bottom:12px; }
   .delivery-opt{
     flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
@@ -277,11 +292,10 @@
     border-color:transparent; background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
     box-shadow:0 4px 12px rgba(217,105,26,0.30);
   }
-  .cart-breakdown .br-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); padding:3px 0; }
+  .cart-breakdown .br-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); padding:3px 0; }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
-  #cartCard h2::after{ content:""; }
   .cart-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dashed var(--rule); }
   .cart-row:last-child{ border-bottom:none; }
   .cart-row .ci-name{ flex:1; font-size:13px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
@@ -417,11 +431,6 @@
   .success-thanks-note svg{ flex:none; width:20px; height:20px; margin-top:1px; }
   .success-actions{ padding:0 16px; display:flex; flex-direction:column; gap:10px; }
   .success-actions .btn{ margin:0; }
-  .btn-ghost{
-    background:none; border:1.5px solid var(--rule); color:var(--plum-800);
-    box-shadow:none;
-  }
-
 
   .toast{
     position:fixed; left:50%; bottom:110px; transform:translate(-50%, 20px); z-index:80;
@@ -907,6 +916,36 @@ let currentOrderRef = 'ORD' + Math.floor(100 + Math.random() * 900);
 let TELEGRAM_BOT_TOKEN = '';
 let TELEGRAM_CHAT_ID = '';
 
+/* ---------------- তাৎক্ষণিক ক্যাশ (Instant open) ----------------
+   লিংকে ক্লিক করার সাথে সাথেই পেজ যেন খালি/স্কেলিটন অবস্থায় বসে না থেকে সরাসরি পণ্য দেখাতে
+   পারে, তাই আগের বার Firebase থেকে পাওয়া পণ্য/শপ-প্রোফাইল ব্রাউজারের localStorage-এ রাখা হয়।
+   পরের বার পেজ খোলার সাথে সাথে (নেটওয়ার্ক রিকোয়েস্টের জন্য অপেক্ষা না করেই) সেই ক্যাশড ডাটা
+   দেখানো হয়, তারপর Firebase থেকে লাইভ ডাটা এলে নিঃশব্দে আপডেট হয়ে যায়। */
+const CACHE_KEY = 'sohanshop_cache_' + SHOP_ID;
+function readCache(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+function writeCache(data){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(data)); }
+  catch(e){ /* কোটা শেষ বা প্রাইভেট ব্রাউজিং মোড হলে ক্যাশ ছাড়াই চলবে */ }
+}
+const __cached = readCache();
+if(__cached){
+  if(__cached.company) applyShopProfile(__cached.company);
+  if(Array.isArray(__cached.products) && __cached.products.length){
+    products = __cached.products;
+    renderCatNav();
+    renderCatalog();
+  }
+  if(Array.isArray(__cached.videos) && __cached.videos.length){
+    videos = __cached.videos;
+    renderVideos();
+  }
+}
+
 function applyShopProfile(company){
   const name = company.name || BUSINESS_NAME;
   const phone = company.contactPhone || '';
@@ -1131,9 +1170,16 @@ function initFirebaseApp(){
     else if(navigator.onLine){ showNetBanner('সার্ভারের সাথে সংযোগ করা হচ্ছে…', true); }
   });
 
+  let __cCompany = (__cached && __cached.company) || null;
+  let __cProducts = (__cached && __cached.products) || null;
+  let __cVideos = (__cached && __cached.videos) || null;
+  function __persistCache(){ writeCache({ company: __cCompany, products: __cProducts, videos: __cVideos }); }
+
   db.ref('shops/' + SHOP_ID + '/company').once('value').then(snap => {
     const company = snap.val() || {};
     applyShopProfile(company);
+    __cCompany = company;
+    __persistCache();
   }).catch(()=>{ /* প্রোফাইল লোড না হলেও ফর্ম ব্যবহারযোগ্য থাকবে */ });
 
   db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
@@ -1141,8 +1187,13 @@ function initFirebaseApp(){
     products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderCatNav();
     renderCatalog();
+    __cProducts = products;
+    __persistCache();
   }, () => {
-    document.getElementById('catalogGrid').innerHTML = '<div class="empty-note" style="grid-column:1/-1;">পণ্য লোড করা যায়নি — নেটওয়ার্ক চেক করুন।</div>';
+    // লাইভ লোড ব্যর্থ হলে — ক্যাশড পণ্য আগে থেকেই দেখানো থাকলে সেটাই থাকবে, নাহলে বার্তা দেখানো হবে
+    if(!products.length){
+      document.getElementById('catalogGrid').innerHTML = '<div class="empty-note" style="grid-column:1/-1;">পণ্য লোড করা যায়নি — নেটওয়ার্ক চেক করুন।</div>';
+    }
   });
 
   // আলাদা "ভিডিও" সেকশনের জন্য — Firebase-এ একটা আলাদা "videos" নোড থেকে পড়া হয় (প্রোডাক্ট থেকে আলাদা)
@@ -1151,10 +1202,9 @@ function initFirebaseApp(){
     const val = snap.val() || {};
     videos = Object.keys(val).map(id => Object.assign({ id }, val[id]));
     renderVideos();
+    __cVideos = videos;
+    __persistCache();
   });
-
-  // Initialize order button visibility and event listeners
-  initOrderButtonVisibility();
 }
 
 function renderCatNav(){
@@ -1254,13 +1304,6 @@ function renderCatalog(){
     }
   }
   appendRow();
-}
-
-let wishlist = {};
-function toggleWishlist(productId){
-  if(wishlist[productId]) delete wishlist[productId];
-  else wishlist[productId] = true;
-  renderCatalog();
 }
 
 function openQuickView(productId){
@@ -1377,13 +1420,6 @@ function normalizePhoneDigits(value){
 function isValidPhone(value){
   const digits = normalizePhoneDigits(value);
   return /^0[0-9]{10}$/.test(digits);
-}
-
-/* ---------- Order button visibility control ---------- */
-// অর্ডার বাটন এখন সবসময় দৃশ্যমান থাকে — নাম/ঠিকানা/ফোন পূরণ করা না থাকলেও বাটনটি
-// লুকানো হবে না; ভ্যালিডেশন সাবমিট করার সময়ই (submitOrder ফাংশনে) চেক করা হয়
-function initOrderButtonVisibility(){
-  // কিছুই করার প্রয়োজন নেই — বাটন ডিফল্টভাবেই দৃশ্যমান
 }
 
 /* ---------------- VIDEO LIGHTBOX ---------------- */
