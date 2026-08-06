@@ -6579,7 +6579,7 @@ function registerPushToken(){
   if(!('serviceWorker' in navigator) || typeof firebase === 'undefined' || !firebase.messaging){
     return;
   }
-  navigator.serviceWorker.register('./firebase-messaging-sw.js')
+  navigator.serviceWorker.register('./firebase-messaging-sw.js', { scope: './firebase-cloud-messaging-push-scope' })
     .then(reg => {
       if(!fcmMessaging) fcmMessaging = firebase.messaging();
       return fcmMessaging.getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg });
