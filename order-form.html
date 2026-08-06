@@ -312,20 +312,80 @@
 
   .empty-note{ font-size:12.5px; color:var(--muted); text-align:center; padding:14px; }
 
-  #successScreen{ display:none; text-align:center; padding:70px 26px; }
-  #successScreen .seal.big{
-    width:88px; height:88px; margin-bottom:22px;
-    animation: stampIn .5s cubic-bezier(.2,1.4,.4,1) both;
+  /* ---------- Success screen (redesigned) ---------- */
+  #successScreen{ display:none; padding:0 0 34px; }
+  .success-hero{
+    position:relative; overflow:hidden; padding:54px 26px 46px; text-align:center;
+    background:radial-gradient(120% 140% at 50% -10%, var(--plum-700) 0%, var(--plum-900) 62%, #061224 100%);
   }
-  #successScreen .seal.big span{ font-size:34px; }
+  .success-hero::before, .success-hero::after{
+    content:""; position:absolute; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, rgba(255,168,87,0.28), rgba(255,168,87,0) 70%);
+  }
+  .success-hero::before{ width:260px; height:260px; top:-110px; left:-70px; }
+  .success-hero::after{ width:220px; height:220px; bottom:-90px; right:-60px;
+    background:radial-gradient(circle, rgba(53,102,194,0.35), rgba(53,102,194,0) 70%); }
+  .success-confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
+  .success-confetti span{
+    position:absolute; top:-12%; border-radius:2px; opacity:0;
+    animation:confettiFall 2.6s ease-in forwards; will-change:transform, opacity;
+  }
+  @keyframes confettiFall{
+    0%{ opacity:0; transform:translateY(0) rotate(0deg); }
+    8%{ opacity:1; }
+    100%{ opacity:0; transform:translateY(340px) rotate(240deg); }
+  }
+  .success-check{
+    position:relative; z-index:2; width:82px; height:82px; margin:0 auto 22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
+    box-shadow:0 10px 26px rgba(0,0,0,0.4), 0 0 0 7px rgba(255,168,87,0.14);
+    animation: stampIn .55s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .success-check svg{ width:38px; height:38px; }
   @keyframes stampIn{
-    0%{ opacity:0; transform:scale(2.2) rotate(-14deg); }
+    0%{ opacity:0; transform:scale(2.1) rotate(-14deg); }
     60%{ opacity:1; transform:scale(0.94) rotate(3deg); }
     100%{ opacity:1; transform:scale(1) rotate(0deg); }
   }
-  #successScreen h2{ font-size:21px; color:var(--plum-900); }
-  #successScreen p{ font-size:13.5px; color:var(--muted); line-height:1.7; max-width:320px; margin:10px auto 0; }
-  #successScreen .btn{ max-width:260px; margin:22px auto 0; }
+  .success-eyebrow{
+    position:relative; z-index:2; font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold-light); margin:0 0 8px;
+    animation: fadeUp .5s ease .1s both;
+  }
+  .success-hero h2{
+    position:relative; z-index:2; font-size:24px; color:#fff; margin:0; line-height:1.4;
+    animation: fadeUp .5s ease .18s both;
+  }
+  .success-hero h2 .cust-name{ color:var(--gold-light); }
+  .success-hero .success-sub{
+    position:relative; z-index:2; font-size:13.5px; color:#CFE0EA; line-height:1.75; margin:12px auto 0; max-width:340px;
+    animation: fadeUp .5s ease .26s both;
+  }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+  .success-body{ padding:22px 16px 0; animation: fadeUp .5s ease .32s both; }
+  .success-card{
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    border:1px solid rgba(14,42,90,0.05); padding:18px 18px 6px; margin-bottom:16px;
+  }
+  .success-card .sc-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 0; border-bottom:1px dashed var(--rule); }
+  .success-card .sc-row:last-child{ border-bottom:none; }
+  .success-card .sc-k{ font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .success-card .sc-v{ font-size:14px; font-weight:700; color:var(--plum-900); text-align:right; }
+  .success-card .sc-v.ref{ font-family:'IBM Plex Mono',monospace; color:var(--gold-deep); font-size:13px; }
+  .success-thanks-note{
+    display:flex; gap:10px; align-items:flex-start; background:var(--paper-deep); border:1.5px dashed var(--gold);
+    border-radius:12px; padding:13px 14px; margin:0 16px 18px; font-size:12.5px; color:var(--plum-700); line-height:1.7;
+  }
+  .success-thanks-note svg{ flex:none; width:20px; height:20px; margin-top:1px; }
+  .success-actions{ padding:0 16px; display:flex; flex-direction:column; gap:10px; }
+  .success-actions .btn{ margin:0; }
+  .btn-ghost{
+    background:none; border:1.5px solid var(--rule); color:var(--plum-800);
+    box-shadow:none;
+  }
+
 
   .toast{
     position:fixed; left:50%; bottom:110px; transform:translate(-50%, 20px); z-index:80;
@@ -521,11 +581,47 @@
   </main>
 
   <div id="successScreen">
-    <div class="seal big"><span>✓</span></div>
-    <h2>অর্ডার সম্পন্ন হয়েছে!</h2>
-    <p>আপনার অর্ডারটি আমরা পেয়েছি। শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।</p>
-    <button class="btn btn-primary" style="margin-top:18px;" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
+    <div class="success-hero">
+      <div class="success-confetti" id="successConfetti"></div>
+      <div class="success-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0E2A5A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <p class="success-eyebrow">অর্ডার সফলভাবে সম্পন্ন হয়েছে</p>
+      <h2>ধন্যবাদ, <span class="cust-name" id="successCustName">প্রিয় কাস্টমার</span> !</h2>
+      <p class="success-sub">আপনার অর্ডারটি আমরা সাথে সাথে পেয়ে গেছি। আমাদের টিম শীঘ্রই আপনার সাথে যোগাযোগ করে অর্ডারটি নিশ্চিত করবে।</p>
+    </div>
+
+    <div class="success-body">
+      <div class="success-card">
+        <div class="sc-row" id="successRefRow" style="display:none;">
+          <span class="sc-k">রেফারেন্স</span>
+          <span class="sc-v ref" id="successRef">—</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-k">পণ্য সংখ্যা</span>
+          <span class="sc-v" id="successItemCount">—</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-k">ডেলিভারি এলাকা</span>
+          <span class="sc-v" id="successDeliveryArea">—</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-k">পেমেন্ট মাধ্যম</span>
+          <span class="sc-v" id="successPaymentMethod">—</span>
+        </div>
+      </div>
+
+      <div class="success-thanks-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D9691A" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2.3 4.5 6 4c2-.3 3.7.7 6 3 2.3-2.3 4-3.3 6-3 3.7.5 5.5 4 4 7.7C19.5 16.4 12 21 12 21Z"/></svg>
+        <span>আমাদের সাথে কেনাকাটা করার জন্য আন্তরিক ধন্যবাদ! আপনার বিশ্বাস ও ভালোবাসাই আমাদের এগিয়ে যাওয়ার শক্তি — আশা করি খুব শীঘ্রই আবার আপনাকে সেবা দেওয়ার সুযোগ পাব। 💛</span>
+      </div>
+
+      <div class="success-actions">
+        <button class="btn btn-primary" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
+      </div>
+    </div>
   </div>
+
 
   <!-- ---------- Footer: Contact Info (pulled live from the shop's Settings > Footer Contact Info) ---------- -->
   <footer class="page-footer" id="pageFooter" style="display:none;">
@@ -1103,7 +1199,7 @@ function updateTotal(){
   document.getElementById('totalDisplay').textContent = '৳' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   const submitBtn = document.getElementById('submitBtn');
   if(submitBtn && !isSubmitting){
-    submitBtn.textContent = 'অর্ডার কনফার্ম করুন — ৳' + total.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+    submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
   }
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -1295,6 +1391,7 @@ function submitOrder(e){
       sendTelegramNotification(order); // COD সহ সব অর্ডারেই — কাস্টমার কোথাও যায় না
       document.getElementById('orderWrap').querySelector('main').style.display = 'none';
       document.querySelector('.hero').style.display = 'none';
+      populateSuccessScreen(order);
       document.getElementById('successScreen').style.display = 'block';
       // অর্ডার সম্পন্ন হওয়ার পর নিচের ফাঁকা (footer-এর জন্য রাখা) জায়গাটি সরিয়ে ফেলা হলো
       document.getElementById('orderWrap').classList.add('order-complete');
@@ -1306,6 +1403,53 @@ function submitOrder(e){
       updateTotal();
     });
   return false;
+}
+
+function populateSuccessScreen(order){
+  const nameEl = document.getElementById('successCustName');
+  if(nameEl) nameEl.textContent = order.customerName || 'প্রিয় কাস্টমার';
+
+  const refRow = document.getElementById('successRefRow');
+  const refEl = document.getElementById('successRef');
+  if(order.orderRef){
+    if(refEl) refEl.textContent = order.orderRef;
+    if(refRow) refRow.style.display = 'flex';
+  } else if(refRow){
+    refRow.style.display = 'none';
+  }
+
+  const itemCountEl = document.getElementById('successItemCount');
+  if(itemCountEl){
+    const totalQty = order.items.reduce((s, it) => s + (Number(it.qty) || 0), 0);
+    itemCountEl.textContent = order.items.length + ' ধরনের পণ্য (মোট ' + totalQty + ' পিস)';
+  }
+
+  const deliveryEl = document.getElementById('successDeliveryArea');
+  if(deliveryEl) deliveryEl.textContent = order.deliveryArea || '—';
+
+  const paymentEl = document.getElementById('successPaymentMethod');
+  if(paymentEl) paymentEl.textContent = order.paymentMethod || '—';
+
+  spawnConfetti();
+}
+
+function spawnConfetti(){
+  const host = document.getElementById('successConfetti');
+  if(!host) return;
+  host.innerHTML = '';
+  const colors = ['#FFA857', '#F2812B', '#4ADE80', '#3566C2', '#FFFFFF'];
+  const pieceCount = 26;
+  for(let i = 0; i < pieceCount; i++){
+    const el = document.createElement('span');
+    const size = 5 + Math.random() * 5;
+    el.style.left = Math.random() * 100 + '%';
+    el.style.width = size + 'px';
+    el.style.height = (size * 0.4) + 'px';
+    el.style.background = colors[i % colors.length];
+    el.style.animationDelay = (Math.random() * 0.5) + 's';
+    el.style.animationDuration = (2 + Math.random() * 1) + 's';
+    host.appendChild(el);
+  }
 }
 
 let toastTimer;
