@@ -4161,7 +4161,7 @@ function initFirebaseCore(){
       checkOwnVerificationStatus(currentUid).then(verified => {
         if(verified){
           const pushStep = pushOfflineEditsFirst
-            ? shopRef().update({
+            ? shopRef().update(stripUndefinedDeep({
                 company: state.company,
                 settings: state.settings,
                 security: state.security,
@@ -4170,7 +4170,7 @@ function initFirebaseCore(){
                 expenses: state.expenses,
                 invItems: state.invItems,
                 idCounter
-              }).catch(()=>{})
+              })).catch((err)=>{ console.error('Offline-edit push failed:', err); })
             : Promise.resolve();
           pushStep.then(()=> loadShopData(currentUid)).then(()=>{
             offlineEditsPending = false;
@@ -4215,7 +4215,7 @@ function syncShopToCloud(){
   if(!fbDb || !currentUid) return;
   clearTimeout(cloudSyncTimer);
   cloudSyncTimer = setTimeout(()=>{
-    shopRef().update({
+    shopRef().update(stripUndefinedDeep({
       company: state.company,
       settings: state.settings,
       security: state.security,
@@ -4224,10 +4224,11 @@ function syncShopToCloud(){
       expenses: state.expenses,
       invItems: state.invItems,
       idCounter
-    }).then(()=>{
+    })).then(()=>{
       offlineEditsPending = false;
-    }).catch(()=>{
+    }).catch((err)=>{
       offlineEditsPending = true;
+      console.error('Cloud sync failed:', err);
       if(navigator.onLine) showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন');
     });
   }, 600);
@@ -4465,7 +4466,7 @@ function handleSignup(e){
       signedUpUser = cred.user;
       currentUid = cred.user.uid;
       // brand-new shop: push current (possibly migrated) local state up as the initial cloud copy
-      return shopRef().set({
+      return shopRef().set(stripUndefinedDeep({
         company: state.company,
         settings: state.settings,
         security: state.security,
@@ -4474,7 +4475,7 @@ function handleSignup(e){
         expenses: state.expenses,
         invItems: state.invItems,
         idCounter
-      });
+      }));
     })
     .then(()=> sendVerificationCode(signedUpUser.uid, signedUpUser.email))
     .then(()=>{
@@ -4531,7 +4532,7 @@ function handleGoogleAuth(){
         // নতুন Google ইউজার: বিদ্যমান স্থানীয় ডাটা (থাকলে) এই একাউন্টের প্রাথমিক কপি হিসেবে আপলোড হবে
         if(!state.company.name) state.company.name = result.user.displayName || 'My Business';
         if(!state.company.currency) state.company.currency = '৳';
-        return shopRef().set({
+        return shopRef().set(stripUndefinedDeep({
           company: state.company,
           settings: state.settings,
           security: state.security,
@@ -4540,7 +4541,7 @@ function handleGoogleAuth(){
           expenses: state.expenses,
           invItems: state.invItems,
           idCounter
-        }).then(()=>{
+        })).then(()=>{
           if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
           saveState();
         });
@@ -4582,7 +4583,7 @@ function handleFacebookAuth(){
         // নতুন Facebook ইউজার: বিদ্যমান স্থানীয় ডাটা (থাকলে) এই একাউন্টের প্রাথমিক কপি হিসেবে আপলোড হবে
         if(!state.company.name) state.company.name = result.user.displayName || 'My Business';
         if(!state.company.currency) state.company.currency = '৳';
-        return shopRef().set({
+        return shopRef().set(stripUndefinedDeep({
           company: state.company,
           settings: state.settings,
           security: state.security,
@@ -4591,7 +4592,7 @@ function handleFacebookAuth(){
           expenses: state.expenses,
           invItems: state.invItems,
           idCounter
-        }).then(()=>{
+        })).then(()=>{
           if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
           saveState();
         });
@@ -4715,7 +4716,7 @@ function verifyPhoneAuthCode(){
         const typedCurrency = document.getElementById('obCurrency').value;
         state.company.name = typedName || state.company.name || 'My Business';
         state.company.currency = typedCurrency || state.company.currency || '৳';
-        return shopRef().set({
+        return shopRef().set(stripUndefinedDeep({
           company: state.company,
           settings: state.settings,
           security: state.security,
@@ -4724,7 +4725,7 @@ function verifyPhoneAuthCode(){
           expenses: state.expenses,
           invItems: state.invItems,
           idCounter
-        }).then(()=>{
+        })).then(()=>{
           if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
           saveState();
         });
@@ -5140,6 +5141,28 @@ function getListFor(type){
   return state.expenses;
 }
 
+/* Firebase Realtime Database এর .update()/.set() কোনো value যদি undefined হয় তাহলে পুরো
+   রাইট রিজেক্ট করে (throw করে) — এতে ক্রয়/খরচ এন্ট্রি লোকালি সেভ হলেও ক্লাউডে সিঙ্ক না হয়ে
+   নিঃশব্দে হারিয়ে যাচ্ছিল (নতুন ফোনে লগইন করলে সেই এন্ট্রি থাকতো না)। এই ফাংশন যেকোনো
+   object/array থেকে undefined ভ্যালুর key রিকার্সিভলি বাদ দিয়ে দেয়, যাতে Firebase-এ পাঠানোর
+   আগে ডাটা সবসময় নিরাপদ থাকে। */
+function stripUndefinedDeep(value){
+  if(Array.isArray(value)){
+    return value.map(stripUndefinedDeep);
+  }
+  if(value && typeof value === 'object'){
+    const out = {};
+    for(const k in value){
+      if(!Object.prototype.hasOwnProperty.call(value, k)) continue;
+      const v = value[k];
+      if(v === undefined) continue;
+      out[k] = stripUndefinedDeep(v);
+    }
+    return out;
+  }
+  return value;
+}
+
 const _debounceTimers = {};
 function debounceRender(key, fn, delay){
   clearTimeout(_debounceTimers[key]);
@@ -5442,7 +5465,7 @@ function saveTxn(e){
   e.preventDefault();
   const { type, id } = state.editing;
   const total = updateComputedTotal();
-  const payload = {
+  const payload = stripUndefinedDeep({
     date: document.getElementById('fDate').value,
     ref: document.getElementById('fRef').value.trim(),
     name: document.getElementById('fName').value.trim(),
@@ -5456,7 +5479,7 @@ function saveTxn(e){
     payment: document.getElementById('fPayment').value,
     notes: document.getElementById('fNotes').value.trim(),
     total
-  };
+  });
   const list = getListFor(type);
   let fraudWarning = '';
   if(id){
