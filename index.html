@@ -7546,58 +7546,43 @@ function confirmOrder(orderId){
   const order = state.orders.find(o => o.id === orderId);
   if(!order) return;
   const items = Array.isArray(order.items) && order.items.length ? order.items : [{ name: 'Order', qty: 1, price: order.total || 0 }];
-  // One unique, purely-numeric invoice number per order (e.g. OID-000482) —
-  // shared by every item line and the delivery charge so they all print
-  // together on a single slip, and used as-is for the slip's barcode too.
+  // One unique, purely-numeric invoice number per order (e.g. OID-000482),
+  // used for the single combined sales row and printed on the slip's barcode.
   const invoiceRef = 'OID-' + String(idCounter++).padStart(6, '0');
-  items.forEach(it => {
-    const saleEntry = {
-      id: idCounter++,
-      date: todayISO(),
-      ref: invoiceRef,
-      name: it.name || 'Item',
-      category: 'Online Order',
-      qty: it.qty || 1,
-      price: it.price || 0,
-      party: order.customerName || '',
-      phone: order.phone || '',
-      address: order.address || '',
-      productId: it.productId || '',
-      payment: order.paymentMethod || '',
-      notes: order.notes || '',
-      total: (it.qty || 1) * (it.price || 0)
-    };
-    state.sales.push(saleEntry);
-    syncToSheet('sales', 'create', saleEntry);
-    // অর্ডার কনফার্ম হওয়ার সাথে সাথে সেই প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
-    // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
-    adjustInvStock(it.name, null, -(it.qty || 1));
-  });
+  // অর্ডার কনফার্ম হওয়ার সাথে সাথে প্রতিটা প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
+  // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
+  items.forEach(it => adjustInvStock(it.name, null, -(it.qty || 1)));
   // Delivery charge: order.total may include a delivery/shipping charge on top of
-  // the item prices. Add the difference as its own sales line so Sales/print slip
-  // totals match the amount shown on the Orders page (which shows order.total).
+  // the item prices — folded into this single row's total instead of its own line.
   const itemsSum = items.reduce((s, it) => s + (it.qty || 1) * (it.price || 0), 0);
   const deliveryCharge = Math.round(((order.total || 0) - itemsSum) * 100) / 100;
-  if(deliveryCharge > 0){
-    const deliveryEntry = {
-      id: idCounter++,
-      date: todayISO(),
-      ref: invoiceRef,
-      name: 'Delivery Charge',
-      category: 'Online Order',
-      qty: 1,
-      price: deliveryCharge,
-      party: order.customerName || '',
-      phone: order.phone || '',
-      address: order.address || '',
-      productId: '',
-      payment: order.paymentMethod || '',
-      notes: order.notes || '',
-      total: deliveryCharge
-    };
-    state.sales.push(deliveryEntry);
-    syncToSheet('sales', 'create', deliveryEntry);
-  }
+  const totalQty = items.reduce((s, it) => s + (it.qty || 1), 0);
+  const itemsName = items.map(it => `${it.name || 'Item'} ×${it.qty || 1}`).join(', ');
+  const grandTotal = Math.round((itemsSum + deliveryCharge) * 100) / 100;
+  // ছোট নাম্বার-প্রিন্টার: হোল নাম্বার হলে .00 বাদ যাবে (যেমন 456), না হলে ২ দশমিক পর্যন্ত থাকবে
+  const numText = n => (Math.round(n * 100) / 100).toString();
+  // One Sales row per order: items summarized in the name, delivery folded into total,
+  // customer name/phone/address/notes kept as before.
+  const saleEntry = {
+    id: idCounter++,
+    date: todayISO(),
+    ref: invoiceRef,
+    name: itemsName,
+    category: 'Online Order',
+    qty: totalQty,
+    price: itemsSum,
+    party: order.customerName || '',
+    phone: order.phone || '',
+    address: order.address || '',
+    productId: items.length === 1 ? (items[0].productId || '') : '',
+    payment: order.paymentMethod || '',
+    notes: order.notes || '',
+    total: grandTotal // numeric — app-এর ড্যাশবোর্ড/হিসাবের জন্য এটা সংখ্যাই থাকে
+  };
+  state.sales.push(saleEntry);
+  // শিটে Total কলামে ডেলিভারি চার্জ সহ দেখানো হয়, যেমন: 456 (D60)
+  const totalForSheet = deliveryCharge > 0 ? `${numText(grandTotal)} (D${numText(deliveryCharge)})` : numText(grandTotal);
+  syncToSheet('sales', 'create', { ...saleEntry, total: totalForSheet });
   saveState();
   if(fbDb) shopRef('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
   renderList('sales');
@@ -7886,7 +7871,7 @@ async function scanReceiptImage(dataUrl){
 
 
 function normalizeParsedReceipt(p){
-  const items = (Array.isArray(p.items) && p.items.length)
+  let items = (Array.isArray(p.items) && p.items.length)
     ? p.items.map(it => {
         const qty = parseFloat(it.qty) || 1;
         const price = parseFloat(it.price) || 0;
@@ -7896,7 +7881,26 @@ function normalizeParsedReceipt(p){
           total: parseFloat(it.total) || (qty * price)
         };
       })
-    : [{ name: (p.partyName || 'Item').toString().trim() || 'Item', qty: 1, price: parseFloat(p.totalAmount) || 0, total: parseFloat(p.totalAmount) || 0 }];
+    : [];
+  // AI মাঝে মাঝে আইটেম নাম দেয় কিন্তু প্রতিটির total/price 0 রেখে দেয় (যেমন non-itemized
+  // রিসিটে শুধু grand total থাকে)। এই অবস্থায় সব আইটেমের total 0 হয়ে যায়, ফলে সেভের সময়
+  // "বৈধ আইটেম নেই" ধরে পুরো এন্ট্রি বাতিল হয়ে যেত — স্ক্যান ঠিকই হতো কিন্তু সেভ হতো না।
+  // এখানে সেই ক্ষেত্রে grand total (totalAmount) দিয়ে একটা ফলব্যাক আইটেম বানানো হচ্ছে যাতে
+  // অন্তত একটি বৈধ (total > 0) আইটেম থাকে এবং ব্যবহারকারী সেভ করতে পারেন।
+  const hasUsableTotal = items.some(it => (parseFloat(it.total) || 0) > 0);
+  const fallbackTotal = parseFloat(p.totalAmount) || 0;
+  if(!hasUsableTotal && fallbackTotal > 0){
+    if(items.length === 1){
+      // একটাই আইটেম আছে কিন্তু total 0 — সেটাতেই grand total বসানো হলো
+      items[0].total = fallbackTotal;
+      items[0].price = items[0].qty ? fallbackTotal / items[0].qty : fallbackTotal;
+    } else {
+      items = [{ name: (p.partyName || 'Item').toString().trim() || 'Item', qty: 1, price: fallbackTotal, total: fallbackTotal }];
+    }
+  }
+  if(items.length === 0){
+    items = [{ name: (p.partyName || 'Item').toString().trim() || 'Item', qty: 1, price: fallbackTotal, total: fallbackTotal }];
+  }
   let date = (p.date || '').toString().trim();
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = todayISO();
   const paymentMethod = state.settings.paymentMethods.includes(p.paymentMethod) ? p.paymentMethod : 'Cash';
@@ -8015,39 +8019,47 @@ function addRsItem(){
   renderRsItems();
 }
 function saveRsEntries(){
-  const p = receiptScanState.parsed;
-  if(!p) return;
-  const type = receiptScanState.type;
-  const date = document.getElementById('rsDate').value || todayISO();
-  const party = document.getElementById('rsParty').value.trim();
-  const payment = document.getElementById('rsPayment').value;
-  const category = document.getElementById('rsCategory').value;
-  const refBase = document.getElementById('rsRef').value.trim();
-  const validItems = p.items.filter(it => it.name && it.name.trim() && (parseFloat(it.total) || 0) > 0);
-  if(validItems.length === 0){ showToast('অন্তত একটি বৈধ আইটেম দরকার (নাম ও মোট টাকা)'); return; }
-  const list = getListFor(type);
-  validItems.forEach((it, idx) => {
-    const payload = {
-      id: idCounter++,
-      date,
-      ref: validItems.length > 1 ? `${refBase}${refBase ? '-' : ''}${idx + 1}` : refBase,
-      name: it.name.trim(),
-      category,
-      qty: type !== 'expense' ? (it.qty || 1) : undefined,
-      price: type !== 'expense' ? (it.price || it.total) : undefined,
-      party,
-      payment,
-      notes: 'AI রিসিট স্ক্যান থেকে যোগ করা হয়েছে',
-      total: parseFloat(it.total) || 0
-    };
-    list.push(payload);
-    syncToSheet(type, 'create', payload);
-  });
-  saveState();
-  closeReceiptScanSheet();
-  renderList(type);
-  renderDashboard();
-  showToast(`${validItems.length}টি এন্ট্রি সেভ হয়েছে`);
+  // পুরো ফাংশনটা try/catch এ মোড়ানো হলো — আগে কোথাও অপ্রত্যাশিত এরর হলে (যেমন কোনো
+  // DOM এলিমেন্ট খুঁজে না পাওয়া) সেভ পুরোপুরি চুপচাপ থেমে যেত, ব্যবহারকারী কোনো বার্তা
+  // ছাড়াই বুঝতে পারতেন না কেন সেভ হলো না। এখন অন্তত একটা toast বার্তা দেখাবে।
+  try{
+    const p = receiptScanState.parsed;
+    if(!p){ showToast('স্ক্যান করা ডেটা পাওয়া যায়নি — আবার স্ক্যান করুন'); return; }
+    const type = receiptScanState.type;
+    const date = document.getElementById('rsDate').value || todayISO();
+    const party = document.getElementById('rsParty').value.trim();
+    const payment = document.getElementById('rsPayment').value;
+    const category = document.getElementById('rsCategory').value;
+    const refBase = document.getElementById('rsRef').value.trim();
+    const validItems = p.items.filter(it => it.name && it.name.trim() && (parseFloat(it.total) || 0) > 0);
+    if(validItems.length === 0){ showToast('অন্তত একটি আইটেমে নাম ও মোট টাকা (০ এর বেশি) থাকতে হবে — উপরে টাকার ঘরগুলো চেক করে ঠিক করুন'); return; }
+    const list = getListFor(type);
+    validItems.forEach((it, idx) => {
+      const payload = {
+        id: idCounter++,
+        date,
+        ref: validItems.length > 1 ? `${refBase}${refBase ? '-' : ''}${idx + 1}` : refBase,
+        name: it.name.trim(),
+        category,
+        qty: type !== 'expense' ? (it.qty || 1) : undefined,
+        price: type !== 'expense' ? (it.price || it.total) : undefined,
+        party,
+        payment,
+        notes: 'AI রিসিট স্ক্যান থেকে যোগ করা হয়েছে',
+        total: parseFloat(it.total) || 0
+      };
+      list.push(payload);
+      syncToSheet(type, 'create', payload);
+    });
+    saveState();
+    closeReceiptScanSheet();
+    renderList(type);
+    renderDashboard();
+    showToast(`${validItems.length}টি এন্ট্রি সেভ হয়েছে`);
+  }catch(err){
+    console.error('saveRsEntries failed:', err);
+    showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
+  }
 }
 </script>
 </body>
