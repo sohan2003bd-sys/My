@@ -1649,6 +1649,7 @@
         <button class="settings-menu-item" data-i18n="menu_info_videos" onclick="openSettingsSection('sblk16', this)">🎬 Info Videos</button>
         <button class="settings-menu-item" onclick="openSettingsSection('sblk17', this)">📦 ইনভেন্টরি ক্যাটেগরি</button>
         <button class="settings-menu-item" onclick="openSettingsSection('sblk18', this)">🤖 AI রিসিট স্ক্যানার</button>
+        <button class="settings-menu-item" onclick="openSettingsSection('sblk19', this)">📊 Google Sheet সিঙ্ক</button>
       </nav>
 
       <div class="settings-empty-hint" id="settingsEmptyHint"></div>
@@ -1983,6 +1984,26 @@
         <div style="display:flex; gap:8px; margin-top:16px;">
           <button class="btn btn-primary" style="flex:1;" onclick="saveProfile()" data-i18n="btn_save_changes">Save Changes</button>
         </div>
+      </div>
+
+      <div class="settings-block settings-subpage" id="sblk19">
+        <h3>📊 Google Sheet সিঙ্ক (Auto-Sync)</h3>
+        <div class="helper-text" style="margin-top:0; line-height:1.7;">
+          Sales, Purchase, Expense — প্রতিটা এন্ট্রি যোগ, এডিট বা ডিলিট হলে সাথে সাথে আপনার Google Sheet-এ অটো-আপডেট হবে। প্রথমে Google Sheet-এ Apps Script দিয়ে ওয়েব-অ্যাপ ডিপ্লয় করে সেই URL এখানে বসান (Setup Guide শিটে ধাপগুলো লেখা আছে)।
+        </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <span class="k">সিঙ্ক চালু করুন</span>
+          <label class="switch"><input type="checkbox" id="settingsSheetSyncEnabled"><span class="slider"></span></label>
+        </div>
+        <div class="field" style="margin-top:12px;">
+          <label>Apps Script Web App URL</label>
+          <input type="text" id="settingsSheetSyncUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="saveSheetSyncSettings()">Save Changes</button>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:10px; width:100%;" onclick="testSheetSync()">📶 Test Sync পাঠান</button>
+        <div class="helper-text" id="sheetSyncStatusText" style="margin-top:10px;">এখনো টেস্ট করা হয়নি।</div>
       </div>
 
     </section>
@@ -3835,7 +3856,9 @@ const state = {
     products: [], // [{id, name, price}] — shown on the landing page
     videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
     invCategories: ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"], // Inventory: product categories
-    dragMode: false // Light mode with colorful theme
+    dragMode: false, // Light mode with colorful theme
+    sheetSyncUrl: "", // Google Apps Script Web App URL — Sales/Purchase/Expense auto-sync to Google Sheet
+    sheetSyncEnabled: false
   },
   security: { pinEnabled: false, pin: "", bioEnabled: false },
   sales: [],
@@ -5336,6 +5359,7 @@ function deleteTxn(type, id){
     }
     list.splice(idx,1);
     saveState();
+    syncToSheet(type, 'delete', { id: t.id });
     showToast('Entry deleted');
     renderList(type);
     renderDashboard();
@@ -5411,6 +5435,7 @@ function saveTxn(e){
       fraudWarning = checkTxnFraudFlags(t, list);
     }
     showToast(fraudWarning || 'Entry updated');
+    syncToSheet(type, 'update', t);
   } else {
     payload.id = idCounter++;
     list.push(payload);
@@ -5419,6 +5444,7 @@ function saveTxn(e){
       fraudWarning = checkTxnFraudFlags(payload, list);
     }
     showToast(fraudWarning || 'Entry saved');
+    syncToSheet(type, 'create', payload);
   }
   saveState();
   closeSheet();
@@ -6043,6 +6069,9 @@ function renderSettings(){
   renderVideosSettings();
   updateNotifyStatus();
   document.getElementById('cloudAccountEmail').textContent = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.email : '—';
+  document.getElementById('settingsSheetSyncUrl').value = state.settings.sheetSyncUrl || '';
+  document.getElementById('settingsSheetSyncEnabled').checked = !!state.settings.sheetSyncEnabled;
+  renderSheetSyncStatusUI();
   resetSettingsView();
 }
 function buildShopLink(){
@@ -6705,6 +6734,53 @@ function saveProfile(){
   showToast('Business profile saved');
   renderDashboard();
 }
+/* ---------------- GOOGLE SHEET AUTO-SYNC ----------------
+   Sales/Purchase/Expense এন্ট্রি create/update/delete হলে এই ফাংশনগুলো
+   একটি Google Apps Script Web App URL-এ ডেটা পাঠায়, যেটা Google Sheet-এর
+   সংশ্লিষ্ট ট্যাবে সারি বসায়/আপডেট করে/মুছে দেয় (ID কলাম ধরে ম্যাচ করে)। */
+function saveSheetSyncSettings(){
+  state.settings.sheetSyncUrl = document.getElementById('settingsSheetSyncUrl').value.trim();
+  state.settings.sheetSyncEnabled = document.getElementById('settingsSheetSyncEnabled').checked;
+  saveState();
+  showToast('Sheet Sync সেটিংস সেভ হয়েছে');
+}
+function renderSheetSyncStatusUI(){
+  const el = document.getElementById('sheetSyncStatusText');
+  if(!el) return;
+  const last = state.settings.lastSheetSyncAt;
+  if(!last){ el.textContent = 'এখনো টেস্ট করা হয়নি।'; return; }
+  const when = new Date(last).toLocaleString('bn-BD', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+  el.textContent = `সর্বশেষ পাঠানো হয়েছে: ${when} (Sheet-এর "Sync Log" ট্যাবে গিয়ে নিশ্চিত করুন)`;
+}
+function testSheetSync(){
+  const url = document.getElementById('settingsSheetSyncUrl').value.trim();
+  if(!url){ showToast('আগে Apps Script URL বসান'); return; }
+  state.settings.sheetSyncUrl = url;
+  state.settings.sheetSyncEnabled = true;
+  document.getElementById('settingsSheetSyncEnabled').checked = true;
+  saveState();
+  syncToSheet('test', 'ping', { message: 'MY SHOP অ্যাপ থেকে টেস্ট সিগন্যাল', sentAt: new Date().toISOString() });
+  showToast('টেস্ট পাঠানো হয়েছে — Sheet-এর Sync Log ট্যাবে চেক করুন');
+}
+function syncToSheet(type, action, payload){
+  const url = (state.settings.sheetSyncUrl || '').trim();
+  if(!state.settings.sheetSyncEnabled || !url) return;
+  const body = { type, action, data: payload };
+  // fire-and-forget: mode 'no-cors' + text/plain avoids a CORS preflight that
+  // Apps Script web apps don't handle, and never blocks the UI on network issues
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  }).then(() => {
+    state.settings.lastSheetSyncAt = Date.now();
+    saveState();
+    renderSheetSyncStatusUI();
+  }).catch((err) => {
+    console.warn('Sheet sync failed (app data is safe, this only affects the Sheet copy):', err);
+  });
+}
 /* ---------------- PRODUCTS CATALOG ---------------- */
 function saveProduct(){
   const name = document.getElementById('newProductName').value.trim();
@@ -7346,7 +7422,7 @@ function confirmOrder(orderId){
   // together on a single slip, and used as-is for the slip's barcode too.
   const invoiceRef = 'OID-' + String(idCounter++).padStart(6, '0');
   items.forEach(it => {
-    state.sales.push({
+    const saleEntry = {
       id: idCounter++,
       date: todayISO(),
       ref: invoiceRef,
@@ -7361,7 +7437,9 @@ function confirmOrder(orderId){
       payment: order.paymentMethod || '',
       notes: order.notes || '',
       total: (it.qty || 1) * (it.price || 0)
-    });
+    };
+    state.sales.push(saleEntry);
+    syncToSheet('sales', 'create', saleEntry);
     // অর্ডার কনফার্ম হওয়ার সাথে সাথে সেই প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
     // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
     adjustInvStock(it.name, null, -(it.qty || 1));
@@ -7372,7 +7450,7 @@ function confirmOrder(orderId){
   const itemsSum = items.reduce((s, it) => s + (it.qty || 1) * (it.price || 0), 0);
   const deliveryCharge = Math.round(((order.total || 0) - itemsSum) * 100) / 100;
   if(deliveryCharge > 0){
-    state.sales.push({
+    const deliveryEntry = {
       id: idCounter++,
       date: todayISO(),
       ref: invoiceRef,
@@ -7387,7 +7465,9 @@ function confirmOrder(orderId){
       payment: order.paymentMethod || '',
       notes: order.notes || '',
       total: deliveryCharge
-    });
+    };
+    state.sales.push(deliveryEntry);
+    syncToSheet('sales', 'create', deliveryEntry);
   }
   saveState();
   if(fbDb) shopRef('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
@@ -7832,6 +7912,7 @@ function saveRsEntries(){
       total: parseFloat(it.total) || 0
     };
     list.push(payload);
+    syncToSheet(type, 'create', payload);
   });
   saveState();
   closeReceiptScanSheet();
