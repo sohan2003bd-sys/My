@@ -277,6 +277,19 @@
   .qv-body h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0 0 6px; color:var(--plum-900); }
   .qv-body p{ font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 12px; }
   .qv-close{ position:sticky; top:10px; float:right; margin-right:10px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(8,20,36,0.55); color:#fff; font-size:15px; z-index:2; }
+  /* ---------- পোশাক পণ্য: ডিজাইন ফটো কোলাজ ও সাইজ চিপ ---------- */
+  .qv-designs, .qv-sizes{ margin:0 0 14px; }
+  .qv-designs-label, .qv-sizes-label{ font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; }
+  .qv-designs-row{ display:flex; gap:9px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+  .qv-designs-row::-webkit-scrollbar{ display:none; }
+  .qv-design-thumb{ flex:none; width:58px; height:58px; border-radius:12px; overflow:hidden; border:2.5px solid var(--rule); padding:0; background:var(--paper-deep); }
+  .qv-design-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .qv-design-thumb.active{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(242,129,43,0.22); }
+  .qv-sizes-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .qv-size-chip{ padding:8px 17px; border-radius:10px; border:1.5px solid var(--rule); background:var(--card); font-size:13.5px; font-weight:600; color:var(--plum-800); font-family:'Hind Siliguri',sans-serif; }
+  .qv-size-chip.active{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); border-color:transparent; box-shadow:0 4px 12px rgba(217,105,26,0.30); }
+  .qv-hint{ font-size:12px; color:var(--rust); margin-top:2px; }
+  #qvOrderBtn[disabled]{ opacity:.45; pointer-events:none; }
 
   .delivery-box{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
   .delivery-note{ font-size:11.5px; color:var(--muted); margin:0 0 10px; line-height:1.6; }
@@ -785,7 +798,9 @@
     <div class="qv-img" id="qvImgWrap"></div>
     <div class="qv-body">
       <h3 id="qvName"></h3>
+      <div class="qv-designs" id="qvDesigns" style="display:none;"></div>
       <p id="qvDesc"></p>
+      <div class="qv-sizes" id="qvSizes" style="display:none;"></div>
       <div class="price-row" id="qvPrice" style="margin-bottom:14px;"></div>
       <button type="button" class="btn btn-primary" id="qvOrderBtn">Order now</button>
     </div>
@@ -900,9 +915,12 @@ setInterval(updateHeroDateTime, 60 * 1000);
 
 let products = [];
 let videos = [];
-let cart = {}; // productId -> { productId, name, price, qty }
+let cart = {}; // key -> { key, productId, name, price, qty, design?, size? } — সাধারণ পণ্যে key = productId, পোশাকে key = productId+ডিজাইন+সাইজ
 let selectedCategory = 'সকল';
 let db;
+// Quick View-তে পোশাক পণ্যের জন্য বাছাই করা ডিজাইন/সাইজ — সবার আগে ডিক্লেয়ার করা হলো (cache-render early-call এর জন্য)
+let currentQvProduct = null;
+let qvSelection = { designIdx: null, size: null };
 
 // bKash/Nagad/Rocket/Bank details পাওয়ার জন্য — শপ প্রোফাইল লোড হলে applyShopProfile() এটা ভরে দেয়
 let PAYMENT_INFO = { bKash: '', Nagad: '', Rocket: '', 'Bank Transfer': '' };
@@ -1258,8 +1276,14 @@ function selectCategory(cat){
   renderCatalog();
 }
 
+function isClothingProduct(p){
+  return p.variantType === 'clothing' && Array.isArray(p.designs) && p.designs.length > 0;
+}
 function buildCardHtml(p, isPriority){
-  const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
+  const clothing = isClothingProduct(p);
+  const inCartQty = clothing
+    ? Object.values(cart).filter(it => it.productId === p.id).reduce((s,it) => s + it.qty, 0)
+    : (cart[p.id] ? cart[p.id].qty : 0);
   const thumbUrl = getThumbUrl(p);
   const price = Number(p.price) || 0;
   const original = Number(p.originalPrice) || 0;
@@ -1296,8 +1320,8 @@ function buildCardHtml(p, isPriority){
         ${hasDiscount ? `<span class="price-old">৳${original.toFixed(0)}</span>` : ''}
       </div>
       <div class="action-row">
-        <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="addToCart('${p.id}')">
-          ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : `Order now <span class="plus">+</span>`}
+        <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="${clothing ? `openQuickView('${p.id}')` : `addToCart('${p.id}')`}">
+          ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : (clothing ? `ডিজাইন ও সাইজ বাছাই করুন <span class="plus">+</span>` : `Order now <span class="plus">+</span>`)}
         </button>
         <button type="button" class="view-btn" onclick="openQuickView('${p.id}')" aria-label="Quick view">👁</button>
       </div>
@@ -1345,6 +1369,9 @@ function renderCatalog(){
 function openQuickView(productId){
   const p = products.find(x => x.id === productId);
   if(!p) return;
+  currentQvProduct = p;
+  qvSelection = { designIdx: null, size: null };
+  const clothing = isClothingProduct(p);
   const thumbUrl = getThumbUrl(p);
   const price = Number(p.price) || 0;
   const original = Number(p.originalPrice) || 0;
@@ -1355,8 +1382,73 @@ function openQuickView(productId){
   document.getElementById('qvName').textContent = p.name;
   document.getElementById('qvDesc').textContent = p.description || '';
   document.getElementById('qvPrice').innerHTML = `<span class="price-now" style="color:var(--gold-deep);">৳${price.toFixed(0)}</span>${hasDiscount ? ` <span class="price-old">৳${original.toFixed(0)}</span>` : ''}`;
-  document.getElementById('qvOrderBtn').setAttribute('onclick', `addToCart('${p.id}'); closeQuickView();`);
+
+  const designsBox = document.getElementById('qvDesigns');
+  const sizesBox = document.getElementById('qvSizes');
+  if(clothing){
+    designsBox.style.display = 'block';
+    designsBox.innerHTML = `<div class="qv-designs-label">ডিজাইন বাছাই করুন</div><div class="qv-designs-row">` +
+      p.designs.map((d,i) => `<button type="button" class="qv-design-thumb" onclick="selectQvDesign(${i})"><img src="${escapeHTML(resolveImageUrl(d.image))}" alt="${escapeHTML(d.label || '')}" loading="lazy"></button>`).join('') +
+      `</div>`;
+    sizesBox.style.display = 'none';
+    sizesBox.innerHTML = '';
+  } else {
+    designsBox.style.display = 'none';
+    designsBox.innerHTML = '';
+    sizesBox.style.display = 'none';
+    sizesBox.innerHTML = '';
+  }
+  updateQvOrderBtnState();
   document.getElementById('qvOverlay').classList.add('open');
+}
+function selectQvDesign(idx){
+  if(!currentQvProduct || !currentQvProduct.designs[idx]) return;
+  qvSelection.designIdx = idx;
+  qvSelection.size = null; // ডিজাইন পাল্টালে আগের সাইজ বাছাই মুছে যাবে
+  document.querySelectorAll('#qvDesigns .qv-design-thumb').forEach((el,i) => el.classList.toggle('active', i === idx));
+  const d = currentQvProduct.designs[idx];
+  const resolved = resolveImageUrl(d.image);
+  document.getElementById('qvImgWrap').innerHTML = `<img src="${escapeHTML(resolved)}" alt="${escapeHTML(d.label || currentQvProduct.name)}" onerror="this.style.display='none'">`;
+  const sizes = (Array.isArray(currentQvProduct.sizes) && currentQvProduct.sizes.length) ? currentQvProduct.sizes : ['M','L','XL','XXL'];
+  const sizesBox = document.getElementById('qvSizes');
+  sizesBox.style.display = 'block';
+  sizesBox.innerHTML = `<div class="qv-sizes-label">সাইজ বাছাই করুন</div><div class="qv-sizes-row">` +
+    sizes.map(s => `<button type="button" class="qv-size-chip" onclick="selectQvSize(${idx}, this)">${escapeHTML(s)}</button>`).join('') +
+    `</div><div class="qv-hint" id="qvSizeHint">সাইজ বাছাই না করলে অর্ডার করা যাবে না</div>`;
+  updateQvOrderBtnState();
+}
+function selectQvSize(designIdx, btnEl){
+  if(!currentQvProduct || qvSelection.designIdx !== designIdx) return;
+  qvSelection.size = btnEl.textContent.trim();
+  document.querySelectorAll('#qvSizes .qv-size-chip').forEach(el => el.classList.toggle('active', el === btnEl));
+  const hint = document.getElementById('qvSizeHint');
+  if(hint) hint.style.display = 'none';
+  updateQvOrderBtnState();
+}
+function updateQvOrderBtnState(){
+  const btn = document.getElementById('qvOrderBtn');
+  if(!currentQvProduct) return;
+  if(!isClothingProduct(currentQvProduct)){
+    btn.disabled = false;
+    btn.textContent = 'Order now';
+    btn.setAttribute('onclick', `addToCart('${currentQvProduct.id}'); closeQuickView();`);
+    return;
+  }
+  const ready = qvSelection.designIdx !== null && !!qvSelection.size;
+  btn.disabled = false;
+  btn.textContent = ready ? 'কার্টে যোগ করুন' : 'ডিজাইন ও সাইজ বাছাই করুন';
+  if(ready){
+    const idx = qvSelection.designIdx;
+    const size = qvSelection.size.replace(/'/g, "\\'");
+    btn.setAttribute('onclick', `addClothingToCart('${currentQvProduct.id}', ${idx}, '${size}'); closeQuickView();`);
+  } else {
+    btn.setAttribute('onclick', `qvOrderBtnBlocked()`);
+  }
+}
+function qvOrderBtnBlocked(){
+  if(!currentQvProduct) return;
+  if(qvSelection.designIdx === null){ showToast('একটি ডিজাইন বাছাই করুন'); return; }
+  if(!qvSelection.size){ showToast('সাইজ সিলেক্ট করুন'); return; }
 }
 function closeQuickView(){
   document.getElementById('qvOverlay').classList.remove('open');
@@ -1368,20 +1460,43 @@ function addToCart(productId){
   if(cart[productId]){
     cart[productId].qty += 1;
   } else {
-    cart[productId] = { productId: p.id, name: p.name, price: Number(p.price) || 0, qty: 1 };
+    cart[productId] = { key: productId, productId: p.id, name: p.name, price: Number(p.price) || 0, qty: 1 };
   }
   renderCatalog();
   renderCart();
 }
-function changeQty(productId, delta){
-  if(!cart[productId]) return;
-  cart[productId].qty += delta;
-  if(cart[productId].qty <= 0) delete cart[productId];
+function addClothingToCart(productId, designIdx, size){
+  const p = products.find(x => x.id === productId);
+  if(!p || !Array.isArray(p.designs) || !p.designs[designIdx] || !size) return;
+  const design = p.designs[designIdx];
+  const designLabel = design.label ? design.label.trim() : ('ডিজাইন ' + (designIdx + 1));
+  const key = productId + '__' + designIdx + '__' + size;
+  if(cart[key]){
+    cart[key].qty += 1;
+  } else {
+    cart[key] = {
+      key,
+      productId: p.id,
+      name: `${p.name} — ${designLabel} / সাইজ: ${size}`,
+      price: Number(p.price) || 0,
+      qty: 1,
+      design: designLabel,
+      size
+    };
+  }
+  renderCatalog();
+  renderCart();
+  showToast('কার্টে যোগ করা হয়েছে');
+}
+function changeQty(key, delta){
+  if(!cart[key]) return;
+  cart[key].qty += delta;
+  if(cart[key].qty <= 0) delete cart[key];
   renderCatalog();
   renderCart();
 }
-function removeFromCart(productId){
-  delete cart[productId];
+function removeFromCart(key){
+  delete cart[key];
   renderCatalog();
   renderCart();
 }
@@ -1399,11 +1514,11 @@ function renderCart(){
     <div class="cart-row">
       <div class="ci-name">${escapeHTML(it.name)}<br><span class="ci-price">৳${it.price.toFixed(2)} × ${it.qty}</span></div>
       <div class="stepper">
-        <button type="button" onclick="changeQty('${it.productId}', -1)">−</button>
+        <button type="button" onclick="changeQty('${it.key}', -1)">−</button>
         <span>${it.qty}</span>
-        <button type="button" onclick="changeQty('${it.productId}', 1)">+</button>
+        <button type="button" onclick="changeQty('${it.key}', 1)">+</button>
       </div>
-      <button type="button" class="cart-rm" onclick="removeFromCart('${it.productId}')">✕</button>
+      <button type="button" class="cart-rm" onclick="removeFromCart('${it.key}')">✕</button>
     </div>`).join('');
   updateTotal();
 }

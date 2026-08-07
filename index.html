@@ -1926,7 +1926,7 @@
           <label>Description (optional)</label>
           <textarea id="newProductDesc" rows="2" placeholder="Short details shown to customers — size, material, colour options, etc."></textarea>
         </div>
-        <div class="field">
+        <div class="field" id="newProductImageWrap">
           <label>Image URL (optional)</label>
           <input type="text" id="newProductImage" placeholder="https://... (a direct image link)">
           <div class="helper-text">Upload the photo anywhere (Facebook, Imgur, Google Drive "share as public" link) and paste its direct link here.</div>
@@ -1935,6 +1935,42 @@
           <label>Video URL (optional)</label>
           <input type="text" id="newProductVideo" placeholder="YouTube link or direct video (.mp4) link">
         </div>
+
+        <div class="field" style="margin:16px 0 0; padding:12px; border:1.5px dashed var(--gold); border-radius:12px; background:var(--tint-purchase);">
+          <label style="display:flex; align-items:center; gap:8px; margin-bottom:0;">
+            <input type="checkbox" id="newProductIsClothing" style="width:auto;" onchange="toggleClothingFields()">
+            👕 এটি একটি পোশাক পণ্য (একাধিক ডিজাইন/ছবি + সাইজ থাকবে)
+          </label>
+          <div class="helper-text" style="margin-bottom:0;">চালু করলে কাস্টমার একটি ডিজাইন বাছাই করে তারপর সাইজ (M/L/XL...) বাছাই করে অর্ডার করতে পারবে। সাইজ না বাছাই করলে অর্ডার কনফার্ম হবে না।</div>
+        </div>
+
+        <div id="clothingFieldsBlock" style="display:none;">
+          <div class="field" style="margin-top:14px;">
+            <label>ডিজাইন / রঙ (একাধিক ছবি যোগ করুন)</label>
+            <div id="clothingDesignsList" style="margin-bottom:8px;"></div>
+            <div class="row2">
+              <input type="text" id="newDesignImage" placeholder="ডিজাইনের ছবির লিংক (https://...)">
+              <input type="text" id="newDesignLabel" placeholder="নাম/রঙ (ঐচ্ছিক, যেমন: লাল)">
+            </div>
+            <button type="button" class="btn btn-ghost" style="width:100%; margin-top:8px;" onclick="addClothingDesign()">+ ডিজাইন যোগ করুন</button>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>সাইজ অপশন</label>
+            <div id="clothingSizesList" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+              <button type="button" class="mini-btn" onclick="addClothingSizePreset('S')">+S</button>
+              <button type="button" class="mini-btn" onclick="addClothingSizePreset('M')">+M</button>
+              <button type="button" class="mini-btn" onclick="addClothingSizePreset('L')">+L</button>
+              <button type="button" class="mini-btn" onclick="addClothingSizePreset('XL')">+XL</button>
+              <button type="button" class="mini-btn" onclick="addClothingSizePreset('XXL')">+XXL</button>
+            </div>
+            <div class="row2">
+              <input type="text" id="newSizeCustom" placeholder="কাস্টম সাইজ লিখুন">
+              <button type="button" class="btn btn-ghost" onclick="addClothingSizeCustom()">+ যোগ করুন</button>
+            </div>
+          </div>
+        </div>
+
         <div style="display:flex; gap:8px; margin-top:14px;">
           <button class="btn btn-primary" style="flex:1;" onclick="saveProduct()" id="productSaveBtn">Add Product</button>
           <button class="btn btn-ghost" style="flex:1; display:none;" id="productCancelBtn" onclick="cancelEditProduct()">Cancel</button>
@@ -6122,7 +6158,7 @@ function renderProductsSettings(){
       <div style="display:flex; align-items:center; gap:10px; min-width:0;">
         ${p.imageUrl ? `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex:none;" onerror="this.style.display='none'">` : `<div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;">🛍️</div>`}
         <div style="min-width:0;">
-          <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escapeHTML(p.name)}${p.videoUrl ? ' 🎬' : ''}</div>
+          <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escapeHTML(p.name)}${p.videoUrl ? ' 🎬' : ''}${p.variantType === 'clothing' ? ' 👕' : ''}</div>
           <div class="v">${fmtMoney(p.price)}</div>
         </div>
       </div>
@@ -6133,6 +6169,71 @@ function renderProductsSettings(){
     </div>`).join('');
 }
 let editingProductIdx = null;
+// পোশাক-জাতীয় পণ্যের জন্য অস্থায়ী (ফর্ম-এ থাকা অবস্থায়) ডিজাইন ও সাইজ তালিকা
+let clothingDesignsTemp = []; // [{image, label}]
+let clothingSizesTemp = []; // ['M','L',...]
+
+function toggleClothingFields(){
+  const on = document.getElementById('newProductIsClothing').checked;
+  document.getElementById('clothingFieldsBlock').style.display = on ? 'block' : 'none';
+  document.getElementById('newProductImageWrap').style.display = on ? 'none' : 'block';
+  if(on && clothingSizesTemp.length === 0){
+    clothingSizesTemp = ['M','L','XL','XXL'];
+    renderClothingSizesList();
+  }
+}
+function renderClothingDesignsList(){
+  const box = document.getElementById('clothingDesignsList');
+  if(clothingDesignsTemp.length === 0){
+    box.innerHTML = '<div class="helper-text" style="margin:0 0 6px;">এখনো কোনো ডিজাইন যোগ করা হয়নি।</div>';
+    return;
+  }
+  box.innerHTML = clothingDesignsTemp.map((d,i) => `
+    <div class="field-inline" style="padding:6px 8px;">
+      <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+        <img src="${escapeHTML(d.image)}" alt="" loading="lazy" style="width:32px;height:32px;border-radius:6px;object-fit:cover;flex:none;" onerror="this.style.display='none'">
+        <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${escapeHTML(d.label || ('ডিজাইন ' + (i+1)))}</div>
+      </div>
+      <button class="mini-btn" onclick="removeClothingDesign(${i})" aria-label="Remove">✕</button>
+    </div>`).join('');
+}
+function addClothingDesign(){
+  const image = document.getElementById('newDesignImage').value.trim();
+  const label = document.getElementById('newDesignLabel').value.trim();
+  if(!image){ showToast('ডিজাইনের ছবির লিংক দিন'); return; }
+  clothingDesignsTemp.push({ image, label });
+  document.getElementById('newDesignImage').value = '';
+  document.getElementById('newDesignLabel').value = '';
+  renderClothingDesignsList();
+}
+function removeClothingDesign(idx){
+  clothingDesignsTemp.splice(idx, 1);
+  renderClothingDesignsList();
+}
+function renderClothingSizesList(){
+  const box = document.getElementById('clothingSizesList');
+  box.innerHTML = clothingSizesTemp.map((s,i) => `
+    <span class="chip">${escapeHTML(s)}<button onclick="removeClothingSize(${i})">✕</button></span>
+  `).join('') || '<div class="helper-text" style="margin:0;">এখনো কোনো সাইজ যোগ করা হয়নি।</div>';
+}
+function addClothingSizePreset(size){
+  if(clothingSizesTemp.includes(size)){ showToast('এই সাইজ ইতিমধ্যে যোগ করা আছে'); return; }
+  clothingSizesTemp.push(size);
+  renderClothingSizesList();
+}
+function addClothingSizeCustom(){
+  const val = document.getElementById('newSizeCustom').value.trim();
+  if(!val) return;
+  if(clothingSizesTemp.includes(val)){ showToast('এই সাইজ ইতিমধ্যে যোগ করা আছে'); return; }
+  clothingSizesTemp.push(val);
+  document.getElementById('newSizeCustom').value = '';
+  renderClothingSizesList();
+}
+function removeClothingSize(idx){
+  clothingSizesTemp.splice(idx, 1);
+  renderClothingSizesList();
+}
+
 function editProduct(idx){
   const p = state.settings.products[idx];
   if(!p) return;
@@ -6144,6 +6245,14 @@ function editProduct(idx){
   document.getElementById('newProductDesc').value = p.description || '';
   document.getElementById('newProductImage').value = p.imageUrl || '';
   document.getElementById('newProductVideo').value = p.videoUrl || '';
+  const isClothing = p.variantType === 'clothing';
+  document.getElementById('newProductIsClothing').checked = isClothing;
+  clothingDesignsTemp = isClothing && Array.isArray(p.designs) ? p.designs.map(d => Object.assign({}, d)) : [];
+  clothingSizesTemp = isClothing && Array.isArray(p.sizes) ? p.sizes.slice() : [];
+  document.getElementById('clothingFieldsBlock').style.display = isClothing ? 'block' : 'none';
+  document.getElementById('newProductImageWrap').style.display = isClothing ? 'none' : 'block';
+  renderClothingDesignsList();
+  renderClothingSizesList();
   document.getElementById('productFormTitle').textContent = 'Edit Product';
   document.getElementById('productSaveBtn').textContent = 'Save Changes';
   document.getElementById('productCancelBtn').style.display = 'block';
@@ -6158,6 +6267,11 @@ function cancelEditProduct(){
   document.getElementById('newProductDesc').value = '';
   document.getElementById('newProductImage').value = '';
   document.getElementById('newProductVideo').value = '';
+  document.getElementById('newProductIsClothing').checked = false;
+  clothingDesignsTemp = [];
+  clothingSizesTemp = [];
+  document.getElementById('clothingFieldsBlock').style.display = 'none';
+  document.getElementById('newProductImageWrap').style.display = 'block';
   document.getElementById('productFormTitle').textContent = 'Add a Product';
   document.getElementById('productSaveBtn').textContent = 'Add Product';
   document.getElementById('productCancelBtn').style.display = 'none';
@@ -6788,15 +6902,25 @@ function saveProduct(){
   const originalPrice = parseFloat(document.getElementById('newProductOriginalPrice').value) || 0;
   const hotDeal = document.getElementById('newProductHotDeal').checked;
   const description = document.getElementById('newProductDesc').value.trim();
-  const imageUrl = document.getElementById('newProductImage').value.trim();
+  let imageUrl = document.getElementById('newProductImage').value.trim();
   const videoUrl = document.getElementById('newProductVideo').value.trim();
   if(!name){ showToast('Enter a product name'); return; }
+  const isClothing = document.getElementById('newProductIsClothing').checked;
+  if(isClothing && clothingDesignsTemp.length === 0){ showToast('অন্তত একটি ডিজাইনের ছবি যোগ করুন'); return; }
+  if(isClothing && clothingSizesTemp.length === 0){ showToast('অন্তত একটি সাইজ যোগ করুন'); return; }
+  const variantType = isClothing ? 'clothing' : undefined;
+  const designs = isClothing ? clothingDesignsTemp.slice() : undefined;
+  const sizes = isClothing ? clothingSizesTemp.slice() : undefined;
+  if(isClothing) imageUrl = clothingDesignsTemp[0].image; // কার্ড থাম্বনেইলের জন্য প্রথম ডিজাইনের ছবি ব্যবহার হবে
+  const fields = { name, price, originalPrice, hotDeal, description, imageUrl, videoUrl, variantType, designs, sizes };
   if(editingProductIdx !== null){
     const p = state.settings.products[editingProductIdx];
-    Object.assign(p, { name, price, originalPrice, hotDeal, description, imageUrl, videoUrl });
+    // পুরোনো ডিজাইন/সাইজ ডেটা রয়ে যাওয়া ঠেকাতে আগে মুছে তারপর নতুন করে বসানো হলো
+    delete p.variantType; delete p.designs; delete p.sizes;
+    Object.assign(p, fields);
     showToast('Product updated');
   } else {
-    state.settings.products.push({ id: 'p' + Date.now() + Math.floor(Math.random()*1000), name, price, originalPrice, hotDeal, description, imageUrl, videoUrl });
+    state.settings.products.push(Object.assign({ id: 'p' + Date.now() + Math.floor(Math.random()*1000) }, fields));
     showToast('Product added');
   }
   cancelEditProduct();
@@ -6816,6 +6940,11 @@ function pushProductsToFirebase(){
   const obj = {};
   state.settings.products.forEach(p => {
     obj[p.id] = { name: p.name, price: p.price, originalPrice: p.originalPrice || 0, hotDeal: !!p.hotDeal, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
+    if(p.variantType === 'clothing' && Array.isArray(p.designs) && p.designs.length){
+      obj[p.id].variantType = 'clothing';
+      obj[p.id].designs = p.designs.map(d => ({ image: d.image || '', label: d.label || '' }));
+      obj[p.id].sizes = Array.isArray(p.sizes) ? p.sizes : [];
+    }
   });
   shopRef('products').set(obj).catch(()=> showToast('Could not sync products to Firebase'));
 }
