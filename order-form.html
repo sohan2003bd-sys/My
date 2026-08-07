@@ -910,6 +910,9 @@ let shopWhatsAppIntl = ''; // দোকানের WhatsApp নম্বর, �
 // প্রতিটা অর্ডার-এর জন্য একটা ছোট, পড়তে সহজ রেফারেন্স কোড — bKash/Nagad "Send Money" স্টেটমেন্টে
 // কোন টাকা কোন অর্ডারের সেটা মেলাতে সাহায্য করে। শুধু এই একটা অর্ডারের জন্যই বৈধ ধরা হয়।
 let currentOrderRef = 'ORD' + Math.floor(100 + Math.random() * 900);
+// ক্যাটালগ রেন্ডার হওয়ার সময় ধারাবাহিকতা ট্র্যাক করতে — renderCatalog() নিচে ব্যবহার করে,
+// কিন্তু ক্যাশ থেকে তাৎক্ষণিক রেন্ডার আরও আগে হতে পারে, তাই এটি সবার আগেই ডিক্লেয়ার করা হলো
+let catalogRenderToken = 0;
 
 // Telegram বট দিয়ে অটো-নোটিফিকেশন — কাস্টমারকে কোথাও রিডাইরেক্ট না করেই সরাসরি ব্রাউজার থেকে
 // দোকানদারের Telegram-এ মেসেজ পাঠানো হয়। শপ প্রোফাইল লোড হলে applyShopProfile() এগুলো ভরে দেয়।
@@ -1302,7 +1305,6 @@ function buildCardHtml(p, isPriority){
   </div>`;
 }
 
-let catalogRenderToken = 0;
 function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
   if(products.length === 0){
