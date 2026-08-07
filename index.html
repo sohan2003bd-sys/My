@@ -5833,11 +5833,23 @@ function receiptCardHTML(group){
   // "Total Payable Amount" instead of "Total Paid" for those.
   const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
   const totalLabel = isCOD ? 'Total Payable Amount' : 'Total Paid';
-  const itemsHTML = rows.map(r => `
+  const itemsHTML = rows.map(r => {
+    // Multi-product order rows carry a structured `items` list (see confirmOrder) —
+    // print each product on its own line here. Everything else (single-product
+    // sales, manual entries) keeps the exact original single-line rendering.
+    if(Array.isArray(r.items) && r.items.length > 1){
+      return r.items.map(it => `
+      <div class="rc-item-line">
+        <span class="rc-item-name">${escapeHTML(it.name || '—')}${it.qty && it.qty > 1 ? ` × ${it.qty}` : ''}</span>
+        <span class="rc-item-amt">${fmtMoney((it.qty || 1) * (it.price || 0))}</span>
+      </div>`).join('');
+    }
+    return `
       <div class="rc-item-line">
         <span class="rc-item-name">${escapeHTML(r.name || '—')}${r.qty && r.qty > 1 ? ` × ${r.qty}` : ''}</span>
         <span class="rc-item-amt">${fmtMoney(r.total || 0)}</span>
-      </div>`).join('');
+      </div>`;
+  }).join('');
   // QR payload — invoice no., grand total (incl. delivery charge) and the
   // customer's phone, in a simple readable "Label: value" format so any
   // generic QR scanner shows something meaningful, not just raw data.
@@ -7600,7 +7612,10 @@ function confirmOrder(orderId){
     productId: items.length === 1 ? (items[0].productId || '') : '',
     payment: order.paymentMethod || '',
     notes: order.notes || '',
-    total: grandTotal // numeric — app-এর ড্যাশবোর্ড/হিসাবের জন্য এটা সংখ্যাই থাকে
+    total: grandTotal, // numeric — app-এর ড্যাশবোর্ড/হিসাবের জন্য এটা সংখ্যাই থাকে
+    // শুধু রিসিট প্রিন্টে প্রতিটি প্রোডাক্ট আলাদা লাইনে দেখানোর জন্য — বাকি সব জায়গায়
+    // (লেজার/শিট/ড্যাশবোর্ড) আগের মতোই সামারাইজড name ফিল্ড ব্যবহার হয়, এটাতে হাত পড়ে না।
+    items: items.map(it => ({ name: it.name || 'Item', qty: it.qty || 1, price: it.price || 0 }))
   };
   state.sales.push(saleEntry);
   // শিটে Total কলামে ডেলিভারি চার্জ সহ দেখানো হয়, যেমন: 456 (D60)
