@@ -923,6 +923,9 @@
     .rpt-section h2{ font-size:14px; border-bottom:1.5px solid #123832; padding-bottom:4px; margin:20px 0 8px; font-family:'Fraunces', serif; }
     table.rpt-table{ width:100%; border-collapse:collapse; font-size:9.5px; table-layout:fixed; }
     table.rpt-table th, table.rpt-table td{ border:1px solid #ddd; padding:5px 5px; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    /* একাধিক প্রোডাক্টের ঘরে (i), (ii), (iii)... প্রতিটা নতুন লাইনে দেখানোর জন্য —
+       বাকি সব ঘর আগের মতোই এক লাইনে ইলিপসিস দিয়ে কাটা থাকবে */
+    table.rpt-table td.wrap{ white-space:pre-line; overflow:visible; text-overflow:clip; word-break:break-word; line-height:1.5; }
     table.rpt-table th{ background:#f0f0f0; }
     table.rpt-table td.num, table.rpt-table th.num{ text-align:right; font-family:'IBM Plex Mono', monospace; }
     .rpt-footer{ margin-top:24px; font-size:9.5px; color:#999; text-align:center; }
@@ -1101,6 +1104,9 @@
     .rc-item-name{ font-weight:600; font-size:9.8px; color:#1B2420; line-height:1.3; flex:1; min-width:0;
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .rc-item-amt{ font-size:9.8px; font-family:'IBM Plex Mono', monospace; font-weight:600; color:#3F5C50; flex:none; }
+    /* Delivery charge line — sits right after the product list, separated by a
+       dashed rule so it reads distinctly from the products above it */
+    .rc-delivery-line{ border-top:1px dashed #D3D6C9; margin-top:1.6px; padding-top:4px; }
 
     .rc-total{ display:flex; justify-content:space-between; align-items:center; margin-top:6px;
       background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:5px; padding:6px 8px; }
@@ -5850,6 +5856,13 @@ function receiptCardHTML(group){
         <span class="rc-item-amt">${fmtMoney(r.total || 0)}</span>
       </div>`;
   }).join('');
+  // ডেলিভারি চার্জ থাকলে প্রোডাক্ট লিস্টের ঠিক পরে, টোটালের আগে আলাদা লাইনে দেখানো হবে
+  const groupDeliveryCharge = rows.reduce((sum, r) => sum + (r.deliveryCharge || 0), 0);
+  const deliveryHTML = groupDeliveryCharge > 0 ? `
+      <div class="rc-item-line rc-delivery-line">
+        <span class="rc-item-name">🚚 Delivery Charge</span>
+        <span class="rc-item-amt">${fmtMoney(groupDeliveryCharge)}</span>
+      </div>` : '';
   // QR payload — invoice no., grand total (incl. delivery charge) and the
   // customer's phone, in a simple readable "Label: value" format so any
   // generic QR scanner shows something meaningful, not just raw data.
@@ -5880,7 +5893,7 @@ function receiptCardHTML(group){
     <hr class="rc-divider">
     <div class="rc-section rc-item-box">
       <div class="rc-label">Product / Service</div>
-      ${itemsHTML}
+      ${itemsHTML}${deliveryHTML}
     </div>
     <div class="rc-total${isCOD ? ' rc-total-cod' : ''}"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
     <div class="rc-barcode">
@@ -6741,6 +6754,14 @@ function renderDriveSettingsUI(){
 }
 
 /* ---------------- PDF REPORT EXPORT ---------------- */
+// PDF রিপোর্টে একাধিক-প্রোডাক্ট সেলস এন্ট্রি একই ঘরে (i), (ii), (iii)... নাম্বারিং দিয়ে
+// আলাদা লাইনে দেখানোর জন্য — ছোট হাতের রোমান নাম্বারে রূপান্তর করে
+function toRomanLower(num){
+  const map = [[1000,'m'],[900,'cm'],[500,'d'],[400,'cd'],[100,'c'],[90,'xc'],[50,'l'],[40,'xl'],[10,'x'],[9,'ix'],[5,'v'],[4,'iv'],[1,'i']];
+  let n = num, out = '';
+  for(const [val, sym] of map){ while(n >= val){ out += sym; n -= val; } }
+  return out || 'i';
+}
 function exportPDF(period){
   period = period || document.getElementById('reportPeriod').value || 'month';
   const range = getPeriodRange(period);
@@ -6759,14 +6780,24 @@ function exportPDF(period){
 
   function rowsTable(rows, cols){
     if(rows.length === 0) return '<p style="font-size:11px;color:#888;">No entries in this period.</p>';
-    const head = cols.map(c => `<th${c.num ? ' class="num"':''}>${c.label}</th>`).join('');
-    const body = rows.map(r => `<tr>${cols.map(c => `<td${c.num?' class="num"':''}>${escapeHTML(c.get(r))}</td>`).join('')}</tr>`).join('');
+    const head = cols.map(c => `<th${c.num ? ' class="num"':''}${c.width ? ` style="width:${c.width}"` : ''}>${c.label}</th>`).join('');
+    const body = rows.map(r => `<tr>${cols.map(c => {
+      const cls = [c.num ? 'num' : '', c.wrap ? 'wrap' : ''].filter(Boolean).join(' ');
+      return `<td${cls ? ` class="${cls}"` : ''}>${escapeHTML(c.get(r))}</td>`;
+    }).join('')}</tr>`).join('');
     return `<table class="rpt-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
   }
 
   const salesTable = rowsTable(salesRows, [
     {label:'Date', get:r=>fmtDate(r.date)},
-    {label:'Product/Service', get:r=>r.name||''},
+    {label:'Product/Service', wrap:true, width:'19%', get:r=>{
+      // একাধিক প্রোডাক্টের অর্ডার হলে প্রতিটা প্রোডাক্ট (i), (ii), (iii)... নাম্বারিং দিয়ে
+      // এক ঘরেই আলাদা লাইনে দেখানো হয় — একটাই প্রোডাক্ট হলে আগের মতো সাধারণ নামই দেখাবে
+      if(Array.isArray(r.items) && r.items.length > 1){
+        return r.items.map((it, i) => `(${toRomanLower(i+1)}) ${it.name || 'Item'}${it.qty && it.qty > 1 ? ` ×${it.qty}` : ''}`).join('\n');
+      }
+      return r.name || '';
+    }},
     {label:'Category', get:r=>r.category||''},
     {label:'Customer', get:r=>r.party||''},
     {label:'Mobile Number', get:r=>r.phone||''},
@@ -7613,6 +7644,9 @@ function confirmOrder(orderId){
     payment: order.paymentMethod || '',
     notes: order.notes || '',
     total: grandTotal, // numeric — app-এর ড্যাশবোর্ড/হিসাবের জন্য এটা সংখ্যাই থাকে
+    // রিসিট প্রিন্টে প্রোডাক্ট লিস্টের পর "Delivery Charge" আলাদা লাইনে দেখানোর জন্য —
+    // total ফিল্ডের হিসাব আগের মতোই থাকে (delivery তার মধ্যে যোগ করাই আছে), এটা শুধু প্রিন্টের জন্য বাড়তি তথ্য
+    deliveryCharge: deliveryCharge > 0 ? deliveryCharge : 0,
     // শুধু রিসিট প্রিন্টে প্রতিটি প্রোডাক্ট আলাদা লাইনে দেখানোর জন্য — বাকি সব জায়গায়
     // (লেজার/শিট/ড্যাশবোর্ড) আগের মতোই সামারাইজড name ফিল্ড ব্যবহার হয়, এটাতে হাত পড়ে না।
     items: items.map(it => ({ name: it.name || 'Item', qty: it.qty || 1, price: it.price || 0 }))
