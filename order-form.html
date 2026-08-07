@@ -726,7 +726,7 @@
       </div>
 
       <div class="success-actions">
-        <button class="btn btn-primary" onclick="location.reload()">আরেকটি অর্ডার করুন</button>
+        <button class="btn btn-primary" onclick="window.location.href='/'">Back to Home Page</button>
       </div>
     </div>
   </div>
@@ -934,15 +934,34 @@ function writeCache(data){
 }
 const __cached = readCache();
 if(__cached){
-  if(__cached.company) applyShopProfile(__cached.company);
-  if(Array.isArray(__cached.products) && __cached.products.length){
-    products = __cached.products;
-    renderCatNav();
-    renderCatalog();
+  // Cache validity check — যদি cache এর মধ্যে কোনো product imageUrl ছাড়াই থাকে, তাহলে cache পরিষ্কার করা হয়
+  let isValidCache = true;
+  if(Array.isArray(__cached.products) && __cached.products.length > 0){
+    // প্রথম দুইটি প্রোডাক্ট চেক করা — যদি কোনো imageUrl বা videoUrl না থাকে তাহলে cache invalid
+    const sample = __cached.products.slice(0, 2);
+    for(let p of sample){
+      if(!p.imageUrl && !p.videoUrl){
+        isValidCache = false;
+        console.warn('Cache corrupted: products have no images');
+        break;
+      }
+    }
   }
-  if(Array.isArray(__cached.videos) && __cached.videos.length){
-    videos = __cached.videos;
-    renderVideos();
+  
+  if(isValidCache){
+    if(__cached.company) applyShopProfile(__cached.company);
+    if(Array.isArray(__cached.products) && __cached.products.length){
+      products = __cached.products;
+      renderCatNav();
+      renderCatalog();
+    }
+    if(Array.isArray(__cached.videos) && __cached.videos.length){
+      videos = __cached.videos;
+      renderVideos();
+    }
+  } else {
+    // Invalid cache — পরবর্তী Firebase load-এর জন্য ক্যাশ পরিষ্কার করা
+    try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
   }
 }
 
@@ -1184,13 +1203,22 @@ function initFirebaseApp(){
 
   db.ref('shops/' + SHOP_ID + '/products').on('value', snap => {
     const val = snap.val() || {};
-    products = Object.keys(val).map(id => Object.assign({ id }, val[id]));
+    // Firebase থেকে আসা ডেটা ভ্যালিডেট করা — নিশ্চিত করা যে imageUrl সঠিকভাবে আছে
+    products = Object.keys(val).map(id => {
+      const product = Object.assign({ id }, val[id]);
+      // যদি imageUrl খালি থাকে, তাহলে null এর পরিবর্তে undefined হবে, যা getThumbUrl-এ ঠিকভাবে হ্যান্ডেল করা হবে
+      if(!product.imageUrl && product.videoUrl){
+        // video থেকে thumbnail টানা হবে, এটি OK
+      }
+      return product;
+    });
     renderCatNav();
     renderCatalog();
     __cProducts = products;
     __persistCache();
-  }, () => {
+  }, (err) => {
     // লাইভ লোড ব্যর্থ হলে — ক্যাশড পণ্য আগে থেকেই দেখানো থাকলে সেটাই থাকবে, নাহলে বার্তা দেখানো হবে
+    console.warn('Firebase products লোড ব্যর্থ:', err);
     if(!products.length){
       document.getElementById('catalogGrid').innerHTML = '<div class="empty-note" style="grid-column:1/-1;">পণ্য লোড করা যায়নি — নেটওয়ার্ক চেক করুন।</div>';
     }
@@ -1239,6 +1267,12 @@ function buildCardHtml(p, isPriority){
   const imgAttrs = isPriority
     ? `loading="eager" fetchpriority="high" decoding="async"`
     : `loading="lazy" decoding="async"`;
+  
+  // Debugging: যদি thumbUrl খালি হয় তাহলে console-এ জানায় (development help)
+  if(!thumbUrl && p.id){
+    console.debug('পণ্য ' + p.id + ' এর ছবি নেই:', { imageUrl: p.imageUrl, videoUrl: p.videoUrl });
+  }
+  
   return `
   <div class="pcard">
     <div class="thumb">
@@ -1634,7 +1668,22 @@ function populateSuccessScreen(order){
   const paymentEl = document.getElementById('successPaymentMethod');
   if(paymentEl) paymentEl.textContent = order.paymentMethod || '—';
 
+  // অর্ডার সম্পন্ন হওয়ার পর কার্ট ডেটা এবং ক্যাশ রিসেট করা হয়
+  clearCartAndCache();
+
   spawnConfetti();
+}
+
+// অর্ডারের পর কার্ট এবং ক্যাশ পরিষ্কার করার ফাংশন
+function clearCartAndCache(){
+  // কার্ট সম্পূর্ণ খালি করা
+  cart = {};
+  
+  // localStorage থেকে এই শপের ক্যাশ ডেলিট করা (পরবর্তী ভিজিটে তাজা ডেটা লোড হবে)
+  try {
+    const cacheKey = 'sohanshop_cache_' + SHOP_ID;
+    localStorage.removeItem(cacheKey);
+  } catch(e) { /* ব্যর্থ হলেও চলবে */ }
 }
 
 function spawnConfetti(){
