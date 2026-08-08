@@ -7612,9 +7612,13 @@ function confirmOrder(orderId){
   const order = state.orders.find(o => o.id === orderId);
   if(!order) return;
   const items = Array.isArray(order.items) && order.items.length ? order.items : [{ name: 'Order', qty: 1, price: order.total || 0 }];
-  // One unique, purely-numeric invoice number per order (e.g. OID-000482),
-  // used for the single combined sales row and printed on the slip's barcode.
-  const invoiceRef = 'OID-' + String(idCounter++).padStart(6, '0');
+  // অনলাইন অর্ডার ফর্ম থেকে আসা অর্ডারে নিজস্ব orderId (যেমন OID-0000383) থাকে — কাস্টমারের
+  // কনফার্মেশন পেজে সেই একই আইডি দেখানো হয়, তাই এই সেলস এন্ট্রি/রিসিটেও ঠিক সেটাই ব্যবহার করা হচ্ছে,
+  // যাতে কাস্টমারের অর্ডার আইডি আর দোকানের রিসিট/ইনভয়েস নাম্বার সবসময় এক থাকে। পুরনো অর্ডার
+  // (এই ফিচার আসার আগে করা, orderId নেই) বা ম্যানুয়াল এন্ট্রির জন্য আগের মতো অটো-জেনারেটেড নাম্বার।
+  const invoiceRef = (order.orderId && String(order.orderId).trim())
+    ? String(order.orderId).trim()
+    : ('OID-' + String(idCounter++).padStart(7, '0'));
   // অর্ডার কনফার্ম হওয়ার সাথে সাথে প্রতিটা প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
   // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
   items.forEach(it => adjustInvStock(it.name, null, -(it.qty || 1)));

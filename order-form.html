@@ -340,6 +340,7 @@
   .btn{ width:100%; padding:14px; border-radius:13px; border:none; font-weight:700; font-size:15px; cursor:pointer; transition:transform .1s ease; font-family:'Hind Siliguri',sans-serif; }
   .btn:active{ transform:scale(0.98); }
   .btn-primary{ background:linear-gradient(155deg, var(--gold-light), var(--gold) 60%, var(--gold-deep)); color:var(--plum-900); box-shadow:0 8px 20px rgba(217,105,26,0.35); }
+  .btn-outline{ background:#fff; color:var(--plum-800); border:1.5px solid var(--plum-700); box-shadow:none; }
   .btn:disabled{ opacity:.55; box-shadow:none; }
 
   .empty-note{ font-size:12.5px; color:var(--muted); text-align:center; padding:14px; }
@@ -715,6 +716,10 @@
 
     <div class="success-body">
       <div class="success-card">
+        <div class="sc-row">
+          <span class="sc-k">অর্ডার আইডি</span>
+          <span class="sc-v ref" id="successOrderId">—</span>
+        </div>
         <div class="sc-row" id="successRefRow" style="display:none;">
           <span class="sc-k">রেফারেন্স</span>
           <span class="sc-v ref" id="successRef">—</span>
@@ -739,6 +744,7 @@
       </div>
 
       <div class="success-actions">
+        <button type="button" class="btn btn-outline" id="downloadReceiptBtn" onclick="downloadReceiptPNG()">রিসিট ডাউনলোড করুন (PNG)</button>
         <button class="btn btn-primary" onclick="window.location.href=window.location.pathname + window.location.search">Back to Home Page</button>
       </div>
     </div>
@@ -1692,6 +1698,7 @@ function submitOrder(e){
 
   const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
   const total = subtotal + delivery.charge;
+
   const order = {
     customerName: custName,
     phone: phone,
@@ -1714,14 +1721,27 @@ function submitOrder(e){
   btn.classList.remove('show-anim');
   btn.textContent = 'পাঠানো হচ্ছে…';
 
-  // ধীরগতির নেটওয়ার্কে অর্ডার পাঠানো আটকে থাকতে পারে — ৫ সেকেন্ডের মধ্যে সাড়া না পেলে
+  // ক্রমিক অর্ডার নাম্বার — OID-0000001, OID-0000002, ... — শপের নিজস্ব একটা কাউন্টার থেকে বানানো হয়।
+  // Firebase-এর transaction() ব্যবহার করা হচ্ছে যাতে একই সময়ে একাধিক অর্ডার এলেও (রেস-কন্ডিশন)
+  // কখনো দুইটা অর্ডারে একই নাম্বার না বসে। কাউন্টার আনতে সমস্যা হলে (নেটওয়ার্ক/পারমিশন) অর্ডার
+  // যেন আটকে না থাকে, তাই তখন সময়ের ওপর ভিত্তি করে একটা ব্যাকআপ নাম্বার ব্যবহার হয়।
+  function nextOrderNumber(){
+    return db.ref('shops/' + SHOP_ID + '/orderCounter').transaction(current => (current || 0) + 1)
+      .then(result => (result && result.committed && result.snapshot) ? result.snapshot.val() : Number(String(Date.now()).slice(-7)))
+      .catch(() => Number(String(Date.now()).slice(-7)));
+  }
+
+  // ধীরগতির নেটওয়ার্কে অর্ডার পাঠানো আটকে থাকতে পারে — ৬ সেকেন্ডের মধ্যে সাড়া না পেলে
   // ব্যবহারকারীকে জানিয়ে বাটন আবার সচল করে দেওয়া হয়, যাতে সে আবার চেষ্টা করতে পারে।
-  // তবে আসল push() অনুরোধটি ব্যাকগ্রাউন্ডে চলতেই থাকে — পরে সফল হলে (ডুপ্লিকেট অর্ডার এড়াতে)
-  // বাটন আর নতুন করে সচল করা হয় না, বরং সরাসরি সফলতার স্ক্রিন দেখানো হয়
+  // তবে আসল অনুরোধটি (নাম্বার আনা + সেভ করা) ব্যাকগ্রাউন্ডে চলতেই থাকে — পরে সফল হলে
+  // (ডুপ্লিকেট অর্ডার এড়াতে) বাটন আর নতুন করে সচল করা হয় না, বরং সরাসরি সফলতার স্ক্রিন দেখানো হয়
   let settled = false;
-  const pushPromise = db.ref('shops/' + SHOP_ID + '/orders').push(order);
+  const savePromise = nextOrderNumber().then(seq => {
+    order.orderId = 'OID-' + String(seq).padStart(7, '0');
+    return db.ref('shops/' + SHOP_ID + '/orders').push().set(order);
+  });
   const submitTimeout = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('timeout')), 5000);
+    setTimeout(() => reject(new Error('timeout')), 6000);
   });
 
   function showSuccess(){
@@ -1736,7 +1756,7 @@ function submitOrder(e){
     document.getElementById('orderWrap').classList.add('order-complete');
   }
 
-  pushPromise.then(()=>{
+  savePromise.then(()=>{
     if(settled) { showSuccess(); return; } // timeout মেসেজ দেখানোর পর দেরিতে সফল হলে — চুপচাপ সফলতার স্ক্রিনে নিয়ে যাওয়া হয়
     settled = true;
     showSuccess();
@@ -1760,9 +1780,16 @@ function submitOrder(e){
   return false;
 }
 
+let lastOrderForReceipt = null;
+
 function populateSuccessScreen(order){
+  lastOrderForReceipt = order;
+
   const nameEl = document.getElementById('successCustName');
   if(nameEl) nameEl.textContent = order.customerName || 'প্রিয় কাস্টমার';
+
+  const orderIdEl = document.getElementById('successOrderId');
+  if(orderIdEl) orderIdEl.textContent = order.orderId || '—';
 
   const refRow = document.getElementById('successRefRow');
   const refEl = document.getElementById('successRef');
@@ -1789,6 +1816,342 @@ function populateSuccessScreen(order){
   clearCartAndCache();
 
   spawnConfetti();
+}
+
+/* ==========================================================================
+   রিসিট (PNG) জেনারেটর — অর্ডার কনফার্ম হওয়ার পর সফলতার স্ক্রিন থেকে
+   "রিসিট ডাউনলোড করুন" বাটনে ক্লিক করলে Canvas দিয়ে একটি রিসিট ছবি বানিয়ে
+   সরাসরি ডাউনলোড করে দেয়। কোনো সার্ভার কল লাগে না — সবটাই ব্রাউজারে হয়।
+   ========================================================================== */
+
+function fmtMoney(n){
+  return '৳' + Number(n || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function fmtReceiptDateTime(ts){
+  const d = new Date(ts);
+  const months = ['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্ট','অক্টো','নভে','ডিসে'];
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mon = months[d.getMonth()];
+  const yyyy = d.getFullYear();
+  let hh = d.getHours();
+  const ampm = hh >= 12 ? 'PM' : 'AM';
+  hh = hh % 12; if(hh === 0) hh = 12;
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${dd} ${mon} ${yyyy}, ${hh}:${mm} ${ampm}`;
+}
+
+// একটাই ফাংশন দিয়ে লে-আউট মাপা (dryRun:true — উচ্চতা বের করার জন্য) এবং আসল আঁকা
+// (dryRun:false) — দুই পাসেই একই ধাপ চলে, তাই মাপ আর আসল ছবি সবসময় মিলে যায়।
+function drawReceipt(ctx, order, opts){
+  const dryRun = !!opts.dryRun;
+  const W = opts.width;
+  const mX = 28;
+  const cw = W - mX * 2;
+  let y = 0;
+
+  const C = {
+    ink:'#16241A', plum900:'#081A3B', gold:'#FFA857', goldDeep:'#D9691A',
+    muted:'#6E7568', rule:'#D8DCE8', paper:'#FAFBF3'
+  };
+
+  function setFont(weight, size, family){
+    ctx.font = weight + ' ' + size + 'px ' + (family || "'Hind Siliguri', sans-serif");
+  }
+  function text(str, x, ty, o){
+    if(dryRun) return;
+    ctx.fillStyle = (o && o.color) || C.ink;
+    ctx.textAlign = (o && o.align) || 'left';
+    ctx.fillText(str, x, ty);
+  }
+  function rect(x, ty, w, h, color){
+    if(dryRun) return;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, ty, w, h);
+  }
+  function hr(ty){
+    if(dryRun) return;
+    ctx.strokeStyle = C.rule;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(mX, ty);
+    ctx.lineTo(W - mX, ty);
+    ctx.stroke();
+  }
+  function wrap(str, maxW){
+    const words = String(str || '').split(/\s+/).filter(Boolean);
+    const lines = [];
+    let line = '';
+    for(const w of words){
+      const t = line ? line + ' ' + w : w;
+      if(ctx.measureText(t).width > maxW && line){ lines.push(line); line = w; }
+      else line = t;
+    }
+    if(line) lines.push(line);
+    return lines.length ? lines : [''];
+  }
+
+  // ===== হেডার ব্যান্ড =====
+  rect(0, 0, W, 96, C.plum900);
+  const bizNameEl = document.getElementById('bizName');
+  setFont(700, 20, "'Hind Siliguri', sans-serif");
+  text(bizNameEl ? bizNameEl.textContent : 'SOHAN SHOP BD', mX, 34, {color:'#FFFFFF'});
+  setFont(600, 11.5);
+  text('অর্ডার রিসিট', mX, 54, {color: C.gold});
+  setFont(600, 11, "'IBM Plex Mono', monospace");
+  text(order.orderId || '—', mX, 78, {color:'#FFFFFF'});
+  setFont(500, 10.5);
+  text(fmtReceiptDateTime(order.createdAt), W - mX, 78, {color:'#CFE0EA', align:'right'});
+  y = 96 + 24;
+
+  // ===== কাস্টমার তথ্য =====
+  setFont(700, 13);
+  text('কাস্টমার তথ্য', mX, y, {color: C.goldDeep});
+  y += 14; hr(y); y += 20;
+
+  function infoRow(label, value){
+    setFont(600, 11);
+    text(label, mX, y, {color: C.muted});
+    setFont(700, 12.5);
+    text(String(value || '—'), W - mX, y, {color: C.plum900, align:'right'});
+    y += 22;
+  }
+  infoRow('নাম', order.customerName);
+  infoRow('মোবাইল', order.phone);
+
+  setFont(600, 11);
+  text('ঠিকানা', mX, y, {color: C.muted});
+  y += 16;
+  setFont(600, 12.5);
+  wrap(order.address, cw).forEach(ln => { text(ln, mX, y, {color: C.ink}); y += 17; });
+  y += 6;
+
+  infoRow('ডেলিভারি এলাকা', order.deliveryArea);
+  infoRow('পেমেন্ট মাধ্যম', order.paymentMethod);
+  if(order.trxId) infoRow('TrxID', order.trxId);
+  if(order.orderRef) infoRow('রেফারেন্স', order.orderRef);
+
+  y += 4; hr(y); y += 22;
+
+  // ===== পণ্যের বিবরণ (টেবিল) =====
+  setFont(700, 13);
+  text('পণ্যের বিবরণ', mX, y, {color: C.goldDeep});
+  y += 20;
+
+  const qtyEndX = W - mX - 172;
+  const priceEndX = W - mX - 82;
+  const subEndX = W - mX;
+  const nameColW = qtyEndX - mX - 40;
+
+  setFont(600, 10.5);
+  text('পণ্য', mX, y, {color: C.muted});
+  text('পরিমাণ', qtyEndX, y, {color: C.muted, align:'right'});
+  text('দাম', priceEndX, y, {color: C.muted, align:'right'});
+  text('সাবটোটাল', subEndX, y, {color: C.muted, align:'right'});
+  y += 12; hr(y); y += 18;
+
+  (order.items || []).forEach(it => {
+    const lines = wrap(it.name, nameColW);
+    const rowTop = y;
+    setFont(600, 12);
+    lines.forEach(ln => { text(ln, mX, y, {color: C.ink}); y += 15; });
+    setFont(600, 12);
+    text(String(it.qty), qtyEndX, rowTop, {color: C.ink, align:'right'});
+    text(fmtMoney(it.price), priceEndX, rowTop, {color: C.ink, align:'right'});
+    text(fmtMoney(it.price * it.qty), subEndX, rowTop, {color: C.plum900, align:'right'});
+    y += 9;
+  });
+
+  y += 4; hr(y); y += 22;
+
+  // ===== মোট হিসাব =====
+  function totalRow(label, value, big){
+    setFont(big ? 700 : 600, big ? 15 : 12.5);
+    text(label, mX, y, {color: big ? C.plum900 : C.muted});
+    text(value, W - mX, y, {color: big ? C.goldDeep : C.ink, align:'right'});
+    y += big ? 26 : 20;
+  }
+  totalRow('সাবটোটাল', fmtMoney(order.subtotal));
+  totalRow('ডেলিভারি চার্জ', fmtMoney(order.deliveryCharge));
+  y += 4; hr(y); y += 18;
+  totalRow('সর্বমোট', fmtMoney(order.total), true);
+
+  y += 10; hr(y); y += 24;
+
+  // ===== ফুটার =====
+  setFont(600, 11);
+  text('কেনাকাটার জন্য ধন্যবাদ! 💛', mX, y, {color: C.goldDeep});
+  y += 16;
+  setFont(500, 9.5);
+  text('এই রিসিটটি স্বয়ংক্রিয়ভাবে তৈরি — যেকোনো তথ্যের জন্য যোগাযোগ করুন।', mX, y, {color: C.muted});
+  y += 20;
+
+  return Math.ceil(y);
+}
+
+/* ---------- ছোট ইনডেক্সড-কালার PNG এনকোডার (ফাইল সাইজ ছোট রাখার জন্য) ----------
+   রিসিটে মূলত অল্প কয়েকটি রং (ব্যাকগ্রাউন্ড + লেখা) থাকে, তাই সাধারণ ৩২-বিট PNG-এর
+   বদলে ৮-বিট প্যালেট (ইনডেক্সড-কালার) PNG বানালে ফাইল সাইজ অনেকটাই (৩-৪ গুণ+) কমে যায়।
+   ব্রাউজারের বিল্ট-ইন CompressionStream দিয়েই zlib কম্প্রেশন করা হয়, তাই আলাদা কোনো
+   লাইব্রেরি লাগে না। ২৫৬-এর বেশি রং হয়ে গেলে বা পুরনো ব্রাউজারে এই ফিচার না থাকলে
+   buildReceiptBlob() স্বয়ংক্রিয়ভাবে সাধারণ canvas.toBlob() PNG-তে ফিরে যায়। */
+function makeCRCTable(){
+  const table = new Uint32Array(256);
+  for(let n = 0; n < 256; n++){
+    let c = n;
+    for(let k = 0; k < 8; k++){ c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); }
+    table[n] = c >>> 0;
+  }
+  return table;
+}
+const PNG_CRC_TABLE = makeCRCTable();
+function pngCrc32(bytes){
+  let c = 0xFFFFFFFF;
+  for(let i = 0; i < bytes.length; i++){ c = PNG_CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8); }
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function pngU32(n){ return new Uint8Array([(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255]); }
+function pngChunk(type, data){
+  const typeBytes = new TextEncoder().encode(type);
+  const crcInput = new Uint8Array(typeBytes.length + data.length);
+  crcInput.set(typeBytes, 0);
+  crcInput.set(data, typeBytes.length);
+  const out = new Uint8Array(4 + typeBytes.length + data.length + 4);
+  out.set(pngU32(data.length), 0);
+  out.set(typeBytes, 4);
+  out.set(data, 4 + typeBytes.length);
+  out.set(pngU32(pngCrc32(crcInput)), 4 + typeBytes.length + data.length);
+  return out;
+}
+
+// রঙের সংখ্যা কমানো (quantize) — খালি চোখে পার্থক্য বোঝা প্রায় অসম্ভব, কিন্তু এতে
+// ছবির মোট রঙের সংখ্যা ২৫৬-এর মধ্যে থেকে যায় (ইনডেক্সড PNG-এর জন্য প্রয়োজনীয়)
+function quantizeImageData(ctx, w, h, levels){
+  const step = 255 / (levels - 1);
+  const imgData = ctx.getImageData(0, 0, w, h);
+  const d = imgData.data;
+  for(let i = 0; i < d.length; i += 4){
+    d[i]   = Math.round(Math.round(d[i]   / step) * step);
+    d[i+1] = Math.round(Math.round(d[i+1] / step) * step);
+    d[i+2] = Math.round(Math.round(d[i+2] / step) * step);
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return imgData;
+}
+
+async function encodeIndexedPNG(imageData, width, height){
+  const data = imageData.data;
+  const paletteMap = new Map();
+  const palette = [];
+  const indices = new Uint8Array(width * height);
+  for(let p = 0, i = 0; p < data.length; p += 4, i++){
+    const r = data[p], g = data[p+1], b = data[p+2];
+    const key = (r << 16) | (g << 8) | b;
+    let idx = paletteMap.get(key);
+    if(idx === undefined){
+      if(palette.length >= 256) throw new Error('palette overflow'); // caller falls back to normal PNG
+      idx = palette.length;
+      palette.push([r, g, b]);
+      paletteMap.set(key, idx);
+    }
+    indices[i] = idx;
+  }
+
+  const rowBytes = width + 1;
+  const raw = new Uint8Array(rowBytes * height);
+  for(let y = 0; y < height; y++){
+    raw[y * rowBytes] = 0; // filter type: None
+    raw.set(indices.subarray(y * width, y * width + width), y * rowBytes + 1);
+  }
+
+  const cs = new CompressionStream('deflate'); // zlib format — exactly what PNG's IDAT needs
+  const writer = cs.writable.getWriter();
+  writer.write(raw);
+  writer.close();
+  const idatData = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+
+  const sig = new Uint8Array([137,80,78,71,13,10,26,10]);
+  const ihdrData = new Uint8Array(13);
+  const dv = new DataView(ihdrData.buffer);
+  dv.setUint32(0, width);
+  dv.setUint32(4, height);
+  ihdrData[8] = 8; ihdrData[9] = 3; ihdrData[10] = 0; ihdrData[11] = 0; ihdrData[12] = 0;
+  const ihdr = pngChunk('IHDR', ihdrData);
+
+  const plteData = new Uint8Array(palette.length * 3);
+  palette.forEach(([r,g,b], i) => { plteData[i*3] = r; plteData[i*3+1] = g; plteData[i*3+2] = b; });
+  const plte = pngChunk('PLTE', plteData);
+  const idat = pngChunk('IDAT', idatData);
+  const iend = pngChunk('IEND', new Uint8Array(0));
+
+  const total = sig.length + ihdr.length + plte.length + idat.length + iend.length;
+  const out = new Uint8Array(total);
+  let off = 0;
+  [sig, ihdr, plte, idat, iend].forEach(part => { out.set(part, off); off += part.length; });
+  return new Blob([out], {type:'image/png'});
+}
+
+function buildReceiptBlob(order){
+  return new Promise((resolve, reject) => {
+    try{
+      const W = 440;
+
+      // ধাপ ১: শুধু মাপার জন্য একটি অস্থায়ী ক্যানভাস — এখান থেকে মোট উচ্চতা বের করা হয়
+      const measureCanvas = document.createElement('canvas');
+      measureCanvas.width = W;
+      measureCanvas.height = 10;
+      const measureCtx = measureCanvas.getContext('2d');
+      const totalHeight = drawReceipt(measureCtx, order, {dryRun:true, width:W}) + 16;
+
+      // ধাপ ২: ঠিক প্রয়োজনীয় উচ্চতায় আসল ক্যানভাস বানিয়ে আঁকা হচ্ছে
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = totalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FAFBF3';
+      ctx.fillRect(0, 0, W, totalHeight);
+      drawReceipt(ctx, order, {dryRun:false, width:W});
+
+      (async () => {
+        // আগে ছোট ইনডেক্সড PNG বানানোর চেষ্টা (~২৫ KB-এর কাছাকাছি) — কোনো কারণে ব্যর্থ
+        // হলে (পুরনো ব্রাউজার, ২৫৬-এর বেশি রং ইত্যাদি) সাধারণ PNG এক্সপোর্টে ফিরে যাওয়া হয়,
+        // যাতে ডাউনলোড বাটন সবসময় কাজ করে।
+        try{
+          if(typeof CompressionStream === 'undefined') throw new Error('CompressionStream unsupported');
+          const imgData = quantizeImageData(ctx, W, totalHeight, 16);
+          const blob = await encodeIndexedPNG(imgData, W, totalHeight);
+          resolve(blob);
+        } catch(e){
+          canvas.toBlob(blob => {
+            if(blob) resolve(blob); else reject(new Error('canvas toBlob failed'));
+          }, 'image/png');
+        }
+      })();
+    } catch(err){ reject(err); }
+  });
+}
+
+async function downloadReceiptPNG(){
+  if(!lastOrderForReceipt){ showToast('রিসিটের জন্য অর্ডারের তথ্য পাওয়া যায়নি'); return; }
+  const btn = document.getElementById('downloadReceiptBtn');
+  const originalText = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে…'; }
+  try{
+    if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
+    const blob = await buildReceiptBlob(lastOrderForReceipt);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (lastOrderForReceipt.orderId || 'receipt') + '.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  } catch(err){
+    showToast('রিসিট তৈরি করতে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = originalText; }
+  }
 }
 
 // অর্ডারের পর কার্ট এবং ক্যাশ পরিষ্কার করার ফাংশন
