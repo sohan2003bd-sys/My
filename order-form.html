@@ -1000,6 +1000,10 @@ function applyShopProfile(company){
 
   document.getElementById('bizName').textContent = name;
   document.title = 'অর্ডার করুন — ' + name;
+  // রিসিটে (PNG) ব্যবহারের জন্য শপের যোগাযোগ নম্বর ও লোগো মনে রাখা হচ্ছে — পেজের হেডারে যেটা
+  // দেখানো হচ্ছে, রিসিটেও ঠিক সেই একই নম্বর/লোগো ব্যবহার হবে।
+  shopContactPhone = phone;
+  shopLogoUrl = (company.logoUrl || '').trim();
 
   const track = document.getElementById('marqueeTrack');
   if(track){
@@ -1781,6 +1785,8 @@ function submitOrder(e){
 }
 
 let lastOrderForReceipt = null;
+let shopContactPhone = '';
+let shopLogoUrl = '';
 
 function populateSuccessScreen(order){
   lastOrderForReceipt = order;
@@ -1894,10 +1900,23 @@ function drawReceipt(ctx, order, opts){
   // ===== হেডার ব্যান্ড =====
   rect(0, 0, W, 96, C.plum900);
   const bizNameEl = document.getElementById('bizName');
+  const logoImg = opts.logoImg || null;
+  const logoSize = 42;
+  // লোগো থাকলে শপের নামের বামপাশে বসানো হয়, আর নাম/সাবটাইটেল সেই অনুযায়ী ডানে সরে যায়
+  const nameX = logoImg ? (mX + logoSize + 12) : mX;
+  if(logoImg && !dryRun){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(mX + logoSize/2, 14 + logoSize/2, logoSize/2, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(logoImg, mX, 14, logoSize, logoSize);
+    ctx.restore();
+  }
   setFont(700, 20, "'Hind Siliguri', sans-serif");
-  text(bizNameEl ? bizNameEl.textContent : 'SOHAN SHOP BD', mX, 34, {color:'#FFFFFF'});
+  text(bizNameEl ? bizNameEl.textContent : 'SOHAN SHOP BD', nameX, 34, {color:'#FFFFFF'});
   setFont(600, 11.5);
-  text('অর্ডার রিসিট', mX, 54, {color: C.gold});
+  text('অর্ডার রিসিট', nameX, 54, {color: C.gold});
   setFont(600, 11, "'IBM Plex Mono', monospace");
   text(order.orderId || '—', mX, 78, {color:'#FFFFFF'});
   setFont(500, 10.5);
@@ -1928,6 +1947,13 @@ function drawReceipt(ctx, order, opts){
 
   infoRow('ডেলিভারি এলাকা', order.deliveryArea);
   infoRow('পেমেন্ট মাধ্যম', order.paymentMethod);
+  if(order.paymentMethod === 'Cash on Delivery'){
+    // COD অর্ডারে "Cash on Delivery" এর পাশাপাশি বাড়তি একটা নির্দেশনাও আলাদাভাবে যোগ হচ্ছে —
+    // লেখাটা লম্বা তাই ঠিকানার মতো একাধিক লাইনে wrap করে দেখানো হয়
+    setFont(600, 12);
+    wrap('প্রোডাক্ট হাতে পাওয়ার পর দেখে টাকা পরিশোধ করবেন', cw).forEach(ln => { text(ln, mX, y, {color: C.plum900}); y += 16; });
+    y += 6;
+  }
   if(order.trxId) infoRow('TrxID', order.trxId);
   if(order.orderRef) infoRow('রেফারেন্স', order.orderRef);
 
@@ -1982,8 +2008,16 @@ function drawReceipt(ctx, order, opts){
   setFont(600, 11);
   text('কেনাকাটার জন্য ধন্যবাদ! 💛', mX, y, {color: C.goldDeep});
   y += 16;
+  if(shopContactPhone){
+    setFont(600, 10.5);
+    text('📞 যোগাযোগ: ' + shopContactPhone, mX, y, {color: C.plum900});
+    y += 17;
+  }
   setFont(500, 9.5);
-  text('এই রিসিটটি স্বয়ংক্রিয়ভাবে তৈরি — যেকোনো তথ্যের জন্য যোগাযোগ করুন।', mX, y, {color: C.muted});
+  text('এই রিসিটটি স্বয়ংক্রিয়ভাবে তৈরি করা হয়েছে।', mX, y, {color: C.muted});
+  y += 15;
+  setFont(500, 9);
+  text('N.B: প্রোডাক্ট হাতে পাওয়ার পর অর্ডার নাম্বার যাচাই করে নিন!', mX, y, {color: C.muted});
   y += 20;
 
   return Math.ceil(y);
@@ -2091,49 +2125,73 @@ async function encodeIndexedPNG(imageData, width, height){
   return new Blob([out], {type:'image/png'});
 }
 
-function buildReceiptBlob(order){
-  return new Promise((resolve, reject) => {
-    try{
-      const W = 440;
-      // রিসিটের ছবি এই স্কেলে (বড় রেজোলিউশনে) আঁকা হয় — এতে লেখা আরও ক্রিস্প/স্পষ্ট হয় এবং
-      // ফাইল সাইজও একটু বড় (~৮০ KB এর কাছাকাছি) থাকে। drawReceipt() নিজে অপরিবর্তিত —
-      // পুরো ক্যানভাসটাই বড় করে আঁকা হচ্ছে।
-      const SCALE = 3.5;
-
-      // ধাপ ১: শুধু মাপার জন্য একটি অস্থায়ী ক্যানভাস — এখান থেকে মোট উচ্চতা বের করা হয়
-      const measureCanvas = document.createElement('canvas');
-      measureCanvas.width = W;
-      measureCanvas.height = 10;
-      const measureCtx = measureCanvas.getContext('2d');
-      const totalHeight = drawReceipt(measureCtx, order, {dryRun:true, width:W}) + 16;
-
-      // ধাপ ২: ঠিক প্রয়োজনীয় উচ্চতায় (SCALE গুণ বড়) আসল ক্যানভাস বানিয়ে আঁকা হচ্ছে
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(W * SCALE);
-      canvas.height = Math.round(totalHeight * SCALE);
-      const ctx = canvas.getContext('2d');
-      ctx.scale(SCALE, SCALE);
-      ctx.fillStyle = '#FAFBF3';
-      ctx.fillRect(0, 0, W, totalHeight);
-      drawReceipt(ctx, order, {dryRun:false, width:W});
-
-      (async () => {
-        // আগে ছোট ইনডেক্সড PNG বানানোর চেষ্টা (~৮০ KB-এর কাছাকাছি) — কোনো কারণে ব্যর্থ
-        // হলে (পুরনো ব্রাউজার, ২৫৬-এর বেশি রং ইত্যাদি) সাধারণ PNG এক্সপোর্টে ফিরে যাওয়া হয়,
-        // যাতে ডাউনলোড বাটন সবসময় কাজ করে।
-        try{
-          if(typeof CompressionStream === 'undefined') throw new Error('CompressionStream unsupported');
-          const imgData = quantizeImageData(ctx, canvas.width, canvas.height, 16);
-          const blob = await encodeIndexedPNG(imgData, canvas.width, canvas.height);
-          resolve(blob);
-        } catch(e){
-          canvas.toBlob(blob => {
-            if(blob) resolve(blob); else reject(new Error('canvas toBlob failed'));
-          }, 'image/png');
-        }
-      })();
-    } catch(err){ reject(err); }
+// শপের লোগো (যদি সেট করা থাকে) রিসিটে বসানোর জন্য নিরাপদভাবে লোড করা হয়। ছবিটা অন্য ডোমেইন
+// থেকে আসতে পারে বলে CORS সমস্যা হতে পারে — লোড হলেও ক্যানভাসে আঁকার পর সেই ক্যানভাস থেকে
+// পিক্সেল পড়া (PNG বানানোর জন্য যেটা লাগবেই) ব্লক হয়ে যেতে পারে। তাই একটা আলাদা ছোট টেস্ট
+// ক্যানভাসে আগে যাচাই করে নেওয়া হয় — নিরাপদ না হলে বা লোড ব্যর্থ/দেরি হলে লোগো ছাড়াই রিসিট
+// বানানো হয় (শপের নাম আগের জায়গাতেই থাকে), রিসিট ডাউনলোড কখনো আটকায় না।
+function loadSafeImage(url, timeoutMs){
+  return new Promise(resolve => {
+    if(!url){ resolve(null); return; }
+    let done = false;
+    const finish = (result) => { if(!done){ done = true; clearTimeout(timer); resolve(result); } };
+    const timer = setTimeout(() => finish(null), timeoutMs || 4000);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try{
+        const test = document.createElement('canvas');
+        test.width = 2; test.height = 2;
+        const tctx = test.getContext('2d');
+        tctx.drawImage(img, 0, 0, 2, 2);
+        tctx.getImageData(0, 0, 1, 1); // ব্যর্থ হলেই বোঝা যায় ছবিটা এই ব্রাউজারে নিরাপদে ব্যবহারযোগ্য নয়
+        finish(img);
+      } catch(e){ finish(null); }
+    };
+    img.onerror = () => finish(null);
+    img.src = url;
   });
+}
+
+async function buildReceiptBlob(order){
+  const W = 440;
+  // রিসিটের ছবি এই স্কেলে (বড় রেজোলিউশনে) আঁকা হয় — এতে লেখা আরও ক্রিস্প/স্পষ্ট হয় এবং
+  // ফাইল সাইজও একটু বড় (~৮০ KB এর কাছাকাছি) থাকে। drawReceipt() নিজে অপরিবর্তিত —
+  // পুরো ক্যানভাসটাই বড় করে আঁকা হচ্ছে।
+  const SCALE = 3.5;
+  const logoImg = await loadSafeImage(shopLogoUrl, 4000);
+
+  // ধাপ ১: শুধু মাপার জন্য একটি অস্থায়ী ক্যানভাস — এখান থেকে মোট উচ্চতা বের করা হয়
+  const measureCanvas = document.createElement('canvas');
+  measureCanvas.width = W;
+  measureCanvas.height = 10;
+  const measureCtx = measureCanvas.getContext('2d');
+  const totalHeight = drawReceipt(measureCtx, order, {dryRun:true, width:W, logoImg}) + 16;
+
+  // ধাপ ২: ঠিক প্রয়োজনীয় উচ্চতায় (SCALE গুণ বড়) আসল ক্যানভাস বানিয়ে আঁকা হচ্ছে
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(W * SCALE);
+  canvas.height = Math.round(totalHeight * SCALE);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+  ctx.fillStyle = '#FAFBF3';
+  ctx.fillRect(0, 0, W, totalHeight);
+  drawReceipt(ctx, order, {dryRun:false, width:W, logoImg});
+
+  // আগে ছোট ইনডেক্সড PNG বানানোর চেষ্টা (~৮০ KB-এর কাছাকাছি) — কোনো কারণে ব্যর্থ
+  // হলে (পুরনো ব্রাউজার, ২৫৬-এর বেশি রং, বা লোগো-জনিত taint ইত্যাদি) সাধারণ PNG
+  // এক্সপোর্টে ফিরে যাওয়া হয়, যাতে ডাউনলোড বাটন সবসময় কাজ করে।
+  try{
+    if(typeof CompressionStream === 'undefined') throw new Error('CompressionStream unsupported');
+    const imgData = quantizeImageData(ctx, canvas.width, canvas.height, 16);
+    return await encodeIndexedPNG(imgData, canvas.width, canvas.height);
+  } catch(e){
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        if(blob) resolve(blob); else reject(new Error('canvas toBlob failed'));
+      }, 'image/png');
+    });
+  }
 }
 
 async function downloadReceiptPNG(){

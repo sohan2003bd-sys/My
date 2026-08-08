@@ -176,7 +176,6 @@
     padding:16px 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
     box-shadow: var(--shadow-lift);
-    position:relative;
   }
   .topbar::after{
     content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px;
@@ -6489,6 +6488,33 @@ let driveTokenExpiresAt = 0;
 let driveAutoBackupTimer = null;
 let driveBackupInFlight = false;
 
+// আসল সমস্যাটা এখানে ছিল: driveAccessToken শুধু মেমরিতে (একটা সাধারণ ভেরিয়েবলে) রাখা হতো,
+// যেটা পেজ রিলোড/রিফ্রেশ করা মাত্রই হারিয়ে যায় — যদিও Google-এর দেওয়া টোকেনটা তখনো (সাধারণত
+// ৫০ মিনিট থেকে ১ ঘণ্টা) বৈধ থাকে। ফলে Settings > Data Backup-এ আবার ঢুকলেই অ্যাপ ভাবত কোনো
+// সংযোগই নেই, আর নতুন করে Google-এর অ্যাকাউন্ট বাছাইয়ের পপ-আপ চালু হয়ে যেত — যদিও ইউজার আগেই
+// কানেক্ট করে রেখেছিল। এখন টোকেনটা sessionStorage-এ (ব্রাউজার/ট্যাব বন্ধ করলেই এমনিতে মুছে যায়,
+// তাই নিরাপদ) সেভ রাখা হচ্ছে, যাতে একই ব্রাউজার সেশনে পেজ রিলোড হলেও সংযোগ মনে থাকে এবং
+// মেয়াদ না ফুরানো পর্যন্ত বারবার অ্যাকাউন্ট বাছাই করতে না হয়।
+const DRIVE_TOKEN_SESSION_KEY = 'myshop_drive_token_v1';
+(function restoreDriveTokenFromSession(){
+  try{
+    const cached = JSON.parse(sessionStorage.getItem(DRIVE_TOKEN_SESSION_KEY) || 'null');
+    if(cached && cached.token && cached.expiresAt && Date.now() < cached.expiresAt - 30000){
+      driveAccessToken = cached.token;
+      driveTokenExpiresAt = cached.expiresAt;
+    }
+  }catch(e){}
+})();
+function persistDriveToken(){
+  try{
+    if(driveAccessToken && driveTokenExpiresAt){
+      sessionStorage.setItem(DRIVE_TOKEN_SESSION_KEY, JSON.stringify({ token: driveAccessToken, expiresAt: driveTokenExpiresAt }));
+    } else {
+      sessionStorage.removeItem(DRIVE_TOKEN_SESSION_KEY);
+    }
+  }catch(e){}
+}
+
 function loadDriveMeta(){
   try{ return JSON.parse(localStorage.getItem(DRIVE_META_KEY)) || {}; }catch(e){ return {}; }
 }
@@ -6536,6 +6562,7 @@ function requestDriveToken(promptMode, onDone){
     if(resp && resp.access_token){
       driveAccessToken = resp.access_token;
       driveTokenExpiresAt = Date.now() + (resp.expires_in ? resp.expires_in * 1000 : 3000 * 1000);
+      persistDriveToken();
       finish(true);
     } else {
       finish(false, resp && resp.error);
@@ -6680,10 +6707,29 @@ function backupToDriveNow(isAuto){
   });
 }
 
+// Drive থেকে restore করার সময় ব্যবহৃত হয় — id মিলিয়ে দুইটা লিস্ট merge করে, ডিভাইসের কোনো
+// এন্ট্রি বাদ না দিয়ে (একই id দুই জায়গায় থাকলে ডিভাইসের ভার্সনটাই রাখা হয়, backup শুধু
+// অনুপস্থিত এন্ট্রিগুলো যোগ করে)।
+function mergeRecordsById(localArr, backupArr){
+  const map = new Map();
+  (backupArr || []).forEach(item => { if(item && item.id != null) map.set(item.id, item); });
+  (localArr || []).forEach(item => { if(item && item.id != null) map.set(item.id, item); }); // ডিভাইসের ভার্সন সবসময় জেতে
+  return Array.from(map.values());
+}
+// merge করার পর idCounter যেন মিশ্রিত লিস্টগুলোর সবচেয়ে বড় id-এর চেয়েও এগিয়ে থাকে —
+// নাহলে নতুন এন্ট্রি যোগ করার সময় id সংঘর্ষ হতে পারে।
+function computeSafeIdCounter(mergedArrays, backupIdCounter, localIdCounter){
+  let maxId = Math.max(Number(backupIdCounter) || 0, Number(localIdCounter) || 0);
+  mergedArrays.forEach(arr => (arr || []).forEach(item => {
+    if(item && typeof item.id === 'number' && item.id > maxId) maxId = item.id;
+  }));
+  return maxId + 1;
+}
+
 function restoreFromDrive(){
   const meta = loadDriveMeta();
   if(!meta.connected){ showToast('আগে Drive সংযোগ করুন'); return; }
-  if(!confirm('এটি এই ডিভাইসের বর্তমান সব ডাটা Drive-এর ব্যাকআপ দিয়ে প্রতিস্থাপন করবে। এগোতে চান?')) return;
+  if(!confirm('এটি Drive-এর ব্যাকআপ থেকে ডাটা এই ডিভাইসে যোগ করবে। ডিভাইসে থাকা বিদ্যমান কোনো ডাটা মুছে যাবে না। এগোতে চান?')) return;
   getValidDriveToken((ok) => {
     if(!ok){ showToast('Drive সংযোগ যাচাই করা যায়নি — আবার চেষ্টা করুন'); return; }
     const doFetch = (fileId) => {
@@ -6693,14 +6739,21 @@ function restoreFromDrive(){
         Object.assign(state.company, d.company || {});
         Object.assign(state.settings, d.settings || {});
         Object.assign(state.security, d.security || {});
-        state.sales = d.sales || [];
-        state.purchases = d.purchases || [];
-        state.expenses = d.expenses || [];
-        state.invItems = d.invItems || [];
-        idCounter = d.idCounter || 1;
+        // আগে এখানে state.sales = d.sales (এবং purchases/expenses/invItems-ও একইভাবে) দিয়ে
+        // পুরো লিস্টটাই Drive-এর ব্যাকআপ দিয়ে বদলে ফেলা হতো — তাতে এই ডিভাইসে যোগ করা কিন্তু
+        // এখনো Drive-এ ব্যাকআপ হয়নি এমন এন্ট্রি (যেমন সবশেষ ব্যাকআপের পরে করা বিক্রি/খরচ) পুরোপুরি
+        // মুছে যেত। এখন id মিলিয়ে merge করা হয় — Drive-এর যেসব এন্ট্রি এই ডিভাইসে নেই সেগুলো যোগ
+        // হয়, কিন্তু ডিভাইসে থাকা কোনো এন্ট্রি কখনো মোছা হয় না (একই id থাকলে ডিভাইসের ভার্সনটাই থাকে)।
+        state.sales = mergeRecordsById(state.sales, d.sales);
+        state.purchases = mergeRecordsById(state.purchases, d.purchases);
+        state.expenses = mergeRecordsById(state.expenses, d.expenses);
+        state.invItems = mergeRecordsById(state.invItems, d.invItems);
+        // idCounter-ও এখন সবচেয়ে বড় id-এর চেয়ে নিরাপদভাবে এগিয়ে রাখা হয় — নাহলে Drive-এর পুরনো
+        // (ছোট) idCounter বসে গিয়ে ভবিষ্যতে নতুন এন্ট্রির id বিদ্যমান কোনো এন্ট্রির সাথে সংঘর্ষ করতে পারত।
+        idCounter = computeSafeIdCounter([state.sales, state.purchases, state.expenses, state.invItems], d.idCounter, idCounter);
         saveState();
         renderAll();
-        showToast('Drive থেকে ডাটা ফিরিয়ে আনা হয়েছে');
+        showToast('Drive থেকে ডাটা যোগ করা হয়েছে — ডিভাইসের বিদ্যমান কোনো ডাটা মোছা হয়নি');
       }).catch(() => showToast('Restore ব্যর্থ হয়েছে'));
     };
     if(meta.fileId){
@@ -6722,6 +6775,7 @@ function disconnectDrive(){
   }
   driveAccessToken = null;
   driveTokenExpiresAt = 0;
+  persistDriveToken();
   clearTimeout(driveAutoBackupTimer);
   saveDriveMeta({});
   renderDriveSettingsUI();
