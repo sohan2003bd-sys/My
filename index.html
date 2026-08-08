@@ -1905,6 +1905,15 @@
         <div class="helper-text" style="margin-top:0;">Add the products customers can order from your landing page, including a photo and a video link. Saving here pushes the list live to your shop link above.</div>
         <div id="productsListBox" style="margin-top:10px;"></div>
 
+        <div style="margin-top:14px; padding:10px 12px; border:1px dashed var(--gold); border-radius:12px;">
+          <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">প্রোডাক্ট ক্যাটেগরি</label>
+          <div class="chip-row" id="chipsProductCat"></div>
+          <div class="chip-add">
+            <input type="text" id="newProductCat" placeholder="নতুন ক্যাটেগরি যোগ করুন">
+            <button onclick="addCategory('product')">Add</button>
+          </div>
+        </div>
+
         <div id="productFormTitle" style="font-size:13px; font-weight:600; margin:16px 0 8px; color:var(--green-800);">Add a Product</div>
         <div class="row2">
           <div class="field" style="margin-bottom:0;">
@@ -1921,11 +1930,15 @@
             <label>Original Price (optional)</label>
             <input type="number" id="newProductOriginalPrice" placeholder="e.g. 6499 — shows as a discount badge" step="0.01">
           </div>
-          <div class="field" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:flex-end;">
-            <label style="display:flex; align-items:center; gap:8px; margin-bottom:9px;">
-              <input type="checkbox" id="newProductHotDeal" style="width:auto;"> Mark as Hot Deal
-            </label>
+          <div class="field" style="margin-bottom:0;">
+            <label>Category</label>
+            <select id="newProductCategory"></select>
           </div>
+        </div>
+        <div class="field" style="margin-bottom:0; display:flex; align-items:center;">
+          <label style="display:flex; align-items:center; gap:8px; margin-bottom:0;">
+            <input type="checkbox" id="newProductHotDeal" style="width:auto;"> Mark as Hot Deal
+          </label>
         </div>
         <div class="field">
           <label>Description (optional)</label>
@@ -3894,8 +3907,9 @@ const state = {
     purchaseCategories: ["Raw Material","Stock/Goods","Packaging","Equipment","Other Purchase"],
     expenseCategories: ["Shop Rent","Salary","Electricity Bill","Transport","Marketing","Internet/Phone","Maintenance","Office Expense","Other Expense"],
     paymentMethods: ["Cash","Bank","bKash","Nagad","Rocket","Card","Cheque"],
-    products: [], // [{id, name, price}] — shown on the landing page
+    products: [], // [{id, name, price, category}] — shown on the landing page
     videos: [], // [{id, caption, videoUrl}] — general info videos, not products (no price)
+    productCategories: ["শিশুদের খেলনা","লাইফস্টাইল পণ্য","পোশাক","অন্যান্য"], // Landing Page products: category list
     invCategories: ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"], // Inventory: product categories
     dragMode: false, // Light mode with colorful theme
     sheetSyncUrl: "", // Google Apps Script Web App URL — Sales/Purchase/Expense auto-sync to Google Sheet
@@ -4213,6 +4227,7 @@ function loadShopData(uid){
     if(!state.settings.products) state.settings.products = [];
     if(!state.settings.videos) state.settings.videos = [];
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories = ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"];
+    if(!state.settings.productCategories || !state.settings.productCategories.length) state.settings.productCategories = ["শিশুদের খেলনা","লাইফস্টাইল পণ্য","পোশাক","অন্যান্য"];
     saveState(true); // caches locally too — skip Drive auto-backup schedule; this fires on every app open, not on real edits
   });
 }
@@ -5424,6 +5439,7 @@ function deleteTxn(type, id){
     list.splice(idx,1);
     saveState();
     syncToSheet(type, 'delete', { id: t.id });
+    if(type === 'sales' && t.phone) syncCustomerToSheet(t.phone);
     showToast('Entry deleted');
     renderList(type);
     renderDashboard();
@@ -5500,6 +5516,7 @@ function saveTxn(e){
     }
     showToast(fraudWarning || 'Entry updated');
     syncToSheet(type, 'update', t);
+    if(type === 'sales' && t.phone) syncCustomerToSheet(t.phone);
   } else {
     payload.id = idCounter++;
     list.push(payload);
@@ -5509,6 +5526,7 @@ function saveTxn(e){
     }
     showToast(fraudWarning || 'Entry saved');
     syncToSheet(type, 'create', payload);
+    if(type === 'sales' && payload.phone) syncCustomerToSheet(payload.phone);
   }
   saveState();
   closeSheet();
@@ -6148,6 +6166,8 @@ function renderSettings(){
   renderChips('chipsExpenseCat', state.settings.expenseCategories, 'expense');
   renderChips('chipsPayment', state.settings.paymentMethods, 'payment');
   renderChips('chipsInvCat', state.settings.invCategories, 'inv');
+  renderChips('chipsProductCat', state.settings.productCategories, 'product');
+  populateProductCategoryOptions();
   renderProductsSettings();
   renderVideosSettings();
   updateNotifyStatus();
@@ -6206,7 +6226,7 @@ function renderProductsSettings(){
         ${p.imageUrl ? `<img src="${escapeHTML(p.imageUrl)}" alt="" loading="lazy" decoding="async" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex:none;" onerror="this.style.display='none'">` : `<div style="width:36px;height:36px;border-radius:8px;background:var(--paper-deep);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;">🛍️</div>`}
         <div style="min-width:0;">
           <div class="k" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escapeHTML(p.name)}${p.videoUrl ? ' 🎬' : ''}${p.variantType === 'clothing' ? ' 👕' : ''}</div>
-          <div class="v">${fmtMoney(p.price)}</div>
+          <div class="v">${fmtMoney(p.price)}${p.category ? ` · ${escapeHTML(p.category)}` : ''}</div>
         </div>
       </div>
       <div style="display:flex; gap:6px;">
@@ -6214,6 +6234,17 @@ function renderProductsSettings(){
         <button class="mini-btn" onclick="removeProduct(${i})" aria-label="Remove">✕</button>
       </div>
     </div>`).join('');
+}
+// প্রোডাক্ট ফর্মের ক্যাটেগরি ড্রপডাউন — state.settings.productCategories থেকে অপশন বসায়,
+// ক্যাটেগরি যোগ/মুছার পর বা সেটিংস রিরেন্ডার হলে এটাও আবার কল হয় যাতে তালিকা আপ-টু-ডেট থাকে
+function populateProductCategoryOptions(){
+  const sel = document.getElementById('newProductCategory');
+  if(!sel) return;
+  const current = sel.value;
+  const cats = state.settings.productCategories || [];
+  sel.innerHTML = '<option value="">— কোনো ক্যাটেগরি না —</option>' +
+    cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  if(cats.includes(current)) sel.value = current;
 }
 let editingProductIdx = null;
 // পোশাক-জাতীয় পণ্যের জন্য অস্থায়ী (ফর্ম-এ থাকা অবস্থায়) ডিজাইন ও সাইজ তালিকা
@@ -6288,6 +6319,8 @@ function editProduct(idx){
   document.getElementById('newProductName').value = p.name || '';
   document.getElementById('newProductPrice').value = p.price || '';
   document.getElementById('newProductOriginalPrice').value = p.originalPrice || '';
+  populateProductCategoryOptions();
+  document.getElementById('newProductCategory').value = p.category || '';
   document.getElementById('newProductHotDeal').checked = !!p.hotDeal;
   document.getElementById('newProductDesc').value = p.description || '';
   document.getElementById('newProductImage').value = p.imageUrl || '';
@@ -6310,6 +6343,7 @@ function cancelEditProduct(){
   document.getElementById('newProductName').value = '';
   document.getElementById('newProductPrice').value = '';
   document.getElementById('newProductOriginalPrice').value = '';
+  document.getElementById('newProductCategory').value = '';
   document.getElementById('newProductHotDeal').checked = false;
   document.getElementById('newProductDesc').value = '';
   document.getElementById('newProductImage').value = '';
@@ -6912,10 +6946,10 @@ function renderChips(elId, arr, key){
 function keyToArray(key){
   return { sales: state.settings.salesCategories, purchase: state.settings.purchaseCategories,
            expense: state.settings.expenseCategories, payment: state.settings.paymentMethods,
-           inv: state.settings.invCategories }[key];
+           inv: state.settings.invCategories, product: state.settings.productCategories }[key];
 }
 function addCategory(key){
-  const inputIdMap = { sales:'newSalesCat', purchase:'newPurchaseCat', expense:'newExpenseCat', payment:'newPayment', inv:'newInvCat' };
+  const inputIdMap = { sales:'newSalesCat', purchase:'newPurchaseCat', expense:'newExpenseCat', payment:'newPayment', inv:'newInvCat', product:'newProductCat' };
   const input = document.getElementById(inputIdMap[key]);
   const val = input.value.trim();
   if(!val) return;
@@ -6926,11 +6960,13 @@ function addCategory(key){
   saveState();
   renderSettings();
   showToast('Added');
+  if(key === 'product') populateProductCategoryOptions();
 }
 function removeCategory(key, idx){
   keyToArray(key).splice(idx,1);
   saveState();
   renderSettings();
+  if(key === 'product') populateProductCategoryOptions();
 }
 function testTelegramNotification(){
   const token = document.getElementById('settingsTelegramBotToken').value.trim();
@@ -7015,11 +7051,33 @@ function syncToSheet(type, action, payload){
     console.warn('Sheet sync failed (app data is safe, this only affects the Sheet copy):', err);
   });
 }
+/* Sales এন্ট্রি create/update/delete হলে এই ফাংশন সেই কাস্টমারের (ফোন নম্বর ধরে
+   শনাক্ত) সব সেলস স্ক্যান করে Total Orders, Total Spent, Last Order Date হিসাব
+   করে Customers শিটে 'customer' টাইপ দিয়ে upsert পাঠায়। ফোন নম্বর না থাকলে
+   কাস্টমার শনাক্ত করার উপায় নেই বলে স্কিপ করা হয়। */
+function syncCustomerToSheet(phone){
+  const cleanPhone = (phone || '').trim();
+  if(!cleanPhone) return;
+  const orders = state.sales.filter(s => (s.phone || '').trim() === cleanPhone);
+  if(orders.length === 0) return;
+  const sorted = [...orders].sort((a,b) => new Date(b.date) - new Date(a.date));
+  const latest = sorted[0];
+  syncToSheet('customer', 'upsert', {
+    id: cleanPhone,
+    name: latest.party || '',
+    phone: cleanPhone,
+    address: latest.address || '',
+    totalOrders: orders.length,
+    totalSpent: orders.reduce((sum, s) => sum + (s.total || 0), 0),
+    lastOrderDate: latest.date || ''
+  });
+}
 /* ---------------- PRODUCTS CATALOG ---------------- */
 function saveProduct(){
   const name = document.getElementById('newProductName').value.trim();
   const price = parseFloat(document.getElementById('newProductPrice').value) || 0;
   const originalPrice = parseFloat(document.getElementById('newProductOriginalPrice').value) || 0;
+  const category = document.getElementById('newProductCategory').value;
   const hotDeal = document.getElementById('newProductHotDeal').checked;
   const description = document.getElementById('newProductDesc').value.trim();
   let imageUrl = document.getElementById('newProductImage').value.trim();
@@ -7032,16 +7090,19 @@ function saveProduct(){
   const designs = isClothing ? clothingDesignsTemp.slice() : undefined;
   const sizes = isClothing ? clothingSizesTemp.slice() : undefined;
   if(isClothing) imageUrl = clothingDesignsTemp[0].image; // কার্ড থাম্বনেইলের জন্য প্রথম ডিজাইনের ছবি ব্যবহার হবে
-  const fields = { name, price, originalPrice, hotDeal, description, imageUrl, videoUrl, variantType, designs, sizes };
+  const fields = { name, price, originalPrice, category, hotDeal, description, imageUrl, videoUrl, variantType, designs, sizes };
   if(editingProductIdx !== null){
     const p = state.settings.products[editingProductIdx];
     // পুরোনো ডিজাইন/সাইজ ডেটা রয়ে যাওয়া ঠেকাতে আগে মুছে তারপর নতুন করে বসানো হলো
     delete p.variantType; delete p.designs; delete p.sizes;
     Object.assign(p, fields);
     showToast('Product updated');
+    syncToSheet('product', 'update', productSyncPayload(p));
   } else {
-    state.settings.products.push(Object.assign({ id: 'p' + Date.now() + Math.floor(Math.random()*1000) }, fields));
+    const newProduct = Object.assign({ id: 'p' + Date.now() + Math.floor(Math.random()*1000) }, fields);
+    state.settings.products.push(newProduct);
     showToast('Product added');
+    syncToSheet('product', 'create', productSyncPayload(newProduct));
   }
   cancelEditProduct();
   saveState();
@@ -7050,16 +7111,35 @@ function saveProduct(){
 }
 function removeProduct(idx){
   if(editingProductIdx === idx) cancelEditProduct();
+  const removedId = state.settings.products[idx] && state.settings.products[idx].id;
   state.settings.products.splice(idx, 1);
   saveState();
   renderProductsSettings();
   pushProductsToFirebase();
+  if(removedId) syncToSheet('product', 'delete', { id: removedId });
+}
+/* Product অবজেক্ট থেকে Sheet-এ পাঠানোর মতো ফ্ল্যাট ডেটা বানায় — designs/sizes অ্যারে
+   Sheet-এ শুধু বেসিক তথ্য যায়, designs/sizes (JSON) বাদ দেওয়া হয়েছে যেহেতু
+   ব্যাকআপ/রিকভারির দরকার নেই — Firebase-ই এগুলোর একমাত্র সোর্স থাকবে। */
+function productSyncPayload(p){
+  return {
+    id: p.id,
+    name: p.name || '',
+    price: p.price || 0,
+    originalPrice: p.originalPrice || 0,
+    hotDeal: !!p.hotDeal,
+    description: p.description || '',
+    imageUrl: p.imageUrl || '',
+    videoUrl: p.videoUrl || '',
+    variantType: p.variantType || '',
+    category: p.category || ''
+  };
 }
 function pushProductsToFirebase(){
   if(!fbDb || !currentUid) return;
   const obj = {};
   state.settings.products.forEach(p => {
-    obj[p.id] = { name: p.name, price: p.price, originalPrice: p.originalPrice || 0, hotDeal: !!p.hotDeal, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
+    obj[p.id] = { name: p.name, price: p.price, originalPrice: p.originalPrice || 0, category: p.category || '', hotDeal: !!p.hotDeal, description: p.description || '', imageUrl: p.imageUrl || '', videoUrl: p.videoUrl || '' };
     if(p.variantType === 'clothing' && Array.isArray(p.designs) && p.designs.length){
       obj[p.id].variantType = 'clothing';
       obj[p.id].designs = p.designs.map(d => ({ image: d.image || '', label: d.label || '' }));
