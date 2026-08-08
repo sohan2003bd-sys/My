@@ -943,6 +943,15 @@ let catalogRenderToken = 0;
 let TELEGRAM_BOT_TOKEN = '';
 let TELEGRAM_CHAT_ID = '';
 
+// রিসিটে (PNG) ব্যবহারের জন্য শপের যোগাযোগ নম্বর ও লোগো — applyShopProfile() এগুলো ভরে দেয়।
+// এই দুটো এখানেই (readCache/instant-render ব্লকের আগে) ডিক্লেয়ার করা জরুরি, কারণ ক্যাশ থেকে
+// তাৎক্ষণিক রেন্ডার (নিচে) applyShopProfile()-কে সাথে সাথেই কল করতে পারে (refresh-এর সময়) —
+// এই দুটো নিচে (আগে যেখানে ছিল) থাকলে সেই early call-এ "Cannot access before initialization"
+// এরর হয়ে পুরো স্ক্রিপ্ট থেমে যেত, ফলে Firebase init/DOMContentLoaded আর কখনো চলত না এবং
+// পেজ চিরস্থায়ীভাবে "লোড হচ্ছে…" অবস্থায় আটকে থাকত — এটাই ছিল রিফ্রেশে না-খোলার আসল কারণ।
+let shopContactPhone = '';
+let shopLogoUrl = '';
+
 /* ---------------- তাৎক্ষণিক ক্যাশ (Instant open) ----------------
    লিংকে ক্লিক করার সাথে সাথেই পেজ যেন খালি/স্কেলিটন অবস্থায় বসে না থেকে সরাসরি পণ্য দেখাতে
    পারে, তাই আগের বার Firebase থেকে পাওয়া পণ্য/শপ-প্রোফাইল ব্রাউজারের localStorage-এ রাখা হয়।
@@ -1785,8 +1794,6 @@ function submitOrder(e){
 }
 
 let lastOrderForReceipt = null;
-let shopContactPhone = '';
-let shopLogoUrl = '';
 
 function populateSuccessScreen(order){
   lastOrderForReceipt = order;
