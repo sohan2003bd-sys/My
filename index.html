@@ -6,11 +6,12 @@
 <meta name="theme-color" content="#B8863E">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MY SHOP">
+<meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icon-192.png">
-<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-512.png">
+<link rel="icon" href="./icon-512.png">
 <title>MY SHOP — Business Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,6 +107,7 @@
     touch-action: pan-x pan-y;
     -ms-touch-action: pan-x pan-y;
     overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
   /* লেখা সিলেক্ট বা কপি করা যাবে না — পুরো অ্যাপ জুড়ে */
   html,body,*{
@@ -175,7 +177,7 @@
     position:sticky; top:0; z-index:30;
     background: var(--gold);
     color:var(--ink);
-    padding:16px 18px 14px;
+    padding:calc(16px + env(safe-area-inset-top)) 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
     box-shadow: var(--shadow-lift);
   }
@@ -1136,6 +1138,39 @@
     opacity:0; transition:all .25s ease; box-shadow:var(--shadow); white-space:nowrap;
   }
   .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  /* ---------- Install banner (browser-tab only — hidden once installed/standalone) ---------- */
+  #installBanner{
+    position:fixed; left:12px; right:12px;
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    z-index:9500;
+    transform:translateY(120%); opacity:0;
+    transition:transform .35s cubic-bezier(.34,1.2,.64,1), opacity .3s ease;
+    max-width:496px; margin:0 auto;
+  }
+  #installBanner.visible{ transform:translateY(0); opacity:1; }
+  .install-banner-inner{
+    display:flex; align-items:center; gap:12px;
+    background:var(--green-900); color:#F5EFDD;
+    border-radius:18px; padding:13px 12px 13px 16px;
+    box-shadow:0 16px 36px rgba(6,23,19,0.4);
+    border:1px solid rgba(217,175,107,0.24);
+  }
+  .install-banner-icon{ font-size:26px; line-height:1; flex:none; }
+  .install-banner-text{ display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
+  .install-banner-text strong{ font-size:13.5px; font-weight:700; }
+  .install-banner-text span{ font-size:11.5px; color:rgba(245,239,221,0.7); line-height:1.4; }
+  .install-banner-btn{
+    flex:none; background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:#2A1D08; border:none; border-radius:12px; padding:9px 14px;
+    font-size:12.5px; font-weight:700; white-space:nowrap;
+  }
+  .install-banner-btn:active{ transform:scale(0.96); }
+  .install-banner-close{
+    flex:none; width:26px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,0.08); border:none; color:rgba(245,239,221,0.6);
+    font-size:12px; display:flex; align-items:center; justify-content:center;
+  }
 
   /* ---------- Pull-to-refresh indicator ---------- */
   #ptrIndicator{
@@ -4292,6 +4327,7 @@ function showAuthScreen(){
   document.getElementById('app').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
+  setThemeColor('#0B2721'); // অনবোর্ডিং/অথ স্ক্রিনের গাঢ় সবুজ ব্যাকগ্রাউন্ডের সাথে ম্যাচ
   const hasLocalData = !!localStorage.getItem(STORAGE_KEY);
   document.getElementById('migrateNotice').style.display = hasLocalData ? 'block' : 'none';
 
@@ -4393,6 +4429,7 @@ function showVerifyEmailScreen(email){
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('onboardingScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'flex';
+  setThemeColor('#0B2721'); // ভেরিফিকেশন স্ক্রিনের গাঢ় সবুজ ব্যাকগ্রাউন্ডের সাথে ম্যাচ
   document.getElementById('verifyEmailAddress').textContent = email || 'আপনার ইমেইলে';
   const otpInput = document.getElementById('otpCodeInput');
   if(otpInput){
@@ -4823,6 +4860,18 @@ document.getElementById('authTabs').addEventListener('click', (e)=>{
 
 /* ---------------- APP BOOT ---------------- */
 let bootFallbackTimer = null;
+// স্ট্যাটাস বার (Android Chrome/PWA) সবসময় স্ক্রিনের নিজস্ব ব্যাকগ্রাউন্ড কালারের সাথে
+// মিলিয়ে রাখা হয় — নাহলে অ্যাপের ভেতরের গাঢ় সবুজ লক/অনবোর্ডিং স্ক্রিনের উপরে হলুদ স্ট্যাটাস
+// বার থেকে গিয়ে সেটা ব্রাউজার-ট্যাবের মতো লাগে। এই মিসম্যাচটাই সবচেয়ে বড় "নেটিভ না" সিগনাল।
+function setThemeColor(hex){
+  let meta = document.querySelector('meta[name="theme-color"]');
+  if(!meta){
+    meta = document.createElement('meta');
+    meta.setAttribute('name', 'theme-color');
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', hex);
+}
 function bootApp(){
   loadState(); // warm local cache immediately so onboarding can detect existing local data
   applyBrandMark(); // so the splash screen shows the right logo/initial right away
@@ -4873,6 +4922,7 @@ function enterApp(){
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  setThemeColor('#B8863E'); // মূল অ্যাপের গোল্ড টপবারের সাথে ম্যাচ
   markTabUnlocked();
   renderAll();
   listenOrders();
@@ -4964,6 +5014,7 @@ function showLockScreen(){
   document.getElementById('onboardingScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'flex';
+  setThemeColor('#0B2721'); // লক স্ক্রিনের গাঢ় সবুজ ব্যাকগ্রাউন্ডের সাথে ম্যাচ
   document.getElementById('lockCoName').textContent = state.company.name;
   applyBrandMark();
   document.getElementById('lockError').style.display = 'none';
@@ -6162,6 +6213,9 @@ function applyDragMode(enabled){
   } else {
     body.classList.remove('light-mode');
   }
+  if(document.getElementById('app').style.display !== 'none'){
+    setThemeColor(enabled ? '#FFFFFF' : '#B8863E'); // টপবার/বটমনেভ কালারের সাথে স্ট্যাটাস বার মিলিয়ে রাখা
+  }
   
   showToast(enabled ? '🌗 Light Mode Activated' : '🌙 Dark Mode Activated');
 }
@@ -6169,6 +6223,7 @@ function applyDragMode(enabled){
 function initThemeMode(){
   if(state.settings.dragMode){
     document.body.classList.add('light-mode');
+    setThemeColor('#FFFFFF');
   }
 }
 
@@ -8046,6 +8101,104 @@ if(document.readyState === 'loading'){
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   }
+</script>
+
+<script>
+  /* ===================== ব্রাউজার ট্যাব vs ইনস্টল করা অ্যাপ শনাক্তকরণ =====================
+     PWA হোমস্ক্রিনে ইনস্টল না করে সরাসরি ব্রাউজারে খোলা হলে উপরে URL বার আর নিচে
+     ব্রাউজারের নিজস্ব নেভিগেশন বার দেখা যায় — তখন যতই ভেতরের UI নেটিভ-এর মতো দেখাক,
+     "এটা একটা ওয়েবসাইট" ফিলটা থেকেই যায়। তাই ব্রাউজার ট্যাবে চললে (ইনস্টল করা অবস্থায়
+     না চললে) একটা হালকা "Add to Home Screen" ব্যানার দেখানো হয় যাতে ব্যবহারকারী একবার
+     ইনস্টল করে নিলে পরের বার থেকে পুরোপুরি নেটিভ-অ্যাপ ফিল পান (কোনো ব্রাউজার ক্রোম ছাড়াই,
+     নিজস্ব আইকনসহ, ফুলস্ক্রিন)। */
+  (function initInstallPrompt(){
+    function isStandalone(){
+      return window.matchMedia('(display-mode: standalone)').matches
+        || window.matchMedia('(display-mode: fullscreen)').matches
+        || window.navigator.standalone === true; // iOS Safari-এর পুরনো প্রপার্টি
+    }
+    document.documentElement.classList.toggle('is-standalone', isStandalone());
+    document.documentElement.classList.toggle('is-browser-tab', !isStandalone());
+
+    if(isStandalone()) return; // ইতিমধ্যেই ইনস্টল করা অ্যাপ হিসেবে চলছে — কিছু করার দরকার নেই
+
+    const DISMISS_KEY = 'myshop_install_banner_dismissed_v1';
+    let deferredPrompt = null;
+    let bannerShown = false;
+
+    function alreadyDismissedRecently(){
+      try{
+        const ts = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10);
+        return ts && (Date.now() - ts) < (7 * 24 * 60 * 60 * 1000); // ৭ দিন
+      }catch(e){ return false; }
+    }
+
+    function buildBanner(showManualIosSteps){
+      if(bannerShown || alreadyDismissedRecently()) return;
+      bannerShown = true;
+      const el = document.createElement('div');
+      el.id = 'installBanner';
+      el.innerHTML =
+        '<div class="install-banner-inner">' +
+          '<div class="install-banner-icon">📲</div>' +
+          '<div class="install-banner-text">' +
+            '<strong>MY SHOP অ্যাপ হিসেবে ইনস্টল করুন</strong>' +
+            '<span>' + (showManualIosSteps
+              ? 'শেয়ার বাটন ➜ "Add to Home Screen" চাপুন'
+              : 'হোমস্ক্রিনে যোগ করলে ব্রাউজার ছাড়াই সরাসরি অ্যাপের মতো খুলবে') + '</span>' +
+          '</div>' +
+          (showManualIosSteps ? '' : '<button type="button" class="install-banner-btn" id="installBannerBtn">ইনস্টল</button>') +
+          '<button type="button" class="install-banner-close" id="installBannerClose" aria-label="Close">✕</button>' +
+        '</div>';
+      document.body.appendChild(el);
+      requestAnimationFrame(()=> el.classList.add('visible'));
+
+      document.getElementById('installBannerClose').addEventListener('click', dismissBanner);
+      const installBtn = document.getElementById('installBannerBtn');
+      if(installBtn){
+        installBtn.addEventListener('click', async () => {
+          if(!deferredPrompt) return;
+          deferredPrompt.prompt();
+          try{ await deferredPrompt.userChoice; }catch(e){}
+          deferredPrompt = null;
+          dismissBanner();
+        });
+      }
+    }
+    function dismissBanner(){
+      const el = document.getElementById('installBanner');
+      if(el){ el.classList.remove('visible'); setTimeout(()=> el.remove(), 300); }
+      try{ localStorage.setItem(DISMISS_KEY, String(Date.now())); }catch(e){}
+    }
+
+    // সাইনআপ/লগইন/লক স্ক্রিনের উপর ব্যানার দেখিয়ে বিরক্ত না করে, ব্যবহারকারী আসল অ্যাপে
+    // ঢুকে অন্তত একটু ব্যবহার করার পরেই (৩ সেকেন্ড) ইনস্টল ব্যানারটা দেখানো হয়।
+    function whenAppVisible(cb){
+      const check = () => {
+        const appEl = document.getElementById('app');
+        if(appEl && appEl.style.display !== 'none'){
+          setTimeout(cb, 3000);
+        } else {
+          setTimeout(check, 800);
+        }
+      };
+      check();
+    }
+
+    // Android/Chrome/Edge: ব্রাউজার নিজে থেকেই ইনস্টলযোগ্য কিনা জানায়
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      whenAppVisible(() => buildBanner(false));
+    });
+
+    // iOS Safari: কোনো beforeinstallprompt নেই, ম্যানুয়াল নির্দেশনা দেখাতে হয়
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = isIos && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+    if(isIos && isSafari){
+      whenAppVisible(() => buildBanner(true));
+    }
+  })();
 </script>
 
 <script>
