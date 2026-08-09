@@ -4153,7 +4153,21 @@ function toLocalISODate(d){
 const todayISO = () => toLocalISODate(new Date());
 
 /* ---------------- PERSISTENCE (local cache) ---------------- */
+const OFFLINE_PENDING_KEY = 'myshop_offline_pending_v1';
+// আগে এই ফ্ল্যাগটা শুধু মেমরিতে (JS variable) রাখা হতো — অফলাইনে এন্ট্রি করার পর অ্যাপ পুরোপুরি
+// বন্ধ করে আবার খুললে (পেজ রিলোড) এই ফ্ল্যাগ রিসেট হয়ে যেত। ফলে অনলাইনে ফিরে আসার পর অ্যাপ
+// বুঝতেই পারতো না যে ডিভাইসে সিঙ্ক-না-হওয়া অফলাইন এন্ট্রি আছে, আর সরাসরি ক্লাউডের পুরনো ডেটা
+// দিয়ে লোকাল ক্যাশ ওভাররাইট করে দিত — অফলাইনে করা এন্ট্রি চিরতরে হারিয়ে যেত। এখন এই ফ্ল্যাগটা
+// localStorage-এও রাখা হয়, তাই অ্যাপ পুরোপুরি বন্ধ/রিস্টার্ট হলেও এটা মনে থাকে।
 let offlineEditsPending = false;
+try{ offlineEditsPending = localStorage.getItem(OFFLINE_PENDING_KEY) === '1'; }catch(e){}
+function setOfflineEditsPending(val){
+  offlineEditsPending = val;
+  try{
+    if(val) localStorage.setItem(OFFLINE_PENDING_KEY, '1');
+    else localStorage.removeItem(OFFLINE_PENDING_KEY);
+  }catch(e){}
+}
 function saveState(skipDriveSchedule){
   markAllPagesDirty(); // any data write can affect what a page would show — force fresh renders on next visit
   // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
@@ -4175,7 +4189,7 @@ function saveState(skipDriveSchedule){
       showToast('Could not save — device storage may be full');
     }
   }, 0);
-  if(!navigator.onLine) offlineEditsPending = true; // অফলাইনে করা পরিবর্তন — কানেকশন ফিরলে ক্লাউডে পাঠাতে হবে
+  if(!navigator.onLine) setOfflineEditsPending(true); // অফলাইনে করা পরিবর্তন — কানেকশন ফিরলে ক্লাউডে পাঠাতে হবে
   syncShopToCloud();
   if(!skipDriveSchedule) scheduleAutoDriveBackup();
 }
@@ -4244,12 +4258,21 @@ function initFirebaseCore(){
                 expenses: state.expenses,
                 invItems: state.invItems,
                 idCounter
-              })).catch((err)=>{ console.error('Offline-edit push failed:', err); })
+              }))
             : Promise.resolve();
-          pushStep.then(()=> loadShopData(currentUid)).then(()=>{
-            offlineEditsPending = false;
+          pushStep.then(()=>{
+            setOfflineEditsPending(false); // পুশ সফল হলে তবেই ফ্ল্যাগ সাফ হবে
+            return loadShopData(currentUid);
+          }).then(()=>{
             enterOrLock();
             if(pushOfflineEditsFirst) showToast('অফলাইনে করা পরিবর্তন ক্লাউডে সিঙ্ক হয়েছে ✅');
+          }).catch((err)=>{
+            // পুশ ব্যর্থ হলে loadShopData একদম না চালিয়ে সরাসরি থামানো হলো — নাহলে
+            // ক্লাউডের পুরনো ডেটা লোকাল ক্যাশ ওভাররাইট করে অফলাইন এন্ট্রি হারিয়ে ফেলতো।
+            console.error('Offline-edit push failed:', err);
+            offlineEditsPending = true; // মেমরিতে সত্যিটা বহাল রাখা হলো — localStorage আগের মতোই '1' আছে
+            enterOrLock(); // ক্যাশ করা (এখনও-না-সিঙ্ক-হওয়া) ডেটা দিয়েই অ্যাপ খুলে দেওয়া হলো, ডেটা হারায়নি
+            if(navigator.onLine) showToast('অফলাইন এন্ট্রি ক্লাউডে পাঠানো যায়নি — পরে আবার চেষ্টা হবে');
           });
         } else {
           showVerifyEmailScreen(user.email);
@@ -4257,6 +4280,17 @@ function initFirebaseCore(){
             otpAutoSent = true;
             sendVerificationCode(currentUid, user.email);
           }
+        }
+      }).catch((err)=>{
+        // ভেরিফিকেশন-স্টেটাস চেক করতে ব্যর্থ হলে (যেমন নেটওয়ার্ক এরর) আগে এখানে কোনো catch
+        // না থাকায় ব্যবহারকারী স্প্ল্যাশ স্ক্রিনেই আটকে থাকতেন। এখন লোকাল ক্যাশ থাকলে সেটা
+        // দিয়েই অ্যাপ খুলে দেওয়া হয়, না থাকলে auth স্ক্রিন দেখানো হয়।
+        console.error('Verification status check failed:', err);
+        const hasLocalData = !!localStorage.getItem(STORAGE_KEY) && state.company && state.company.name;
+        if(hasLocalData){
+          enterOrLock();
+        } else {
+          showAuthScreen();
         }
       });
     } else {
@@ -4313,9 +4347,9 @@ function syncShopToCloud(){
       invItems: state.invItems,
       idCounter
     })).then(()=>{
-      offlineEditsPending = false;
+      setOfflineEditsPending(false);
     }).catch((err)=>{
-      offlineEditsPending = true;
+      setOfflineEditsPending(true);
       console.error('Cloud sync failed:', err);
       if(navigator.onLine) showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন');
     });
@@ -4841,6 +4875,7 @@ function logoutShop(){
   fbAuth.signOut().then(()=>{
     localStorage.removeItem(STORAGE_KEY);
     try{ localStorage.removeItem('myshop_verified_uid_v1'); }catch(e){}
+    setOfflineEditsPending(false); // লোকাল ক্যাশ মুছে ফেলা হচ্ছে, তাই সিঙ্ক-পেন্ডিং ফ্ল্যাগও সাফ — নাহলে পরের একাউন্টে বিভ্রান্তি হতে পারতো
     location.reload();
   });
 }
