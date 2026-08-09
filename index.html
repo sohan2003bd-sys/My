@@ -5439,7 +5439,7 @@ function deleteTxn(type, id){
     list.splice(idx,1);
     saveState();
     syncToSheet(type, 'delete', { id: t.id });
-    if(type === 'sales' && t.phone) syncCustomerToSheet(t.phone);
+    if(type === 'sales') syncCustomerToSheet(t.phone);
     showToast('Entry deleted');
     renderList(type);
     renderDashboard();
@@ -5516,7 +5516,7 @@ function saveTxn(e){
     }
     showToast(fraudWarning || 'Entry updated');
     syncToSheet(type, 'update', t);
-    if(type === 'sales' && t.phone) syncCustomerToSheet(t.phone);
+    if(type === 'sales') syncCustomerToSheet(t.phone);
   } else {
     payload.id = idCounter++;
     list.push(payload);
@@ -5526,7 +5526,7 @@ function saveTxn(e){
     }
     showToast(fraudWarning || 'Entry saved');
     syncToSheet(type, 'create', payload);
-    if(type === 'sales' && payload.phone) syncCustomerToSheet(payload.phone);
+    if(type === 'sales') syncCustomerToSheet(payload.phone);
   }
   saveState();
   closeSheet();
@@ -7034,22 +7034,64 @@ function testSheetSync(){
 }
 function syncToSheet(type, action, payload){
   const url = (state.settings.sheetSyncUrl || '').trim();
-  if(!state.settings.sheetSyncEnabled || !url) return;
-  const body = { type, action, data: payload };
+  if(!state.settings.sheetSyncEnabled || !url){
+    showToast(`⚠️ Sync off/no URL (type: ${type})`); // TEMP DEBUG — সমস্যা ধরা পড়লে এই লাইনটা সরিয়ে দেবেন
+    return;
+  }
+  const bodyStr = JSON.stringify({ type, action, data: payload });
+  showToast(`📤 Sending to sheet: ${type}`); // TEMP DEBUG — সমস্যা ধরা পড়লে এই লাইনটা সরিয়ে দেবেন
   // fire-and-forget: mode 'no-cors' + text/plain avoids a CORS preflight that
   // Apps Script web apps don't handle, and never blocks the UI on network issues
   fetch(url, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(body)
+    body: bodyStr
   }).then(() => {
     state.settings.lastSheetSyncAt = Date.now();
     saveState();
     renderSheetSyncStatusUI();
   }).catch((err) => {
-    console.warn('Sheet sync failed (app data is safe, this only affects the Sheet copy):', err);
+    console.warn('fetch() sync failed, trying backup form-post method:', err);
+    showToast(`⚠️ fetch failed (${type}), trying backup method...`); // TEMP DEBUG
+    syncToSheetViaForm(url, bodyStr, type);
   });
+}
+/* বিকল্প পদ্ধতি — কিছু মোবাইল WebView-এ fetch()+no-cors ঠিকমতো কাজ নাও করতে পারে।
+   এটা একটা লুকানো <iframe> + <form> দিয়ে ক্লাসিক ফর্ম-পোস্ট পাঠায়, যেটা ব্রাউজারের
+   একদম বেসিক নেভিগেশন মেকানিজম ব্যবহার করে — fetch/CORS একদম বাদ। Apps Script সাইডে
+   doPost()-এ e.parameter.payload হিসেবে এটা ধরা হয় (Code.gs-এও আপডেট লাগবে)। */
+function syncToSheetViaForm(url, bodyStr, type){
+  try{
+    let iframe = document.getElementById('sheetSyncFrame');
+    if(!iframe){
+      iframe = document.createElement('iframe');
+      iframe.id = 'sheetSyncFrame';
+      iframe.name = 'sheetSyncFrame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = 'sheetSyncFrame';
+    form.style.display = 'none';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = bodyStr;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+    state.settings.lastSheetSyncAt = Date.now();
+    saveState();
+    renderSheetSyncStatusUI();
+    showToast(`📨 Sent via backup method (${type})`); // TEMP DEBUG
+  } catch(err){
+    console.warn('Backup form-post also failed:', err);
+    showToast(`❌ Both methods failed (${type}): ${err.message}`); // TEMP DEBUG
+  }
 }
 /* Sales এন্ট্রি create/update/delete হলে এই ফাংশন সেই কাস্টমারের (ফোন নম্বর ধরে
    শনাক্ত) সব সেলস স্ক্যান করে Total Orders, Total Spent, Last Order Date হিসাব
@@ -7057,9 +7099,9 @@ function syncToSheet(type, action, payload){
    কাস্টমার শনাক্ত করার উপায় নেই বলে স্কিপ করা হয়। */
 function syncCustomerToSheet(phone){
   const cleanPhone = (phone || '').trim();
-  if(!cleanPhone) return;
+  if(!cleanPhone){ showToast('⚠️ No phone — customer sync skipped'); return; } // TEMP DEBUG
   const orders = state.sales.filter(s => (s.phone || '').trim() === cleanPhone);
-  if(orders.length === 0) return;
+  if(orders.length === 0){ showToast('⚠️ No matching sales found for this phone'); return; } // TEMP DEBUG
   const sorted = [...orders].sort((a,b) => new Date(b.date) - new Date(a.date));
   const latest = sorted[0];
   syncToSheet('customer', 'upsert', {
