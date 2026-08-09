@@ -4,7 +4,7 @@
   "description": "Business ledger, live orders and landing page for your shop",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#F1F3EC",
+  "background_color": "#B8863E",
   "theme_color": "#123832",
   "icons": [
     {
