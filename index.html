@@ -18,11 +18,13 @@
 <!-- Fonts loaded non-blocking: page paints immediately with fallback fonts, then swaps in webfonts -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
-<!-- Firebase (auth + optional Live Orders) — deferred so it downloads in parallel without blocking first paint -->
+<!-- Firebase (auth + Live Orders) — deferred so it downloads in parallel without blocking first paint.
+     firebase-messaging is NOT loaded here anymore: it's only needed after login for push
+     notifications, so it's lazy-loaded on demand (see loadFirebaseMessagingSdk) instead of
+     competing for bandwidth with the SDKs the app actually needs to boot. -->
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js"></script>
 <!-- Google Identity Services — used only for the separate, narrow Google Drive appDataFolder backup permission -->
 <script defer src="https://accounts.google.com/gsi/client"></script>
 <style>
@@ -4167,6 +4169,11 @@ let cloudSyncTimer = null;
 
 let isSigningUp = false;
 let otpAutoSent = false;
+// এই ডিভাইসে সবশেষ যে uid ভেরিফায়েড হিসেবে নিশ্চিত হয়েছিল — একবার ভেরিফাই করা হলে
+// প্রতিবার অ্যাপ খোলার সময় আবার ভেরিফিকেশন-স্টেটাস চেক করে অপেক্ষা করানোর দরকার নেই,
+// কারণ ইমেইল ভেরিফিকেশন একবার হলে আর পাল্টায় না।
+let lastKnownVerifiedUid = null;
+try{ lastKnownVerifiedUid = localStorage.getItem('myshop_verified_uid_v1') || null; }catch(e){}
 function initFirebaseCore(){
   if(fbApp) return;
   fbApp = firebase.initializeApp(FIREBASE_CONFIG);
@@ -4177,8 +4184,21 @@ function initFirebaseCore(){
     if(user){
       currentUid = user.uid;
       const pushOfflineEditsFirst = offlineEditsPending && !!localStorage.getItem(STORAGE_KEY);
+      // দ্রুত ওপেন করার জন্য: এই ডিভাইসে আগেই এই দোকানের ক্যাশ করা ডেটা থাকলে (এবং কোনো
+      // অফলাইন পরিবর্তন পাঠানোর দরকার না থাকলে) verification check ও পূর্ণ ডেটা fetch-এর
+      // জন্য অপেক্ষা না করে সাথে সাথেই অ্যাপ খুলে দেওয়া হয়। ভেরিফিকেশন-স্টেটাস ও সবশেষ
+      // ডেটা ব্যাকগ্রাউন্ডে চুপচাপ চেক/সিঙ্ক হয় — কিছু বদলালে UI নিজে থেকেই রিফ্রেশ হবে।
+      const hasCachedShop = !pushOfflineEditsFirst && !!localStorage.getItem(STORAGE_KEY)
+        && state.company && state.company.name;
+      if(hasCachedShop && lastKnownVerifiedUid === currentUid){
+        enterOrLock();
+        syncShopDataInBackground(currentUid);
+        return;
+      }
       checkOwnVerificationStatus(currentUid).then(verified => {
         if(verified){
+          lastKnownVerifiedUid = currentUid;
+          try{ localStorage.setItem('myshop_verified_uid_v1', currentUid); }catch(e){}
           const pushStep = pushOfflineEditsFirst
             ? shopRef().update(stripUndefinedDeep({
                 company: state.company,
@@ -4229,6 +4249,19 @@ function loadShopData(uid){
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories = ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"];
     if(!state.settings.productCategories || !state.settings.productCategories.length) state.settings.productCategories = ["শিশুদের খেলনা","লাইফস্টাইল পণ্য","পোশাক","অন্যান্য"];
     saveState(true); // caches locally too — skip Drive auto-backup schedule; this fires on every app open, not on real edits
+  });
+}
+// দ্রুত বুট পাথে (ক্যাশ থেকে সাথে সাথে অ্যাপ খোলার পর) ক্লাউডের সবশেষ ডেটা চুপচাপ
+// ব্যাকগ্রাউন্ডে টেনে নিয়ে আসে। ইউজার ইতিমধ্যেই অ্যাপ ব্যবহার করছেন — তাই কোনো লোডিং
+// স্ক্রিন না দেখিয়ে, ডেটা এলে UI নিজে থেকেই রিফ্রেশ হয়ে যায়।
+function syncShopDataInBackground(uid){
+  loadShopData(uid).then(() => {
+    if(currentUid !== uid) return; // ততক্ষণে লগআউট/অন্য একাউন্টে চলে গেলে আর প্রয়োগ করার দরকার নেই
+    if(document.getElementById('app').style.display !== 'none'){
+      renderAll(); // অ্যাপ ইতিমধ্যে দৃশ্যমান — সবশেষ ডেটা দিয়ে চুপচাপ রিফ্রেশ
+    }
+  }).catch(err => {
+    console.warn('ব্যাকগ্রাউন্ড সিঙ্ক ব্যর্থ:', err); // চুপচাপ — ক্যাশ করা ডেটা দিয়ে অ্যাপ চলতেই থাকবে
   });
 }
 function syncShopToCloud(){
@@ -4770,6 +4803,7 @@ function logoutShop(){
   try{ sessionStorage.removeItem(tabUnlockKey()); }catch(e){}
   fbAuth.signOut().then(()=>{
     localStorage.removeItem(STORAGE_KEY);
+    try{ localStorage.removeItem('myshop_verified_uid_v1'); }catch(e){}
     location.reload();
   });
 }
@@ -7378,40 +7412,58 @@ function updateNotifyStatus(){
    অ্যাপ পুরোপুরি বন্ধ বা ফোন লক থাকা অবস্থায়ও — কারণ এটা Google-এর সার্ভার
    থেকে সরাসরি অপারেটিং সিস্টেমে পাঠানো হয়। */
 let fcmMessaging = null;
+let fcmSdkLoadPromise = null;
+// firebase-messaging-compat.js আর <head>-এ ব্লকিং স্ক্রিপ্ট হিসেবে নেই — অ্যাপ বুট হওয়ার
+// সময় এটার জন্য অপেক্ষা করতে হয় না। পুশ নোটিফিকেশন আসলেই দরকার হয় (লগইনের পরে), তাই
+// প্রথমবার দরকার হলে তখনই ডাউনলোড করা হয়।
+function loadFirebaseMessagingSdk(){
+  if(typeof firebase !== 'undefined' && firebase.messaging) return Promise.resolve();
+  if(fcmSdkLoadPromise) return fcmSdkLoadPromise;
+  fcmSdkLoadPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js';
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('firebase-messaging SDK লোড ব্যর্থ'));
+    document.head.appendChild(s);
+  });
+  return fcmSdkLoadPromise;
+}
 function registerPushToken(){
   if(!FCM_VAPID_KEY){
     // VAPID key বসানো হয়নি — এই ফাংশন চুপচাপ কিছু করবে না, লোকাল নোটিফিকেশন যথারীতি কাজ করবে।
     return;
   }
-  if(!('serviceWorker' in navigator) || typeof firebase === 'undefined' || !firebase.messaging){
-    return;
-  }
-  navigator.serviceWorker.register('./firebase-messaging-sw.js', { scope: './firebase-cloud-messaging-push-scope' })
-    .then(reg => {
-      if(!fcmMessaging) fcmMessaging = firebase.messaging();
-      return fcmMessaging.getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg });
-    })
-    .then(token => {
-      if(!token || !currentUid) return;
-      // এই ডিভাইসের টোকেন দোকানের নিজস্ব শাখায় সেভ হলো — পরে সার্ভার/Cloud Function
-      // থেকে এই টোকেনে পুশ পাঠানো যাবে যখনই নতুন অর্ডার আসবে।
-      shopRef('fcmTokens/' + token).set({ createdAt: Date.now(), ua: navigator.userAgent.slice(0,120) }).catch(()=>{});
-    })
-    .catch(err => { console.warn('FCM token নেওয়া যায়নি:', err); });
+  if(!('serviceWorker' in navigator)) return;
+  loadFirebaseMessagingSdk().then(() => {
+    navigator.serviceWorker.register('./firebase-messaging-sw.js', { scope: './firebase-cloud-messaging-push-scope' })
+      .then(reg => {
+        if(!fcmMessaging) fcmMessaging = firebase.messaging();
+        return fcmMessaging.getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg });
+      })
+      .then(token => {
+        if(!token || !currentUid) return;
+        // এই ডিভাইসের টোকেন দোকানের নিজস্ব শাখায় সেভ হলো — পরে সার্ভার/Cloud Function
+        // থেকে এই টোকেনে পুশ পাঠানো যাবে যখনই নতুন অর্ডার আসবে।
+        shopRef('fcmTokens/' + token).set({ createdAt: Date.now(), ua: navigator.userAgent.slice(0,120) }).catch(()=>{});
+      })
+      .catch(err => { console.warn('FCM token নেওয়া যায়নি:', err); });
+  }).catch(err => { console.warn(err); });
 }
 // অ্যাপ খোলা/ফোরগ্রাউন্ডে থাকা অবস্থায় পুশ এলে ব্রাউজারের ডিফল্ট পপআপের বদলে
 // অ্যাপের নিজস্ব টোস্ট + লোকাল নোটিফিকেশন স্টাইলে দেখানো হয়।
 function initFCMForegroundHandler(){
-  if(!FCM_VAPID_KEY || typeof firebase === 'undefined' || !firebase.messaging) return;
-  try{
-    if(!fcmMessaging) fcmMessaging = firebase.messaging();
-    fcmMessaging.onMessage(payload => {
-      const title = (payload.notification && payload.notification.title) || '🛎️ নতুন অর্ডার এসেছে!';
-      const body = (payload.notification && payload.notification.body) || '';
-      showToast(title + (body ? ' — ' + body : ''));
-      updateOrdersBadge();
-    });
-  }catch(e){ /* messaging সাপোর্ট না থাকলে চুপচাপ স্কিপ */ }
+  if(!FCM_VAPID_KEY) return;
+  loadFirebaseMessagingSdk().then(() => {
+    try{
+      if(!fcmMessaging) fcmMessaging = firebase.messaging();
+      fcmMessaging.onMessage(payload => {
+        const title = (payload.notification && payload.notification.title) || '🛎️ নতুন অর্ডার এসেছে!';
+        const body = (payload.notification && payload.notification.body) || '';
+        showToast(title + (body ? ' — ' + body : ''));
+        updateOrdersBadge();
+      });
+    }catch(e){ /* messaging সাপোর্ট না থাকলে চুপচাপ স্কিপ */ }
+  }).catch(err => { console.warn(err); });
 }
 
 function updateOrdersBadge(){
