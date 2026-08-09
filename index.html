@@ -7835,6 +7835,7 @@ function confirmOrder(orderId){
   // শিটে Total কলামে ডেলিভারি চার্জ সহ দেখানো হয়, যেমন: 456 (D60)
   const totalForSheet = deliveryCharge > 0 ? `${numText(grandTotal)} (D${numText(deliveryCharge)})` : numText(grandTotal);
   syncToSheet('sales', 'create', { ...saleEntry, total: totalForSheet });
+  syncCustomerToSheet(saleEntry.phone);
   saveState();
   if(fbDb) shopRef('orders/' + orderId).update({ status: 'confirmed', confirmedAt: Date.now() });
   renderList('sales');
