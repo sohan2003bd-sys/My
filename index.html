@@ -518,13 +518,11 @@
   .txn-menu-wrap{ position:relative; margin-top:4px; display:flex; justify-content:flex-end; }
   .dots-btn{ font-size:15px; font-weight:700; letter-spacing:-1px; }
   .txn-menu{
-    position:fixed; z-index:1000;
-    opacity:0; transform:scale(.94); transform-origin:top right; pointer-events:none;
-    transition:opacity .14s ease, transform .16s cubic-bezier(.34,1.56,.64,1);
+    position:fixed; z-index:1000; display:none;
     background:#fff; border-radius:11px; overflow:hidden; min-width:120px;
     box-shadow:var(--shadow-lift); border:1px solid rgba(15,56,48,0.08);
   }
-  .txn-menu.open{ opacity:1; transform:scale(1); pointer-events:auto; }
+  .txn-menu.open{ display:block; }
   .txn-menu button{
     width:100%; border:none; background:none; padding:10px 13px; font-size:12.5px; font-weight:500;
     display:flex; align-items:center; gap:8px; color:var(--ink); text-align:left; white-space:nowrap;
@@ -626,23 +624,14 @@
   .btn-ghost{ background:transparent; color:var(--muted); border:1.5px solid var(--paper-deep); }
   .btn-danger{ background:var(--loss-bg); color:var(--loss); }
 
-  /* ---------- Modal / bottom sheet ----------
-     iOS-style presentation curve (cubic-bezier(.32,.72,0,1)) used throughout for
-     sheets/drawers so open+close feels like a native modal, not a web popup. */
-  .overlay{
-    position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60;
-    opacity:0; pointer-events:none;
-    transition:opacity .28s ease;
-    backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
-  }
-  .overlay.open{ opacity:1; pointer-events:auto; }
-  .overlay.dragging{ transition:none; }
+  /* ---------- Modal / bottom sheet ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60; display:none; backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); }
+  .overlay.open{ display:block; }
   .sheet{
     position:fixed; left:0; right:0; bottom:0; z-index:61;
     max-width:520px; margin:0 auto; background:var(--paper);
     border-radius:22px 22px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom));
-    transform:translateY(110%);
-    transition:transform .34s cubic-bezier(.32,.72,0,1);
+    transform:translateY(110%); transition:transform 0s;
     max-height:88vh; overflow-y:auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -650,17 +639,7 @@
     border-top:3px solid var(--gold);
   }
   .sheet.open{ transform:translateY(0); }
-  .sheet.dragging{ transition:none; }
-  .sheet-handle{
-    width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 14px;
-    /* Bigger invisible touch target than the visible bar, so the drag-to-close
-       gesture is easy to grab with a thumb without enlarging it visually. */
-    position:relative;
-  }
-  .sheet-handle::before{
-    content:""; position:absolute; left:50%; top:50%;
-    width:120px; height:36px; transform:translate(-50%,-50%);
-  }
+  .sheet-handle{ width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 14px; }
   .sheet h2{ font-size:19px; margin:0 0 16px; }
   .sheet-close{ position:absolute; right:16px; top:18px; background:none; border:none; font-size:20px; color:var(--muted); }
 
@@ -866,7 +845,6 @@
   .lock-wrap{
     width:100%; max-width:420px; height:100vh; margin:0 auto;
     display:flex; flex-direction:column; position:relative; z-index:1; overflow-y:auto;
-    -webkit-overflow-scrolling: touch;
   }
   /* Top orange section ≈ 30% of the frame height, bottom dark panel ≈ 70% — matches the reference proportions */
   .lock-top{
@@ -1032,7 +1010,7 @@
   .settings-nav-title{ font-size:15px; font-weight:600; color:var(--green-900); font-family:'Fraunces',serif; }
   .settings-menu-overlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:49;
-    opacity:0; pointer-events:none; transition:opacity .28s ease;
+    opacity:0; pointer-events:none; transition:opacity 0s;
     backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
   }
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
@@ -1040,11 +1018,8 @@
     position:fixed; top:0; left:0; bottom:0; width:82%; max-width:320px;
     background:var(--blend-grad-v); z-index:50;
     box-shadow:0 0 40px rgba(120,150,90,0.35);
-    transform:translateX(-105%);
-    transition:transform .32s cubic-bezier(.32,.72,0,1);
+    transform:translateX(-105%); transition:transform 0s;
     padding:22px 14px; overflow-y:auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     border-right:1px solid rgba(15,56,48,0.12);
   }
   .settings-menu-drawer.open{ transform:translateX(0); }
@@ -2469,7 +2444,7 @@
       <span>Select Sales</span>
       <button type="button" class="select-all-btn" onclick="toggleAllReceiptChecks()">Select / Deselect All</button>
     </label>
-    <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto; -webkit-overflow-scrolling:touch;"></div>
+    <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto;"></div>
   </div>
   <button class="btn btn-gold" onclick="printReceipts()">🧾 Generate &amp; Print Receipts</button>
   <div class="helper-text" style="text-align:center;">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
@@ -8923,88 +8898,6 @@ function saveRsEntries(){
     showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
   }
 }
-
-/* =================== NATIVE APP FEEL এনহ্যান্সমেন্ট ===================
-   এখানে যা যোগ করা হলো তা কোনো বিজনেস লজিক ছোঁয় না, শুধু "ফিল"টা নেটিভ অ্যাপের
-   মতো করে:
-   1) হ্যাপটিক ফিডব্যাক (navigator.vibrate) — প্রতিটা বাটন ট্যাপে একটা হালকা কম্পন,
-      একটাই delegated listener দিয়ে, যাতে হাজারটা আলাদা onclick ছুঁতে না হয়।
-   2) বটম-শিটগুলো (Transaction/Item/Receipt/AI Insights/Receipt-Scan) এখন টেনে
-      নিচে নামিয়ে বন্ধ করা যাবে — ঠিক আইওএস-এর মতো: হ্যান্ডেল থেকে ধরে টানলে, অথবা
-      সিটের ভেতরের কনটেন্ট একদম উপরে স্ক্রল করা অবস্থায় যেকোনো জায়গা থেকে টানলে।
-   ======================================================================= */
-
-// হ্যাপটিক ফিডব্যাক — যেসব ডিভাইসে navigator.vibrate নেই (যেমন iOS Safari) সেখানে
-// চুপচাপ কিছুই হবে না, কোনো এরর দেখাবে না।
-function haptic(style){
-  if(!('vibrate' in navigator)) return;
-  try{
-    const patterns = { light:8, medium:16, success:[10,30,10], warning:[16,40,16] };
-    navigator.vibrate(patterns[style] || 8);
-  }catch(e){}
-}
-// অ্যাপ জুড়ে প্রতিটা ট্যাপযোগ্য এলিমেন্টে (যেকোনো [onclick], <button>, বটম-নেভ ট্যাব)
-// হালকা হ্যাপটিক — কোডবেসেই এই তিনটাকে "ট্যাপযোগ্য" হিসেবে ধরা হয় (দ্র. tap-highlight
-// রুল, উপরে), তাই একই কনভেনশন এখানেও ব্যবহার করা হলো।
-document.addEventListener('click', function(e){
-  const el = e.target.closest('[onclick], button, .navtab');
-  if(el) haptic('light');
-}, true);
-
-// বটম শিট টেনে বন্ধ করার জেশ্চার — sheetId/overlayId/closeFn নিয়ে কাজ করে, তাই
-// পাঁচটা শিটেই একই ফাংশন পুনর্ব্যবহার করা যায়।
-function makeSheetSwipeable(sheetId, overlayId, closeFn){
-  const sheet = document.getElementById(sheetId);
-  const overlay = overlayId ? document.getElementById(overlayId) : null;
-  const handle = sheet && sheet.querySelector('.sheet-handle');
-  if(!sheet || !handle) return;
-  let startY = 0, lastDelta = 0, dragging = false;
-
-  function onStart(e){
-    // হ্যান্ডেল থেকে ধরলে সবসময় ড্র্যাগ শুরু হবে; অন্য কোথাও থেকে ধরলে তখনই শুরু হবে
-    // যখন সিটের কনটেন্ট ইতিমধ্যে একদম উপরে স্ক্রল করা (scrollTop 0) — নাহলে সাধারণ
-    // স্ক্রলিং-এর সাথে সংঘর্ষ হবে।
-    if(!(e.target === handle || handle.contains(e.target)) && sheet.scrollTop > 0) return;
-    startY = e.touches[0].clientY;
-    lastDelta = 0;
-    dragging = true;
-    sheet.classList.add('dragging');
-    if(overlay) overlay.classList.add('dragging');
-  }
-  function onMove(e){
-    if(!dragging) return;
-    const delta = e.touches[0].clientY - startY;
-    if(delta <= 0){
-      if(lastDelta > 0){ sheet.style.transform = ''; if(overlay) overlay.style.opacity = ''; }
-      lastDelta = 0;
-      return; // উপরের দিকে টানলে সিট সরবে না, ভেতরের কনটেন্ট স্বাভাবিকভাবে স্ক্রল হবে
-    }
-    e.preventDefault();
-    lastDelta = delta;
-    sheet.style.transform = `translateY(${delta}px)`;
-    if(overlay) overlay.style.opacity = String(Math.max(0, 1 - delta / 280));
-  }
-  function onEnd(){
-    if(!dragging) return;
-    dragging = false;
-    sheet.classList.remove('dragging');
-    if(overlay) overlay.classList.remove('dragging');
-    const shouldClose = lastDelta > 90; // ৯০px-এর বেশি টানলে বন্ধ হয়ে যাবে
-    sheet.style.transform = '';
-    if(overlay) overlay.style.opacity = '';
-    lastDelta = 0;
-    if(shouldClose){ haptic('light'); closeFn(); }
-  }
-  sheet.addEventListener('touchstart', onStart, { passive:true });
-  sheet.addEventListener('touchmove', onMove, { passive:false });
-  sheet.addEventListener('touchend', onEnd);
-  sheet.addEventListener('touchcancel', onEnd);
-}
-makeSheetSwipeable('txnSheet', 'overlay', closeSheet);
-makeSheetSwipeable('itemSheet', 'itemOverlay', closeItemSheet);
-makeSheetSwipeable('receiptSheet', 'receiptOverlay', closeReceiptSheet);
-makeSheetSwipeable('aiInsightsSheet', 'aiInsightsOverlay', closeAiInsights);
-makeSheetSwipeable('receiptScanSheet', 'receiptScanOverlay', closeReceiptScanSheet);
 </script>
 </body>
 </html>
