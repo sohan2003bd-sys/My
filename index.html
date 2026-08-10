@@ -207,9 +207,11 @@
     background:rgba(15,56,48,0.10); border:none; color:var(--ink);
     width:38px;height:38px;border-radius:11px;
     display:flex;align-items:center;justify-content:center; flex:none;
+    will-change:transform, background;
+    transform:translateZ(0);
     transition:background .15s ease, transform .1s ease;
   }
-  .icon-btn:active{ background:rgba(15,56,48,0.20); transform:scale(0.94); }
+  .icon-btn:active{ background:rgba(15,56,48,0.20); transform:scale(0.94); transition-duration:.04s; }
   .icon-btn.orders-btn{
     width:46px; height:46px; border-radius:13px;
     background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%);
@@ -545,10 +547,12 @@
     background:linear-gradient(150deg, var(--gold-bright), var(--gold) 70%); color:var(--green-900); border:none;
     box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,0.4);
     display:flex; align-items:center; justify-content:center;
+    will-change:transform;
+    transform:translateZ(0);
     transition:transform .12s ease;
   }
   .fab svg{ width:21px; height:21px; }
-  .fab:active{ transform:scale(0.92); }
+  .fab:active{ transform:scale(0.92); transition-duration:.04s; }
   @media (max-width:560px){ .fab{ right:20px; } }
 
   /* ---------- Bottom nav ---------- */
@@ -563,7 +567,7 @@
     display:flex; align-items:center; overflow:visible;
     border-radius:24px;
     padding:6px 6px;
-    height:66px;
+    height:70px;
     background:#FFFFFF;
     box-shadow:0 -1px 0 rgba(15,40,34,0.04), 0 10px 30px rgba(15,40,34,0.12);
     border:1px solid rgba(15,40,34,0.06);
@@ -576,14 +580,19 @@
     transition:color .15s ease, transform .12s ease;
   }
   .navbtn .ico-wrap{
-    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
-    border-radius:13px; position:relative;
+    width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+    border-radius:14px; position:relative;
     background:transparent; color:var(--blue-600);
+    will-change:transform, background;
+    transform:translateZ(0);
     transition:background .18s cubic-bezier(.34,1.56,.64,1), color .15s ease, transform .18s cubic-bezier(.34,1.56,.64,1);
   }
-  .navbtn svg{ width:21px;height:21px; stroke-width:2.3; }
-  .navbtn span[data-i18n]{ font-size:9px; font-weight:600; letter-spacing:.02em; color:var(--muted); transition:color .15s ease, opacity .15s ease; opacity:0.9; }
-  .navbtn:active .ico-wrap{ transform:scale(0.90); }
+  /* Pressing down snaps to the pressed state almost instantly (no perceptible
+     delay on tap); releasing still eases back out smoothly via the .18s bounce
+     defined above, so the icon still feels lively without the tap itself lagging. */
+  .navbtn svg{ width:24px;height:24px; stroke-width:2.4; }
+  .navbtn span[data-i18n]{ font-size:9px; font-weight:700; letter-spacing:.02em; color:var(--muted); transition:color .15s ease, opacity .15s ease; opacity:0.9; }
+  .navbtn:active .ico-wrap{ transition-duration:.04s; transform:scale(0.90); }
   .navbtn.active{ color:var(--green-600); }
   .navbtn.active .ico-wrap{
     background:rgba(46,125,91,0.13);
@@ -591,7 +600,7 @@
     transform:translateY(-3px);
   }
   .navbtn.active span[data-i18n]{ color:var(--green-600); opacity:1; }
-  .navbtn.active svg{ stroke-width:2.5; }
+  .navbtn.active svg{ stroke-width:2.9; }
   .dot-ind{ display:none; }
 
   /* ---------- Forms / inputs ---------- */
@@ -616,9 +625,11 @@
 
   .btn{
     width:100%; padding:13px; border-radius:12px; border:none; font-weight:600; font-size:14.5px;
+    will-change:transform;
+    transform:translateZ(0);
     transition:transform .1s ease, box-shadow .15s ease;
   }
-  .btn:active{ transform:scale(0.98); }
+  .btn:active{ transform:scale(0.98); transition-duration:.04s; }
   .btn:disabled{ opacity:0.6; pointer-events:none; }
   .btn-primary{ background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; box-shadow:0 8px 18px rgba(15,56,48,0.28); }
   .btn-primary:active{ background:var(--blue-900); }
@@ -4113,7 +4124,7 @@ const ITEM_SORT_MODES = [
 let itemSortMode = 0;
 
 let idCounter = 1;
-const LIST_PAGE_SIZE = 50;
+const LIST_PAGE_SIZE = 30;
 let listVisibleCounts = { sales: LIST_PAGE_SIZE, purchase: LIST_PAGE_SIZE, expense: LIST_PAGE_SIZE };
 let listSearchQuery = { sales:'', purchase:'', expense:'' };
 
@@ -5143,7 +5154,13 @@ function markScreenDecided(){
   splashScreenDecided = true;
   trySplashHide();
 }
-setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 1300);
+// আগে এখানে ৫০০ms ফিক্সড মিনিমাম টাইম ছিল — যতই দ্রুত ক্যাশ থেকে ডেটা রেডি হোক না কেন,
+// স্প্ল্যাশ অন্তত আধা সেকেন্ড আটকে রাখতই। "১ সেকেন্ডের কমে ওপেন" নিশ্চিত করতে এই ফিক্সড
+// অপেক্ষাটাই ছিল সবচেয়ে বড় single bottleneck (আসল ডেটা-লোড/রেন্ডার সাধারণত এর চেয়ে
+// অনেক কম সময়ে শেষ হয়ে যায়)। ১৫০ms-এ নামানো হলো — এখনো লোগো এক ঝলক ফ্ল্যাশ করে
+// অদৃশ্য হয়ে যাওয়ার মতো দেখাবে না, কিন্তু বাকি সবটুকু সময় এখন আসল কাজে (ক্যাশ পড়া +
+// প্রথম রেন্ডার) ব্যয় হয়, কৃত্রিম অপেক্ষায় না।
+setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 150);
 // Bank-app style re-lock: if the app was backgrounded (tab switched, phone
 // locked, another app opened) for 40+ seconds, ask for PIN/biometric again
 // when it comes back — even though the same-tab session hasn't fully reloaded.
@@ -5205,14 +5222,29 @@ function buildKeypad(){
   const kp = document.getElementById('keypad');
   const canBio = state.security.bioEnabled && hasBioCredential() && bioSupported();
   const digits = ['1','2','3','4','5','6','7','8','9'].map(k=>
-    `<button type="button" onclick="keypadPress('${k}')">${k}</button>`
+    `<button type="button" data-key="${k}">${k}</button>`
   ).join('');
   const fpCell = canBio
-    ? `<button type="button" class="key-fingerprint" onclick="tryBiometricUnlock(false)" aria-label="Unlock with fingerprint">${FINGERPRINT_SVG}</button>`
+    ? `<button type="button" class="key-fingerprint" data-key="fp" aria-label="Unlock with fingerprint">${FINGERPRINT_SVG}</button>`
     : `<span class="key-empty"></span>`;
-  const backCell = `<button type="button" class="key-back" onclick="keypadPress('⌫')" aria-label="Backspace">${BACKSPACE_SVG}</button>`;
-  kp.innerHTML = digits + fpCell + `<button type="button" onclick="keypadPress('0')">0</button>` + backCell;
+  const backCell = `<button type="button" class="key-back" data-key="back" aria-label="Backspace">${BACKSPACE_SVG}</button>`;
+  kp.innerHTML = digits + fpCell + `<button type="button" data-key="0">0</button>` + backCell;
 }
+// দ্রুত পরপর অনেকবার চাপলে কিছু সংখ্যা বাদ পড়ে যাচ্ছিল — কারণ বাটনগুলো আগে 'click'
+// ইভেন্টে চলত, যা মোবাইল ব্রাউজারে আসল টাচের পরে একটু দেরিতে (এবং দ্রুত-পরপর ট্যাপে
+// মাঝেমধ্যে বাদ পড়ে/কোয়েলেস্ হয়ে) ফায়ার হয়। এখন পুরো কীপ্যাডে একটাই delegated
+// 'pointerdown' লিসেনার — এটা আঙুল স্ক্রিনে ছোঁয়ার সাথে সাথে, কোনো tap-recognition
+// দেরি ছাড়াই ফায়ার করে, তাই প্রতিটা চাপ আলাদাভাবে ধরা পড়ে, স্পিডে চাপলেও কোনোটা বাদ যায় না।
+document.getElementById('keypad').addEventListener('pointerdown', function(e){
+  const btn = e.target.closest('button[data-key]');
+  if(!btn) return;
+  e.preventDefault(); // ঘোস্ট ক্লিক/জুম-ডিলে বন্ধ, পরে ডুপ্লিকেট 'click' ফায়ার হবে না
+  const k = btn.dataset.key;
+  if(k === 'fp'){ haptic('light'); tryBiometricUnlock(false); return; }
+  if(k === 'back'){ haptic('light'); keypadPress('⌫'); return; }
+  haptic('light');
+  keypadPress(k);
+});
 function keypadPress(k){
   if(k === '⌫'){ lockBuffer = lockBuffer.slice(0,-1); updateLockDots(); return; }
   if(lockBuffer.length >= 4) return;
@@ -5261,18 +5293,35 @@ function goPage(page){
   document.getElementById('topPageLabel').textContent = labels[page];
   const fabHiddenPages = ['settings','dashboard','orders','stockalerts'];
   document.getElementById('fabAdd').style.display = fabHiddenPages.includes(page) ? 'none' : 'flex';
-  // Each render*() call below rebuilds a chunk of DOM (lists, chips, dashboard
-  // cards, etc.) — real work, not just a page-visibility toggle. Skipping it
-  // when the page's data hasn't changed since last time is what actually cuts
-  // the per-tap delay; the plain show/hide above is already cheap.
-  if(page === 'dashboard' && dirtyPages.dashboard){ renderDashboard(); dirtyPages.dashboard = false; }
-  if(page === 'sales' && dirtyPages.sales){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
-  if(page === 'purchase' && dirtyPages.purchase){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
-  if(page === 'expense' && dirtyPages.expense){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
-  if(page === 'orders' && dirtyPages.orders){ renderOrders(); dirtyPages.orders = false; }
-  if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
-  if(page === 'inventory' && dirtyPages.inventory){ renderItems(); dirtyPages.inventory = false; }
-  if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
+  // ----------------------------------------------------------------------
+  // ট্যাপ করার সাথে সাথেই যেন উইন্ডো/পেজ চোখে instantly বদলে যায় (০% ল্যাগ):
+  // উপরের সব কাজ (active class, লেবেল, bottom-nav হাইলাইট) already সস্তা এবং
+  // সরাসরি হয়ে গেছে। কিন্তু নিচের render*() কলগুলো (বিশেষত renderItems ও
+  // renderOrders — এগুলোর Sales/Purchase/Expense লিস্টের মতো ৫০-আইটেম pagination
+  // নেই, তাই একবারে পুরো লিস্টের HTML বানায়) synchronous, ভারী কাজ। এতদিন এই
+  // কাজটা page দৃশ্যমান করার একই জাভাস্ক্রিপ্ট কলে ঘটত বলে ব্রাউজার নতুন পেজটা
+  // পেইন্টই করতে পারত না যতক্ষণ না পুরো render শেষ হয় — ফলে আইকনে চাপ দেওয়ার পর
+  // চোখে পড়ার মতো একটা বিরতি অনুভূত হতো।
+  //
+  // সমাধান: দুইটা নেস্টেড requestAnimationFrame ব্যবহার করে ভারী render-টা এক
+  // পেইন্ট ফ্রেম পরে সরিয়ে দেওয়া হলো। প্রথম rAF নিশ্চিত করে ব্রাউজার একবার
+  // পেইন্ট করে ফেলেছে (তাই উপরের active/label/nav পরিবর্তনগুলো স্ক্রিনে ভেসে
+  // ওঠে সাথে সাথেই), তারপরই দ্বিতীয় rAF-এ আসল render*() চলে — ফলে ট্যাপ থেকে
+  // "উইন্ডো খোলা" এই অংশটুকু সবসময় instant থাকে, লিস্ট যত বড়ই হোক না কেন;
+  // কনটেন্ট এক ফ্রেম পরে (অদৃশ্যভাবে দ্রুত) ভরে ওঠে।
+  const runHeavyRender = () => {
+    if(page === 'dashboard' && dirtyPages.dashboard){ renderDashboard(); dirtyPages.dashboard = false; }
+    if(page === 'sales' && dirtyPages.sales){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
+    if(page === 'purchase' && dirtyPages.purchase){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
+    if(page === 'expense' && dirtyPages.expense){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
+    if(page === 'orders' && dirtyPages.orders){ renderOrders(); dirtyPages.orders = false; }
+    if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
+    if(page === 'inventory' && dirtyPages.inventory){ renderItems(); dirtyPages.inventory = false; }
+    if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
+  };
+  if(dirtyPages[page]){
+    requestAnimationFrame(()=> requestAnimationFrame(runHeavyRender));
+  }
 }
 
 function applyPageBarColor(page){
@@ -5289,7 +5338,10 @@ document.getElementById('orderTabs').addEventListener('click', (e)=>{
   state.currentOrderTab = btn.dataset.ostatus;
   document.querySelectorAll('#orderTabs button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderOrders();
+  // goPage()-এর মতো একই কারণ: renderOrders() পুরো অর্ডার লিস্টের HTML একবারে বানায়
+  // (pagination নেই), তাই সরাসরি কল করলে ট্যাব হাইলাইটটাও একই ফ্রেমে আটকে থেকে
+  // ল্যাগ অনুভূত হয়। ডাবল rAF দিয়ে হাইলাইট আগে পেইন্ট হতে দিয়ে render এক ফ্রেম পরে।
+  requestAnimationFrame(()=> requestAnimationFrame(renderOrders));
 });
 
 document.getElementById('periodTabs').addEventListener('click', (e)=>{
@@ -5298,10 +5350,16 @@ document.getElementById('periodTabs').addEventListener('click', (e)=>{
   state.currentPeriod = btn.dataset.period;
   document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderDashboard();
+  // renderDashboard() স্ট্যাটস + renderTrendChart() (canvas) একসাথে চালায় বলে
+  // ভারী — একই ডাবল rAF কৌশলে ট্যাব হাইলাইট instant রেখে render এক ফ্রেম পরে দেওয়া।
+  requestAnimationFrame(()=> requestAnimationFrame(renderDashboard));
 });
 
 /* ---------------- DATE HELPERS (mirrors the spreadsheet SUMIFS logic) ---------------- */
+// dateStr টু "YYYY-MM-DD" ফরম্যাট — একবার বানানো হলে reuse করার জন্য
+function isoDateStr(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 function getPeriodRange(period){
   const now = new Date(); now.setHours(0,0,0,0);
   let start;
@@ -5310,11 +5368,17 @@ function getPeriodRange(period){
   else if(period === 'month'){ start = new Date(now.getFullYear(), now.getMonth(), 1); }
   else if(period === 'year'){ start = new Date(now.getFullYear(), 0, 1); }
   else { start = new Date(2000,0,1); }
-  return { start, end: now };
+  // range এখন থেকে string boundary হিসেবেও রাখা হচ্ছে (date object না বানিয়ে সরাসরি
+  // string তুলনা করার জন্য) — 1000+ এন্ট্রিতে inRange() বার বার কল হলে প্রতিবার নতুন
+  // Date অবজেক্ট বানানোটাই ছিল মূল স্লো-ডাউনের কারণ। ISO "YYYY-MM-DD" স্ট্রিং সরাসরি
+  // lexical/chronological ভাবে তুলনাযোগ্য, তাই parsing ছাড়াই সঠিক ফলাফল পাওয়া যায়।
+  return { start, end: now, startStr: isoDateStr(start), endStr: isoDateStr(now) };
 }
 function inRange(dateStr, range){
-  const d = new Date(dateStr + 'T00:00:00');
-  return d >= range.start && d <= range.end;
+  // dateStr প্রত্যাশিত ফরম্যাট "YYYY-MM-DD..." — শুধু প্রথম ১০ ক্যারেক্টার নিয়ে সরাসরি
+  // string তুলনা করা হচ্ছে, কোনো Date অবজেক্ট না বানিয়েই।
+  const d = dateStr.slice(0, 10);
+  return d >= range.startStr && d <= range.endStr;
 }
 function fmtMoney(n){
   const v = isFinite(n) ? n : 0;
@@ -5327,7 +5391,16 @@ function fmtDate(iso){
 }
 
 /* ---------------- COMPUTATIONS ---------------- */
-function sumInRange(list, range){ return list.filter(t => inRange(t.date, range)).reduce((s,t)=>s+t.total,0); }
+// আগে .filter().reduce() দিয়ে পুরো লিস্টে ২ বার লুপ চলত — এখন একটাই লুপে যোগফল বের করা
+// হচ্ছে, যাতে ১০০০+ এন্ট্রিতেও কাজটা দ্রুত হয়।
+function sumInRange(list, range){
+  let s = 0;
+  for(let i=0;i<list.length;i++){
+    const t = list[i];
+    if(inRange(t.date, range)) s += t.total;
+  }
+  return s;
+}
 
 /* COGS (Cost of Goods Sold): প্রতিটি বিক্রয় এন্ট্রিকে ইনভেন্টরি আইটেমের সাথে নাম/ক্যাটাগরি
    মিলিয়ে (findInvItemForDeduction — adjustInvStock-এও একই ম্যাচিং ব্যবহৃত হয়), সেই আইটেমের
@@ -5438,23 +5511,35 @@ function renderDashboard(){
   renderTrendChart();
 }
 
+// একটা লিস্টকে একবার লুপ করে বছরের ১২ মাসের বাকেটে total যোগ করে দেয়।
+// আগে প্রতিটা মাসের জন্য আলাদা করে sumInRange() কল হতো (৩টা লিস্ট × ১২ মাস = ৩৬ বার
+// পুরো লিস্ট স্ক্যান) — ১০০০+ এন্ট্রি জমলে এই ৩৬x স্ক্যানই ছিল ড্যাশবোর্ড লোডে লেগের
+// প্রধান কারণ। এখন প্রতিটা লিস্ট মোটে ১ বার লুপ হয়, ফলাফল একই থাকে।
+function bucketByMonth(list, year){
+  const buckets = new Array(12).fill(0);
+  const yearStr = String(year);
+  for(let i=0;i<list.length;i++){
+    const t = list[i];
+    if(!t.date || t.date.slice(0,4) !== yearStr) continue;
+    const m = parseInt(t.date.slice(5,7), 10) - 1;
+    if(m >= 0 && m < 12) buckets[m] += t.total;
+  }
+  return buckets;
+}
 function renderTrendChart(){
   const svgCheck = document.getElementById('trendChart');
   if(!svgCheck) return; // Monthly Trend card removed from dashboard
   const now = new Date();
   const year = now.getFullYear();
   document.getElementById('chartYear').textContent = year;
-  const months = Array.from({length:12}, (_,i)=>i);
-  const monthly = months.map(m=>{
-    const start = new Date(year, m, 1);
-    const end = new Date(year, m+1, 0);
-    const r = {start, end};
-    return {
-      sales: sumInRange(state.sales, r),
-      purchase: sumInRange(state.purchases, r),
-      expense: sumInRange(state.expenses, r)
-    };
-  });
+  const salesByMonth = bucketByMonth(state.sales, year);
+  const purchaseByMonth = bucketByMonth(state.purchases, year);
+  const expenseByMonth = bucketByMonth(state.expenses, year);
+  const monthly = Array.from({length:12}, (_,m)=>({
+    sales: salesByMonth[m],
+    purchase: purchaseByMonth[m],
+    expense: expenseByMonth[m]
+  }));
   const maxVal = Math.max(1, ...monthly.map(m=>Math.max(m.sales,m.purchase,m.expense)));
   const svg = document.getElementById('trendChart');
   const W = 480, H = 150, padB = 18, padT = 6;
@@ -5533,8 +5618,13 @@ function debounceRender(key, fn, delay){
 function applyListSort(list, type){
   const mode = SORT_MODES[listSortMode[type] || 0].key;
   const arr = list.slice();
-  if(mode === 'date_desc') arr.sort((a,b)=> sortKey(a) < sortKey(b) ? 1 : -1);
-  else if(mode === 'date_asc') arr.sort((a,b)=> sortKey(a) > sortKey(b) ? 1 : -1);
+  if(mode === 'date_desc' || mode === 'date_asc'){
+    // আগে প্রতিটা তুলনায় (comparator কল) sortKey() নতুন করে string বানাতো — n লগ n বার।
+    // এখন প্রতিটা আইটেমের key একবারই বানিয়ে সাথে রাখা হচ্ছে, sort শেষে খুলে ফেলা হয়।
+    const keyed = arr.map(t => ({ t, k: sortKey(t) }));
+    keyed.sort((a,b)=> mode === 'date_desc' ? (a.k < b.k ? 1 : -1) : (a.k > b.k ? 1 : -1));
+    return keyed.map(x => x.t);
+  }
   else if(mode === 'amt_desc') arr.sort((a,b)=> (b.total||0) - (a.total||0));
   else if(mode === 'amt_asc') arr.sort((a,b)=> (a.total||0) - (b.total||0));
   return arr;
@@ -5735,6 +5825,8 @@ function adjustInvStock(name, category, qtyDelta){
     showToast(`⚠️ "${item.name}" — স্টকে যা আছে তার চেয়ে বেশি বিক্রি দেখানো হয়েছে`);
   }
   if(state.currentPage === 'inventory'){ renderItems(); renderStockAlerts(); }
+  // বিক্রি/অর্ডারের কারণে স্টক বদলালেও Google শিটে 'product' আপডেট পাঠানো হলো
+  syncToSheet('product', 'update', invProductSyncPayload(item));
 }
 
 /* Purchase Ledger-এ এন্ট্রি করলে এখন সরাসরি সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price
@@ -5757,6 +5849,8 @@ function adjustInvStockFromPurchase(name, category, qtyDelta, unitCost){
   }
   item.stockQty = Math.max(0, before + qtyDelta);
   if(state.currentPage === 'inventory'){ renderItems(); renderStockAlerts(); }
+  // ক্রয়ের কারণে স্টক/কস্ট প্রাইস বদলালেও Google শিটে 'product' আপডেট পাঠানো হলো
+  syncToSheet('product', 'update', invProductSyncPayload(item));
   return { matched:true, item };
 }
 
@@ -6136,17 +6230,45 @@ function saveItem(e){
     notes: document.getElementById('iNotes').value.trim()
   };
   if(!state.editingItemId) item.createdAt = Date.now();
+  let savedItem = item;
   if(state.editingItemId){
     const idx = state.invItems.findIndex(x => String(x.id) === String(state.editingItemId));
-    if(idx > -1) state.invItems[idx] = Object.assign({}, state.invItems[idx], item);
+    if(idx > -1){
+      state.invItems[idx] = Object.assign({}, state.invItems[idx], item);
+      savedItem = state.invItems[idx];
+    }
+    // Google শিটে 'product' সিঙ্ক এখন Inventory থেকেই হয় (Settings > পণ্য তালিকা থেকে আর হয় না)
+    syncToSheet('product', 'update', invProductSyncPayload(savedItem));
   } else {
     state.invItems.push(item);
+    syncToSheet('product', 'create', invProductSyncPayload(savedItem));
   }
   saveState();
   closeItemSheet();
   renderItems();
   showToast('সেভ হয়েছে');
   return false;
+}
+// Inventory আইটেম থেকে Google শিটে পাঠানোর মতো 'product' শেপের ডেটা বানায় —
+// আগে এই শেপটা Settings > পণ্য তালিকা (productSyncPayload) থেকে আসত, এখন Inventory-ই সোর্স।
+// originalPrice/hotDeal/videoUrl/variantType Inventory-তে নেই বলে খালি/ডিফল্ট রাখা হলো,
+// আর costPrice/stockQty/sku অতিরিক্ত হিসেবে যোগ করা হলো যেহেতু Inventory-তে এগুলো থাকে।
+function invProductSyncPayload(item){
+  return {
+    id: item.id,
+    name: item.name || '',
+    price: item.sellPrice != null ? item.sellPrice : 0,
+    originalPrice: 0,
+    hotDeal: false,
+    description: item.notes || '',
+    imageUrl: item.photo || '',
+    videoUrl: '',
+    variantType: '',
+    category: item.category || '',
+    costPrice: item.costPrice != null ? item.costPrice : 0,
+    stockQty: item.stockQty != null ? item.stockQty : '',
+    sku: item.sku || ''
+  };
 }
 function deleteItemFromSheet(){
   if(!state.editingItemId) return;
@@ -6160,6 +6282,8 @@ function deleteItem(id){
   renderItems();
   renderStockAlerts();
   showToast('মুছে ফেলা হয়েছে');
+  // Google শিটে 'product' ডিলিট-সিঙ্কও Inventory থেকেই হয় এখন
+  syncToSheet('product', 'delete', { id });
 }
 function stockStatus(item){
   const qty = item.stockQty;
@@ -7609,12 +7733,12 @@ function saveProduct(){
     delete p.variantType; delete p.designs; delete p.sizes;
     Object.assign(p, fields);
     showToast('Product updated');
-    syncToSheet('product', 'update', productSyncPayload(p));
+    // Google শিটে 'product' সিঙ্ক এখন আর এখান থেকে হয় না — Inventory থেকে হয় (দ্র. saveItem)
   } else {
     const newProduct = Object.assign({ id: 'p' + Date.now() + Math.floor(Math.random()*1000) }, fields);
     state.settings.products.push(newProduct);
     showToast('Product added');
-    syncToSheet('product', 'create', productSyncPayload(newProduct));
+    // Google শিটে 'product' সিঙ্ক এখন আর এখান থেকে হয় না — Inventory থেকে হয় (দ্র. saveItem)
   }
   cancelEditProduct();
   saveState();
@@ -7623,29 +7747,11 @@ function saveProduct(){
 }
 function removeProduct(idx){
   if(editingProductIdx === idx) cancelEditProduct();
-  const removedId = state.settings.products[idx] && state.settings.products[idx].id;
   state.settings.products.splice(idx, 1);
   saveState();
   renderProductsSettings();
   pushProductsToFirebase();
-  if(removedId) syncToSheet('product', 'delete', { id: removedId });
-}
-/* Product অবজেক্ট থেকে Sheet-এ পাঠানোর মতো ফ্ল্যাট ডেটা বানায় — designs/sizes অ্যারে
-   Sheet-এ শুধু বেসিক তথ্য যায়, designs/sizes (JSON) বাদ দেওয়া হয়েছে যেহেতু
-   ব্যাকআপ/রিকভারির দরকার নেই — Firebase-ই এগুলোর একমাত্র সোর্স থাকবে। */
-function productSyncPayload(p){
-  return {
-    id: p.id,
-    name: p.name || '',
-    price: p.price || 0,
-    originalPrice: p.originalPrice || 0,
-    hotDeal: !!p.hotDeal,
-    description: p.description || '',
-    imageUrl: p.imageUrl || '',
-    videoUrl: p.videoUrl || '',
-    variantType: p.variantType || '',
-    category: p.category || ''
-  };
+  // Google শিটে 'product' ডিলিট-সিঙ্কও এখন আর এখান থেকে হয় না — Inventory থেকে হয় (দ্র. deleteItem)
 }
 function pushProductsToFirebase(){
   if(!fbDb || !currentUid) return;
@@ -8393,8 +8499,17 @@ function renderAll(){
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
   applyPageBarColor(state.currentPage);
-  renderDashboard();
-  renderSettings();
+  // আগে এখানে renderDashboard() ও renderSettings() — দুটোই — সবসময় নিঃশর্তভাবে চলত,
+  // অ্যাপ বুট হওয়ার সময়ও (যখন Settings পেজ আদৌ দৃশ্যমানই না)। renderSettings() নিজে
+  // বেশ ভারী (৬টা chip লিস্ট + Products + Videos + Drive/Sheet sync স্ট্যাটাস রিবিল্ড করে) —
+  // এই কাজটা splash সরে অ্যাপ দেখা যাওয়ার ঠিক আগে, প্রতিটা ওপেনেই অকারণে সময় খেত। এখন
+  // যে পেজ আসলে দেখা যাচ্ছে শুধু সেটাই এখানে রেন্ডার হয়; বাকিগুলো dirty চিহ্নিত থাকে আর
+  // goPage()-এর আগে থেকে থাকা lazy-render প্যাটার্নেই ইউজার আসলে সেই ট্যাবে গেলে তবেই
+  // রেন্ডার হয় — তথ্য কখনো পুরনো/মিস হয় না, শুধু অপ্রয়োজনীয় কাজটাই বাদ পড়ে।
+  if(state.currentPage === 'dashboard'){ renderDashboard(); dirtyPages.dashboard = false; }
+  else dirtyPages.dashboard = true;
+  if(state.currentPage === 'settings'){ renderSettings(); dirtyPages.settings = false; }
+  else dirtyPages.settings = true;
 }
 
 /* ---------------- PULL-TO-REFRESH (drag down from the top of the screen) ---------------- */
@@ -8974,7 +9089,11 @@ function haptic(style){
 // রুল, উপরে), তাই একই কনভেনশন এখানেও ব্যবহার করা হলো।
 document.addEventListener('click', function(e){
   const el = e.target.closest('[onclick], button, .navtab');
-  if(el) haptic('light');
+  if(!el) return;
+  // লক-স্ক্রিন কীপ্যাডের বাটনে হ্যাপটিক ইতিমধ্যেই pointerdown লিসেনারে হয়ে গেছে
+  // (দ্র. buildKeypad, উপরে) — এখানে আবার করলে ডাবল-ভাইব্রেট হতো।
+  if(el.closest('#keypad')) return;
+  haptic('light');
 }, true);
 
 // বটম শিট টেনে বন্ধ করার জেশ্চার — sheetId/overlayId/closeFn নিয়ে কাজ করে, তাই
