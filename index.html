@@ -5937,7 +5937,15 @@ function configureSheetForType(type){
 
   const catSelect = document.getElementById('fCategory');
   const cats = type === 'sales' ? state.settings.salesCategories : type === 'purchase' ? state.settings.purchaseCategories : state.settings.expenseCategories;
-  catSelect.innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  // ক্যাটেগরি খালি থাকলে <select required> কোনো অপশন ছাড়াই থাকে — তখন ব্রাউজার
+  // ফর্ম সাবমিট নীরবে আটকে দেয় (কোনো টোস্ট ছাড়াই), সেভ বাটন "কাজ করছে না" মনে হয়।
+  // তাই খালি হলে স্পষ্ট প্লেসহোল্ডার + সতর্কতা দেখানো হলো।
+  if(cats.length === 0){
+    catSelect.innerHTML = '<option value="">— কোনো ক্যাটেগরি নেই —</option>';
+    showToast('⚠️ এই ধরনের কোনো ক্যাটেগরি সেট করা নেই — Settings-এ গিয়ে আগে ক্যাটেগরি যোগ করুন, নাহলে সেভ হবে না');
+  } else {
+    catSelect.innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  }
 
   const paySelect = document.getElementById('fPayment');
   paySelect.innerHTML = state.settings.paymentMethods.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
@@ -6024,6 +6032,10 @@ function updateComputedTotal(){
 }
 function saveTxn(e){
   e.preventDefault();
+  // পুরো ফাংশনটা try/catch এ মোড়ানো হলো — আগে অপ্রত্যাশিত এরর হলে (যেমন কোনো DOM
+  // এলিমেন্ট খুঁজে না পাওয়া) সেভ নীরবে থেমে যেত, কোনো বার্তা ছাড়াই বোঝা যেত না কেন
+  // সেভ হলো না। এখন অন্তত একটা toast বার্তা দেখাবে।
+  try{
   const { type, id } = state.editing;
   const total = updateComputedTotal();
   const payload = stripUndefinedDeep({
@@ -6092,6 +6104,10 @@ function saveTxn(e){
   closeSheet();
   renderList(type);
   renderDashboard();
+  }catch(err){
+    console.error('saveTxn failed:', err);
+    showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
+  }
   return false;
 }
 
@@ -6132,7 +6148,14 @@ function handleFabClick(){
 function populateItemCategorySelect(){
   const sel = document.getElementById('iCategory');
   const cats = state.settings.invCategories || [];
-  sel.innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  // fCategory-র মতোই — খালি ক্যাটেগরি লিস্টে <select required> নীরবে সেভ আটকে দেয়,
+  // তাই স্পষ্ট প্লেসহোল্ডার + সতর্কতা দেখানো হলো।
+  if(cats.length === 0){
+    sel.innerHTML = '<option value="">— কোনো ক্যাটেগরি নেই —</option>';
+    showToast('⚠️ Inventory-র কোনো ক্যাটেগরি সেট করা নেই — Settings-এ গিয়ে আগে ক্যাটেগরি যোগ করুন, নাহলে সেভ হবে না');
+  } else {
+    sel.innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+  }
 }
 function onItemPhotoChange(e){
   const file = e.target.files && e.target.files[0];
@@ -6208,6 +6231,8 @@ function closeItemSheet(){
 }
 function saveItem(e){
   e.preventDefault();
+  // saveTxn-এর মতোই try/catch — অপ্রত্যাশিত এরর হলে চুপচাপ থেমে না গিয়ে toast দেখাবে
+  try{
   const name = document.getElementById('iName').value.trim();
   const category = document.getElementById('iCategory').value;
   if(!name || !category){ showToast('নাম ও ক্যাটেগরি দিতে হবে'); return false; }
@@ -6247,6 +6272,10 @@ function saveItem(e){
   closeItemSheet();
   renderItems();
   showToast('সেভ হয়েছে');
+  }catch(err){
+    console.error('saveItem failed:', err);
+    showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
+  }
   return false;
 }
 // Inventory আইটেম থেকে Google শিটে পাঠানোর মতো 'product' শেপের ডেটা বানায় —
@@ -7710,6 +7739,8 @@ function syncCustomerToSheet(phone){
 }
 /* ---------------- PRODUCTS CATALOG ---------------- */
 function saveProduct(){
+  // saveTxn/saveItem-এর মতোই try/catch — অপ্রত্যাশিত এরর হলে চুপচাপ থেমে না গিয়ে toast দেখাবে
+  try{
   const name = document.getElementById('newProductName').value.trim();
   const price = parseFloat(document.getElementById('newProductPrice').value) || 0;
   const originalPrice = parseFloat(document.getElementById('newProductOriginalPrice').value) || 0;
@@ -7744,6 +7775,10 @@ function saveProduct(){
   saveState();
   renderProductsSettings();
   pushProductsToFirebase();
+  }catch(err){
+    console.error('saveProduct failed:', err);
+    showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
+  }
 }
 function removeProduct(idx){
   if(editingProductIdx === idx) cancelEditProduct();
