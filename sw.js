@@ -121,13 +121,18 @@ async function cacheFirst(event) {
   return cached || fetchPromise;
 }
 
-// নোটিফিকেশনে ট্যাপ করলে অ্যাপ খুলে/ফোকাস করে Orders পেজে নিয়ে যায়
+// নোটিফিকেশনে ট্যাপ করলে অ্যাপ খুলে/ফোকাস করে Orders পেজে নিয়ে যায়।
+// index.html-এর navigator.serviceWorker 'message' লিসেনার এই GO_ORDERS মেসেজ
+// ধরে goPage('orders') কল করে — তাই এখানে postMessage যোগ করা হলো।
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({ type: "window" }).then((clientList) => {
       for (const client of clientList) {
-        if ("focus" in client) return client.focus();
+        if ("focus" in client) {
+          client.postMessage({ type: "GO_ORDERS" });
+          return client.focus();
+        }
       }
       if (clients.openWindow) return clients.openWindow("./");
     })
