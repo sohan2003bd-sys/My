@@ -359,6 +359,60 @@
   .legend{ display:flex; gap:14px; font-size:11px; color:var(--muted); margin-bottom:6px; }
   .legend span{ display:inline-flex; align-items:center; gap:5px; }
 
+  /* ---------- P&L Statement card (Stock Value / COGS / Gross Profit / Net Profit) ---------- */
+  .pnl-card{
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:16px 16px 14px; margin-top:14px; border:1px solid rgba(15,56,48,0.06);
+  }
+  .pnl-card .pnl-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .pnl-card .pnl-head .icon-badge{
+    width:30px; height:30px; border-radius:9px; flex:none;
+    background:rgba(15,56,48,0.08); color:var(--green-900);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pnl-card .pnl-head .icon-badge svg{ width:16px; height:16px; }
+  .pnl-card .pnl-head h3{ font-size:14.5px; font-weight:600; margin:0; font-family:'Fraunces',serif; color:var(--ink); }
+  .pnl-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13.5px; }
+  .pnl-row .pnl-lbl{ color:var(--ink); }
+  .pnl-row .pnl-lbl .sign{ color:var(--muted); font-size:12px; margin-right:2px; }
+  .pnl-row .pnl-val{ font-family:'IBM Plex Mono', monospace; font-weight:500; }
+  .pnl-row.subtract .pnl-lbl, .pnl-row.subtract .pnl-val{ color:var(--loss-light); }
+  .pnl-divider{ height:1px; background:var(--rule); margin:2px 0; }
+  .pnl-row.gross .pnl-lbl{ font-weight:600; }
+  .pnl-row.gross .pnl-val{ font-weight:700; color:var(--green-700); font-size:14.5px; }
+  .pnl-net-banner{
+    margin-top:10px; padding:14px 16px; border-radius:14px;
+    display:flex; align-items:center; justify-content:space-between;
+    transition:background .15s ease;
+  }
+  .pnl-net-banner.pos{ background:linear-gradient(135deg, #DFF1E6 0%, #EFF7F1 100%); }
+  .pnl-net-banner.neg{ background:linear-gradient(135deg, #FBE2DA 0%, #FCEEE9 100%); }
+  .pnl-net-banner .t1{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .pnl-net-banner .t2{ font-size:21px; font-weight:700; margin-top:3px; font-family:'IBM Plex Mono', monospace; }
+  .pnl-net-banner.pos .t2{ color:var(--green-600); }
+  .pnl-net-banner.neg .t2{ color:var(--loss); }
+  .pnl-net-banner .pnl-margin{ font-size:11px; color:var(--muted); text-align:right; line-height:1.5; }
+  .pnl-net-banner .pnl-margin b{ display:block; font-size:13px; color:var(--ink); font-family:'IBM Plex Mono', monospace; }
+  .pnl-note{ font-size:10.5px; color:var(--muted); margin-top:10px; line-height:1.5; display:none; gap:5px; align-items:flex-start; background:rgba(184,134,62,0.08); border-radius:8px; padding:8px 10px; }
+
+  /* ---------- Stock Value card ---------- */
+  .stock-value-card{
+    display:flex; align-items:center; gap:14px; margin-top:14px;
+    background:linear-gradient(150deg, var(--blue-800) 0%, var(--blue-600) 100%);
+    border-radius:var(--radius); padding:16px; box-shadow:0 10px 24px rgba(22,63,148,0.28), inset 0 1px 0 rgba(255,255,255,0.14);
+    position:relative; overflow:hidden;
+  }
+  .stock-value-card .sv-icon{
+    width:44px; height:44px; border-radius:13px; flex:none;
+    background:rgba(255,255,255,0.16);
+    display:flex; align-items:center; justify-content:center; color:#fff;
+  }
+  .stock-value-card .sv-text{ flex:1; color:#fff; }
+  .stock-value-card .sv-text .t1{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; opacity:.85; display:flex; align-items:center; gap:6px; }
+  .stock-value-card .sv-text .t1 .live-dot{ width:6px; height:6px; border-radius:50%; background:#82DB98; box-shadow:0 0 0 3px rgba(130,219,152,0.28); }
+  .stock-value-card .sv-text .t2{ font-size:22px; font-weight:700; margin-top:3px; font-family:'IBM Plex Mono', monospace; }
+  .stock-value-card .sv-sub{ font-size:11px; opacity:.82; margin-top:2px; }
+
   /* ---------- Dashboard AI Insights card ---------- */
   .dashboard-ai-card{
     display:flex; align-items:center; gap:14px;
@@ -1538,6 +1592,59 @@
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></div>
           <div class="lbl">Transactions</div>
           <div class="val num" id="kpiCount">0</div>
+        </div>
+      </div>
+
+      <div class="section-title"><span>প্রকৃত ব্যবসায়িক হিসাব</span></div>
+
+      <div class="stock-value-card">
+        <div class="sv-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"></path><path d="M1 3h22v5H1z"></path><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+        </div>
+        <div class="sv-text">
+          <div class="t1"><span class="live-dot"></span>Stock Value · এখন পর্যন্ত</div>
+          <div class="t2 num" id="stockValueVal">৳0.00</div>
+          <div class="sv-sub" id="stockValueUnits">0 ইউনিট মজুদ আছে</div>
+        </div>
+      </div>
+
+      <div class="pnl-card">
+        <div class="pnl-head">
+          <div class="icon-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18 9l-5 5-4-4-4 4"></path></svg>
+          </div>
+          <h3>লাভ-ক্ষতির হিসাব (P&amp;L Statement)</h3>
+        </div>
+
+        <div class="pnl-row">
+          <div class="pnl-lbl">মোট বিক্রয় (Sales)</div>
+          <div class="pnl-val num" id="pnlSalesVal">৳0.00</div>
+        </div>
+        <div class="pnl-row subtract">
+          <div class="pnl-lbl"><span class="sign">(−)</span>পণ্যের ক্রয়মূল্য (COGS)</div>
+          <div class="pnl-val num" id="pnlCogsVal">৳0.00</div>
+        </div>
+        <div class="pnl-divider"></div>
+        <div class="pnl-row gross">
+          <div class="pnl-lbl">মোট মুনাফা (Gross Profit)</div>
+          <div class="pnl-val num" id="pnlGrossVal">৳0.00</div>
+        </div>
+        <div class="pnl-row subtract">
+          <div class="pnl-lbl"><span class="sign">(−)</span>মোট খরচ (Total Expense)</div>
+          <div class="pnl-val num" id="pnlExpenseVal">৳0.00</div>
+        </div>
+        <div class="pnl-divider"></div>
+
+        <div class="pnl-net-banner" id="pnlNetBanner">
+          <div>
+            <div class="t1">নীট লাভ / ক্ষতি (Net Profit/Loss)</div>
+            <div class="t2 num" id="pnlNetVal">৳0.00</div>
+          </div>
+          <div class="pnl-margin">Margin<b class="num" id="pnlMarginVal">0.0%</b></div>
+        </div>
+
+        <div class="pnl-note" id="pnlNote">
+          <span>ℹ️</span><span id="pnlNoteText"></span>
         </div>
       </div>
 
@@ -5190,6 +5297,39 @@ function fmtDate(iso){
 /* ---------------- COMPUTATIONS ---------------- */
 function sumInRange(list, range){ return list.filter(t => inRange(t.date, range)).reduce((s,t)=>s+t.total,0); }
 
+/* COGS (Cost of Goods Sold): প্রতিটি বিক্রয় এন্ট্রিকে ইনভেন্টরি আইটেমের সাথে নাম/ক্যাটাগরি
+   মিলিয়ে (findInvItemForDeduction — adjustInvStock-এও একই ম্যাচিং ব্যবহৃত হয়), সেই আইটেমের
+   Cost Price দিয়ে প্রকৃত ক্রয়মূল্য যোগ করা হয়। যেসব বিক্রয়ের সাথে কোনো ইনভেন্টরি আইটেম মেলে না
+   বা Cost Price সেট করা নেই, সেগুলো COGS-এ যোগ না করে আলাদাভাবে "uncosted" হিসেবে ফেরত
+   দেওয়া হয় — যাতে সংখ্যাটি অনুমাননির্ভর না হয়ে প্রকৃত ডেটার উপর ভিত্তি করেই তৈরি হয়। */
+function computeCOGSDetailed(range){
+  let cogs = 0, uncosted = 0;
+  state.sales.filter(t => inRange(t.date, range)).forEach(s=>{
+    const qty = s.qty || 0;
+    if(qty <= 0) return;
+    const item = findInvItemForDeduction(s.name, s.category);
+    if(item && item.costPrice != null && item.costPrice >= 0){
+      cogs += qty * item.costPrice;
+    } else {
+      uncosted += (s.total != null ? s.total : qty * (s.price || 0));
+    }
+  });
+  return { cogs, uncosted };
+}
+
+/* Stock Value: বর্তমানে ইনভেন্টরিতে থাকা প্রতিটি পণ্যের মজুদ পরিমাণ × তার Cost Price —
+   এটি একটি "এখন পর্যন্ত" (real-time) স্ন্যাপশট, তাই Daily/Weekly/Monthly/Yearly পিরিয়ড
+   ফিল্টার এতে প্রভাব ফেলে না। */
+function computeStockValue(){
+  let value = 0, units = 0;
+  (state.invItems || []).forEach(it=>{
+    if(it.stockQty == null) return;
+    value += it.stockQty * (it.costPrice || 0);
+    units += it.stockQty;
+  });
+  return { value, units };
+}
+
 function renderDashboard(){
   const range = getPeriodRange(state.currentPeriod);
   const sales = sumInRange(state.sales, range);
@@ -5212,6 +5352,38 @@ function renderDashboard(){
   document.getElementById('plIcon').innerHTML = profit >= 0
     ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>'
     : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>';
+
+  /* ---- Stock Value + P&L Statement (Stock Value / COGS / Gross Profit / Net Profit) ---- */
+  const stock = computeStockValue();
+  const stockValEl = document.getElementById('stockValueVal');
+  if(stockValEl){
+    stockValEl.textContent = fmtMoney(stock.value);
+    document.getElementById('stockValueUnits').textContent = stock.units.toLocaleString('en-US') + ' ইউনিট মজুদ আছে';
+
+    const { cogs, uncosted } = computeCOGSDetailed(range);
+    const grossProfit = sales - cogs;
+    const netProfit = grossProfit - expense;
+    const netMargin = sales > 0 ? (netProfit/sales*100) : 0;
+
+    document.getElementById('pnlSalesVal').textContent = fmtMoney(sales);
+    document.getElementById('pnlCogsVal').textContent = fmtMoney(cogs);
+    document.getElementById('pnlGrossVal').textContent = fmtMoney(grossProfit);
+    document.getElementById('pnlExpenseVal').textContent = fmtMoney(expense);
+    document.getElementById('pnlNetVal').textContent = fmtMoney(netProfit);
+    document.getElementById('pnlMarginVal').textContent = netMargin.toFixed(1) + '%';
+
+    const netBanner = document.getElementById('pnlNetBanner');
+    netBanner.className = 'pnl-net-banner ' + (netProfit >= 0 ? 'pos' : 'neg');
+
+    const pnlNote = document.getElementById('pnlNote');
+    if(uncosted > 0.004){
+      pnlNote.style.display = 'flex';
+      document.getElementById('pnlNoteText').textContent =
+        `Cost Price সেট নেই এমন পণ্যের ${fmtMoney(uncosted)} বিক্রয় এই COGS হিসাবে যুক্ত করা যায়নি। সঠিক হিসাবের জন্য ইনভেন্টরিতে পণ্যের Cost Price দিন।`;
+    } else {
+      pnlNote.style.display = 'none';
+    }
+  }
 
   renderTrendChart();
 }
@@ -5515,6 +5687,29 @@ function adjustInvStock(name, category, qtyDelta){
   if(state.currentPage === 'inventory'){ renderItems(); renderStockAlerts(); }
 }
 
+/* Purchase Ledger-এ এন্ট্রি করলে এখন সরাসরি সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price
+   আপডেট হয়ে যায় — আলাদা করে ম্যানুয়ালি Inventory পেজে গিয়ে দুটো সিস্টেম মিলিয়ে রাখতে হয় না।
+   qtyDelta: ধনাত্মক (positive) = নতুন ক্রয় (স্টকে যোগ), ঋণাত্মক (negative) = এন্ট্রি বাতিল/সংশোধন (স্টক থেকে বিয়োগ)
+   unitCost: প্রতি ইউনিট ক্রয়মূল্য — শুধু নতুন ক্রয়ের (qtyDelta > 0) সময় দিলে Cost Price
+   ওয়েটেড এভারেজ (weighted average) পদ্ধতিতে আপডেট হয়, যাতে ভিন্ন সময়ে ভিন্ন দামে কেনা স্টক
+   মিশ্রিত থাকলেও গড় ক্রয়মূল্য নির্ভুল থাকে। এন্ট্রি বাতিল/সংশোধনের রিভার্সাল কলে unitCost দেওয়া
+   হয় না, তাই সেই সময় Cost Price অপরিবর্তিত থাকে (গড় বিকৃত হয় না)। */
+function adjustInvStockFromPurchase(name, category, qtyDelta, unitCost){
+  if(!qtyDelta) return { matched:false };
+  const item = findInvItemForDeduction(name, category);
+  if(!item || item.stockQty == null) return { matched:false }; // এই পণ্যটি Inventory-তে ট্র্যাক করা হয় না — বাদ দেওয়া হলো
+  const before = Math.max(0, item.stockQty);
+  if(qtyDelta > 0 && unitCost != null && unitCost >= 0){
+    const oldCost = item.costPrice != null ? item.costPrice : unitCost;
+    const totalQty = before + qtyDelta;
+    const weightedCost = totalQty > 0 ? ((before * oldCost) + (qtyDelta * unitCost)) / totalQty : unitCost;
+    item.costPrice = Math.round(weightedCost * 100) / 100;
+  }
+  item.stockQty = Math.max(0, before + qtyDelta);
+  if(state.currentPage === 'inventory'){ renderItems(); renderStockAlerts(); }
+  return { matched:true, item };
+}
+
 /* ---------------- ADD / EDIT TRANSACTION SHEET ---------------- */
 function openAddSheet(){
   const type = state.currentPage; // sales / purchase / expense
@@ -5555,6 +5750,8 @@ function deleteTxn(type, id){
     const t = list[idx];
     if(type === 'sales'){
       adjustInvStock(t.name, t.category, t.qty || 0); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
+    } else if(type === 'purchase'){
+      adjustInvStockFromPurchase(t.name, t.category, -(t.qty || 0)); // ক্রয় বাতিল হলো — স্টক থেকে বাদ দেওয়া হলো (Cost Price অপরিবর্তিত)
     }
     list.splice(idx,1);
     saveState();
@@ -5623,6 +5820,7 @@ function saveTxn(e){
   });
   const list = getListFor(type);
   let fraudWarning = '';
+  let stockNote = '';
   if(id){
     const t = list.find(x => String(x.id) === String(id));
     const oldQty = t.qty, oldName = t.name, oldCategory = t.category;
@@ -5633,8 +5831,14 @@ function saveTxn(e){
       adjustInvStock(oldName, oldCategory, oldQty || 0);
       adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
       fraudWarning = checkTxnFraudFlags(t, list);
+    } else if(type === 'purchase'){
+      // পুরনো ক্রয়ের পরিমাণ স্টক থেকে বাদ দিয়ে (Cost Price অপরিবর্তিত রেখে), নতুন পরিমাণ + দাম
+      // দিয়ে আবার যোগ করা হচ্ছে — Cost Price ওয়েটেড এভারেজ পদ্ধতিতে আপডেট হয়
+      adjustInvStockFromPurchase(oldName, oldCategory, -(oldQty || 0));
+      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
+      if(r.matched) stockNote = ' · ইনভেন্টরি স্টক সমন্বয় হয়েছে';
     }
-    showToast(fraudWarning || 'Entry updated');
+    showToast((fraudWarning || 'Entry updated') + stockNote);
     syncToSheet(type, 'update', t);
     if(type === 'sales') syncCustomerToSheet(t.phone);
   } else {
@@ -5643,8 +5847,13 @@ function saveTxn(e){
     if(type === 'sales'){
       adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
       fraudWarning = checkTxnFraudFlags(payload, list);
+    } else if(type === 'purchase'){
+      // নতুন ক্রয় এন্ট্রি সরাসরি সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price-এ যোগ হয়ে যায় —
+      // আলাদা করে ম্যানুয়ালি Inventory পেজে গিয়ে দুটো সিস্টেম মিলিয়ে রাখতে হয় না
+      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
+      if(r.matched) stockNote = ' · ইনভেন্টরি স্টক +' + (payload.qty || 0) + ' হয়েছে';
     }
-    showToast(fraudWarning || 'Entry saved');
+    showToast((fraudWarning || 'Entry saved') + stockNote);
     syncToSheet(type, 'create', payload);
     if(type === 'sales') syncCustomerToSheet(payload.phone);
   }
@@ -8527,6 +8736,7 @@ function saveRsEntries(){
     const validItems = p.items.filter(it => it.name && it.name.trim() && (parseFloat(it.total) || 0) > 0);
     if(validItems.length === 0){ showToast('অন্তত একটি আইটেমে নাম ও মোট টাকা (০ এর বেশি) থাকতে হবে — উপরে টাকার ঘরগুলো চেক করে ঠিক করুন'); return; }
     const list = getListFor(type);
+    let stockMatchedCount = 0;
     validItems.forEach((it, idx) => {
       const payload = {
         id: idCounter++,
@@ -8542,13 +8752,20 @@ function saveRsEntries(){
         total: parseFloat(it.total) || 0
       };
       list.push(payload);
+      if(type === 'purchase'){
+        // রিসিট স্ক্যান করে ক্রয় সেভ করলেও সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price
+        // অটো-আপডেট হবে — সাধারণ ফর্ম দিয়ে ক্রয় এন্ট্রি করার মতোই
+        const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
+        if(r.matched) stockMatchedCount++;
+      }
       syncToSheet(type, 'create', payload);
     });
     saveState();
     closeReceiptScanSheet();
     renderList(type);
     renderDashboard();
-    showToast(`${validItems.length}টি এন্ট্রি সেভ হয়েছে`);
+    const stockMsg = stockMatchedCount > 0 ? ` · ${stockMatchedCount}টি ইনভেন্টরি স্টক আপডেট হয়েছে` : '';
+    showToast(`${validItems.length}টি এন্ট্রি সেভ হয়েছে${stockMsg}`);
   }catch(err){
     console.error('saveRsEntries failed:', err);
     showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');

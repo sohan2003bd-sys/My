@@ -7,10 +7,11 @@
 <title>অর্ডার করুন — SOHAN SHOP BD</title>
 <script>
 /* সবার আগে চলে (head-এর একদম শুরুতে) — আগের ভিজিটের localStorage ক্যাশ থেকে
-   সবচেয়ে উপরের পণ্যের ছবিটা সাথে সাথে খুঁজে বের করে preload করে দেয়, যাতে
-   বাকি HTML/CSS/JS পার্স হওয়ার সাথে সাথেই সেই ছবিটা ব্যাকগ্রাউন্ডে ডাউনলোড
-   হতে শুরু করে — পেজ খোলা মাত্রই সবচেয়ে উপরের ছবি সবচেয়ে দ্রুত দেখা যায়।
-   নিচের IMAGE_BASE_URL মূল <script> ব্লকে থাকা কনফিগের সাথেই মিলিয়ে রাখতে হবে। */
+   সবচেয়ে উপরের সারির প্রথম ২টি পণ্যের ছবি সাথে সাথে খুঁজে বের করে preload করে দেয়,
+   যাতে বাকি HTML/CSS/JS পার্স হওয়ার সাথে সাথেই এই ২টা ছবি ব্যাকগ্রাউন্ডে ডাউনলোড
+   হতে শুরু করে — পেজ খোলা মাত্রই প্রথম সারি (২টা কার্ড) সবচেয়ে দ্রুত দেখা যায়,
+   বাকি ছবিগুলো renderCatalog()-এ পরে ধীরে ধীরে (lazy) আসে।
+   নিচের base URL মূল <script> ব্লকে থাকা IMAGE_BASE_URL-এর সাথেই মিলিয়ে রাখতে হবে। */
 (function(){
   try{
     var shopId = new URLSearchParams(location.search).get('shop');
@@ -18,17 +19,19 @@
     var raw = localStorage.getItem('sohanshop_cache_' + shopId);
     if(!raw) return;
     var data = JSON.parse(raw);
-    var p = data && data.products && data.products[0];
-    var url = p && p.imageUrl;
-    if(!url) return;
-    var u = String(url).trim();
-    if(!/^(https?:)?\/\//i.test(u) && u.indexOf('data:') !== 0){
-      u = 'https://sohan2003bd-sys.github.io/My/' + u.replace(/^\/+/, '');
-    }
-    var link = document.createElement('link');
-    link.rel = 'preload'; link.as = 'image'; link.href = u;
-    link.setAttribute('fetchpriority', 'high');
-    document.head.appendChild(link);
+    var list = (data && Array.isArray(data.products)) ? data.products.slice(0, 2) : [];
+    list.forEach(function(p){
+      var url = p && p.imageUrl;
+      if(!url) return;
+      var u = String(url).trim();
+      if(!/^(https?:)?\/\//i.test(u) && u.indexOf('data:') !== 0){
+        u = 'https://sohan2003bd-sys.github.io/My/' + u.replace(/^\/+/, '');
+      }
+      var link = document.createElement('link');
+      link.rel = 'preload'; link.as = 'image'; link.href = u;
+      link.setAttribute('fetchpriority', 'high');
+      document.head.appendChild(link);
+    });
   } catch(e){ /* ক্যাশ না থাকলে বা পার্স করা না গেলে চুপচাপ বাদ দেওয়া হলো */ }
 })();
 </script>
@@ -1193,15 +1196,23 @@ window.addEventListener('offline', () => showNetBanner('ইন্টারনে
 window.addEventListener('online', () => { showNetBanner('সংযোগ ফিরে এসেছে…', true); setTimeout(hideNetBanner, 1800); });
 if(!navigator.onLine){ showNetBanner('ইন্টারনেট সংযোগ বিচ্ছিন্ন — নেটওয়ার্ক ফিরলে অটো লোড হবে'); }
 
-/* ---------------- Firebase SDK লোড না হলে (ধীরগতির/অবরুদ্ধ নেটওয়ার্কে) — রিট্রাই স্ক্রিন ---------------- */
-function showConnectionError(){
-  document.body.innerHTML = `
-    <div class="conn-error">
-      <div class="ce-icon">📡</div>
-      <h2>সংযোগ করা যায়নি</h2>
-      <p>ইন্টারনেট সংযোগ দুর্বল বা সাময়িকভাবে সমস্যা হচ্ছে। নেটওয়ার্ক চেক করে আবার চেষ্টা করুন।</p>
-      <button onclick="location.reload()">আবার চেষ্টা করুন</button>
+/* ---------------- Firebase SDK লোড না হলে (ধীরগতির/অবরুদ্ধ নেটওয়ার্কে) ----------------
+   আগে একটা নির্দিষ্ট সংখ্যক চেষ্টার পর পুরো পেজ ভেঙে একটা "সংযোগ করা যায়নি" স্ক্রিন
+   দেখানো হতো, যেখানে আটকে যাওয়া যেত। এখন পুরো পেজ কখনোই ভাঙা হয় না — ক্যাশ/আগের
+   ডাটা না থাকলেও ক্যাটালগ অংশে শুধু একটা বন্ধুত্বপূর্ণ বার্তা ও ম্যানুয়াল রিট্রাই বাটন
+   দেখানো হয়, বাকি পুরো পেজ (হেডার, ফর্ম ইত্যাদি) সবসময় স্বাভাবিক থাকে। */
+function showCatalogRetryMessage(){
+  const grid = document.getElementById('catalogGrid');
+  if(!grid || products.length > 0) return; // পণ্য ইতিমধ্যে দেখানো থাকলে এই বার্তার দরকার নেই
+  grid.innerHTML = `<div class="empty-note" style="grid-column:1/-1;">
+      পণ্য লোড হতে দেরি হচ্ছে — নেটওয়ার্ক চেক করুন।<br>
+      <button type="button" class="btn btn-primary" style="margin-top:10px; width:auto; padding:10px 20px;" onclick="manualRetryFirebase()">এখনই আবার চেষ্টা করুন</button>
     </div>`;
+}
+function manualRetryFirebase(){
+  clearTimeout(fbRetryTimer);
+  showNetBanner('আবার চেষ্টা করা হচ্ছে…', true);
+  tryInitFirebase(1);
 }
 function waitForFirebaseSDK(timeoutMs){
   return new Promise((resolve, reject) => {
@@ -1213,9 +1224,62 @@ function waitForFirebaseSDK(timeoutMs){
     })();
   });
 }
+// Firebase SDK-র <script> ট্যাগ যদি নেটওয়ার্ক সমস্যায় লোড হতেই ব্যর্থ হয় (শুধু ধীরগতি না,
+// একদম fail), তাহলে ব্রাউজার সেটা আর নিজে থেকে দ্বিতীয়বার চেষ্টা করে না — তাই __fbLoadFailed
+// সেট হয়ে থাকলে নতুন করে <script> ট্যাগ বসিয়ে আবার ডাউনলোড শুরু করানো হয়, যাতে নেটওয়ার্ক
+// ফিরে এলে এখান থেকেও সেরে ওঠে (শুধু রিলোডের অপেক্ষা করতে না হয়)।
+function reloadFirebaseScriptsIfNeeded(){
+  if(window.firebase && firebase.database) return;
+  if(!window.__fbLoadFailed) return;
+  window.__fbLoadFailed = false;
+  [
+    'https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js'
+  ].forEach(src => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onerror = () => { window.__fbLoadFailed = true; };
+    document.head.appendChild(s);
+  });
+}
 
+// বার বার রিফ্রেশ/রিলোড দিলে বা যেকোনো (এমনকি খুব দুর্বল) নেটওয়ার্কেও পেজ যেন কখনো
+// "আটকে" না যায় — সংযোগ ব্যর্থ হলে নিজে থেকেই বার বার (বাড়তে থাকা, তবে সর্বোচ্চ ১৫ সেকেন্ড
+// পর্যন্ত অপেক্ষাসহ) চেষ্টা চালিয়ে যায়, কখনো হাল ছাড়ে না। অফলাইন থাকলে অযথা ব্যাটারি/ডাটা
+// খরচ না করে চেষ্টা থামিয়ে রাখে, আর নেট ফিরলে (online ইভেন্টে) সাথে সাথেই আবার চেষ্টা করে।
+// ক্যাশ থেকে পণ্য আগে থেকেই দেখানো থাকলে পুরো পেজ কখনোই স্পর্শ করা হয় না — শুধু একটা
+// ছোট ব্যানারে জানানো হয়, ব্যবহারকারী শপ ব্রাউজ করা নিরবচ্ছিন্নভাবে চালিয়ে যেতে পারেন।
+let fbInitStarted = false;
+let fbRetryTimer = null;
+function tryInitFirebase(attempt){
+  attempt = attempt || 1;
+  if(!navigator.onLine){
+    // অফলাইন অবস্থায় বৃথা চেষ্টা না চালিয়ে online ইভেন্টের অপেক্ষা করা হয় (নিচে হ্যান্ডলার আছে)
+    return;
+  }
+  reloadFirebaseScriptsIfNeeded();
+  const timeout = Math.min(6000 + attempt * 2000, 15000);
+  waitForFirebaseSDK(timeout).then(function(){
+    if(fbInitStarted) return; // ভুলবশত দুইবার init হওয়া ঠেকাতে (firebase.initializeApp দুইবার কল করলে এরর দেয়)
+    fbInitStarted = true;
+    hideNetBanner();
+    initFirebaseApp();
+  }).catch(function(){
+    if(products.length > 0){
+      showNetBanner('সংযোগ দুর্বল — আবার চেষ্টা করা হচ্ছে…', true);
+    } else if(attempt >= 3){
+      showCatalogRetryMessage();
+    }
+    const delay = Math.min(3000 * attempt, 15000);
+    clearTimeout(fbRetryTimer);
+    fbRetryTimer = setTimeout(() => tryInitFirebase(attempt + 1), delay);
+  });
+}
+window.addEventListener('online', function(){
+  if(!fbInitStarted){ clearTimeout(fbRetryTimer); tryInitFirebase(1); }
+});
 document.addEventListener('DOMContentLoaded', function(){
-  waitForFirebaseSDK(12000).then(initFirebaseApp).catch(showConnectionError);
+  tryInitFirebase();
 });
 
 function initFirebaseApp(){
@@ -1320,7 +1384,7 @@ function buildCardHtml(p, isPriority){
   }
   
   return `
-  <div class="pcard">
+  <div class="pcard" data-pid="${escapeHTML(p.id)}">
     <div class="thumb">
       ${thumbUrl
         ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" ${imgAttrs} onerror="this.outerHTML='<div class=noimg></div>'">`
@@ -1383,6 +1447,25 @@ function renderCatalog(){
     }
   }
   appendRow();
+}
+
+// কার্টে যোগ/বিয়োগ হলে পুরো গ্রিড (সব প্রডাক্ট কার্ড, ছবিসহ) আবার বানানো হতো —
+// তাতে প্রতিবার ট্যাপ করলে পুরো লিস্ট নতুন করে আঁকা হওয়ায় পেজটা লে-আউট শিফটের কারণে
+// কেঁপে উঠত (flicker/shake)। এখন শুধু যে প্রডাক্টের কার্ট-সংখ্যা বদলেছে, শুধু তার
+// বাটনটাই আপডেট হয় — বাকি গ্রিড অস্পৃশ্য থাকে, তাই আর কাঁপে না।
+function updateCardQtyDisplay(productId){
+  const p = products.find(x => x.id === productId);
+  if(!p) return;
+  const clothing = isClothingProduct(p);
+  const inCartQty = clothing
+    ? Object.values(cart).filter(it => it.productId === productId).reduce((s,it) => s + it.qty, 0)
+    : (cart[productId] ? cart[productId].qty : 0);
+  document.querySelectorAll(`.pcard[data-pid="${CSS.escape(productId)}"] .add-btn`).forEach(btn => {
+    btn.classList.toggle('in-cart', !!inCartQty);
+    btn.innerHTML = inCartQty
+      ? `${inCartQty}টি কার্টে <span class="plus">+</span>`
+      : (clothing ? `ডিজাইন ও সাইজ বাছাই করুন <span class="plus">+</span>` : `Order now <span class="plus">+</span>`);
+  });
 }
 
 function openQuickView(productId){
@@ -1481,7 +1564,7 @@ function addToCart(productId){
   } else {
     cart[productId] = { key: productId, productId: p.id, name: p.name, price: Number(p.price) || 0, qty: 1 };
   }
-  renderCatalog();
+  updateCardQtyDisplay(productId);
   renderCart();
 }
 function addClothingToCart(productId, designIdx, size){
@@ -1503,20 +1586,22 @@ function addClothingToCart(productId, designIdx, size){
       size
     };
   }
-  renderCatalog();
+  updateCardQtyDisplay(productId);
   renderCart();
   showToast('কার্টে যোগ করা হয়েছে');
 }
 function changeQty(key, delta){
   if(!cart[key]) return;
+  const pid = cart[key].productId;
   cart[key].qty += delta;
   if(cart[key].qty <= 0) delete cart[key];
-  renderCatalog();
+  updateCardQtyDisplay(pid);
   renderCart();
 }
 function removeFromCart(key){
+  const pid = cart[key] ? cart[key].productId : null;
   delete cart[key];
-  renderCatalog();
+  if(pid) updateCardQtyDisplay(pid);
   renderCart();
 }
 function renderCart(){
@@ -1689,6 +1774,13 @@ function sendTelegramNotification(order){
 
 function submitOrder(e){
   e.preventDefault();
+  // Firebase সংযোগ এখনো প্রস্তুত না হলে (যেমন সংযোগ রিট্রাই চলছে) — অর্ডার বাটন
+  // "পাঠানো হচ্ছে…" অবস্থায় চিরতরে আটকে না গিয়ে বরং সাথে সাথে বন্ধুত্বপূর্ণ বার্তা দেখায়,
+  // ফর্মের কোনো তথ্য হারায় না, ব্যবহারকারী সংযোগ ফিরলে আবার চেষ্টা করতে পারেন
+  if(!db){
+    showToast('সংযোগ প্রস্তুত হচ্ছে — কয়েক সেকেন্ড পর আবার চেষ্টা করুন');
+    return false;
+  }
   const items = collectItems();
   if(items.length === 0){ showToast('অন্তত একটি পণ্য নির্বাচন করুন'); return false; }
   const custName = document.getElementById('custName').value.trim();
@@ -1744,7 +1836,7 @@ function submitOrder(e){
       .catch(() => Number(String(Date.now()).slice(-7)));
   }
 
-  // ধীরগতির নেটওয়ার্কে অর্ডার পাঠানো আটকে থাকতে পারে — ৬ সেকেন্ডের মধ্যে সাড়া না পেলে
+  // ধীরগতির নেটওয়ার্কে অর্ডার পাঠানো আটকে থাকতে পারে — ৪ সেকেন্ডের মধ্যে সাড়া না পেলে
   // ব্যবহারকারীকে জানিয়ে বাটন আবার সচল করে দেওয়া হয়, যাতে সে আবার চেষ্টা করতে পারে।
   // তবে আসল অনুরোধটি (নাম্বার আনা + সেভ করা) ব্যাকগ্রাউন্ডে চলতেই থাকে — পরে সফল হলে
   // (ডুপ্লিকেট অর্ডার এড়াতে) বাটন আর নতুন করে সচল করা হয় না, বরং সরাসরি সফলতার স্ক্রিন দেখানো হয়
@@ -1754,7 +1846,7 @@ function submitOrder(e){
     return db.ref('shops/' + SHOP_ID + '/orders').push().set(order);
   });
   const submitTimeout = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('timeout')), 6000);
+    setTimeout(() => reject(new Error('timeout')), 4000);
   });
 
   function showSuccess(){
@@ -1785,7 +1877,7 @@ function submitOrder(e){
   submitTimeout.catch(() => {
     if(settled) return;
     settled = true;
-    showToast('নেটওয়ার্ক ধীরগতি — অর্ডার পাঠাতে বেশি সময় লাগছে, আবার চেষ্টা করুন');
+    showToast('নেটওয়ার্ক দুর্বল — আবার চেষ্টা করুন');
     isSubmitting = false;
     btn.disabled = false;
     updateTotal();
