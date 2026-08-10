@@ -4390,7 +4390,11 @@ function initFirebaseCore(){
       const hasCachedShop = !pushOfflineEditsFirst && !!localStorage.getItem(STORAGE_KEY)
         && state.company && state.company.name;
       if(hasCachedShop && lastKnownVerifiedUid === currentUid){
-        enterOrLock();
+        // instant boot (নিচে দ্র.) ইতিমধ্যে সঠিক স্ক্রিন (অ্যাপ/লক) দেখিয়ে দিয়ে থাকলে
+        // enterOrLock() আবার কল করা হয় না — নাহলে লক স্ক্রিনে থাকলে ইউজার তখন যে PIN
+        // ডিজিট টাইপ করছিলেন তা মুছে যেত (showLockScreen() প্রতিবার buffer রিসেট করে)।
+        if(!instantBooted) enterOrLock();
+        else markScreenDecided();
         syncShopDataInBackground(currentUid);
         return;
       }
@@ -5058,19 +5062,25 @@ function setThemeColor(hex){
   meta.setAttribute('content', hex);
 }
 function bootApp(){
-  loadState(); // warm local cache immediately so onboarding can detect existing local data
-  applyBrandMark(); // so the splash screen shows the right logo/initial right away
+  if(!instantBooted){
+    loadState(); // warm local cache immediately so onboarding can detect existing local data
+    applyBrandMark(); // so the splash screen shows the right logo/initial right away
+  }
   const hasLocalAccount = !!localStorage.getItem(STORAGE_KEY);
   if(!navigator.onLine){
     // ইন্টারনেট নেই — Firebase-এর জন্য অপেক্ষা না করে সরাসরি ক্যাশ করা ডাটা দিয়ে অ্যাপ খুলে দেওয়া
-    enterOfflineMode(hasLocalAccount);
+    if(!instantBooted) enterOfflineMode(hasLocalAccount);
+    else showOfflineBanner(true);
   } else {
     initFirebaseCore();
     // দুর্বল/আটকে থাকা নেটওয়ার্কে (যেমন captive portal) Firebase অনেকক্ষণ চুপ থাকতে পারে —
-    // এতক্ষণে সিদ্ধান্ত না এলে ক্যাশ করা ডাটা দিয়েই ঢুকিয়ে দেওয়া, পরে কানেকশন ঠিক হলে এমনিই সিঙ্ক হয়ে যাবে
-    bootFallbackTimer = setTimeout(()=>{
-      if(!splashScreenDecided) enterOfflineMode(hasLocalAccount);
-    }, 8000);
+    // এতক্ষণে সিদ্ধান্ত না এলে ক্যাশ করা ডাটা দিয়েই ঢুকিয়ে দেওয়া, পরে কানেকশন ঠিক হলে এমনিই সিঙ্ক হয়ে যাবে।
+    // instant boot ইতিমধ্যে অ্যাপ/লক স্ক্রিন দেখিয়ে দিয়ে থাকলে এই fallback আর দরকার নেই।
+    if(!instantBooted){
+      bootFallbackTimer = setTimeout(()=>{
+        if(!splashScreenDecided) enterOfflineMode(hasLocalAccount);
+      }, 8000);
+    }
   }
   window.addEventListener('online', syncAfterReconnect);
   window.addEventListener('offline', ()=> showOfflineBanner(true));
@@ -8652,6 +8662,35 @@ function refreshCurrentPageView(){
     pulling = false; dragging = false;
     if(!refreshing) resetIndicator();
   }, { passive:true });
+})();
+
+/* ============ দ্রুত ওপেন (instant boot) ============
+   আগে bootApp() চলত শুধু DOMContentLoaded-এর পরে। কিন্তু DOMContentLoaded ফায়ার হয় না
+   যতক্ষণ না <head>-এ থাকা তিনটা Firebase স্ক্রিপ্ট (app/auth/database, defer দেওয়া) আর
+   Google Identity স্ক্রিপ্ট নেটওয়ার্ক থেকে ডাউনলোড+এক্সিকিউট শেষ করে — ধীর/মোবাইল
+   নেটওয়ার্কে এই একটা অপেক্ষাই "১ সেকেন্ডের মধ্যে ওপেন" না হওয়ার সবচেয়ে বড় কারণ ছিল,
+   অথচ এই ডিভাইসে আগে থেকে লগইন করা থাকলে (localStorage-এ ক্যাশ করা শপ ডেটা থাকলে)
+   Firebase রেডি হওয়ার জন্য অপেক্ষা করারই দরকার নেই — ক্যাশ করা ডেটা এমনিতেই সঠিক ধরে
+   নিয়ে সাথে সাথে দেখানো যায়, Firebase ব্যাকগ্রাউন্ডে চুপচাপ ভেরিফাই/সিঙ্ক করবে (দ্র.
+   syncShopDataInBackground, hasCachedShop) — এটা এই কোডবেসে আগে থেকেই থাকা প্যাটার্ন,
+   শুধু সেটাকে আরও আগে, নেটওয়ার্কের অপেক্ষা ছাড়াই শুরু করানো হলো।
+   এই স্ক্রিপ্ট ট্যাগটা body-র একদম শেষে বসানো, তাই ততক্ষণে অ্যাপের সব HTML
+   (splash/lock/app স্ক্রিন) parse হয়ে DOM-এ চলে এসেছে — কোনো ইভেন্টের অপেক্ষা ছাড়াই
+   সরাসরি এখানে চালানো নিরাপদ। */
+let instantBooted = false;
+(function instantBootFromCache(){
+  try{
+    loadState();
+    applyBrandMark();
+    const hasLocalAccount = !!localStorage.getItem(STORAGE_KEY) && state.company && state.company.name;
+    if(hasLocalAccount){
+      instantBooted = true;
+      enterOrLock();
+    }
+  }catch(e){
+    instantBooted = false; // সমস্যা হলে চুপচাপ নিচের স্বাভাবিক bootApp() ফ্লো-তেই চলে যাবে
+    console.warn('Instant boot skipped:', e);
+  }
 })();
 
 if(document.readyState === 'loading'){
