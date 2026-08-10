@@ -1306,6 +1306,10 @@
     box-shadow:0 20px 44px rgba(15,40,34,0.28);
     animation: splashPop .7s cubic-bezier(.34,1.56,.64,1) both;
   }
+  /* instant boot (ক্যাশ করা ডেটা দিয়ে) হলে splash খুব দ্রুত সরে যায় — তখন ৭০০ms পপ-ইন
+     এনিমেশন মাঝপথে কেটে ফেড-আউট শুরু হলে জগাখিচুড়ি/broken দেখাবে, তাই সেক্ষেত্রে লোগো
+     সরাসরি চূড়ান্ত অবস্থাতেই (এনিমেশন ছাড়া) দেখানো হয়। */
+  #splashScreen.no-anim .splash-mark{ animation:none; }
   #splashScreen .splash-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
   @keyframes splashPop{
     0%{ transform:scale(0.4); opacity:0; }
@@ -5049,6 +5053,38 @@ document.getElementById('authTabs').addEventListener('click', (e)=>{
 
 /* ---------------- APP BOOT ---------------- */
 let bootFallbackTimer = null;
+/* ============ দ্রুত ওপেন (instant boot) ============
+   আগে bootApp() চলত শুধু DOMContentLoaded-এর পরে। কিন্তু DOMContentLoaded ফায়ার হয় না
+   যতক্ষণ না <head>-এ থাকা তিনটা Firebase স্ক্রিপ্ট (app/auth/database, defer দেওয়া) আর
+   Google Identity স্ক্রিপ্ট নেটওয়ার্ক থেকে ডাউনলোড+এক্সিকিউট শেষ করে — ধীর/মোবাইল
+   নেটওয়ার্কে এই একটা অপেক্ষাই "১ সেকেন্ডের মধ্যে ওপেন" না হওয়ার সবচেয়ে বড় কারণ ছিল,
+   অথচ এই ডিভাইসে আগে থেকে লগইন করা থাকলে (localStorage-এ ক্যাশ করা শপ ডেটা থাকলে)
+   Firebase রেডি হওয়ার জন্য অপেক্ষা করারই দরকার নেই — ক্যাশ করা ডেটা এমনিতেই সঠিক ধরে
+   নিয়ে সাথে সাথে দেখানো যায়, Firebase ব্যাকগ্রাউন্ডে চুপচাপ ভেরিফাই/সিঙ্ক করবে (দ্র.
+   syncShopDataInBackground, hasCachedShop) — এটা এই কোডবেসে আগে থেকেই থাকা প্যাটার্ন,
+   শুধু সেটাকে আরও আগে, নেটওয়ার্কের অপেক্ষা ছাড়াই শুরু করানো হলো।
+   এই কোডটা যেহেতু এই বড় <script>-এরই অংশ (যেটা body-র সব HTML-এর পরে বসানো), ততক্ষণে
+   অ্যাপের সব স্ক্রিন (splash/lock/app) parse হয়ে DOM-এ চলে এসেছে — তাই কোনো ইভেন্টের
+   অপেক্ষা ছাড়াই সরাসরি এখানে চালানো নিরাপদ। splash-টা কোনো কৃত্রিম "লোডিং" এর মতো না
+   লাগার জন্য এই মানটা (instantBooted) splash-এর মিনিমাম-টাইম গেটও পড়ে, তাই এটাকে
+   splash-timing কোডের (নিচে) আগেই বসানো হয়েছে। */
+let instantBooted = false;
+(function instantBootFromCache(){
+  try{
+    loadState();
+    applyBrandMark();
+    const hasLocalAccount = !!localStorage.getItem(STORAGE_KEY) && state.company && state.company.name;
+    if(hasLocalAccount){
+      instantBooted = true;
+      const splashEl = document.getElementById('splashScreen');
+      if(splashEl) splashEl.classList.add('no-anim');
+      enterOrLock();
+    }
+  }catch(e){
+    instantBooted = false; // সমস্যা হলে চুপচাপ স্বাভাবিক bootApp() ফ্লো-তেই চলে যাবে
+    console.warn('Instant boot skipped:', e);
+  }
+})();
 // স্ট্যাটাস বার (Android Chrome/PWA) সবসময় স্ক্রিনের নিজস্ব ব্যাকগ্রাউন্ড কালারের সাথে
 // মিলিয়ে রাখা হয় — নাহলে অ্যাপের ভেতরের গাঢ় সবুজ লক/অনবোর্ডিং স্ক্রিনের উপরে হলুদ স্ট্যাটাস
 // বার থেকে গিয়ে সেটা ব্রাউজার-ট্যাবের মতো লাগে। এই মিসম্যাচটাই সবচেয়ে বড় "নেটিভ না" সিগনাল।
@@ -5156,21 +5192,31 @@ function trySplashHide(){
   const el = document.getElementById('splashScreen');
   if(!el || el.dataset.hidden) return;
   el.dataset.hidden = '1';
+  // ক্যাশ করা ডেটা দিয়ে instant boot হলে গন্তব্য স্ক্রিন এমনিতেই রেডি — তখন আগের ৪২০ms
+  // ধীর ফেড নিজেই একটা "লোডিং"-এর মতো লাগে, তাই দ্রুত (~১০০ms) ফেড ব্যবহার করা হচ্ছে।
+  const fadeMs = instantBooted ? 100 : 420;
+  el.style.transition = `opacity ${fadeMs}ms ease`;
   el.classList.add('splash-fade-out');
-  setTimeout(()=>{ el.style.display = 'none'; }, 420);
+  setTimeout(()=>{ el.style.display = 'none'; }, fadeMs);
 }
 function markScreenDecided(){
   if(bootFallbackTimer){ clearTimeout(bootFallbackTimer); bootFallbackTimer = null; }
   splashScreenDecided = true;
   trySplashHide();
 }
-// আগে এখানে ৫০০ms ফিক্সড মিনিমাম টাইম ছিল — যতই দ্রুত ক্যাশ থেকে ডেটা রেডি হোক না কেন,
-// স্প্ল্যাশ অন্তত আধা সেকেন্ড আটকে রাখতই। "১ সেকেন্ডের কমে ওপেন" নিশ্চিত করতে এই ফিক্সড
-// অপেক্ষাটাই ছিল সবচেয়ে বড় single bottleneck (আসল ডেটা-লোড/রেন্ডার সাধারণত এর চেয়ে
-// অনেক কম সময়ে শেষ হয়ে যায়)। ১৫০ms-এ নামানো হলো — এখনো লোগো এক ঝলক ফ্ল্যাশ করে
-// অদৃশ্য হয়ে যাওয়ার মতো দেখাবে না, কিন্তু বাকি সবটুকু সময় এখন আসল কাজে (ক্যাশ পড়া +
-// প্রথম রেন্ডার) ব্যয় হয়, কৃত্রিম অপেক্ষায় না।
-setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 150);
+// আগে এখানে ৫০০ms ফিক্সড মিনিমাম টাইম ছিল, পরে ১৫০ms-এ নামানো হয়েছিল — কিন্তু ক্যাশ করা
+// ডেটা দিয়ে instant boot হলে (উপরে দ্র.) গন্তব্য স্ক্রিন তো ইতিমধ্যেই ঠিক হয়ে গেছে, তখন এই
+// কৃত্রিম অপেক্ষার আর কোনো মানে নেই — এটাই এখন একমাত্র জায়গা যেখানে "হালকা লোডিং" এর
+// মতো লাগার সুযোগ ছিল। তাই instant boot হলে সরাসরি এখনই (০ অপেক্ষায়) স্প্ল্যাশ সরিয়ে
+// দেওয়া হচ্ছে। শুধু সত্যিকারের প্রথমবার-ওপেন/নতুন ডিভাইসে (যেখানে Firebase-এর জন্য আসলেই
+// অপেক্ষা করতে হয়) আগের মতো ১৫০ms ন্যূনতম সময় রাখা হলো, যাতে লোগোটা এক ঝলক ফ্ল্যাশ করে
+// অদৃশ্য হয়ে না যায়।
+if(instantBooted){
+  splashMinTimeElapsed = true;
+  trySplashHide();
+} else {
+  setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 150);
+}
 // Bank-app style re-lock: if the app was backgrounded (tab switched, phone
 // locked, another app opened) for 40+ seconds, ask for PIN/biometric again
 // when it comes back — even though the same-tab session hasn't fully reloaded.
@@ -8665,34 +8711,8 @@ function refreshCurrentPageView(){
 })();
 
 /* ============ দ্রুত ওপেন (instant boot) ============
-   আগে bootApp() চলত শুধু DOMContentLoaded-এর পরে। কিন্তু DOMContentLoaded ফায়ার হয় না
-   যতক্ষণ না <head>-এ থাকা তিনটা Firebase স্ক্রিপ্ট (app/auth/database, defer দেওয়া) আর
-   Google Identity স্ক্রিপ্ট নেটওয়ার্ক থেকে ডাউনলোড+এক্সিকিউট শেষ করে — ধীর/মোবাইল
-   নেটওয়ার্কে এই একটা অপেক্ষাই "১ সেকেন্ডের মধ্যে ওপেন" না হওয়ার সবচেয়ে বড় কারণ ছিল,
-   অথচ এই ডিভাইসে আগে থেকে লগইন করা থাকলে (localStorage-এ ক্যাশ করা শপ ডেটা থাকলে)
-   Firebase রেডি হওয়ার জন্য অপেক্ষা করারই দরকার নেই — ক্যাশ করা ডেটা এমনিতেই সঠিক ধরে
-   নিয়ে সাথে সাথে দেখানো যায়, Firebase ব্যাকগ্রাউন্ডে চুপচাপ ভেরিফাই/সিঙ্ক করবে (দ্র.
-   syncShopDataInBackground, hasCachedShop) — এটা এই কোডবেসে আগে থেকেই থাকা প্যাটার্ন,
-   শুধু সেটাকে আরও আগে, নেটওয়ার্কের অপেক্ষা ছাড়াই শুরু করানো হলো।
-   এই স্ক্রিপ্ট ট্যাগটা body-র একদম শেষে বসানো, তাই ততক্ষণে অ্যাপের সব HTML
-   (splash/lock/app স্ক্রিন) parse হয়ে DOM-এ চলে এসেছে — কোনো ইভেন্টের অপেক্ষা ছাড়াই
-   সরাসরি এখানে চালানো নিরাপদ। */
-let instantBooted = false;
-(function instantBootFromCache(){
-  try{
-    loadState();
-    applyBrandMark();
-    const hasLocalAccount = !!localStorage.getItem(STORAGE_KEY) && state.company && state.company.name;
-    if(hasLocalAccount){
-      instantBooted = true;
-      enterOrLock();
-    }
-  }catch(e){
-    instantBooted = false; // সমস্যা হলে চুপচাপ নিচের স্বাভাবিক bootApp() ফ্লো-তেই চলে যাবে
-    console.warn('Instant boot skipped:', e);
-  }
-})();
-
+   এই লজিকটা এখন উপরে সরানো হয়েছে (দ্র. "APP BOOT" সেকশন) — splash-hide গেট নিজেই
+   instantBooted-এর মান পড়ে বলে, সেটা নির্ধারিত হওয়ার পরেই splash-timing কোড চলা দরকার। */
 if(document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', bootApp);
 } else {
