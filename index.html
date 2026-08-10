@@ -518,11 +518,13 @@
   .txn-menu-wrap{ position:relative; margin-top:4px; display:flex; justify-content:flex-end; }
   .dots-btn{ font-size:15px; font-weight:700; letter-spacing:-1px; }
   .txn-menu{
-    position:fixed; z-index:1000; display:none;
+    position:fixed; z-index:1000;
+    opacity:0; transform:scale(.94); transform-origin:top right; pointer-events:none;
+    transition:opacity .14s ease, transform .16s cubic-bezier(.34,1.56,.64,1);
     background:#fff; border-radius:11px; overflow:hidden; min-width:120px;
     box-shadow:var(--shadow-lift); border:1px solid rgba(15,56,48,0.08);
   }
-  .txn-menu.open{ display:block; }
+  .txn-menu.open{ opacity:1; transform:scale(1); pointer-events:auto; }
   .txn-menu button{
     width:100%; border:none; background:none; padding:10px 13px; font-size:12.5px; font-weight:500;
     display:flex; align-items:center; gap:8px; color:var(--ink); text-align:left; white-space:nowrap;
@@ -594,6 +596,9 @@
 
   /* ---------- Forms / inputs ---------- */
   .field{ margin-bottom:14px; }
+  .fname-cogs-hint{ font-size:12px; margin-top:5px; line-height:1.4; }
+  .fname-cogs-hint.matched{ color: var(--green-600); }
+  .fname-cogs-hint.unmatched{ color: var(--loss); }
   .field label{ display:block; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
   .field input, .field select, .field textarea{
     width:100%; border:1.5px solid var(--paper-deep); background:var(--paper); border-radius:11px;
@@ -621,20 +626,41 @@
   .btn-ghost{ background:transparent; color:var(--muted); border:1.5px solid var(--paper-deep); }
   .btn-danger{ background:var(--loss-bg); color:var(--loss); }
 
-  /* ---------- Modal / bottom sheet ---------- */
-  .overlay{ position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60; display:none; backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); }
-  .overlay.open{ display:block; }
+  /* ---------- Modal / bottom sheet ----------
+     iOS-style presentation curve (cubic-bezier(.32,.72,0,1)) used throughout for
+     sheets/drawers so open+close feels like a native modal, not a web popup. */
+  .overlay{
+    position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60;
+    opacity:0; pointer-events:none;
+    transition:opacity .28s ease;
+    backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+  .overlay.dragging{ transition:none; }
   .sheet{
     position:fixed; left:0; right:0; bottom:0; z-index:61;
     max-width:520px; margin:0 auto; background:var(--paper);
     border-radius:22px 22px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom));
-    transform:translateY(110%); transition:transform 0s;
+    transform:translateY(110%);
+    transition:transform .34s cubic-bezier(.32,.72,0,1);
     max-height:88vh; overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     box-shadow:0 -20px 50px rgba(15,40,34,0.25);
     border-top:3px solid var(--gold);
   }
   .sheet.open{ transform:translateY(0); }
-  .sheet-handle{ width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 14px; }
+  .sheet.dragging{ transition:none; }
+  .sheet-handle{
+    width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 14px;
+    /* Bigger invisible touch target than the visible bar, so the drag-to-close
+       gesture is easy to grab with a thumb without enlarging it visually. */
+    position:relative;
+  }
+  .sheet-handle::before{
+    content:""; position:absolute; left:50%; top:50%;
+    width:120px; height:36px; transform:translate(-50%,-50%);
+  }
   .sheet h2{ font-size:19px; margin:0 0 16px; }
   .sheet-close{ position:absolute; right:16px; top:18px; background:none; border:none; font-size:20px; color:var(--muted); }
 
@@ -840,6 +866,7 @@
   .lock-wrap{
     width:100%; max-width:420px; height:100vh; margin:0 auto;
     display:flex; flex-direction:column; position:relative; z-index:1; overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
   }
   /* Top orange section ≈ 30% of the frame height, bottom dark panel ≈ 70% — matches the reference proportions */
   .lock-top{
@@ -1005,7 +1032,7 @@
   .settings-nav-title{ font-size:15px; font-weight:600; color:var(--green-900); font-family:'Fraunces',serif; }
   .settings-menu-overlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:49;
-    opacity:0; pointer-events:none; transition:opacity 0s;
+    opacity:0; pointer-events:none; transition:opacity .28s ease;
     backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
   }
   .settings-menu-overlay.open{ opacity:1; pointer-events:auto; }
@@ -1013,8 +1040,11 @@
     position:fixed; top:0; left:0; bottom:0; width:82%; max-width:320px;
     background:var(--blend-grad-v); z-index:50;
     box-shadow:0 0 40px rgba(120,150,90,0.35);
-    transform:translateX(-105%); transition:transform 0s;
+    transform:translateX(-105%);
+    transition:transform .32s cubic-bezier(.32,.72,0,1);
     padding:22px 14px; overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     border-right:1px solid rgba(15,56,48,0.12);
   }
   .settings-menu-drawer.open{ transform:translateX(0); }
@@ -2297,11 +2327,13 @@
     </div>
     <div class="field">
       <label id="fNameLabel">Product / Service</label>
-      <input type="text" id="fName" placeholder="Item name" required>
+      <input type="text" id="fName" placeholder="Item name" list="fNameList" required oninput="updateFNameCogsHint()">
+      <datalist id="fNameList"></datalist>
+      <div id="fNameCogsHint" class="fname-cogs-hint" style="display:none;"></div>
     </div>
     <div class="field">
       <label>Category</label>
-      <select id="fCategory" required></select>
+      <select id="fCategory" required onchange="updateFNameCogsHint()"></select>
     </div>
     <div class="row2" id="qtyPriceRow">
       <div class="field">
@@ -2437,7 +2469,7 @@
       <span>Select Sales</span>
       <button type="button" class="select-all-btn" onclick="toggleAllReceiptChecks()">Select / Deselect All</button>
     </label>
-    <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto;"></div>
+    <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto; -webkit-overflow-scrolling:touch;"></div>
   </div>
   <button class="btn btn-gold" onclick="printReceipts()">🧾 Generate &amp; Print Receipts</button>
   <div class="helper-text" style="text-align:center;">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
@@ -5301,10 +5333,28 @@ function sumInRange(list, range){ return list.filter(t => inRange(t.date, range)
    মিলিয়ে (findInvItemForDeduction — adjustInvStock-এও একই ম্যাচিং ব্যবহৃত হয়), সেই আইটেমের
    Cost Price দিয়ে প্রকৃত ক্রয়মূল্য যোগ করা হয়। যেসব বিক্রয়ের সাথে কোনো ইনভেন্টরি আইটেম মেলে না
    বা Cost Price সেট করা নেই, সেগুলো COGS-এ যোগ না করে আলাদাভাবে "uncosted" হিসেবে ফেরত
-   দেওয়া হয় — যাতে সংখ্যাটি অনুমাননির্ভর না হয়ে প্রকৃত ডেটার উপর ভিত্তি করেই তৈরি হয়। */
+   দেওয়া হয় — যাতে সংখ্যাটি অনুমাননির্ভর না হয়ে প্রকৃত ডেটার উপর ভিত্তি করেই তৈরি হয়।
+   Orders থেকে confirmOrder() দিয়ে তৈরি হওয়া Sales এন্ট্রিতে name ফিল্ড একাধিক পণ্য/পরিমাণ
+   একসাথে সামারাইজ করে রাখে (যেমন "HUDI ×4", বা একাধিক পণ্য হলে "A ×2, B ×3") — এই সামারি
+   টেক্সট ইনভেন্টরির নামের সাথে কখনো হুবহু মিলবে না। তাই এমন এন্ট্রিতে যদি আসল প্রতিটি পণ্যের
+   ভাঙা তথ্য (items অ্যারে — রিসিট প্রিন্টের জন্য আগে থেকেই রাখা হয়) থাকে, সেটাই ব্যবহার করে
+   প্রতিটি পণ্য আলাদাভাবে ম্যাচ করা হয়; না থাকলে (ম্যানুয়াল এন্ট্রি) আগের মতো একক name/qty দিয়ে। */
 function computeCOGSDetailed(range){
   let cogs = 0, uncosted = 0;
   state.sales.filter(t => inRange(t.date, range)).forEach(s=>{
+    if(Array.isArray(s.items) && s.items.length){
+      s.items.forEach(it=>{
+        const qty = it.qty || 0;
+        if(qty <= 0) return;
+        const item = findInvItemForDeduction(it.name, s.category);
+        if(item && item.costPrice != null && item.costPrice >= 0){
+          cogs += qty * item.costPrice;
+        } else {
+          uncosted += qty * (it.price || 0);
+        }
+      });
+      return;
+    }
     const qty = s.qty || 0;
     if(qty <= 0) return;
     const item = findInvItemForDeduction(s.name, s.category);
@@ -5725,7 +5775,9 @@ function editTxn(type, id){
   const list = getListFor(type);
   const t = list.find(x => String(x.id) === String(id));
   if(!t) return;
-  state.editing = { type, id };
+  // Orders থেকে আসা Sales এন্ট্রির আসল (ভাঙা) পণ্য তালিকা থাকলে সেটা এখানে সাথে রাখা হলো,
+  // যাতে COGS হিন্ট প্রদর্শনের সময় সামারাইজড name ("HUDI ×4") না দেখে আসল পণ্যভিত্তিক ম্যাচ দেখাতে পারে
+  state.editing = { type, id, items: (type === 'sales' && Array.isArray(t.items) && t.items.length) ? t.items : null };
   configureSheetForType(type);
   document.getElementById('fDate').value = t.date;
   document.getElementById('fRef').value = t.ref || '';
@@ -5741,6 +5793,7 @@ function editTxn(type, id){
   document.getElementById('fPayment').value = t.payment || '';
   document.getElementById('fNotes').value = t.notes || '';
   updateComputedTotal();
+  updateFNameCogsHint();
   openSheetEl();
 }
 function deleteTxn(type, id){
@@ -5749,7 +5802,16 @@ function deleteTxn(type, id){
   if(idx > -1){
     const t = list[idx];
     if(type === 'sales'){
-      adjustInvStock(t.name, t.category, t.qty || 0); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
+      // Orders থেকে confirmOrder() দিয়ে আসা বিক্রয়ে name ফিল্ডে সামারি টেক্সট থাকে
+      // (যেমন "HUDI ×4"), যা ইনভেন্টরির নামের সাথে মেলে না — items অ্যারেতে আসল প্রতিটি
+      // পণ্যের নাম/পরিমাণ থাকে (confirmOrder-এ যেভাবে বিয়োগ করা হয়েছিল ঠিক সেভাবেই এখানে
+      // ফেরত দেওয়া হচ্ছে), তাই স্টক ফেরত সঠিকভাবে হয়। items না থাকলে (ম্যানুয়াল এন্ট্রি)
+      // আগের মতো একক name/qty দিয়ে।
+      if(Array.isArray(t.items) && t.items.length){
+        t.items.forEach(it => adjustInvStock(it.name, null, it.qty || 0));
+      } else {
+        adjustInvStock(t.name, t.category, t.qty || 0); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
+      }
     } else if(type === 'purchase'){
       adjustInvStockFromPurchase(t.name, t.category, -(t.qty || 0)); // ক্রয় বাতিল হলো — স্টক থেকে বাদ দেওয়া হলো (Cost Price অপরিবর্তিত)
     }
@@ -5785,6 +5847,73 @@ function configureSheetForType(type){
 
   const paySelect = document.getElementById('fPayment');
   paySelect.innerHTML = state.settings.paymentMethods.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
+
+  /* Sales/Purchase-এর Item নাম ইনভেন্টরির নামের সাথে হুবহু (case/space বাদে) না মিললে
+     COGS হিসাবে যুক্ত হয় না — তাই এখানে ইনভেন্টরির বিদ্যমান নামগুলো দিয়ে একটি datalist
+     সাজেশন হিসেবে দেখানো হচ্ছে, যাতে টাইপো বা ভিন্ন বানানের কারণে মিল না হওয়া এড়ানো যায়। */
+  const fNameList = document.getElementById('fNameList');
+  if(fNameList){
+    if(type === 'sales' || type === 'purchase'){
+      const names = Array.from(new Set((state.invItems || []).map(x => (x.name || '').trim()).filter(Boolean)));
+      fNameList.innerHTML = names.map(n => `<option value="${escapeHTML(n)}"></option>`).join('');
+    } else {
+      fNameList.innerHTML = '';
+    }
+  }
+  const hintEl = document.getElementById('fNameCogsHint');
+  if(hintEl) hintEl.style.display = 'none';
+}
+/* ফর্মে Item name টাইপ করার সময় সাথে সাথে দেখানো হয় সেটি ইনভেন্টরির কোনো পণ্যের সাথে
+   মিলছে কিনা এবং সেই পণ্যের Cost Price সেট আছে কিনা — যাতে সেভ করার আগেই বোঝা যায়
+   এই বিক্রয়টি COGS হিসাবে যুক্ত হবে কিনা। শুধু Sales ফর্মে প্রযোজ্য।
+   Orders থেকে আসা এন্ট্রিতে name ফিল্ডে একাধিক পণ্য/পরিমাণ একসাথে সামারাইজ করা থাকে
+   (যেমন "HUDI ×4"), যা টাইপ করা টেক্সট হিসেবে সরাসরি ম্যাচ করা যায় না — তাই সেক্ষেত্রে
+   state.editing.items-এ রাখা আসল ভাঙা পণ্য তালিকা অনুযায়ী প্রতিটি পণ্য আলাদাভাবে দেখানো হয়। */
+function updateFNameCogsHint(){
+  const hint = document.getElementById('fNameCogsHint');
+  if(!hint) return;
+  const type = state.editing ? state.editing.type : state.currentPage;
+  if(type !== 'sales'){ hint.style.display = 'none'; return; }
+  const catEl = document.getElementById('fCategory');
+  const category = catEl ? catEl.value : '';
+  const orderItems = (state.editing && Array.isArray(state.editing.items)) ? state.editing.items : null;
+  if(orderItems && orderItems.length){
+    const lines = orderItems.map(it=>{
+      const item = findInvItemForDeduction(it.name, category);
+      if(item && item.costPrice != null && item.costPrice >= 0){
+        return `✓ "${it.name}" ×${it.qty || 1} — ইনভেন্টরির সাথে মিলেছে, COGS-এ যুক্ত হবে`;
+      } else if(item){
+        return `⚠ "${it.name}" ×${it.qty || 1} — Cost Price সেট নেই, COGS-এ যুক্ত হবে না`;
+      } else {
+        return `⚠ "${it.name}" ×${it.qty || 1} — ইনভেন্টরিতে এই নামে পণ্য পাওয়া যায়নি`;
+      }
+    });
+    const anyUnmatched = orderItems.some(it=>{
+      const item = findInvItemForDeduction(it.name, category);
+      return !(item && item.costPrice != null && item.costPrice >= 0);
+    });
+    hint.style.display = 'block';
+    hint.className = 'fname-cogs-hint ' + (anyUnmatched ? 'unmatched' : 'matched');
+    hint.textContent = 'অর্ডারের প্রকৃত পণ্য অনুযায়ী: ' + lines.join(' · ');
+    return;
+  }
+  const nameEl = document.getElementById('fName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  if(!name){ hint.style.display = 'none'; return; }
+  const item = findInvItemForDeduction(name, category);
+  hint.style.display = 'block';
+  if(item && item.costPrice != null && item.costPrice >= 0){
+    hint.className = 'fname-cogs-hint matched';
+    hint.textContent = `✓ ইনভেন্টরির "${item.name}" এর সাথে মিলেছে (Cost Price ${fmtMoney(item.costPrice)}) — COGS-এ যুক্ত হবে`;
+  } else if(item){
+    hint.className = 'fname-cogs-hint unmatched';
+    hint.textContent = `⚠ ইনভেন্টরিতে "${item.name}" পণ্যটি আছে কিন্তু Cost Price সেট নেই — এই বিক্রয় COGS-এ যুক্ত হবে না`;
+  } else if((state.invItems||[]).length){
+    hint.className = 'fname-cogs-hint unmatched';
+    hint.textContent = `⚠ ইনভেন্টরিতে এই নামে কোনো পণ্য পাওয়া যায়নি — বানান/স্পেস মিলিয়ে দেখুন, নাহলে COGS-এ যুক্ত হবে না`;
+  } else {
+    hint.style.display = 'none';
+  }
 }
 function updateComputedTotal(){
   const type = state.editing ? state.editing.type : state.currentPage;
@@ -5824,12 +5953,20 @@ function saveTxn(e){
   if(id){
     const t = list.find(x => String(x.id) === String(id));
     const oldQty = t.qty, oldName = t.name, oldCategory = t.category;
+    const oldItems = (type === 'sales' && Array.isArray(t.items) && t.items.length) ? t.items : null;
     Object.assign(t, payload);
     if(type === 'sales'){
-      // আগের এন্ট্রির পরিমাণ স্টকে ফেরত দিয়ে, নতুন পরিমাণ আবার বিয়োগ করা হচ্ছে —
-      // এতে এন্ট্রি এডিট করলেও ইনভেন্টরির হিসাব সঠিক থাকবে
-      adjustInvStock(oldName, oldCategory, oldQty || 0);
-      adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+      if(oldItems){
+        // Orders থেকে আসা বিক্রয়ের প্রকৃত পণ্য-ভিত্তিক পরিমাণ items অ্যারেতে থাকে, যেটা এই
+        // ফর্ম দিয়ে এডিট করা যায় না (Quantity ঘরটা শুধু সামারি সংখ্যা, প্রতিটি পণ্যের ভাগ নয়) —
+        // তাই এখানে স্টক ছোঁয়া হচ্ছে না, নাহলে না-মেলা summary name দিয়ে স্টক ভুলভাবে বদলে যেত
+        // (আগে এটা নীরবেই ঘটত, কিন্তু কোনো প্রভাব ছাড়াই — এখন ইচ্ছাকৃতভাবে এড়ানো হলো)
+      } else {
+        // আগের এন্ট্রির পরিমাণ স্টকে ফেরত দিয়ে, নতুন পরিমাণ আবার বিয়োগ করা হচ্ছে —
+        // এতে এন্ট্রি এডিট করলেও ইনভেন্টরির হিসাব সঠিক থাকবে
+        adjustInvStock(oldName, oldCategory, oldQty || 0);
+        adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+      }
       fraudWarning = checkTxnFraudFlags(t, list);
     } else if(type === 'purchase'){
       // পুরনো ক্রয়ের পরিমাণ স্টক থেকে বাদ দিয়ে (Cost Price অপরিবর্তিত রেখে), নতুন পরিমাণ + দাম
@@ -7855,10 +7992,14 @@ function renderAiInventoryTab(){
     .filter(x => x.stockQty != null && x.lowStock != null && x.stockQty <= x.lowStock)
     .sort((a,b)=> a.stockQty - b.stockQty);
   const lowStockBox = document.getElementById('aiLowStockList');
+  // sold30: state.sales-এর পুরো তালিকা একবার স্ক্যান করে গত ৩০ দিনের বিক্রয় বের করে —
+  // আগে এই একই হিসাব এই ফাংশনেই দুইবার (Low Stock অংশে ও Fast/Slow Moving অংশে) আলাদা
+  // আলাদাভাবে চালানো হতো, ফলে বিক্রয়ের সংখ্যা বেশি হলে প্রতিবার AI Insights খুললে
+  // (Inventory ট্যাব ডিফল্ট) দ্বিগুণ সময় লাগত। এখন একবার হিসাব করে দুই জায়গাতেই ব্যবহার করা হচ্ছে।
+  const sold30 = aiSalesQtyByProductSince(30);
   if(lowStockItems.length === 0){
     lowStockBox.innerHTML = emptyStateHTML('স্টক ঠিক আছে', 'কোনো পণ্যের স্টক এখনো সতর্কতা সীমার নিচে নামেনি।');
   } else {
-    const sold30 = aiSalesQtyByProductSince(30);
     lowStockBox.innerHTML = lowStockItems.map(item => {
       const dailyRate = (sold30[item.name]?.qty || 0) / 30;
       const suggestQty = Math.max(item.lowStock || 5, Math.ceil(dailyRate * 14)); // ২ সপ্তাহের সাপ্লাই
@@ -7870,7 +8011,6 @@ function renderAiInventoryTab(){
   }
 
   // Fast / slow moving based on last 30 days sales quantity
-  const sold30 = aiSalesQtyByProductSince(30);
   const productNames = state.invItems.length
     ? state.invItems.map(x => x.name)
     : Object.keys(sold30);
@@ -7890,6 +8030,7 @@ function renderAiInventoryTab(){
     ? slowList.map(x => aiRowHTML(x.name, 'গত ৩০ দিনে একবারও বিক্রি হয়নি', 'Dead Stock', 'var(--gold)')).join('')
     : emptyStateHTML('চমৎকার!', 'সব পণ্যই গত ৩০ দিনে অন্তত একবার বিক্রি হয়েছে।');
 }
+
 
 /* --- Sales tab: daily/weekly/monthly summary + top/bottom products --- */
 function renderAiSalesTab(){
@@ -7995,16 +8136,27 @@ function renderAiFinanceTab(){
     ? catList.map(c => aiRowHTML(c.name, totalExp > 0 ? `মোট খরচের ${Math.round(c.amt/totalExp*100)}%` : '', fmtMoney(c.amt), 'var(--loss)')).join('')
     : emptyStateHTML('কোনো খরচ নেই', 'এই সময়সীমায় কোনো খরচ রেকর্ড পাওয়া যায়নি।');
 
+  // দৈনিক ট্রেন্ড: আগে প্রতিটি দিনের জন্য আলাদাভাবে সম্পূর্ণ sales/purchases/expenses
+  // অ্যারে .filter() করা হতো (সর্বোচ্চ ১৪ দিন × ৩টি অ্যারে = ৪২ বার পুরো তালিকা স্ক্যান) —
+  // ডেটা বেশি হলে (মাস/বছরের পুরনো শপ) এটাই Finance ট্যাব খোলার সময় ধীরগতির মূল কারণ ছিল।
+  // এখন ইতিমধ্যে সময়সীমা অনুযায়ী ফিল্টার করা salesR/purR/expR (উপরে গণনা করা) একবার করে
+  // তারিখ অনুযায়ী বাকেটে ভাগ করে নেওয়া হচ্ছে, তারপর প্রতিটি দিনের জন্য শুধু লুকআপ করা হয়।
+  const bucketByDate = (list) => {
+    const map = {};
+    list.forEach(t => { if(t.date) map[t.date] = (map[t.date] || 0) + (t.total || 0); });
+    return map;
+  };
+  const salesByDate = bucketByDate(salesR);
+  const purByDate = bucketByDate(purR);
+  const expByDate = bucketByDate(expR);
   const trendDays = Math.min(days, 14);
   const rows = [];
   for(let i = trendDays - 1; i >= 0; i--){
     const d = new Date();
     d.setDate(d.getDate() - i);
     const dStr = d.toISOString().slice(0,10);
-    const daySales = state.sales.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
-    const dayPur = state.purchases.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
-    const dayExp = state.expenses.filter(t => t.date === dStr).reduce((s,t)=> s+(t.total||0), 0);
-    rows.push({ date: dStr, profit: daySales - dayPur - dayExp });
+    const profit = (salesByDate[dStr] || 0) - (purByDate[dStr] || 0) - (expByDate[dStr] || 0);
+    rows.push({ date: dStr, profit });
   }
   const maxAbs = Math.max(1, ...rows.map(r => Math.abs(r.profit)));
   document.getElementById('aiFinTrend').innerHTML = rows.map(r => {
@@ -8771,6 +8923,88 @@ function saveRsEntries(){
     showToast('সেভ করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
   }
 }
+
+/* =================== NATIVE APP FEEL এনহ্যান্সমেন্ট ===================
+   এখানে যা যোগ করা হলো তা কোনো বিজনেস লজিক ছোঁয় না, শুধু "ফিল"টা নেটিভ অ্যাপের
+   মতো করে:
+   1) হ্যাপটিক ফিডব্যাক (navigator.vibrate) — প্রতিটা বাটন ট্যাপে একটা হালকা কম্পন,
+      একটাই delegated listener দিয়ে, যাতে হাজারটা আলাদা onclick ছুঁতে না হয়।
+   2) বটম-শিটগুলো (Transaction/Item/Receipt/AI Insights/Receipt-Scan) এখন টেনে
+      নিচে নামিয়ে বন্ধ করা যাবে — ঠিক আইওএস-এর মতো: হ্যান্ডেল থেকে ধরে টানলে, অথবা
+      সিটের ভেতরের কনটেন্ট একদম উপরে স্ক্রল করা অবস্থায় যেকোনো জায়গা থেকে টানলে।
+   ======================================================================= */
+
+// হ্যাপটিক ফিডব্যাক — যেসব ডিভাইসে navigator.vibrate নেই (যেমন iOS Safari) সেখানে
+// চুপচাপ কিছুই হবে না, কোনো এরর দেখাবে না।
+function haptic(style){
+  if(!('vibrate' in navigator)) return;
+  try{
+    const patterns = { light:8, medium:16, success:[10,30,10], warning:[16,40,16] };
+    navigator.vibrate(patterns[style] || 8);
+  }catch(e){}
+}
+// অ্যাপ জুড়ে প্রতিটা ট্যাপযোগ্য এলিমেন্টে (যেকোনো [onclick], <button>, বটম-নেভ ট্যাব)
+// হালকা হ্যাপটিক — কোডবেসেই এই তিনটাকে "ট্যাপযোগ্য" হিসেবে ধরা হয় (দ্র. tap-highlight
+// রুল, উপরে), তাই একই কনভেনশন এখানেও ব্যবহার করা হলো।
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[onclick], button, .navtab');
+  if(el) haptic('light');
+}, true);
+
+// বটম শিট টেনে বন্ধ করার জেশ্চার — sheetId/overlayId/closeFn নিয়ে কাজ করে, তাই
+// পাঁচটা শিটেই একই ফাংশন পুনর্ব্যবহার করা যায়।
+function makeSheetSwipeable(sheetId, overlayId, closeFn){
+  const sheet = document.getElementById(sheetId);
+  const overlay = overlayId ? document.getElementById(overlayId) : null;
+  const handle = sheet && sheet.querySelector('.sheet-handle');
+  if(!sheet || !handle) return;
+  let startY = 0, lastDelta = 0, dragging = false;
+
+  function onStart(e){
+    // হ্যান্ডেল থেকে ধরলে সবসময় ড্র্যাগ শুরু হবে; অন্য কোথাও থেকে ধরলে তখনই শুরু হবে
+    // যখন সিটের কনটেন্ট ইতিমধ্যে একদম উপরে স্ক্রল করা (scrollTop 0) — নাহলে সাধারণ
+    // স্ক্রলিং-এর সাথে সংঘর্ষ হবে।
+    if(!(e.target === handle || handle.contains(e.target)) && sheet.scrollTop > 0) return;
+    startY = e.touches[0].clientY;
+    lastDelta = 0;
+    dragging = true;
+    sheet.classList.add('dragging');
+    if(overlay) overlay.classList.add('dragging');
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const delta = e.touches[0].clientY - startY;
+    if(delta <= 0){
+      if(lastDelta > 0){ sheet.style.transform = ''; if(overlay) overlay.style.opacity = ''; }
+      lastDelta = 0;
+      return; // উপরের দিকে টানলে সিট সরবে না, ভেতরের কনটেন্ট স্বাভাবিকভাবে স্ক্রল হবে
+    }
+    e.preventDefault();
+    lastDelta = delta;
+    sheet.style.transform = `translateY(${delta}px)`;
+    if(overlay) overlay.style.opacity = String(Math.max(0, 1 - delta / 280));
+  }
+  function onEnd(){
+    if(!dragging) return;
+    dragging = false;
+    sheet.classList.remove('dragging');
+    if(overlay) overlay.classList.remove('dragging');
+    const shouldClose = lastDelta > 90; // ৯০px-এর বেশি টানলে বন্ধ হয়ে যাবে
+    sheet.style.transform = '';
+    if(overlay) overlay.style.opacity = '';
+    lastDelta = 0;
+    if(shouldClose){ haptic('light'); closeFn(); }
+  }
+  sheet.addEventListener('touchstart', onStart, { passive:true });
+  sheet.addEventListener('touchmove', onMove, { passive:false });
+  sheet.addEventListener('touchend', onEnd);
+  sheet.addEventListener('touchcancel', onEnd);
+}
+makeSheetSwipeable('txnSheet', 'overlay', closeSheet);
+makeSheetSwipeable('itemSheet', 'itemOverlay', closeItemSheet);
+makeSheetSwipeable('receiptSheet', 'receiptOverlay', closeReceiptSheet);
+makeSheetSwipeable('aiInsightsSheet', 'aiInsightsOverlay', closeAiInsights);
+makeSheetSwipeable('receiptScanSheet', 'receiptScanOverlay', closeReceiptScanSheet);
 </script>
 </body>
 </html>
