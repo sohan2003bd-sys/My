@@ -1257,6 +1257,7 @@
     border:1px solid rgba(217,175,107,0.24);
   }
   .install-banner-icon{ font-size:26px; line-height:1; flex:none; }
+  .install-banner-icon img{ width:42px; height:42px; border-radius:11px; display:block; object-fit:cover; box-shadow:0 3px 8px rgba(0,0,0,0.25); }
   .install-banner-text{ display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
   .install-banner-text strong{ font-size:13.5px; font-weight:700; }
   .install-banner-text span{ font-size:11.5px; color:rgba(245,239,221,0.7); line-height:1.4; }
@@ -8828,12 +8829,12 @@ if(document.readyState === 'loading'){
       el.id = 'installBanner';
       el.innerHTML =
         '<div class="install-banner-inner">' +
-          '<div class="install-banner-icon">📲</div>' +
+          '<div class="install-banner-icon"><img src="./icon-192.png" alt="MY SHOP"></div>' +
           '<div class="install-banner-text">' +
-            '<strong>MY SHOP অ্যাপ হিসেবে ইনস্টল করুন</strong>' +
+            '<strong>MY SHOP অ্যাপ ইনস্টল করুন</strong>' +
             '<span>' + (showManualIosSteps
               ? 'শেয়ার বাটন ➜ "Add to Home Screen" চাপুন'
-              : 'হোমস্ক্রিনে যোগ করলে ব্রাউজার ছাড়াই সরাসরি অ্যাপের মতো খুলবে') + '</span>' +
+              : 'আপনার ব্যবসার হিসাব, স্টক ও লাভ-ক্ষতি এখন আরও সহজে পরিচালনা করুন') + '</span>' +
           '</div>' +
           (showManualIosSteps ? '' : '<button type="button" class="install-banner-btn" id="installBannerBtn">ইনস্টল</button>') +
           '<button type="button" class="install-banner-close" id="installBannerClose" aria-label="Close">✕</button>' +
