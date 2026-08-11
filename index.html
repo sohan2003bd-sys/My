@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#B8863E">
+<meta name="theme-color" content="#1E7A4C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -46,6 +46,10 @@
     --gold:#B8863E;
     --gold-light:#D9AF6B;
     --gold-bright:#E0AC53;
+    /* Topbar / status bar brand green (80% strength green, matches the reference banking-app header) */
+    --topbar-green:#1E7A4C;
+    --topbar-green-light:#2E9863;
+    --topbar-green-dark:#145C39;
     --rule:rgba(15,56,48,0.10);
     --card:#FFFFFF;
     --muted:#6B7268;
@@ -82,10 +86,7 @@
     color: var(--ink);
   }
   body.light-mode .icon-btn:active{ background: rgba(0,0,0,0.16); }
-  body.light-mode .icon-btn.orders-btn,
-  body.light-mode .icon-btn.inventory-btn{ color: inherit; }
-  body.light-mode .icon-btn.orders-btn{ background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%); color:#F5F9FF; }
-  body.light-mode .icon-btn.inventory-btn{ background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%); color:#3B2412; }
+  body.light-mode .icon-btn.orders-btn{ background:linear-gradient(150deg, #FFE24D 0%, #FFC400 70%); color:#3B2E00; }
 
   /* Top bar and bottom nav: always a single flat light-green color across every page (no gradient, no per-page tint) */
   
@@ -175,15 +176,15 @@
   #app{ display:none; max-width:520px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:84px; }
   .topbar{
     position:sticky; top:0; z-index:30;
-    background: var(--gold);
-    color:var(--ink);
+    background: var(--topbar-green);
+    color:#F2FBF6;
     padding:calc(16px + env(safe-area-inset-top)) 18px 14px;
     display:flex; align-items:center; justify-content:space-between;
     box-shadow: var(--shadow-lift);
   }
   .topbar::after{
     content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px;
-    background:linear-gradient(90deg, transparent, var(--gold-light) 25%, var(--gold) 50%, var(--gold-light) 75%, transparent);
+    background:linear-gradient(90deg, transparent, var(--topbar-green-light) 25%, var(--topbar-green) 50%, var(--topbar-green-light) 75%, transparent);
     opacity:.6;
   }
   .topbar .brand{ display:flex; align-items:center; gap:10px; min-width:0; }
@@ -201,31 +202,35 @@
     display:flex;align-items:center;justify-content:center; overflow:hidden;
     font-family:'Fraunces',serif; font-weight:700; color:var(--green-900); font-size:18px; flex:none;
   }
-  .topbar .co-name{ font-size:17px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .topbar .co-sub{ font-size:10.5px; color:#6E4A1F; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
+  .topbar .co-name{ font-size:17px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#F2FBF6; }
+  .topbar .co-sub{ font-size:10.5px; color:#CFEFDC; letter-spacing:.06em; text-transform:uppercase; opacity:.85; }
   .icon-btn{
-    background:rgba(15,56,48,0.10); border:none; color:var(--ink);
+    background:rgba(255,255,255,0.14); border:none; color:#F2FBF6;
     width:38px;height:38px;border-radius:11px;
     display:flex;align-items:center;justify-content:center; flex:none;
     will-change:transform, background;
     transform:translateZ(0);
     transition:background .15s ease, transform .1s ease;
   }
-  .icon-btn:active{ background:rgba(15,56,48,0.20); transform:scale(0.94); transition-duration:.04s; }
+  .icon-btn:active{ background:rgba(255,255,255,0.24); transform:scale(0.94); transition-duration:.04s; }
   .icon-btn.orders-btn{
     width:46px; height:46px; border-radius:13px;
-    background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%);
-    color:#F5F9FF;
-    box-shadow:0 4px 12px rgba(47,111,237,0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+    background:linear-gradient(150deg, #FFE24D 0%, #FFC400 70%);
+    color:#3B2E00;
+    box-shadow:0 4px 12px rgba(255,196,0,0.5), inset 0 1px 0 rgba(255,255,255,0.45);
   }
-  .icon-btn.orders-btn:active{ background:linear-gradient(150deg, #6FA8FF 0%, #2F6FED 70%); transform:scale(0.94); }
-  .icon-btn.inventory-btn{
-    width:46px; height:46px; border-radius:13px;
-    background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%);
-    color:#3B2412;
-    box-shadow:0 4px 12px rgba(181,114,60,0.42), inset 0 1px 0 rgba(255,255,255,0.35);
+  .icon-btn.orders-btn:active{ background:linear-gradient(150deg, #FFE24D 0%, #FFC400 70%); transform:scale(0.94); }
+  /* ইনভেন্টরি আইকন এখন টপবারে নেই — সেটিংস পেজের হেডারে সরানো হয়েছে */
+  .settings-inventory-btn{
+    width:44px; height:44px; border-radius:13px; flex:none; margin-left:auto;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--topbar-green);
+    color:#F2FBF6;
+    border:1px solid rgba(15,56,48,0.15);
+    box-shadow:0 6px 16px rgba(30,122,76,0.32), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition:transform .12s ease;
   }
-  .icon-btn.inventory-btn:active{ background:linear-gradient(150deg, #E3A868 0%, #B5723C 100%); transform:scale(0.94); }
+  .settings-inventory-btn:active{ transform:scale(0.92); }
 
   /* Drag mode toggle */
   .drag-mode-toggle {
@@ -868,10 +873,10 @@
   #onboardingScreen.light-auth .remember-row .forgot-link{ color:#F2722A; font-weight:600; }
   #onboardingScreen.light-auth .bottom-switch-line{ text-align:center; font-size:12.5px; color:#6B6355; margin-top:16px; }
   #onboardingScreen.light-auth .bottom-switch-line a{ text-decoration:none; }
-  /* ---------- App Lock (PIN) screen — bKash-style pink header + white keypad panel ---------- */
+  /* ---------- App Lock (PIN) screen — green header + white keypad panel ---------- */
   #lockScreen{
     display:flex; align-items:stretch; justify-content:center; padding:0;
-    background:linear-gradient(160deg, #E91E7E 0%, #E2136E 45%, #C9126A 100%);
+    background:linear-gradient(160deg, var(--topbar-green-light) 0%, var(--topbar-green) 45%, var(--topbar-green-dark) 100%);
   }
   #lockScreen::before, #lockScreen::after{ content:none; }
   .lock-wrap{
@@ -879,7 +884,7 @@
     display:flex; flex-direction:column; position:relative; z-index:1; overflow-y:auto;
     -webkit-overflow-scrolling: touch;
   }
-  /* Top orange section ≈ 30% of the frame height, bottom dark panel ≈ 70% — matches the reference proportions */
+  /* Top green section ≈ 30% of the frame height, bottom white keypad panel ≈ 70% */
   .lock-top{
     flex:0 0 30%; min-height:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -898,7 +903,7 @@
   .lock-top .lock-dots .d::before{ content:"–"; color:#FFFFFF; font-size:20px; font-weight:600; line-height:1; }
   .lock-top .lock-dots .d.filled{ transform:none; background:rgba(255,255,255,0.95); border-color:#FFFFFF; }
   .lock-top .lock-dots .d.filled::before{
-    content:""; width:10px; height:10px; border-radius:50%; background:#E2136E;
+    content:""; width:10px; height:10px; border-radius:50%; background:var(--topbar-green);
   }
   .lock-panel{
     flex:1 1 70%; min-height:0; background:#FFFFFF; border-radius:30px 30px 0 0;
@@ -912,19 +917,19 @@
   }
   .lock-links .use-pass{
     display:block; background:none; border:none; padding:0; margin:0;
-    color:#E2136E; font-size:14.5px; font-weight:700; letter-spacing:.04em; font-family:inherit;
+    color:var(--topbar-green); font-size:14.5px; font-weight:700; letter-spacing:.04em; font-family:inherit;
   }
   #lockScreen .login-error{ text-align:center; margin-bottom:12px; color:var(--loss); }
-  /* bKash-style keypad: light circular buttons with dark digits on the white panel */
+  /* light circular buttons with dark digits on the white panel */
   #lockScreen .lock-keypad{ width:100%; max-width:280px; gap:9px; margin-top:3px; margin-bottom:4px; }
   #lockScreen .lock-keypad button{
-    background:#F8EEF3;
-    color:var(--ink); box-shadow:0 3px 8px rgba(226,19,110,0.10);
+    background:#EAF6EF;
+    color:var(--ink); box-shadow:0 3px 8px rgba(30,122,76,0.12);
     display:flex; align-items:center; justify-content:center;
     font-size:30px;
   }
-  #lockScreen .lock-keypad button:active{ transform:scale(0.93); background:#F3DCE7; }
-  #lockScreen .lock-keypad button.key-fingerprint{ color:#E2136E; background:#F8EEF3; }
+  #lockScreen .lock-keypad button:active{ transform:scale(0.93); background:#D3ECDD; }
+  #lockScreen .lock-keypad button.key-fingerprint{ color:var(--topbar-green); background:#EAF6EF; }
   #lockScreen .lock-keypad button.key-fingerprint svg,
   #lockScreen .lock-keypad button.key-back svg{ width:30px; height:30px; }
   #lockScreen .lock-keypad span.key-empty{ background:none; box-shadow:none; aspect-ratio:1; }
@@ -1288,33 +1293,41 @@
   #ptrIndicator.snap{ transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease; }
   @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
-  /* ---------- Splash screen (launch animation) ---------- */
+  /* ---------- Splash screen (launch animation) ----------
+     ব্যাকগ্রাউন্ড প্রথমে সাদা থাকে, আইকন ছোট থেকে বড় হয়ে পপ-ইন করে, তারপর
+     ব্যাকগ্রাউন্ড অ্যানিমেট হয়ে সবুজে বদলে যায়। */
   #splashScreen{
     position:fixed; inset:0; z-index:99999;
     height:100vh; height:100dvh;
     display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(150deg, var(--gold-bright), var(--gold));
+    background:#FFFFFF;
+    animation: splashBgToGreen .6s ease .5s both;
     transition:opacity .4s ease;
   }
   #splashScreen.splash-fade-out{ opacity:0; pointer-events:none; }
   #splashScreen .splash-mark{
     width:110px; height:110px; border-radius:30px;
-    background:rgba(255,255,255,0.16);
-    border:3px solid rgba(255,255,255,0.55);
+    background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green));
+    border:3px solid rgba(255,255,255,0.85);
     display:flex; align-items:center; justify-content:center; overflow:hidden;
     font-family:'Fraunces',serif; font-weight:700; color:#fff; font-size:44px;
     box-shadow:0 20px 44px rgba(15,40,34,0.28);
     animation: splashPop .7s cubic-bezier(.34,1.56,.64,1) both;
   }
-  /* instant boot (ক্যাশ করা ডেটা দিয়ে) হলে splash খুব দ্রুত সরে যায় — তখন ৭০০ms পপ-ইন
-     এনিমেশন মাঝপথে কেটে ফেড-আউট শুরু হলে জগাখিচুড়ি/broken দেখাবে, তাই সেক্ষেত্রে লোগো
-     সরাসরি চূড়ান্ত অবস্থাতেই (এনিমেশন ছাড়া) দেখানো হয়। */
+  /* instant boot (ক্যাশ করা ডেটা দিয়ে) হলে splash খুব দ্রুত সরে যায় — তখন সাদা→সবুজ ও
+     পপ-ইন এনিমেশন মাঝপথে কেটে ফেড-আউট শুরু হলে জগাখিচুড়ি/broken দেখাবে, তাই সেক্ষেত্রে
+     লোগো ও ব্যাকগ্রাউন্ড সরাসরি চূড়ান্ত (সবুজ) অবস্থাতেই (এনিমেশন ছাড়া) দেখানো হয়। */
+  #splashScreen.no-anim{ animation:none; background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green)); }
   #splashScreen.no-anim .splash-mark{ animation:none; }
   #splashScreen .splash-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
   @keyframes splashPop{
     0%{ transform:scale(0.4); opacity:0; }
     60%{ transform:scale(1.08); opacity:1; }
     100%{ transform:scale(1); opacity:1; }
+  }
+  @keyframes splashBgToGreen{
+    from{ background:#FFFFFF; }
+    to{ background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green)); }
   }
 
   /* ---------- Welcome carousel (first-run only, before onboarding) ---------- */
@@ -1578,9 +1591,6 @@
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
-      <button class="icon-btn inventory-btn" onclick="goPage('inventory')" aria-label="Inventory" title="ইনভেন্টরি">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-      </button>
       <button class="icon-btn orders-btn" onclick="goPage('orders')" aria-label="Live Orders" style="position:relative;">
         <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         <span id="ordersBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:var(--loss); color:#fff; font-size:9.5px; font-weight:700; min-width:17px; height:17px; border-radius:9px; align-items:center; justify-content:center; padding:0 3px; box-shadow:0 0 0 2px var(--green-800);">0</span>
@@ -1820,6 +1830,9 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
         <div class="settings-nav-title" id="settingsNavTitle" data-i18n="settings_empty_hint">মেনু থেকে একটি অপশন বেছে নিন</div>
+        <button class="settings-inventory-btn" onclick="goPage('inventory')" aria-label="Inventory" title="ইনভেন্টরি">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </button>
       </div>
 
       <div class="settings-menu-overlay" id="settingsMenuOverlay" onclick="closeSettingsMenu()"></div>
@@ -4129,7 +4142,10 @@ let itemSortMode = 0;
 
 let idCounter = 1;
 const LIST_PAGE_SIZE = 30;
-let listVisibleCounts = { sales: LIST_PAGE_SIZE, purchase: LIST_PAGE_SIZE, expense: LIST_PAGE_SIZE };
+// Inventory ও Orders-ও এখন sales/purchase/expense-এর মতো pagination পায় — আগে এই
+// দুইটা পেজ পুরো লিস্টের HTML একবারে বানাত (কমেন্ট দ্র. goPage()), আইটেম/অর্ডার সংখ্যা
+// বেশি হলে সেটাই ট্যাব-ট্যাপে সবচেয়ে চোখে-পড়ার-মতো ল্যাগ তৈরি করত।
+let listVisibleCounts = { sales: LIST_PAGE_SIZE, purchase: LIST_PAGE_SIZE, expense: LIST_PAGE_SIZE, inventory: LIST_PAGE_SIZE, orders: LIST_PAGE_SIZE };
 let listSearchQuery = { sales:'', purchase:'', expense:'' };
 
 // ---------- Per-page "dirty" flags ----------
@@ -5113,9 +5129,12 @@ function bootApp(){
     // এতক্ষণে সিদ্ধান্ত না এলে ক্যাশ করা ডাটা দিয়েই ঢুকিয়ে দেওয়া, পরে কানেকশন ঠিক হলে এমনিই সিঙ্ক হয়ে যাবে।
     // instant boot ইতিমধ্যে অ্যাপ/লক স্ক্রিন দেখিয়ে দিয়ে থাকলে এই fallback আর দরকার নেই।
     if(!instantBooted){
+      // অ্যাপ যত লোডই থাকুক, স্প্ল্যাশ স্ক্রিন ১ সেকেন্ডের বেশি দেখানো হবে না —
+      // এই সময়ের মধ্যে Firebase থেকে কোনো সিদ্ধান্ত (লগইন/লক/অনবোর্ডিং) না এলে
+      // ক্যাশ করা ডাটা দিয়েই অ্যাপ খুলে দেওয়া হবে, Firebase ব্যাকগ্রাউন্ডে চলতেই থাকবে।
       bootFallbackTimer = setTimeout(()=>{
         if(!splashScreenDecided) enterOfflineMode(hasLocalAccount);
-      }, 8000);
+      }, 1000);
     }
   }
   window.addEventListener('online', syncAfterReconnect);
@@ -5153,7 +5172,7 @@ function enterApp(){
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  setThemeColor('#B8863E'); // মূল অ্যাপের গোল্ড টপবারের সাথে ম্যাচ
+  setThemeColor('#1E7A4C'); // মূল অ্যাপের সবুজ টপবারের সাথে ম্যাচ
   markTabUnlocked();
   renderAll();
   listenOrders();
@@ -5261,7 +5280,7 @@ function showLockScreen(){
   document.getElementById('onboardingScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'flex';
-  setThemeColor('#0B2721'); // লক স্ক্রিনের গাঢ় সবুজ ব্যাকগ্রাউন্ডের সাথে ম্যাচ
+  setThemeColor('#1E7A4C'); // লক স্ক্রিনের সবুজ হেডার ব্যাকগ্রাউন্ডের সাথে ম্যাচ
   document.getElementById('lockCoName').textContent = state.company.name;
   applyBrandMark();
   document.getElementById('lockError').style.display = 'none';
@@ -5370,9 +5389,9 @@ function goPage(page){
     if(page === 'sales' && dirtyPages.sales){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
     if(page === 'purchase' && dirtyPages.purchase){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
     if(page === 'expense' && dirtyPages.expense){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
-    if(page === 'orders' && dirtyPages.orders){ renderOrders(); dirtyPages.orders = false; }
+    if(page === 'orders' && dirtyPages.orders){ listVisibleCounts.orders = LIST_PAGE_SIZE; renderOrders(); dirtyPages.orders = false; }
     if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
-    if(page === 'inventory' && dirtyPages.inventory){ renderItems(); dirtyPages.inventory = false; }
+    if(page === 'inventory' && dirtyPages.inventory){ listVisibleCounts.inventory = LIST_PAGE_SIZE; renderItems(); dirtyPages.inventory = false; }
     if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
   };
   if(dirtyPages[page]){
@@ -5394,6 +5413,7 @@ document.getElementById('orderTabs').addEventListener('click', (e)=>{
   state.currentOrderTab = btn.dataset.ostatus;
   document.querySelectorAll('#orderTabs button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  listVisibleCounts.orders = LIST_PAGE_SIZE;
   // goPage()-এর মতো একই কারণ: renderOrders() পুরো অর্ডার লিস্টের HTML একবারে বানায়
   // (pagination নেই), তাই সরাসরি কল করলে ট্যাব হাইলাইটটাও একই ফ্রেমে আটকে থেকে
   // ল্যাগ অনুভূত হয়। ডাবল rAF দিয়ে হাইলাইট আগে পেইন্ট হতে দিয়ে render এক ফ্রেম পরে।
@@ -6391,17 +6411,20 @@ function toggleItemSearch(){
 }
 function onItemSearchInput(v){
   itemSearchQuery = v.trim().toLowerCase();
+  listVisibleCounts.inventory = LIST_PAGE_SIZE;
   debounceRender('items', renderItems, 140);
 }
 function cycleItemSort(){
   itemSortMode = (itemSortMode + 1) % ITEM_SORT_MODES.length;
   document.getElementById('itemSortLbl').textContent = ITEM_SORT_MODES[itemSortMode].lbl;
+  listVisibleCounts.inventory = LIST_PAGE_SIZE;
   renderItems();
 }
 function setItemCatFilter(cat, btn){
   itemCatFilter = cat;
   document.querySelectorAll('#itemCatTabs button').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  listVisibleCounts.inventory = LIST_PAGE_SIZE;
   renderItems();
 }
 function renderItemCatTabs(){
@@ -6442,11 +6465,27 @@ function itemCardHTML(item){
 }
 function renderItems(){
   renderItemCatTabs();
-  const list = getFilteredSortedItems();
-  document.getElementById('itemsCountLbl').textContent = list.length;
-  document.getElementById('itemsList').innerHTML = list.length
-    ? list.map(itemCardHTML).join('')
-    : `<div class="empty-state">এখনো কোনো পণ্য যোগ করা হয়নি — নিচের + বাটনে চেপে শুরু করুন</div>`;
+  const fullList = getFilteredSortedItems();
+  document.getElementById('itemsCountLbl').textContent = fullList.length;
+  const box = document.getElementById('itemsList');
+  if(fullList.length === 0){
+    box.innerHTML = `<div class="empty-state">এখনো কোনো পণ্য যোগ করা হয়নি — নিচের + বাটনে চেপে শুরু করুন</div>`;
+    return;
+  }
+  // sales/purchase/expense লিস্টের মতোই একবারে সব কার্ড না বানিয়ে প্রথমে
+  // LIST_PAGE_SIZE-টা দেখানো হয় — বড় ইনভেন্টরিতে ট্যাব-ট্যাপে instant response পাওয়ার জন্য।
+  const visibleCount = Math.min(listVisibleCounts.inventory || LIST_PAGE_SIZE, fullList.length);
+  const visibleList = fullList.slice(0, visibleCount);
+  let html = visibleList.map(itemCardHTML).join('');
+  if(fullList.length > visibleCount){
+    const remaining = fullList.length - visibleCount;
+    html += `<button class="btn btn-ghost" style="width:100%;margin-top:10px;" onclick="loadMoreInventory()">আরও দেখুন (বাকি ${remaining}টি)</button>`;
+  }
+  box.innerHTML = html;
+}
+function loadMoreInventory(){
+  listVisibleCounts.inventory = (listVisibleCounts.inventory || LIST_PAGE_SIZE) + LIST_PAGE_SIZE;
+  renderItems();
 }
 function renderStockAlerts(){
   const list = state.invItems
@@ -6804,7 +6843,7 @@ function applyDragMode(enabled){
     body.classList.remove('light-mode');
   }
   if(document.getElementById('app').style.display !== 'none'){
-    setThemeColor(enabled ? '#FFFFFF' : '#B8863E'); // টপবার/বটমনেভ কালারের সাথে স্ট্যাটাস বার মিলিয়ে রাখা
+    setThemeColor(enabled ? '#FFFFFF' : '#1E7A4C'); // টপবার/বটমনেভ কালারের সাথে স্ট্যাটাস বার মিলিয়ে রাখা
   }
   
   showToast(enabled ? '🌗 Light Mode Activated' : '🌙 Dark Mode Activated');
@@ -8463,7 +8502,20 @@ function renderOrders(){
     box.innerHTML = emptyStateHTML('No orders here.', 'New orders from your landing page will appear live.');
     return;
   }
-  box.innerHTML = list.map(orderCardHTML).join('');
+  // sales/purchase/expense-এর মতোই — একবারে সব অর্ডার-কার্ড না বানিয়ে ধাপে ধাপে,
+  // যাতে অর্ডার সংখ্যা বেশি হলেও ট্যাব খোলা instant থাকে।
+  const visibleCount = Math.min(listVisibleCounts.orders || LIST_PAGE_SIZE, list.length);
+  const visibleList = list.slice(0, visibleCount);
+  let html = visibleList.map(orderCardHTML).join('');
+  if(list.length > visibleCount){
+    const remaining = list.length - visibleCount;
+    html += `<button class="btn btn-ghost" style="width:100%;margin-top:10px;" onclick="loadMoreOrders()">আরও দেখুন (বাকি ${remaining}টি)</button>`;
+  }
+  box.innerHTML = html;
+}
+function loadMoreOrders(){
+  listVisibleCounts.orders = (listVisibleCounts.orders || LIST_PAGE_SIZE) + LIST_PAGE_SIZE;
+  renderOrders();
 }
 function orderCardHTML(o){
   const items = Array.isArray(o.items) ? o.items : [];
