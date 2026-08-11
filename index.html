@@ -930,7 +930,7 @@
   }
   #lockScreen .lock-keypad button:active{ transform:scale(0.93); background:#D3ECDD; }
   #lockScreen .lock-keypad button.key-fingerprint{ color:var(--topbar-green); background:#EAF6EF; }
-  #lockScreen .lock-keypad button.key-fingerprint svg,
+  #lockScreen .lock-keypad button.key-fingerprint svg{ width:75%; height:75%; }
   #lockScreen .lock-keypad button.key-back svg{ width:30px; height:30px; }
   #lockScreen .lock-keypad span.key-empty{ background:none; box-shadow:none; aspect-ratio:1; }
   #lockScreen h1.display{ color:#FFFFFF; }
@@ -4414,7 +4414,17 @@ function initFirebaseCore(){
         // enterOrLock() আবার কল করা হয় না — নাহলে লক স্ক্রিনে থাকলে ইউজার তখন যে PIN
         // ডিজিট টাইপ করছিলেন তা মুছে যেত (showLockScreen() প্রতিবার buffer রিসেট করে)।
         if(!instantBooted) enterOrLock();
-        else markScreenDecided();
+        else {
+          markScreenDecided();
+          // instant boot-এ লক স্ক্রিন currentUid সেট হওয়ার *আগেই* বানানো হয়ে যায়, আর
+          // ফিঙ্গারপ্রিন্ট ক্রেডেনশিয়াল currentUid-ভিত্তিক key-তে (bioCred_<uid>) রাখা —
+          // তাই প্রথম রেন্ডারে hasBioCredential() ভুল key ('bioCred_local') চেক করে
+          // ফিঙ্গারপ্রিন্ট বাটন বাদ দিয়ে ফেলত (সংখ্যাগুলো সাথে সাথে আসত, ফিঙ্গার আইকন
+          // দেরিতে বা একদমই আসত না)। এখন currentUid ঠিকভাবে জানা মাত্রই কীপ্যাড আবার
+          // বানানো হচ্ছে, যাতে সঠিক ক্রেডেনশিয়াল পাওয়া গেলে ফিঙ্গার আইকন সাথে সাথেই যোগ হয়।
+          const lockEl = document.getElementById('lockScreen');
+          if(lockEl && lockEl.style.display !== 'none') buildKeypad();
+        }
         syncShopDataInBackground(currentUid);
         return;
       }
