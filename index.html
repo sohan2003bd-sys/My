@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1E7A4C">
+<meta name="theme-color" content="#F5EAD0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1295,40 +1295,63 @@
   @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
   /* ---------- Splash screen (launch animation) ----------
-     ব্যাকগ্রাউন্ড প্রথমে সাদা থাকে, আইকন ছোট থেকে বড় হয়ে পপ-ইন করে, তারপর
-     ব্যাকগ্রাউন্ড অ্যানিমেট হয়ে সবুজে বদলে যায়। */
+     ব্যাকগ্রাউন্ড ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটা ট্যাগও এই একই
+     কালারে সেট করা আছে, তাই এই সময় ফোনের স্ট্যাটাস বার/টপবারও একই ক্রিম কালার দেখাবে।
+     (এরপর onboarding/lock/app স্ক্রিনে গেলে সেই স্ক্রিনগুলোর নিজস্ব কালারে বদলে যায় —
+     দ্র. setThemeColor কলগুলো, নিচের বড় script-এ)। */
   #splashScreen{
     position:fixed; inset:0; z-index:99999;
-    height:100vh; height:100dvh;
+    width:100%; height:100vh; height:100dvh;
+    background:#F5EAD0;
     display:flex; align-items:center; justify-content:center;
-    background:#FFFFFF;
-    animation: splashBgToGreen .6s ease .5s both;
-    transition:opacity .4s ease;
+    overflow:hidden;
+    transition:opacity .6s ease;
   }
   #splashScreen.splash-fade-out{ opacity:0; pointer-events:none; }
-  #splashScreen .splash-mark{
-    width:110px; height:110px; border-radius:30px;
-    background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green));
-    border:3px solid rgba(255,255,255,0.85);
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
-    font-family:'Fraunces',serif; font-weight:700; color:#fff; font-size:44px;
-    box-shadow:0 20px 44px rgba(15,40,34,0.28);
-    animation: splashPop .7s cubic-bezier(.34,1.56,.64,1) both;
+  #splashScreen .stage{
+    position:relative; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
   }
-  /* instant boot (ক্যাশ করা ডেটা দিয়ে) হলে splash খুব দ্রুত সরে যায় — তখন সাদা→সবুজ ও
-     পপ-ইন এনিমেশন মাঝপথে কেটে ফেড-আউট শুরু হলে জগাখিচুড়ি/broken দেখাবে, তাই সেক্ষেত্রে
-     লোগো ও ব্যাকগ্রাউন্ড সরাসরি চূড়ান্ত (সবুজ) অবস্থাতেই (এনিমেশন ছাড়া) দেখানো হয়। */
-  #splashScreen.no-anim{ animation:none; background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green)); }
-  #splashScreen.no-anim .splash-mark{ animation:none; }
-  #splashScreen .splash-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-  @keyframes splashPop{
-    0%{ transform:scale(0.4); opacity:0; }
-    60%{ transform:scale(1.08); opacity:1; }
-    100%{ transform:scale(1); opacity:1; }
+  #splashScreen .icon{
+    position:absolute; width:110px; height:110px;
+    opacity:0; transform:scale(.2);
+    transition:opacity .4s ease, transform 1s cubic-bezier(.2,.8,.2,1);
   }
-  @keyframes splashBgToGreen{
-    from{ background:#FFFFFF; }
-    to{ background:linear-gradient(150deg, var(--topbar-green-light), var(--topbar-green)); }
+  #splashScreen .icon.show{ opacity:1; transform:scale(1); }
+  #splashScreen .icon.big{ transform:scale(1.65); }
+  #splashScreen .icon.hide{ opacity:0; transform:scale(1.45); }
+  #splashScreen .brand{
+    position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    opacity:0; transform:translateY(15px) scale(.9);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  #splashScreen .brand.show{ opacity:1; transform:translateY(0) scale(1); }
+  #splashScreen .brand-logo{ width:78px; height:78px; margin-bottom:18px; }
+  #splashScreen .brand-name{
+    font-family:'Fraunces',serif; font-size:32px; font-weight:700;
+    letter-spacing:2px; color:#1B2420;
+  }
+  #splashScreen .tagline{
+    margin-top:10px; font-size:11px; font-weight:600; letter-spacing:1.5px;
+    color:rgba(27,36,32,0.62);
+    opacity:0; transform:translateY(8px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  #splashScreen .tagline.show{ opacity:1; transform:translateY(0); }
+  /* instant boot (ক্যাশ করা ডেটা দিয়ে আগে থেকে লগইন করা) হলে splash সাথে সাথেই সরে যায় —
+     তখন আইকন→ব্র্যান্ড→ট্যাগলাইনের পুরো ধাপগুলো মাঝপথে কেটে ফেড-আউট শুরু হলে জগাখিচুড়ি
+     দেখাবে, তাই সেক্ষেত্রে আইকন-স্টেজ পুরো বাদ, আর ব্র্যান্ড+ট্যাগলাইন সরাসরি চূড়ান্ত
+     অবস্থায় (এনিমেশন ছাড়া) দেখানো হয়। */
+  #splashScreen.no-anim .icon{ display:none; }
+  #splashScreen.no-anim .brand{ opacity:1; transform:none; transition:none; }
+  #splashScreen.no-anim .tagline{ opacity:1; transform:none; transition:none; }
+  @media (max-width:380px){
+    #splashScreen .icon{ width:100px; height:100px; }
+    #splashScreen .brand-logo{ width:70px; height:70px; }
+    #splashScreen .brand-name{ font-size:28px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #splashScreen .icon, #splashScreen .brand, #splashScreen .tagline{ transition:none; }
   }
 
   /* ---------- Welcome carousel (first-run only, before onboarding) ---------- */
@@ -1407,6 +1430,70 @@
 </style>
 </head>
 <body>
+
+<!-- ===================== SPLASH SCREEN (launch animation) =====================
+     Firebase/loadState ঠিক কোন স্ক্রিন (onboarding/lock/app) দেখাবে সেটা বুঝে ওঠার
+     আগ পর্যন্ত পুরো স্ক্রিন ঢেকে রাখে — আইকন বড়/সেটল/ফেড হয়ে "MY SHOP" নাম ও
+     ট্যাগলাইন ভেসে ওঠে (দ্র. runSplashSequence, নিচের বড় script-এ)। ব্যাকগ্রাউন্ড
+     ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটাও এই কালারে সেট করা, তাই এই
+     পুরো সময় ফোনের স্ট্যাটাস বার/টপবারও একই ক্রিম কালার দেখাবে। ===================== -->
+<div id="splashScreen">
+  <div class="stage">
+
+    <!-- ANIMATED ICON (small → big → settle → fade) -->
+    <div class="icon">
+      <svg viewBox="0 0 512 512" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="splashGreen1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0B9850"/>
+            <stop offset="100%" stop-color="#08713E"/>
+          </linearGradient>
+          <linearGradient id="splashBlue1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1674F5"/>
+            <stop offset="100%" stop-color="#0753CF"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="512" height="512" rx="85" fill="url(#splashGreen1)"/>
+        <rect x="108" y="108" width="302" height="320" rx="34" fill="#FFFFFF"/>
+        <rect x="145" y="153" width="160" height="27" rx="14" fill="#0A9550"/>
+        <rect x="143" y="207" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="249" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="291" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="333" width="166" height="10" rx="5" fill="#171717"/>
+        <path d="M321 78 H388 V246 L354.5 216 L321 246 Z" fill="url(#splashBlue1)"/>
+        <circle cx="374" cy="370" r="82" fill="url(#splashBlue1)"/>
+        <rect x="325" y="390" width="23" height="34" rx="3" fill="#FFFFFF"/>
+        <rect x="359" y="365" width="23" height="59" rx="3" fill="#FFFFFF"/>
+        <rect x="393" y="332" width="23" height="92" rx="3" fill="#FFFFFF"/>
+        <path d="M322 365 L351 337 L374 351 L412 313" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M394 313 H416 V335" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- BRAND: same mark, small + name + tagline -->
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" rx="85" fill="#087F46"/>
+        <rect x="108" y="108" width="302" height="320" rx="34" fill="#FFFFFF"/>
+        <rect x="145" y="153" width="160" height="27" rx="14" fill="#0A9550"/>
+        <rect x="143" y="207" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="249" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="291" width="166" height="10" rx="5" fill="#171717"/>
+        <rect x="143" y="333" width="166" height="10" rx="5" fill="#171717"/>
+        <path d="M321 78 H388 V246 L354.5 216 L321 246 Z" fill="#116BE4"/>
+        <circle cx="374" cy="370" r="82" fill="#116BE4"/>
+        <rect x="325" y="390" width="23" height="34" rx="3" fill="#FFFFFF"/>
+        <rect x="359" y="365" width="23" height="59" rx="3" fill="#FFFFFF"/>
+        <rect x="393" y="332" width="23" height="92" rx="3" fill="#FFFFFF"/>
+        <path d="M322 365 L351 337 L374 351 L412 313" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M394 313 H416 V335" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="brand-name">MY SHOP</div>
+      <div class="tagline">SMART BUSINESS • SIMPLE MANAGEMENT</div>
+    </div>
+
+  </div>
+</div>
 
 <!-- ===================== WELCOME CAROUSEL (first-run only, before onboarding) ===================== -->
 <div id="welcomeScreen">
@@ -5217,9 +5304,9 @@ function trySplashHide(){
   const el = document.getElementById('splashScreen');
   if(!el || el.dataset.hidden) return;
   el.dataset.hidden = '1';
-  // ক্যাশ করা ডেটা দিয়ে instant boot হলে গন্তব্য স্ক্রিন এমনিতেই রেডি — তখন আগের ৪২০ms
-  // ধীর ফেড নিজেই একটা "লোডিং"-এর মতো লাগে, তাই দ্রুত (~১০০ms) ফেড ব্যবহার করা হচ্ছে।
-  const fadeMs = instantBooted ? 100 : 420;
+  // ক্যাশ করা ডেটা দিয়ে instant boot হলেও ফেড-আউট এখন ধীরে (~১.২s) হয়, যাতে অ্যাপ
+  // হুট করে "জাম্প" করে খুলে যাওয়ার মতো না লেগে একটা স্বাভাবিক, স্মুথ ট্রানজিশন লাগে।
+  const fadeMs = instantBooted ? 1200 : 420;
   el.style.transition = `opacity ${fadeMs}ms ease`;
   el.classList.add('splash-fade-out');
   setTimeout(()=>{ el.style.display = 'none'; }, fadeMs);
@@ -5229,19 +5316,38 @@ function markScreenDecided(){
   splashScreenDecided = true;
   trySplashHide();
 }
-// আগে এখানে ৫০০ms ফিক্সড মিনিমাম টাইম ছিল, পরে ১৫০ms-এ নামানো হয়েছিল — কিন্তু ক্যাশ করা
-// ডেটা দিয়ে instant boot হলে (উপরে দ্র.) গন্তব্য স্ক্রিন তো ইতিমধ্যেই ঠিক হয়ে গেছে, তখন এই
-// কৃত্রিম অপেক্ষার আর কোনো মানে নেই — এটাই এখন একমাত্র জায়গা যেখানে "হালকা লোডিং" এর
-// মতো লাগার সুযোগ ছিল। তাই instant boot হলে সরাসরি এখনই (০ অপেক্ষায়) স্প্ল্যাশ সরিয়ে
-// দেওয়া হচ্ছে। শুধু সত্যিকারের প্রথমবার-ওপেন/নতুন ডিভাইসে (যেখানে Firebase-এর জন্য আসলেই
-// অপেক্ষা করতে হয়) আগের মতো ১৫০ms ন্যূনতম সময় রাখা হলো, যাতে লোগোটা এক ঝলক ফ্ল্যাশ করে
-// অদৃশ্য হয়ে না যায়।
+// আইকন→ব্র্যান্ড→ট্যাগলাইন — পুরো রিভিল সিকোয়েন্সটা শেষ হতে ~৩.৫ সেকেন্ড লাগে (দ্র.
+// runSplashSequence, নিচে), তাই মিনিমাম-টাইম গেটটা বাড়িয়ে ৫৩০০ms করা হলো, যাতে গন্তব্য
+// স্ক্রিন (onboarding/lock/app) যত দ্রুতই ঠিক হয়ে যাক না কেন, স্প্ল্যাশ মাঝপথে কেটে
+// অ্যানিমেশনটা অসম্পূর্ণ অবস্থায় ফেড-আউট শুরু না করে। ইনস্ট্যান্ট বুট (আগে থেকে লগইন করা,
+// ক্যাশ করা ডেটা আছে) হলে আগের মতোই সিকোয়েন্স পুরোপুরি স্কিপ করে সাথে সাথেই সরে যায় —
+// প্রতিবার অ্যাপ খুলতে ৫ সেকেন্ড অপেক্ষা করানো ঠিক না, শুধু আসল "লঞ্চ" মুহূর্তেই এই পুরো
+// রিভিলটা দেখা যাবে।
 if(instantBooted){
   splashMinTimeElapsed = true;
   trySplashHide();
 } else {
-  setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 150);
+  setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 5300);
 }
+// আইকন বড় হয়ে সেটল করে, মিলিয়ে যায়, তারপর "MY SHOP" নাম ও ট্যাগলাইন ভেসে ওঠে —
+// ব্যাকগ্রাউন্ড শুরু থেকে শেষ পর্যন্ত #0B2721-ই থাকে (manifest.json-এর background_color-এর
+// সাথে মেলানো), তাই OS-এর নিজস্ব স্প্ল্যাশ থেকে এখানে আসার সময় কোনো কালার-জাম্প হয় না।
+// instant boot হলে (no-anim ক্লাস, দ্র. CSS) এই পুরো সিকোয়েন্সটা স্কিপ করা হয়।
+function runSplashSequence(){
+  const splashEl = document.getElementById('splashScreen');
+  if(!splashEl || splashEl.classList.contains('no-anim')) return;
+  const icon = splashEl.querySelector('.icon');
+  const brand = splashEl.querySelector('.brand');
+  const tagline = splashEl.querySelector('.tagline');
+  if(!icon || !brand || !tagline) return;
+  setTimeout(()=> icon.classList.add('show'), 100);       // ছোট আইকন দেখা যায়
+  setTimeout(()=> icon.classList.add('big'), 900);         // আইকন বড় হয়
+  setTimeout(()=> icon.classList.remove('big'), 1900);     // আইকন সেটল করে
+  setTimeout(()=> icon.classList.add('hide'), 2500);       // আইকন মিলিয়ে যায়
+  setTimeout(()=> brand.classList.add('show'), 2900);      // "MY SHOP" ভেসে ওঠে
+  setTimeout(()=> tagline.classList.add('show'), 3500);    // ট্যাগলাইন ভেসে ওঠে
+}
+runSplashSequence();
 // Bank-app style re-lock: if the app was backgrounded (tab switched, phone
 // locked, another app opened) for 40+ seconds, ask for PIN/biometric again
 // when it comes back — even though the same-tab session hasn't fully reloaded.
@@ -5268,7 +5374,10 @@ document.addEventListener('visibilitychange', () => {
 function applyBrandMark(){
   const initial = (state.company.name || 'K').trim().charAt(0).toUpperCase() || 'K';
   const logo = (state.company.logoUrl || '').trim();
-  ['brandMark','lockMark','splashMark','loginMark'].forEach(id=>{
+  /* এখানে আগে 'splashMark'-ও ছিল — কিন্তু স্প্ল্যাশের আইকনটা এখন প্রতি-দোকানের নিজস্ব
+     লোগো/initial না, বরং একটা fixed "MY SHOP" অ্যাপ-আইকন ডিজাইন (দ্র. #splashScreen
+     markup), তাই এটাকে আর এখানে ওভাররাইট করা হয় না। */
+  ['brandMark','lockMark','loginMark'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
     if(logo){
