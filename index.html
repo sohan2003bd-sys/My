@@ -5492,7 +5492,9 @@ function runVerifyMode(vid){
       return;
     }
     waited += 100;
-    if(waited > 5000){ renderVerifyScreen(null); return; }
+    // ৫ সেকেন্ডেও Firebase SDK রেডি না হলে এটা "ভুয়া কোড" (null) না — এটা লোডিং/নেটওয়ার্ক
+    // সমস্যা (undefined), তাই সংযোগ-সমস্যার বার্তা দেখানো হচ্ছে, "যাচাই করা যায়নি" নয়।
+    if(waited > 5000){ renderVerifyScreen(undefined); return; }
     setTimeout(tryInit, 100);
   };
   tryInit();
@@ -5535,9 +5537,10 @@ function renderVerifyScreen(data){
           <div class="v-status-icon">!</div>
           <div>
             <div class="v-status-title">সংযোগ সমস্যা</div>
-            <div class="v-status-sub">যাচাই করতে ইন্টারনেট সংযোগ দরকার — আবার চেষ্টা করুন</div>
+            <div class="v-status-sub">যাচাই করতে ইন্টারনেট সংযোগ দরকার</div>
           </div>
         </div>
+        <button type="button" class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="location.reload()">🔄 আবার চেষ্টা করুন</button>
       </div>`;
     return;
   }
@@ -7636,13 +7639,15 @@ function printReceipts(){
   // নতুন বানিয়ে) পাবলিক verify/ নোডে পুশ করা হচ্ছে — যাতে QR স্ক্যান করে যে কেউ (লগইন
   // ছাড়াই) এই নির্দিষ্ট ইনভয়েসটা যাচাই করতে পারে। sale অবজেক্টে vid বসানো হচ্ছে বলে
   // saveState() দিয়ে সেটাও লোকাল/ক্লাউডে সেভ হয়ে যাচ্ছে, তাই একই ইনভয়েস পরে আবার
-  // প্রিন্ট করলে আগেরই কোড ও লিংক পুনরায় ব্যবহৃত হবে।
+  // প্রিন্ট করলে আগেরই কোড ও লিংক পুনরায় ব্যবহৃত হবে। প্রতিবার প্রিন্ট করার সময়ই আবার
+  // পুশ করা হয় (এমনকি vid আগে থেকে থাকলেও) — যাতে এন্ট্রি এডিট হয়ে থাকলে ভেরিফাই
+  // পেজের তথ্যও আপডেট থাকে।
   let vidsAssigned = false;
   groups.forEach(g => {
     const first = g[0];
+    const hadVid = !!first.vid;
     const vid = ensureVerificationId(first);
-    if(first.vid !== vid) return;
-    vidsAssigned = true;
+    if(!hadVid) vidsAssigned = true;
     pushVerificationRecord(g, vid);
   });
   if(vidsAssigned) saveState();
