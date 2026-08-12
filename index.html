@@ -312,6 +312,12 @@
     background:linear-gradient(155deg, var(--blue-700), var(--blue-800));
     color:#fff; box-shadow:0 4px 10px rgba(15,56,48,0.28);
   }
+  .period-range-label{
+    font-size:11.5px; color:var(--muted); text-align:center; margin:8px 2px 0; font-weight:600; letter-spacing:.01em;
+  }
+  #customDateBtn.active{
+    background:var(--gold-bright) !important; box-shadow:0 4px 10px rgba(184,134,62,0.4);
+  }
 
   /* ---------- KPI cards ---------- */
   .kpi-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
@@ -1121,6 +1127,22 @@
   .receipt-check-row .rc-meta{ font-size:11px; color:var(--muted); margin-top:1px; }
   .select-all-btn{ background:none; border:none; color:var(--green-700); font-size:11.5px; font-weight:600; padding:0; }
 
+  /* ---------- Receipt format picker (radio card list) ---------- */
+  .rf-opt-list{ display:flex; flex-direction:column; gap:8px; }
+  .rf-opt-row{
+    display:flex; align-items:center; gap:10px; padding:11px 12px;
+    border:1.5px solid var(--rule); border-radius:12px; background:var(--card);
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .rf-opt-row:has(input:checked){
+    border-color:var(--green-600);
+    background:linear-gradient(155deg, rgba(59,150,112,0.08), var(--card));
+  }
+  .rf-opt-row input[type="radio"]{ width:17px; height:17px; flex:none; accent-color:var(--green-700); }
+  .rf-opt-info{ min-width:0; flex:1; }
+  .rf-opt-name{ font-weight:600; font-size:13.5px; color:var(--ink); }
+  .rf-opt-desc{ font-size:11px; color:var(--muted); margin-top:1px; line-height:1.4; }
+
   /* ---------- Printable sales receipts — 2×3 grid per A4 sheet ---------- */
   @media print{
     /* @page margin:0 removes the reserved space for the browser's own print
@@ -1231,6 +1253,126 @@
     .rc-foot{ text-align:center; font-size:7.3px; color:#1B2420; margin-top:2px;
       font-family:'Fraunces', serif; font-style:italic; letter-spacing:.02em; }
   }
+
+  /* ---------- Printable sales receipts — Thermal 58mm / 80mm roll slips ---------- */
+  /* এই ব্লকটা শুধু তখনই প্রযোজ্য হবে যখন #printArea-তে সেই ফরম্যাটের ক্লাস থাকবে
+     (printReceipts() সেট করে), তাই A4 বা ডিজিটাল ইনভয়েস প্রিন্ট করার সময় এটা কোনো
+     প্রভাব ফেলে না — পুরনো A4 আউটপুট অপরিবর্তিত থাকে। */
+  @media print{
+    body html, body body{ margin:0; padding:0; background:#fff; }
+    #printArea.print-format-thermal58{ padding:0; }
+    #printArea.print-format-thermal58 .thermal58-page{
+      width:58mm; box-sizing:border-box; page-break-after:always; page-break-inside:avoid;
+    }
+    #printArea.print-format-thermal58 .thermal58-page:last-child{ page-break-after:auto; }
+    #printArea.print-format-thermal80 { padding:0; }
+    #printArea.print-format-thermal80 .thermal80-page{
+      width:80mm; box-sizing:border-box; page-break-after:always; page-break-inside:avoid;
+    }
+    #printArea.print-format-thermal80 .thermal80-page:last-child{ page-break-after:auto; }
+  }
+  /* থার্মাল কার্ডের কমন স্টাইল — স্ক্রিনেও (কম্পোনেন্ট প্রিভিউ না থাকলেও) কোনো ক্ষতি
+     নেই, কারণ #printArea ডিফল্টভাবে display:none। */
+  .thermal-card{
+    font-family:'IBM Plex Sans', sans-serif; color:#1B2420; background:#fff;
+    padding:3mm 2.6mm; box-sizing:border-box;
+  }
+  .thermal-card-58{ width:58mm; font-size:9.5px; }
+  .thermal-card-80{ width:80mm; font-size:10.5px; }
+  .th-co{ font-family:'Fraunces', serif; font-weight:700; font-size:13px; text-align:center; line-height:1.2; }
+  .thermal-card-80 .th-co{ font-size:15px; }
+  .th-tag{ font-size:8.5px; text-align:center; letter-spacing:.08em; text-transform:uppercase; color:#3F5C50; font-weight:600; margin-top:1.5px; }
+  /* ক্যাশ অন ডেলিভারি অংশটা টাইটেলের বাকি অংশ থেকে আলাদাভাবে বোল্ড ও একটু গাঢ় রঙে
+     হাইলাইট করা হলো, যাতে প্রিন্ট করা স্লিপে ডেলিভারি বয় দ্রুত চোখেই বুঝতে পারে এটা
+     পেমেন্ট এখনো বাকি আছে এমন অর্ডার। */
+  .th-cod-mark{ font-weight:800; color:#0F3830; }
+  .th-head-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:6px; }
+  .th-head-text{ flex:1; min-width:0; }
+  .th-qr{ flex:none; width:16mm; height:16mm; background:#fff; border:1px solid #EDEEE4; border-radius:3px; padding:0.8mm; box-sizing:border-box; }
+  .th-qr canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; }
+  .th-divider{ border-top:1px dashed #B9BDAE; margin:3px 0; }
+  .th-meta-line{ display:flex; justify-content:space-between; gap:6px; font-size:9px; padding:1px 0; }
+  .thermal-card-80 .th-meta-line{ font-size:10px; }
+  .th-meta-line span:first-child{ color:#5B6259; font-weight:600; flex:none; }
+  .th-meta-line span:last-child{ font-family:'IBM Plex Mono', monospace; font-weight:600; text-align:right; overflow-wrap:anywhere; }
+  .th-address-line{ display:block; }
+  .th-address-line span:first-child{ display:block; }
+  .th-address-line span:last-child{ display:block; text-align:left; font-family:inherit; font-weight:500; margin-top:1px; }
+  .th-items{ margin:1px 0; }
+  .th-item-line{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; padding:2px 0; border-bottom:1px dotted #E3E5D8; }
+  .th-item-line:last-child{ border-bottom:none; }
+  .th-item-name{ flex:1; min-width:0; font-weight:600; line-height:1.3; overflow-wrap:break-word; }
+  .th-item-amt{ flex:none; font-family:'IBM Plex Mono', monospace; font-weight:600; }
+  .th-delivery-line{ border-top:1px dashed #D3D6C9; margin-top:2px; padding-top:4px; border-bottom:none; }
+  .th-total-line{ display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:12px; padding:2px 0; }
+  .thermal-card-80 .th-total-line{ font-size:14px; }
+  .th-barcode{ text-align:center; margin-top:5px; }
+  .th-barcode canvas{ width:100%; max-width:100%; height:32px; image-rendering:pixelated; display:block; }
+  .th-pid{ font-size:7.5px; letter-spacing:.08em; font-family:'IBM Plex Mono', monospace; font-weight:600; margin-top:2px; text-align:center; }
+  /* Thermal 80mm-এর বারকোড এখন A4 ফরম্যাটের মতোই একটা "স্টিকার" বক্সে বসানো —
+     সাদা ব্যাকগ্রাউন্ড, হালকা বর্ডার, রাউন্ড কর্নার — যাতে প্রিন্ট করা স্লিপের বারকোড
+     অংশটা আলাদা প্রোডাক্ট বারকোড স্টিকারের মতো দেখতে লাগে, কেটে আলাদা করে লাগানো
+     গেলেও ভালো দেখাবে। Thermal 58mm আগের মতোই (কোনো বক্স ছাড়া, edge-to-edge) রয়ে
+     গেছে, কারণ ৫৮মিমি-র সরু চওড়ায় বাড়তি বর্ডার/প্যাডিং বারকোডটাকে আরও ছোট করে দিত। */
+  .th-barcode-box{
+    display:inline-block; max-width:100%; box-sizing:border-box;
+    background:#fff; border:1px solid #C7CBBB; border-radius:4px;
+    padding:5px 8px 4px; margin:0 auto;
+  }
+  .th-barcode-box canvas{ width:100%; max-width:56mm; height:32px; image-rendering:pixelated; display:block; }
+  .th-barcode-box .th-pid{ margin-top:3px; }
+  .th-foot{ text-align:center; font-size:7.5px; color:#1B2420; margin-top:4px;
+    font-family:'Fraunces', serif; font-style:italic; }
+
+  /* ---------- Printable Digital Invoice — one formal A4 invoice per order ---------- */
+  @media print{
+    #printArea.print-format-digital{ padding:0; }
+    #printArea.print-format-digital .digital-invoice-page{
+      width:210mm; min-height:297mm; box-sizing:border-box; padding:16mm;
+      page-break-after:always; page-break-inside:avoid;
+    }
+    #printArea.print-format-digital .digital-invoice-page:last-child{ page-break-after:auto; }
+  }
+  .digital-invoice{ font-family:'IBM Plex Sans', sans-serif; color:#1B2420; }
+  .di-head{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #123832; padding-bottom:14px; margin-bottom:18px; }
+  .di-brand{ display:flex; align-items:center; gap:12px; }
+  .di-brandtext{ min-width:0; }
+  .di-mark{ width:48px; height:48px; border-radius:12px; flex:none; overflow:hidden;
+    background:linear-gradient(150deg,#E0AC53,#B8863E);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:700; font-size:22px; color:#0F3830; }
+  .di-mark img{ width:100%; height:100%; object-fit:cover; }
+  .di-co{ font-family:'Fraunces', serif; font-weight:700; font-size:22px; line-height:1.15; }
+  .di-tag{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#3F5C50; font-weight:600; margin-top:3px; }
+  .di-qr-wrap{ flex:none; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .di-qr{ width:26mm; height:26mm; background:#fff; border:1px solid #EDEEE4; border-radius:4px; padding:1mm; box-sizing:border-box; }
+  .di-qr canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; }
+  .di-invoice-under{ font-size:10px; font-weight:700; font-family:'IBM Plex Mono', monospace; }
+  .di-info-row{ display:flex; justify-content:space-between; gap:20px; margin-bottom:20px; }
+  .di-info-col{ flex:1; min-width:0; }
+  .di-info-right{ text-align:right; }
+  .di-label{ font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#777; font-weight:600; }
+  .di-val{ font-weight:700; font-size:15px; margin-top:3px; }
+  .di-sub{ font-size:11.5px; color:#333; margin-top:3px; line-height:1.4; }
+  .di-meta-line{ font-size:11.5px; margin-top:4px; }
+  .di-meta-line .k{ color:#777; margin-right:8px; }
+  .di-meta-line .v{ font-weight:600; font-family:'IBM Plex Mono', monospace; }
+  table.di-table{ width:100%; border-collapse:collapse; font-size:11px; margin-bottom:6px; }
+  table.di-table th, table.di-table td{ border:1px solid #ddd; padding:7px 8px; text-align:left; }
+  table.di-table th{ background:#f0f0f0; font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; }
+  table.di-table td.di-num, table.di-table th.di-num{ text-align:right; font-family:'IBM Plex Mono', monospace; }
+  .di-delivery-row td{ font-weight:600; }
+  .di-total-row{ display:flex; justify-content:flex-end; align-items:center; gap:14px; margin-top:6px;
+    background:linear-gradient(135deg,#E7F0EC,#F1F3EC); border-radius:6px; padding:10px 16px; }
+  .di-total-row .k{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#3F5C50; font-weight:800; }
+  .di-total-row .v{ font-weight:700; font-size:20px; color:#0F3830; font-family:'IBM Plex Mono', monospace; }
+  .di-barcode{ text-align:center; margin-top:22px; padding-top:12px; border-top:1px dashed #D3D6C9; }
+  .di-barcode-box{ width:2.6in; max-width:100%; margin:0 auto; box-sizing:border-box;
+    background:#fff; border:1px solid #C7CBBB; border-radius:4px; padding:6px 8px 5px; }
+  .di-barcode-box canvas{ width:100%; height:28px; image-rendering:pixelated; display:block; }
+  .di-pid{ font-size:9px; letter-spacing:.1em; font-family:'IBM Plex Mono', monospace; font-weight:600; margin-top:3px; }
+  .di-foot{ text-align:center; font-size:9.5px; color:#555; margin-top:16px;
+    font-family:'Fraunces', serif; font-style:italic; }
 
   .toast{
     position:fixed; left:50%; bottom:100px; transform:translate(-50%, 20px); z-index:80;
@@ -1692,10 +1834,14 @@
           <button data-period="month">Monthly</button>
           <button data-period="year">Yearly</button>
         </div>
+        <button class="icon-btn" id="customDateBtn" style="background:var(--green-700); color:#fff;" onclick="openDateRangeSheet()" aria-label="Select specific date(s)" title="Select specific date(s)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </button>
         <button class="icon-btn" style="background:var(--blue-800); color:#fff;" onclick="exportPDF(state.currentPeriod === 'today' ? 'week' : state.currentPeriod)" aria-label="Export PDF" title="Export current period as PDF">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="9 15 12 18 15 15"></polyline></svg>
         </button>
       </div>
+      <div class="period-range-label" id="periodRangeLabel"></div>
 
       <div class="pl-banner" id="plBanner">
         <div class="pl-left">
@@ -2108,9 +2254,9 @@
         <div class="field">
           <label>Period</label>
           <select id="reportPeriod">
-            <option value="week">This Week</option>
-            <option value="month" selected>This Month</option>
-            <option value="year">This Year</option>
+            <option value="week">Last 7 Days</option>
+            <option value="month" selected>Last 30 Days</option>
+            <option value="year">Last 365 Days</option>
             <option value="all">All Time</option>
           </select>
         </div>
@@ -2582,8 +2728,41 @@
     </label>
     <div class="ledger-card" id="receiptSaleList" style="max-height:280px; overflow-y:auto; -webkit-overflow-scrolling:touch;"></div>
   </div>
+  <div class="field" style="margin-bottom:8px;">
+    <label>Receipt Format</label>
+    <div class="rf-opt-list" id="receiptFormatList">
+      <label class="rf-opt-row">
+        <input type="radio" name="receiptFormat" value="a4" checked onchange="onReceiptFormatChange()">
+        <div class="rf-opt-info">
+          <div class="rf-opt-name">🧾 A4 Sheet (6-up)</div>
+          <div class="rf-opt-desc">6 receipts per A4 page, 2 × 3 grid — for a regular printer</div>
+        </div>
+      </label>
+      <label class="rf-opt-row">
+        <input type="radio" name="receiptFormat" value="thermal58" onchange="onReceiptFormatChange()">
+        <div class="rf-opt-info">
+          <div class="rf-opt-name">🎫 Thermal 58mm</div>
+          <div class="rf-opt-desc">Narrow roll slip — for 58mm thermal/POS printers</div>
+        </div>
+      </label>
+      <label class="rf-opt-row">
+        <input type="radio" name="receiptFormat" value="thermal80" onchange="onReceiptFormatChange()">
+        <div class="rf-opt-info">
+          <div class="rf-opt-name">🎫 Thermal 80mm</div>
+          <div class="rf-opt-desc">Wide roll slip — for 80mm thermal/POS printers</div>
+        </div>
+      </label>
+      <label class="rf-opt-row">
+        <input type="radio" name="receiptFormat" value="digital" onchange="onReceiptFormatChange()">
+        <div class="rf-opt-info">
+          <div class="rf-opt-name">📄 Digital Invoice</div>
+          <div class="rf-opt-desc">One formal full-page invoice — best for sharing as PDF</div>
+        </div>
+      </label>
+    </div>
+  </div>
   <button class="btn btn-gold" onclick="printReceipts()">🧾 Generate &amp; Print Receipts</button>
-  <div class="helper-text" style="text-align:center;">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
+  <div class="helper-text" style="text-align:center;" id="receiptFormatHelper">Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery &amp; phone). Choose "Save as PDF" in the print dialog to export.</div>
   <button class="btn btn-ghost" style="margin-top:10px;" onclick="closeReceiptSheet()">Cancel</button>
 </div>
 
@@ -2719,6 +2898,23 @@
   </div>
 </div>
 
+<div class="overlay" id="dateRangeOverlay" onclick="closeDateRangeSheet()"></div>
+<div class="sheet" id="dateRangeSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closeDateRangeSheet()">✕</button>
+  <h2>📅 Select Date(s)</h2>
+  <div class="helper-text" style="margin-top:0;">যেকোনো তারিখে ট্যাপ করুন — একটি বা একসাথে একাধিক তারিখ বাছাই করা যাবে। আবার ট্যাপ করলে বাদ যাবে।</div>
+  <div class="cal-nav">
+    <button type="button" class="cal-nav-btn" onclick="calShiftMonth(-1)" aria-label="Previous month">‹</button>
+    <div class="cal-month-label" id="calMonthLabel"></div>
+    <button type="button" class="cal-nav-btn" onclick="calShiftMonth(1)" aria-label="Next month">›</button>
+  </div>
+  <div class="cal-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+  <div class="cal-grid" id="calGrid"></div>
+  <button class="btn btn-primary" style="margin-top:16px;" onclick="applyCustomDates()">Show Report</button>
+  <button class="btn btn-ghost" style="margin-top:10px;" onclick="clearCustomDates()">Clear all dates</button>
+</div>
+
 <style>
 @keyframes rsspin{ to{ transform:rotate(360deg); } }
 .rs-preview-wrap{ position:relative; margin:10px 0; border-radius:14px; overflow:hidden; background:var(--paper-deep); line-height:0; }
@@ -2760,6 +2956,31 @@
 .rs-item-row:last-child{ border-bottom:none; }
 .rs-item-row input{ width:100%; min-width:0; border:1px solid rgba(15,56,48,0.12); border-radius:8px; padding:6px 6px; font-size:12.5px; background:var(--paper); color:var(--ink); }
 .rs-item-row.rs-item-expense{ grid-template-columns:1.6fr 0.9fr auto; }
+/* ---------- Custom date-range calendar (dashboard report filter) ---------- */
+.cal-nav{ display:flex; align-items:center; justify-content:space-between; margin:14px 0 10px; }
+.cal-nav-btn{
+  width:34px; height:34px; border-radius:10px; border:none; background:var(--paper-deep); color:var(--ink);
+  font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; flex:none;
+  transition:background .12s ease, transform .08s ease;
+}
+.cal-nav-btn:active{ background:var(--rule); transform:scale(0.92); }
+.cal-month-label{ font-size:14.5px; font-weight:700; color:var(--ink); }
+.cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:5px; }
+.cal-weekdays span{ text-align:center; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; }
+.cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+.cal-day{
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px;
+  font-size:13px; font-weight:600; color:var(--ink); background:var(--paper-deep); cursor:pointer;
+  user-select:none; transition:background .12s ease, color .12s ease, transform .08s ease;
+}
+.cal-day:active{ transform:scale(0.9); }
+.cal-day.empty{ background:transparent; cursor:default; }
+.cal-day.today{ box-shadow:inset 0 0 0 2px var(--green-600); }
+.cal-day.selected{
+  background:linear-gradient(155deg, var(--blue-700), var(--blue-800)); color:#fff;
+  box-shadow:0 4px 10px rgba(15,56,48,0.28);
+}
+.cal-day.selected.today{ box-shadow:0 4px 10px rgba(15,56,48,0.28), inset 0 0 0 2px #fff; }
 </style>
 
 <div class="toast" id="toast"></div>
@@ -4210,6 +4431,7 @@ const state = {
   orders: [], // live mirror of Firebase "orders" node for this shop
   currentPage: "dashboard",
   currentPeriod: "today",
+  customDates: [], // ISO "YYYY-MM-DD" strings — used when currentPeriod === 'custom' (one or several specific dates picked by the user)
   currentOrderTab: "cod",
   editing: null, // {type, id}
   editingItemId: null
@@ -5316,18 +5538,20 @@ function markScreenDecided(){
   splashScreenDecided = true;
   trySplashHide();
 }
-// আইকন→ব্র্যান্ড→ট্যাগলাইন — পুরো রিভিল সিকোয়েন্সটা শেষ হতে ~৩.৫ সেকেন্ড লাগে (দ্র.
-// runSplashSequence, নিচে), তাই মিনিমাম-টাইম গেটটা বাড়িয়ে ৫৩০০ms করা হলো, যাতে গন্তব্য
-// স্ক্রিন (onboarding/lock/app) যত দ্রুতই ঠিক হয়ে যাক না কেন, স্প্ল্যাশ মাঝপথে কেটে
-// অ্যানিমেশনটা অসম্পূর্ণ অবস্থায় ফেড-আউট শুরু না করে। ইনস্ট্যান্ট বুট (আগে থেকে লগইন করা,
-// ক্যাশ করা ডেটা আছে) হলে আগের মতোই সিকোয়েন্স পুরোপুরি স্কিপ করে সাথে সাথেই সরে যায় —
-// প্রতিবার অ্যাপ খুলতে ৫ সেকেন্ড অপেক্ষা করানো ঠিক না, শুধু আসল "লঞ্চ" মুহূর্তেই এই পুরো
-// রিভিলটা দেখা যাবে।
+// আগে এই মিনিমাম-টাইম গেট ৫৩০০ms-এ বাঁধা ছিল যাতে আইকন→ব্র্যান্ড→ট্যাগলাইন পুরো
+// রিভিল অ্যানিমেশনটা (~৩.৫s) সবসময় সম্পূর্ণ দেখা যায় — কিন্তু এর মানে গন্তব্য স্ক্রিন
+// (লক/অ্যাপ) নেটওয়ার্ক থেকে ৫০০ms-এই ঠিক হয়ে গেলেও অ্যাপ খুলতে বাকি সময়টা জোর করে
+// অপেক্ষা করানো হতো — এটাই ছিল "অ্যাপ খুলতে দেরি হয়" অভিযোগের সবচেয়ে বড় একক কারণ।
+// এখন গেটটা শুধু ফ্লিকার আটকানোর মতো ছোট একটা সময় (৬০০ms) রাখা হলো — গন্তব্য স্ক্রিন
+// যত দ্রুত ঠিক হবে, স্প্ল্যাশ তত দ্রুত সরে যাবে; ব্র্যান্ড রিভিল অ্যানিমেশন সমান্তরালে
+// চলতেই থাকে আর মাঝপথে থাকলেও ফেড-আউট ট্রানজিশনে স্বাভাবিকভাবেই মিলিয়ে যায়।
+// ইনস্ট্যান্ট বুট (আগে থেকে লগইন করা, ক্যাশ করা ডেটা আছে) হলে আগের মতোই সিকোয়েন্স
+// পুরোপুরি স্কিপ করে সাথে সাথেই সরে যায়।
 if(instantBooted){
   splashMinTimeElapsed = true;
   trySplashHide();
 } else {
-  setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 5300);
+  setTimeout(()=>{ splashMinTimeElapsed = true; trySplashHide(); }, 600);
 }
 // আইকন বড় হয়ে সেটল করে, মিলিয়ে যায়, তারপর "MY SHOP" নাম ও ট্যাগলাইন ভেসে ওঠে —
 // ব্যাকগ্রাউন্ড শুরু থেকে শেষ পর্যন্ত #0B2721-ই থাকে (manifest.json-এর background_color-এর
@@ -5541,23 +5765,105 @@ document.getElementById('periodTabs').addEventListener('click', (e)=>{
   state.currentPeriod = btn.dataset.period;
   document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  const customBtn = document.getElementById('customDateBtn');
+  if(customBtn) customBtn.classList.remove('active'); // normal ট্যাব বেছে নিলে Custom মোড বন্ধ হয়ে যায়
   // renderDashboard() স্ট্যাটস + renderTrendChart() (canvas) একসাথে চালায় বলে
   // ভারী — একই ডাবল rAF কৌশলে ট্যাব হাইলাইট instant রেখে render এক ফ্রেম পরে দেওয়া।
   requestAnimationFrame(()=> requestAnimationFrame(renderDashboard));
 });
+
+/* ---------------- CUSTOM DATE(S) PICKER (dashboard report filter) ---------------- */
+let tempCustomDates = []; // শিট খোলা অবস্থায় ওয়ার্কিং কপি — "Show Report" চাপার আগে state.customDates বদলায় না
+let calViewDate = new Date(); // ক্যালেন্ডারে বর্তমানে কোন মাস দেখানো হচ্ছে
+function openDateRangeSheet(){
+  tempCustomDates = (state.customDates || []).slice();
+  // যে মাসে সর্বশেষ বাছাই করা তারিখ আছে সেই মাস দেখিয়েই শুরু হবে, নাহলে চলতি মাস
+  calViewDate = tempCustomDates.length
+    ? new Date(tempCustomDates[tempCustomDates.length-1] + 'T00:00:00')
+    : new Date();
+  calViewDate.setDate(1);
+  renderCalendarGrid();
+  document.getElementById('dateRangeOverlay').classList.add('open');
+  document.getElementById('dateRangeSheet').classList.add('open');
+}
+function closeDateRangeSheet(){
+  document.getElementById('dateRangeOverlay').classList.remove('open');
+  document.getElementById('dateRangeSheet').classList.remove('open');
+}
+function calShiftMonth(delta){
+  calViewDate.setMonth(calViewDate.getMonth() + delta);
+  renderCalendarGrid();
+}
+// ক্যালেন্ডারের যেকোনো দিনে ট্যাপ করলে সেটা টগল হয় — আগে থেকে বাছাই করা থাকলে বাদ যায়,
+// না থাকলে যোগ হয়। এভাবে একটার পর একটা "Add" না চেপে সরাসরি একসাথে একাধিক তারিখ বাছাই করা যায়।
+// সিলেকশন ক্যালেন্ডারের হাইলাইটেই বোঝা যায়, তাই আলাদা কোনো তারিখ-লিস্ট দেখানো হয় না।
+function toggleCustomDate(dateStr){
+  const idx = tempCustomDates.indexOf(dateStr);
+  if(idx === -1) tempCustomDates.push(dateStr);
+  else tempCustomDates.splice(idx, 1);
+  tempCustomDates.sort();
+  renderCalendarGrid();
+}
+function clearCustomDates(){
+  tempCustomDates = [];
+  renderCalendarGrid();
+}
+const CAL_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function renderCalendarGrid(){
+  const y = calViewDate.getFullYear(), m = calViewDate.getMonth();
+  document.getElementById('calMonthLabel').textContent = `${CAL_MONTH_NAMES[m]} ${y}`;
+  const startOffset = new Date(y, m, 1).getDay(); // 0=Sun ... 6=Sat, মাসের প্রথম দিনের আগে কতটা ফাঁকা ঘর লাগবে
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const todayStr = isoDateStr(new Date());
+  let html = '';
+  for(let i=0; i<startOffset; i++){ html += '<div class="cal-day empty"></div>'; }
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cls = ['cal-day'];
+    if(tempCustomDates.includes(dateStr)) cls.push('selected');
+    if(dateStr === todayStr) cls.push('today');
+    html += `<div class="${cls.join(' ')}" onclick="toggleCustomDate('${dateStr}')">${d}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+function applyCustomDates(){
+  if(!tempCustomDates.length){ showToast('অন্তত একটি তারিখ বাছাই করুন'); return; }
+  state.customDates = tempCustomDates.slice();
+  state.currentPeriod = 'custom';
+  document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.remove('active'));
+  const customBtn = document.getElementById('customDateBtn');
+  if(customBtn) customBtn.classList.add('active');
+  closeDateRangeSheet();
+  requestAnimationFrame(()=> requestAnimationFrame(renderDashboard));
+}
 
 /* ---------------- DATE HELPERS (mirrors the spreadsheet SUMIFS logic) ---------------- */
 // dateStr টু "YYYY-MM-DD" ফরম্যাট — একবার বানানো হলে reuse করার জন্য
 function isoDateStr(d){
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-function getPeriodRange(period){
+function getPeriodRange(period, customDates){
   const now = new Date(); now.setHours(0,0,0,0);
+  // 'custom' নন-কন্টিনিউয়াস হতে পারে (একাধিক আলাদা তারিখ একসাথে বাছাই করা যায়), তাই
+  // এটির জন্য শুধু start/end string বাউন্ডারি না রেখে, বাছাই করা প্রতিটি তারিখের একটি Set
+  // রাখা হচ্ছে — inRange() এই Set-এই সরাসরি মেম্বারশিপ চেক করবে।
+  if(period === 'custom'){
+    const dates = (customDates && customDates.length) ? customDates.slice().sort() : [isoDateStr(now)];
+    return {
+      start: new Date(dates[0] + 'T00:00:00'),
+      end: new Date(dates[dates.length-1] + 'T00:00:00'),
+      startStr: dates[0], endStr: dates[dates.length-1],
+      dates: new Set(dates), custom: true
+    };
+  }
   let start;
+  // Weekly/Monthly/Yearly এখন ক্যালেন্ডার সপ্তাহ/মাস/বছর নয় — আজ থেকে পেছনের ৭/৩০/৩৬৫
+  // দিনের রোলিং উইন্ডো (আজসহ), যাতে মাসের শুরুতে "মান্থলি" ট্যাবে মাত্র কয়েক দিনের ডেটা
+  // দেখানো না হয়ে সবসময় পূর্ণ ৩০/৩৬৫ দিনের প্রবণতা দেখা যায়।
   if(period === 'today'){ start = new Date(now); }
-  else if(period === 'week'){ start = new Date(now); const day = (start.getDay()+6)%7; start.setDate(start.getDate()-day); }
-  else if(period === 'month'){ start = new Date(now.getFullYear(), now.getMonth(), 1); }
-  else if(period === 'year'){ start = new Date(now.getFullYear(), 0, 1); }
+  else if(period === 'week'){ start = new Date(now); start.setDate(start.getDate()-6); }
+  else if(period === 'month'){ start = new Date(now); start.setDate(start.getDate()-29); }
+  else if(period === 'year'){ start = new Date(now); start.setDate(start.getDate()-364); }
   else { start = new Date(2000,0,1); }
   // range এখন থেকে string boundary হিসেবেও রাখা হচ্ছে (date object না বানিয়ে সরাসরি
   // string তুলনা করার জন্য) — 1000+ এন্ট্রিতে inRange() বার বার কল হলে প্রতিবার নতুন
@@ -5569,7 +5875,20 @@ function inRange(dateStr, range){
   // dateStr প্রত্যাশিত ফরম্যাট "YYYY-MM-DD..." — শুধু প্রথম ১০ ক্যারেক্টার নিয়ে সরাসরি
   // string তুলনা করা হচ্ছে, কোনো Date অবজেক্ট না বানিয়েই।
   const d = dateStr.slice(0, 10);
+  if(range.custom) return range.dates.has(d); // নির্দিষ্ট বাছাই করা তারিখগুলোর যেকোনো একটির সাথে মিললেই যথেষ্ট
   return d >= range.startStr && d <= range.endStr;
+}
+/* Dashboard/PDF রিপোর্টে "কোন পিরিয়ডের ডেটা দেখানো হচ্ছে" বোঝাতে তারিখসহ একটি ছোট লেবেল বানায় —
+   Weekly/Monthly/Yearly-তে শুরু–শেষ তারিখ, Custom-এ বাছাই করা তারিখ(গুলো)। */
+function formatRangeLabel(period, range){
+  if(period === 'custom' && range.dates){
+    const dates = Array.from(range.dates).sort();
+    if(dates.length === 1) return fmtDate(dates[0]);
+    if(dates.length <= 3) return dates.map(fmtDate).join(', ');
+    return `${dates.length} dates: ${fmtDate(dates[0])} … ${fmtDate(dates[dates.length-1])}`;
+  }
+  if(period === 'today') return fmtDate(range.startStr);
+  return `${fmtDate(range.startStr)} – ${fmtDate(range.endStr)}`;
 }
 function fmtMoney(n){
   const v = isFinite(n) ? n : 0;
@@ -5592,6 +5911,18 @@ function sumInRange(list, range){
   }
   return s;
 }
+// ড্যাশবোর্ডে sum আর count দুটোই লাগে (KPI টাকা + এন্ট্রি সংখ্যা) — আগে এই দুটো আলাদা
+// আলাদা .filter()/sumInRange() কলে প্রতিটা লিস্টে ২ বার করে (sales+purchase+expense
+// মিলিয়ে মোট ৬ বার) লুপ চলত। এখন একই লুপে sum ও count একসাথে বের হয়, ফলে
+// sales/purchase/expense — প্রতিটাতে ঠিক ১ বার করেই (মোট ৩ পাস) স্ক্যান হয়।
+function sumAndCountInRange(list, range){
+  let s = 0, c = 0;
+  for(let i=0;i<list.length;i++){
+    const t = list[i];
+    if(inRange(t.date, range)){ s += t.total; c++; }
+  }
+  return { sum: s, count: c };
+}
 
 /* COGS (Cost of Goods Sold): প্রতিটি বিক্রয় এন্ট্রিকে ইনভেন্টরি আইটেমের সাথে নাম/ক্যাটাগরি
    মিলিয়ে (findInvItemForDeduction — adjustInvStock-এও একই ম্যাচিং ব্যবহৃত হয়), সেই আইটেমের
@@ -5603,14 +5934,46 @@ function sumInRange(list, range){
    টেক্সট ইনভেন্টরির নামের সাথে কখনো হুবহু মিলবে না। তাই এমন এন্ট্রিতে যদি আসল প্রতিটি পণ্যের
    ভাঙা তথ্য (items অ্যারে — রিসিট প্রিন্টের জন্য আগে থেকেই রাখা হয়) থাকে, সেটাই ব্যবহার করে
    প্রতিটি পণ্য আলাদাভাবে ম্যাচ করা হয়; না থাকলে (ম্যানুয়াল এন্ট্রি) আগের মতো একক name/qty দিয়ে। */
+// আগে প্রতিটা বিক্রি-আইটেমের জন্য findInvItemForDeduction() পুরো invItems লিস্ট
+// লিনিয়ারলি স্ক্যান করত (.find()) — মানে ড্যাশবোর্ডের প্রতিটা রেন্ডারে খরচ ছিল
+// (রেঞ্জের ভেতরের বিক্রি-আইটেম সংখ্যা × মোট ইনভেন্টরি আইটেম সংখ্যা)। কয়েকশ পণ্য আর
+// হাজার হাজার বিক্রি এন্ট্রি জমলে এটাই ছিল ড্যাশবোর্ড/হিস্টরি পেজে লেগের প্রধান উৎস।
+// এখন প্রতি কলে invItems থেকে একবারই নাম→আইটেম index (Map) বানানো হয়, তারপর প্রতিটা
+// বিক্রি-আইটেমের লুকআপ O(1) — মোট খরচ (invItems + sales items), গুণ নয়, যোগ।
+function buildInvItemIndex(){
+  const byNameCat = new Map();
+  const byName = new Map();
+  const list = state.invItems || [];
+  for(let i=0;i<list.length;i++){
+    const it = list[i];
+    const nm = String(it.name||'').trim().toLowerCase();
+    if(!nm) continue;
+    if(it.category){
+      const k = nm + '||' + it.category;
+      if(!byNameCat.has(k)) byNameCat.set(k, it); // .find()-এর মতোই প্রথম মিলটাই রাখা হচ্ছে
+    }
+    if(!byName.has(nm)) byName.set(nm, it);
+  }
+  return { byNameCat, byName };
+}
+function findInvItemIndexed(index, name, category){
+  const nm = String(name || '').trim().toLowerCase();
+  if(!nm) return null;
+  if(category){
+    const exact = index.byNameCat.get(nm + '||' + category);
+    if(exact) return exact;
+  }
+  return index.byName.get(nm) || null;
+}
 function computeCOGSDetailed(range){
   let cogs = 0, uncosted = 0;
+  const index = buildInvItemIndex();
   state.sales.filter(t => inRange(t.date, range)).forEach(s=>{
     if(Array.isArray(s.items) && s.items.length){
       s.items.forEach(it=>{
         const qty = it.qty || 0;
         if(qty <= 0) return;
-        const item = findInvItemForDeduction(it.name, s.category);
+        const item = findInvItemIndexed(index, it.name, s.category);
         if(item && item.costPrice != null && item.costPrice >= 0){
           cogs += qty * item.costPrice;
         } else {
@@ -5621,7 +5984,7 @@ function computeCOGSDetailed(range){
     }
     const qty = s.qty || 0;
     if(qty <= 0) return;
-    const item = findInvItemForDeduction(s.name, s.category);
+    const item = findInvItemIndexed(index, s.name, s.category);
     if(item && item.costPrice != null && item.costPrice >= 0){
       cogs += qty * item.costPrice;
     } else {
@@ -5645,15 +6008,16 @@ function computeStockValue(){
 }
 
 function renderDashboard(){
-  const range = getPeriodRange(state.currentPeriod);
-  const sales = sumInRange(state.sales, range);
-  const purchase = sumInRange(state.purchases, range);
-  const expense = sumInRange(state.expenses, range);
+  const range = getPeriodRange(state.currentPeriod, state.customDates);
+  const rangeLabelEl = document.getElementById('periodRangeLabel');
+  if(rangeLabelEl) rangeLabelEl.textContent = formatRangeLabel(state.currentPeriod, range);
+  const s = sumAndCountInRange(state.sales, range);
+  const p = sumAndCountInRange(state.purchases, range);
+  const e = sumAndCountInRange(state.expenses, range);
+  const sales = s.sum, purchase = p.sum, expense = e.sum;
   const profit = sales - purchase - expense;
   const margin = sales > 0 ? (profit/sales*100) : 0;
-  const count = state.sales.filter(t=>inRange(t.date,range)).length
-              + state.purchases.filter(t=>inRange(t.date,range)).length
-              + state.expenses.filter(t=>inRange(t.date,range)).length;
+  const count = s.count + p.count + e.count;
 
   document.getElementById('kpiSales').textContent = fmtMoney(sales);
   document.getElementById('kpiPurchase').textContent = fmtMoney(purchase);
@@ -5892,6 +6256,11 @@ function printListPage(type){
   const total = list.reduce((s,t)=>s+(t.total||0),0);
   const rows = list.map(t => `<tr><td>${escapeHTML(fmtDate(t.date))}</td><td>${escapeHTML(t.name||t.category||'—')}</td><td>${escapeHTML(t.party||'')}</td><td style="text-align:right">${fmtMoney(t.total)}</td></tr>`).join('');
   const printArea = document.getElementById('printArea');
+  // রিসিট প্রিন্ট (printReceipts) থেকে থেকে যাওয়া কোনো ফরম্যাট-ক্লাস/@page override
+  // থাকলে সেটা রিসেট করে দেওয়া হচ্ছে, নাহলে থার্মাল/ডিজিটাল ইনভয়েসের পেজ-সাইজ বা
+  // প্যাডিং এই সাধারণ লেজার প্রিন্টেও ভুলভাবে প্রয়োগ হয়ে যেত।
+  printArea.className = '';
+  resetDynamicPageStyle();
   printArea.innerHTML = `
     <div style="padding:20px;font-family:sans-serif;">
       <h2>${escapeHTML(state.company.name)} — ${titleMap[type]}</h2>
@@ -6626,6 +6995,7 @@ function renderStockAlerts(){
 function openReceiptSheet(){
   document.getElementById('receiptDate').value = todayISO();
   updateReceiptPreviewList();
+  onReceiptFormatChange();
   document.getElementById('receiptOverlay').classList.add('open');
   document.getElementById('receiptSheet').classList.add('open');
 }
@@ -6655,6 +7025,23 @@ function toggleAllReceiptChecks(){
   if(boxes.length === 0) return;
   const allChecked = Array.from(boxes).every(b => b.checked);
   boxes.forEach(b => b.checked = !allChecked);
+}
+// রিসিট ফরম্যাট বদলালে হেল্পার টেক্সট আপডেট হয় — জেনারেট লজিক printReceipts()-এ
+// সিলেক্টেড ফরম্যাট অনুযায়ী আলাদা হয়, এখানে শুধু UI হিন্ট বদলানো হচ্ছে।
+const RECEIPT_FORMAT_HELP = {
+  a4: 'Prints 6 receipts per A4 sheet (2 × 3 grid), each with a barcode and a QR code (invoice no., total incl. delivery & phone). Choose "Save as PDF" in the print dialog to export.',
+  thermal58: 'Prints one narrow slip per receipt (58mm roll width), each with a barcode — ideal for 58mm thermal/POS printers. Choose "Save as PDF" in the print dialog to export.',
+  thermal80: 'Prints one slip per receipt (80mm roll width), each with a barcode and a QR code — ideal for 80mm thermal/POS printers. Choose "Save as PDF" in the print dialog to export.',
+  digital: 'Prints one formal full-page invoice per receipt, with a barcode and a QR code — best for emailing or saving as a PDF to share digitally.'
+};
+function getSelectedReceiptFormat(){
+  const el = document.querySelector('input[name="receiptFormat"]:checked');
+  return el ? el.value : 'a4';
+}
+function onReceiptFormatChange(){
+  const fmt = getSelectedReceiptFormat();
+  const helper = document.getElementById('receiptFormatHelper');
+  if(helper) helper.textContent = RECEIPT_FORMAT_HELP[fmt] || RECEIPT_FORMAT_HELP.a4;
 }
 function shortSlipId(s){
   const raw = String(s.productId || s.ref || '').trim();
@@ -6751,15 +7138,210 @@ function receiptCardHTML(group){
     <div class="rc-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
   </div>`;
 }
-function printReceipts(){
-  const checked = Array.from(document.querySelectorAll('.receiptChk:checked')).map(c => c.value);
-  if(checked.length === 0){ showToast('Select at least one sale to print'); return; }
-  const rows = state.sales.filter(s => checked.includes(String(s.id))).sort((a,b)=> sortKey(a) < sortKey(b) ? -1 : 1);
 
-  // Group rows into one slip per order (same invoice ref = same order),
-  // so multiple products — and the delivery charge — from one order print
-  // together on a single slip with one combined total. Rows without a ref
-  // (plain manual sales) each stay on their own slip.
+/* ---------------- Thermal 58mm receipt slip ---------------- */
+// ৫৮মিমি রোল প্রিন্টারের জন্য — একদম সরু, এক-কলাম টেক্সট রিসিট, ছোট বারকোড সহ (কিউআর
+// এখানে বাদ, কারণ ৫৮মিমি চওড়ায় পরিষ্কারভাবে স্ক্যান হওয়ার মতো QR আঁটে না)।
+function receiptCardThermal58HTML(group){
+  const rows = Array.isArray(group) ? group : [group];
+  const first = rows[0];
+  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
+  const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
+  const totalLabel = isCOD ? 'Total Payable' : 'Total Paid';
+  const itemsHTML = rows.map(r => {
+    if(Array.isArray(r.items) && r.items.length > 1){
+      return r.items.map(it => `
+        <div class="th-item-line">
+          <span class="th-item-name">${escapeHTML(it.name || '—')}${it.qty && it.qty > 1 ? ` x${it.qty}` : ''}</span>
+          <span class="th-item-amt">${fmtMoney((it.qty || 1) * (it.price || 0))}</span>
+        </div>`).join('');
+    }
+    return `
+      <div class="th-item-line">
+        <span class="th-item-name">${escapeHTML(r.name || '—')}${r.qty && r.qty > 1 ? ` x${r.qty}` : ''}</span>
+        <span class="th-item-amt">${fmtMoney(r.total || 0)}</span>
+      </div>`;
+  }).join('');
+  const groupDeliveryCharge = rows.reduce((sum, r) => sum + (r.deliveryCharge || 0), 0);
+  const deliveryHTML = groupDeliveryCharge > 0 ? `
+      <div class="th-item-line th-delivery-line">
+        <span class="th-item-name">Delivery Charge</span>
+        <span class="th-item-amt">${fmtMoney(groupDeliveryCharge)}</span>
+      </div>` : '';
+  return `
+  <div class="thermal-card thermal-card-58">
+    <div class="th-co">${escapeHTML(state.company.name)}</div>
+    <div class="th-tag">Sales Receipt${isCOD ? ' · <span class="th-cod-mark">Cash on Delivery</span>' : ''}</div>
+    <div class="th-divider"></div>
+    <div class="th-meta-line"><span>Date</span><span>${fmtDate(first.date)}</span></div>
+    <div class="th-meta-line"><span>Invoice</span><span>${escapeHTML(invoiceNo)}</span></div>
+    <div class="th-meta-line"><span>Customer</span><span>${escapeHTML(first.party || 'Walk-in')}</span></div>
+    ${first.phone ? `<div class="th-meta-line"><span>Phone</span><span>${escapeHTML(first.phone)}</span></div>` : ''}
+    <div class="th-divider"></div>
+    <div class="th-items">${itemsHTML}${deliveryHTML}</div>
+    <div class="th-divider"></div>
+    <div class="th-total-line"><span>${escapeHTML(totalLabel)}</span><span>${fmtMoney(grandTotal)}</span></div>
+    <div class="th-barcode">
+      <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="34"></canvas>
+      <div class="th-pid">${escapeHTML(invoiceNo)}</div>
+    </div>
+    <div class="th-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
+  </div>`;
+}
+
+/* ---------------- Thermal 80mm receipt slip ---------------- */
+// ৮০মিমি রোল প্রিন্টারের জন্য — ৫৮মিমি-র চেয়ে চওড়া, তাই একটা ছোট QR কোডও রাখা গেল
+// (৫৮মিমি-র তুলনায় বেশি জায়গা থাকায় স্ক্যান করার মতো যথেষ্ট বড় করে আঁকা যায়)।
+function receiptCardThermal80HTML(group){
+  const rows = Array.isArray(group) ? group : [group];
+  const first = rows[0];
+  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
+  const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
+  const totalLabel = isCOD ? 'Total Payable Amount' : 'Total Paid';
+  const itemsHTML = rows.map(r => {
+    if(Array.isArray(r.items) && r.items.length > 1){
+      return r.items.map(it => `
+        <div class="th-item-line">
+          <span class="th-item-name">${escapeHTML(it.name || '—')}${it.qty && it.qty > 1 ? ` × ${it.qty}` : ''}</span>
+          <span class="th-item-amt">${fmtMoney((it.qty || 1) * (it.price || 0))}</span>
+        </div>`).join('');
+    }
+    return `
+      <div class="th-item-line">
+        <span class="th-item-name">${escapeHTML(r.name || '—')}${r.qty && r.qty > 1 ? ` × ${r.qty}` : ''}</span>
+        <span class="th-item-amt">${fmtMoney(r.total || 0)}</span>
+      </div>`;
+  }).join('');
+  const groupDeliveryCharge = rows.reduce((sum, r) => sum + (r.deliveryCharge || 0), 0);
+  const deliveryHTML = groupDeliveryCharge > 0 ? `
+      <div class="th-item-line th-delivery-line">
+        <span class="th-item-name">🚚 Delivery Charge</span>
+        <span class="th-item-amt">${fmtMoney(groupDeliveryCharge)}</span>
+      </div>` : '';
+  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  return `
+  <div class="thermal-card thermal-card-80">
+    <div class="th-head-row">
+      <div class="th-head-text">
+        <div class="th-co">${escapeHTML(state.company.name)}</div>
+        <div class="th-tag">Sales Receipt${isCOD ? ' · <span class="th-cod-mark">Cash on Delivery</span>' : ''}</div>
+      </div>
+      <div class="th-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
+    </div>
+    <div class="th-divider"></div>
+    <div class="th-meta-line"><span>Date</span><span>${fmtDate(first.date)}</span></div>
+    <div class="th-meta-line"><span>Invoice</span><span>${escapeHTML(invoiceNo)}</span></div>
+    <div class="th-meta-line"><span>Customer</span><span>${escapeHTML(first.party || 'Walk-in Customer')}</span></div>
+    ${first.phone ? `<div class="th-meta-line"><span>Phone</span><span>${escapeHTML(first.phone)}</span></div>` : ''}
+    ${first.address ? `<div class="th-meta-line th-address-line"><span>Address</span><span>${escapeHTML(first.address)}</span></div>` : ''}
+    <div class="th-divider"></div>
+    <div class="th-items">${itemsHTML}${deliveryHTML}</div>
+    <div class="th-divider"></div>
+    <div class="th-total-line"><span>${escapeHTML(totalLabel)}</span><span>${fmtMoney(grandTotal)}</span></div>
+    <div class="th-barcode">
+      <div class="th-barcode-box">
+        <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="40"></canvas>
+        <div class="th-pid">${escapeHTML(invoiceNo)}</div>
+      </div>
+    </div>
+    <div class="th-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
+  </div>`;
+}
+
+/* ---------------- Digital Invoice (one full A4 page per order) ---------------- */
+// PDF হিসেবে সেভ করে ইমেইল/হোয়াটসঅ্যাপে পাঠানোর জন্য একটা ফরমাল, প্রশস্ত ইনভয়েস —
+// প্রতি পেজে একটাই অর্ডার, বড় হেডার/টেবিল লেআউট, বারকোড + QR দুটোই থাকে।
+function receiptCardDigitalHTML(group){
+  const rows = Array.isArray(group) ? group : [group];
+  const first = rows[0];
+  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
+  const initial = (state.company.name || 'K').trim().charAt(0).toUpperCase();
+  const diLogo = (state.company.logoUrl || '').trim();
+  const diMarkInner = diLogo ? `<img src="${escapeHTML(diLogo)}" alt="">` : escapeHTML(initial);
+  const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
+  const totalLabel = isCOD ? 'Total Payable Amount' : 'Total Paid';
+  let rowNum = 0;
+  const itemRowsHTML = rows.map(r => {
+    if(Array.isArray(r.items) && r.items.length > 1){
+      return r.items.map(it => { rowNum++; return `
+        <tr>
+          <td class="di-num">${rowNum}</td>
+          <td>${escapeHTML(it.name || '—')}</td>
+          <td class="di-num">${it.qty || 1}</td>
+          <td class="di-num">${fmtMoney(it.price || 0)}</td>
+          <td class="di-num">${fmtMoney((it.qty || 1) * (it.price || 0))}</td>
+        </tr>`; }).join('');
+    }
+    rowNum++;
+    return `
+        <tr>
+          <td class="di-num">${rowNum}</td>
+          <td>${escapeHTML(r.name || '—')}</td>
+          <td class="di-num">${r.qty || 1}</td>
+          <td class="di-num">${fmtMoney((r.total || 0) / (r.qty || 1))}</td>
+          <td class="di-num">${fmtMoney(r.total || 0)}</td>
+        </tr>`;
+  }).join('');
+  const groupDeliveryCharge = rows.reduce((sum, r) => sum + (r.deliveryCharge || 0), 0);
+  const deliveryRowHTML = groupDeliveryCharge > 0 ? `
+        <tr class="di-delivery-row">
+          <td></td>
+          <td>🚚 Delivery Charge</td>
+          <td></td>
+          <td></td>
+          <td class="di-num">${fmtMoney(groupDeliveryCharge)}</td>
+        </tr>` : '';
+  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  return `
+  <div class="digital-invoice">
+    <div class="di-head">
+      <div class="di-brand">
+        <div class="di-mark">${diMarkInner}</div>
+        <div class="di-brandtext">
+          <div class="di-co">${escapeHTML(state.company.name)}</div>
+          <div class="di-tag">Sales Invoice</div>
+        </div>
+      </div>
+      <div class="di-qr-wrap">
+        <div class="di-qr"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas></div>
+        <div class="di-invoice-under">Invoice #${escapeHTML(invoiceNo)}</div>
+      </div>
+    </div>
+    <div class="di-info-row">
+      <div class="di-info-col">
+        <div class="di-label">Billed To</div>
+        <div class="di-val">${escapeHTML(first.party || 'Walk-in Customer')}</div>
+        ${first.phone ? `<div class="di-sub">Tel: ${escapeHTML(first.phone)}</div>` : ''}
+        ${first.address ? `<div class="di-sub">Address: ${escapeHTML(first.address)}</div>` : ''}
+      </div>
+      <div class="di-info-col di-info-right">
+        <div class="di-meta-line"><span class="k">Invoice No.</span><span class="v">${escapeHTML(invoiceNo)}</span></div>
+        <div class="di-meta-line"><span class="k">Date</span><span class="v">${fmtDate(first.date)}</span></div>
+        <div class="di-meta-line"><span class="k">Payment</span><span class="v">${escapeHTML(first.payment || '—')}</span></div>
+      </div>
+    </div>
+    <table class="di-table">
+      <thead><tr><th class="di-num">#</th><th>Product / Service</th><th class="di-num">Qty</th><th class="di-num">Unit Price</th><th class="di-num">Amount</th></tr></thead>
+      <tbody>${itemRowsHTML}${deliveryRowHTML}</tbody>
+    </table>
+    <div class="di-total-row"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
+    <div class="di-barcode">
+      <div class="di-barcode-box">
+        <canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="50"></canvas>
+        <div class="di-pid">${escapeHTML(invoiceNo)}</div>
+      </div>
+    </div>
+    <div class="di-foot">আমাদের সাথে থাকার জন্য ধন্যবাদ</div>
+  </div>`;
+}
+// একাধিক ফরম্যাটেই (A4 / Thermal 58mm / Thermal 80mm / Digital Invoice) একই
+// অর্ডার-গ্রুপিং লজিক লাগে (একই ref-এর একাধিক সেল রো একটাই স্লিপে মিলবে) —
+// তাই এটা আলাদা হেল্পারে বের করে নেওয়া হলো, যাতে printReceipts() পুরনো
+// আচরণ অক্ষুণ্ণ রেখে নতুন তিনটা ফরম্যাটেও পুনর্ব্যবহার করতে পারে।
+function groupReceiptRows(rows){
   const groups = [];
   const groupIndexByKey = {};
   rows.forEach(r => {
@@ -6770,12 +7352,54 @@ function printReceipts(){
     }
     groups[groupIndexByKey[key]].push(r);
   });
+  return groups;
+}
+// থার্মাল ৫৮মিমি/৮০মিমি প্রিন্ট করার সময় #dynamicPageStyle-এ রানটাইমে @page size
+// বসানো হয় (দ্র. printReceipts, নিচে) — সেই override অন্য কোনো প্রিন্ট জবে (লেজার
+// প্রিন্ট, ফাইন্যান্সিয়াল রিপোর্ট, বা পরের বার A4/ডিজিটাল রিসিট প্রিন্ট করলে) যেন থেকে
+// না যায়, তাই একটাই জায়গায় খালি করার লজিক রাখা হলো — সব প্রিন্ট-এন্ট্রি-পয়েন্ট এটা
+// কল করে নিজের প্রিন্ট শুরুর আগে।
+function resetDynamicPageStyle(){
+  const pageStyle = document.getElementById('dynamicPageStyle');
+  if(pageStyle) pageStyle.textContent = '';
+}
+function printReceipts(){
+  const checked = Array.from(document.querySelectorAll('.receiptChk:checked')).map(c => c.value);
+  if(checked.length === 0){ showToast('Select at least one sale to print'); return; }
+  const rows = state.sales.filter(s => checked.includes(String(s.id))).sort((a,b)=> sortKey(a) < sortKey(b) ? -1 : 1);
+  const format = getSelectedReceiptFormat();
+  const groups = groupReceiptRows(rows);
+  const printArea = document.getElementById('printArea');
 
-  const pages = [];
-  for(let i = 0; i < groups.length; i += 6) pages.push(groups.slice(i, i + 6));
-  document.getElementById('printArea').innerHTML = pages
-    .map(pageGroups => `<div class="receipt-page">${pageGroups.map(receiptCardHTML).join('')}</div>`)
-    .join('');
+  if(format === 'thermal58' || format === 'thermal80'){
+    // থার্মাল রোল প্রিন্টার — একটার পর একটা স্লিপ, প্রতিটাই আলাদা "পেজ" (রোল কাগজে
+    // পেজ-ব্রেক মানে হলো পরের স্লিপের আগে কাগজ কাটার/এগোনোর জায়গা)।
+    const builder = format === 'thermal58' ? receiptCardThermal58HTML : receiptCardThermal80HTML;
+    const wrapClass = format === 'thermal58' ? 'thermal58-page' : 'thermal80-page';
+    printArea.innerHTML = groups.map(g => `<div class="${wrapClass}">${builder(g)}</div>`).join('');
+  } else if(format === 'digital'){
+    // ডিজিটাল ইনভয়েস — এক পেজে একটা করে ফরমাল ফুল-সাইজ ইনভয়েস।
+    printArea.innerHTML = groups.map(g => `<div class="digital-invoice-page">${receiptCardDigitalHTML(g)}</div>`).join('');
+  } else {
+    // ডিফল্ট: A4 শিটে ৬টা করে (২×৩ গ্রিড) — আগের আচরণ অপরিবর্তিত।
+    const pages = [];
+    for(let i = 0; i < groups.length; i += 6) pages.push(groups.slice(i, i + 6));
+    printArea.innerHTML = pages
+      .map(pageGroups => `<div class="receipt-page">${pageGroups.map(receiptCardHTML).join('')}</div>`)
+      .join('');
+  }
+
+  printArea.className = 'print-format-' + format;
+  // @page-এর size স্ট্যাটিক CSS দিয়ে ফরম্যাট-ভিত্তিক আলাদা করা যায় না (একটাই @page rule
+  // পুরো ডকুমেন্টে সবশেষেরটা জেতে) — তাই এখানে রানটাইমে সঠিক পেজ-সাইজ বসানো হচ্ছে।
+  // format 'a4' বা 'digital' হলে খালি রেখে দেওয়া হয়, তাতে আগের স্ট্যাটিক A4 @page
+  // rule-ই কাজ করে, অর্থাৎ পুরনো A4 ৬-আপ ফরম্যাট একেবারেই অপরিবর্তিত থাকে।
+  resetDynamicPageStyle();
+  const pageStyle = document.getElementById('dynamicPageStyle');
+  if(pageStyle){
+    if(format === 'thermal58') pageStyle.textContent = '@media print{ @page{ size:58mm auto; margin:0; } }';
+    else if(format === 'thermal80') pageStyle.textContent = '@media print{ @page{ size:80mm auto; margin:0; } }';
+  }
   document.querySelectorAll('#printArea .bc-canvas').forEach(cv => drawCode39(cv, cv.dataset.value));
   document.querySelectorAll('#printArea .qr-canvas').forEach(cv => drawQRCode(cv, cv.dataset.value));
   closeReceiptSheet();
@@ -7685,8 +8309,8 @@ function toRomanLower(num){
 }
 function exportPDF(period){
   period = period || document.getElementById('reportPeriod').value || 'month';
-  const range = getPeriodRange(period);
-  const periodLabels = { today:'Today', week:'This Week', month:'This Month', year:'This Year', all:'All Time' };
+  const range = getPeriodRange(period, state.customDates);
+  const periodLabels = { today:'Today', week:'Last 7 Days', month:'Last 30 Days', year:'Last 365 Days', all:'All Time', custom:'Selected Dates' };
 
   const salesRows = state.sales.filter(t => inRange(t.date, range)).sort((a,b)=> a.date < b.date ? -1 : (a.date > b.date ? 1 : 0));
   const purchaseRows = state.purchases.filter(t => inRange(t.date, range)).sort((a,b)=> a.date < b.date ? -1 : (a.date > b.date ? 1 : 0));
@@ -7697,7 +8321,7 @@ function exportPDF(period){
   const expense = expenseRows.reduce((s,t)=>s+t.total,0);
   const profit = sales - purchase - expense;
 
-  const dateRangeLabel = `${fmtDate(toLocalISODate(range.start))} — ${fmtDate(toLocalISODate(range.end))}`;
+  const dateRangeLabel = formatRangeLabel(period, range);
 
   function rowsTable(rows, cols){
     if(rows.length === 0) return '<p style="font-size:11px;color:#888;">No entries in this period.</p>';
@@ -7747,6 +8371,10 @@ function exportPDF(period){
   const rptLogo = (state.company.logoUrl || '').trim();
   const rptInitial = (state.company.name || 'K').trim().charAt(0).toUpperCase();
   const rptMarkInner = rptLogo ? `<img src="${escapeHTML(rptLogo)}" alt="">` : escapeHTML(rptInitial);
+  // রিসিট প্রিন্ট থেকে থেকে যাওয়া ফরম্যাট-ক্লাস/@page override থাকলে রিসেট করে
+  // দেওয়া হচ্ছে, নাহলে এই ফাইন্যান্সিয়াল রিপোর্টেও ভুল পেজ-সাইজ/প্যাডিং বসে যেত।
+  document.getElementById('printArea').className = '';
+  resetDynamicPageStyle();
   document.getElementById('printArea').innerHTML = `
     <div class="rpt-header">
       <div class="rpt-brand">
@@ -8886,6 +9514,7 @@ if(document.readyState === 'loading'){
   bootApp();
 }
 </script>
+<style id="dynamicPageStyle"></style>
 <div id="printArea"></div>
 
 <script>
@@ -9411,6 +10040,7 @@ makeSheetSwipeable('itemSheet', 'itemOverlay', closeItemSheet);
 makeSheetSwipeable('receiptSheet', 'receiptOverlay', closeReceiptSheet);
 makeSheetSwipeable('aiInsightsSheet', 'aiInsightsOverlay', closeAiInsights);
 makeSheetSwipeable('receiptScanSheet', 'receiptScanOverlay', closeReceiptScanSheet);
+makeSheetSwipeable('dateRangeSheet', 'dateRangeOverlay', closeDateRangeSheet);
 </script>
 </body>
 </html>
