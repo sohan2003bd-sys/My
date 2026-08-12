@@ -1436,6 +1436,47 @@
   #ptrIndicator.snap{ transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease; }
   @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
+  /* ---------- QR Verification screen (public, no login) ---------- */
+  #verifyScreen{
+    position:fixed; inset:0; z-index:100000;
+    width:100%; height:100vh; height:100dvh;
+    background:linear-gradient(160deg, var(--green-900) 0%, var(--green-800) 55%, var(--green-700) 100%);
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
+  .v-wrap{ max-width:480px; margin:0 auto; padding:28px 18px 40px; min-height:100%; }
+  .v-brandrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .v-brandmark{ width:34px; height:34px; border-radius:10px; background:var(--gold-bright); color:var(--green-900);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex:none; }
+  .v-brandtext{ color:#fff; font-family:'Fraunces',serif; font-weight:600; font-size:17px; }
+  .v-brandtext span{ display:block; font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:12px; color:rgba(255,255,255,0.65); margin-top:1px; }
+  .v-body{ min-height:60vh; display:flex; flex-direction:column; }
+  .v-loading{ margin:auto; text-align:center; color:rgba(255,255,255,0.85); display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .v-spinner{ width:34px; height:34px; border-radius:50%; border:3px solid rgba(255,255,255,0.25); border-top-color:#fff; animation:vspin 0.8s linear infinite; }
+  @keyframes vspin{ to{ transform:rotate(360deg); } }
+  .v-card{ background:var(--card); border-radius:20px; padding:22px 20px 20px; box-shadow:var(--shadow-lift); }
+  .v-status{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .v-status-icon{ width:46px; height:46px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .v-status.ok .v-status-icon{ background:var(--profit-bg); color:var(--green-700); }
+  .v-status.bad .v-status-icon{ background:var(--loss-bg); color:var(--loss); }
+  .v-status-title{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink); }
+  .v-status-sub{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .v-divider{ height:1px; background:var(--rule); margin:16px 0; }
+  .v-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:7px 0; font-size:13.5px; }
+  .v-row .k{ color:var(--muted); flex:none; }
+  .v-row .v{ color:var(--ink); font-weight:600; text-align:right; }
+  .v-row .v.num{ font-family:'IBM Plex Mono',monospace; }
+  .v-items{ margin:14px 0; border:1px solid var(--rule); border-radius:12px; overflow:hidden; }
+  .v-item-line{ display:flex; justify-content:space-between; gap:10px; padding:9px 12px; font-size:13px; border-bottom:1px solid var(--rule); }
+  .v-item-line:last-child{ border-bottom:none; }
+  .v-total-row{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
+  .v-total-row .k{ font-weight:600; color:var(--ink); }
+  .v-total-row .v{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:18px; color:var(--green-700); }
+  .v-footnote{ margin-top:18px; text-align:center; font-size:11.5px; color:rgba(255,255,255,0.55); line-height:1.6; }
+  .v-shopname{ font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--ink); margin-bottom:1px; }
+  .v-badge{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:8px; }
+  .v-badge.paid{ background:var(--profit-bg); color:var(--green-700); }
+  .v-badge.due{ background:var(--loss-bg); color:var(--loss); }
+
   /* ---------- Splash screen (launch animation) ----------
      ব্যাকগ্রাউন্ড ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটা ট্যাগও এই একই
      কালারে সেট করা আছে, তাই এই সময় ফোনের স্ট্যাটাস বার/টপবারও একই ক্রিম কালার দেখাবে।
@@ -1572,6 +1613,26 @@
 </style>
 </head>
 <body>
+
+<!-- ===================== QR VERIFICATION SCREEN (public, no login) =====================
+     URL-এ ?verify=<verificationId> থাকলে (কাস্টমার রিসিটের QR স্ক্যান করলে এখানেই আসবে)
+     পুরো স্ক্রিন এইটাই দখল করে নেয় — কোনো লগইন/দোকানের ডেটা দরকার হয় না। শুধুমাত্র
+     public "verify/{id}" Firebase নোড থেকে ওই একটা ইনভয়েসের সংক্ষিপ্ত তথ্য fetch করে
+     দেখানো হয় (দ্র. renderVerifyScreen, নিচের বড় script-এ)। ============================= -->
+<div id="verifyScreen" style="display:none;">
+  <div class="v-wrap">
+    <div class="v-brandrow">
+      <div class="v-brandmark">✓</div>
+      <div class="v-brandtext">MY SHOP <span>Verification</span></div>
+    </div>
+    <div id="verifyBody" class="v-body">
+      <div class="v-loading">
+        <div class="v-spinner"></div>
+        <div>যাচাই করা হচ্ছে…</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ===================== SPLASH SCREEN (launch animation) =====================
      Firebase/loadState ঠিক কোন স্ক্রিন (onboarding/lock/app) দেখাবে সেটা বুঝে ওঠার
@@ -5399,8 +5460,132 @@ let bootFallbackTimer = null;
    অপেক্ষা ছাড়াই সরাসরি এখানে চালানো নিরাপদ। splash-টা কোনো কৃত্রিম "লোডিং" এর মতো না
    লাগার জন্য এই মানটা (instantBooted) splash-এর মিনিমাম-টাইম গেটও পড়ে, তাই এটাকে
    splash-timing কোডের (নিচে) আগেই বসানো হয়েছে। */
+/* ---------------- QR VERIFICATION MODE (public, no login) ----------------
+   URL-এ ?verify=<id> থাকলে (রিসিটের QR স্ক্যান করে কাস্টমার এখানে আসে) — স্বাভাবিক
+   লগইন/অ্যাপ বুট ফ্লো পুরোপুরি এড়িয়ে সরাসরি #verifyScreen দেখানো হয়। এটা সবচেয়ে
+   আগে চেক করা হচ্ছে (instant-boot/bootApp শুরুর আগেই) যাতে যিনি স্ক্যান করছেন তার
+   ব্রাউজারে এই ডিভাইসের আগে-থেকে-লগইন-করা দোকানের ড্যাশবোর্ড ভুলবশত ফ্ল্যাশ না করে। */
+function getVerifyIdFromUrl(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const v = params.get('verify');
+    return v ? v.trim() : null;
+  }catch(e){ return null; }
+}
+const VERIFY_MODE_ID = getVerifyIdFromUrl();
+if(VERIFY_MODE_ID){
+  document.documentElement.classList.add('verify-mode-active');
+}
+function runVerifyMode(vid){
+  const splashEl = document.getElementById('splashScreen');
+  if(splashEl) splashEl.style.display = 'none';
+  const screen = document.getElementById('verifyScreen');
+  if(screen) screen.style.display = 'block';
+  setThemeColor('#0F3830');
+  // Firebase compat SDK-গুলো <head>-এ defer করা — DOMContentLoaded/লোড শেষ হওয়ার
+  // অপেক্ষা না করে এখানে সরাসরি চেষ্টা করলে firebase এখনো undefined থাকতে পারে,
+  // তাই রেডি না হওয়া পর্যন্ত অল্প অল্প করে অপেক্ষা করা হচ্ছে (max ~5s)।
+  let waited = 0;
+  const tryInit = () => {
+    if(typeof firebase !== 'undefined' && firebase.apps){
+      fetchAndRenderVerification(vid);
+      return;
+    }
+    waited += 100;
+    if(waited > 5000){ renderVerifyScreen(null); return; }
+    setTimeout(tryInit, 100);
+  };
+  tryInit();
+}
+function fetchAndRenderVerification(vid){
+  try{
+    if(!fbApp){ fbApp = firebase.initializeApp(FIREBASE_CONFIG); }
+    if(!fbDb){ fbDb = firebase.database(); }
+    fbDb.ref('verify/' + vid).once('value')
+      .then(snap => renderVerifyScreen(snap.exists() ? snap.val() : null))
+      .catch(err => { console.error('Verification fetch failed:', err); renderVerifyScreen(undefined); });
+  }catch(err){
+    console.error('Verification init failed:', err);
+    renderVerifyScreen(undefined);
+  }
+}
+// data: object → পাওয়া গেছে ও দেখানো হবে। null → এই আইডিতে কিছু নেই (fake/ভুল QR)।
+// undefined → নেটওয়ার্ক/অন্য কোনো এরর, তথ্য পাওয়া গেল না (fake না, শুধু চেক করা গেল না)।
+function renderVerifyScreen(data){
+  const box = document.getElementById('verifyBody');
+  if(!box) return;
+  if(data === null){
+    box.innerHTML = `
+      <div class="v-card">
+        <div class="v-status bad">
+          <div class="v-status-icon">✕</div>
+          <div>
+            <div class="v-status-title">যাচাই করা যায়নি</div>
+            <div class="v-status-sub">এই কোডের সাথে মিলে এমন কোনো ইনভয়েস পাওয়া যায়নি</div>
+          </div>
+        </div>
+      </div>
+      <div class="v-footnote">এই কোড ভুয়া বা মেয়াদোত্তীর্ণ হতে পারে। সন্দেহ হলে বিক্রেতার সাথে সরাসরি যোগাযোগ করুন।</div>`;
+    return;
+  }
+  if(data === undefined){
+    box.innerHTML = `
+      <div class="v-card">
+        <div class="v-status bad">
+          <div class="v-status-icon">!</div>
+          <div>
+            <div class="v-status-title">সংযোগ সমস্যা</div>
+            <div class="v-status-sub">যাচাই করতে ইন্টারনেট সংযোগ দরকার — আবার চেষ্টা করুন</div>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+  const currency = data.currency || '৳';
+  const money = n => currency + (isFinite(n) ? n : 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const itemsHTML = (Array.isArray(data.items) ? data.items : []).map(it => `
+      <div class="v-item-line">
+        <span>${escapeHTML(it.name || '—')}${it.qty && it.qty > 1 ? ` × ${it.qty}` : ''}</span>
+        <span class="num">${money(it.total || 0)}</span>
+      </div>`).join('');
+  const deliveryHTML = data.deliveryCharge > 0 ? `
+      <div class="v-item-line">
+        <span>🚚 Delivery Charge</span>
+        <span class="num">${money(data.deliveryCharge)}</span>
+      </div>` : '';
+  const dateStr = data.date ? fmtDate(data.date) : '—';
+  const badge = data.paymentStatus === 'due'
+    ? `<span class="v-badge due">⏳ Payment Due (COD)</span>`
+    : `<span class="v-badge paid">✓ Paid</span>`;
+  box.innerHTML = `
+    <div class="v-card">
+      <div class="v-status ok">
+        <div class="v-status-icon">✓</div>
+        <div>
+          <div class="v-status-title">ইনভয়েস যাচাই সম্পন্ন</div>
+          <div class="v-status-sub">এই তথ্যগুলো সরাসরি বিক্রেতার সিস্টেম থেকে যাচাই করা হয়েছে</div>
+        </div>
+      </div>
+      <div class="v-divider"></div>
+      <div class="v-shopname">${escapeHTML(data.shopName || 'My Business')}</div>
+      ${badge}
+      <div class="v-row"><span class="k">Invoice No.</span><span class="v num">${escapeHTML(data.invoiceNo || '—')}</span></div>
+      <div class="v-row"><span class="k">Date</span><span class="v">${escapeHTML(dateStr)}</span></div>
+      <div class="v-row"><span class="k">Customer</span><span class="v">${escapeHTML(data.customerName || '—')}</span></div>
+      ${data.paymentMethod ? `<div class="v-row"><span class="k">Payment Method</span><span class="v">${escapeHTML(data.paymentMethod)}</span></div>` : ''}
+      <div class="v-items">${itemsHTML}${deliveryHTML}</div>
+      <div class="v-total-row"><span class="k">Total</span><span class="v">${money(data.total || 0)}</span></div>
+    </div>
+    <div class="v-footnote">MY SHOP দ্বারা সুরক্ষিত ইনভয়েস ভেরিফিকেশন সিস্টেম<br>এই পেজটি শুধু তথ্য যাচাইয়ের জন্য — লগইন প্রয়োজন হয় না</div>`;
+}
+
 let instantBooted = false;
 (function instantBootFromCache(){
+  if(VERIFY_MODE_ID){
+    // ভেরিফিকেশন মোডে স্বাভাবিক দোকান-বুট ফ্লো সম্পূর্ণ এড়িয়ে যাওয়া হচ্ছে
+    runVerifyMode(VERIFY_MODE_ID);
+    return;
+  }
   try{
     loadState();
     applyBrandMark();
@@ -5429,6 +5614,7 @@ function setThemeColor(hex){
   meta.setAttribute('content', hex);
 }
 function bootApp(){
+  if(VERIFY_MODE_ID) return; // ভেরিফিকেশন মোড ইতিমধ্যে instantBootFromCache-এই সামলানো হয়ে গেছে
   if(!instantBooted){
     loadState(); // warm local cache immediately so onboarding can detect existing local data
     applyBrandMark(); // so the splash screen shows the right logo/initial right away
@@ -5691,6 +5877,14 @@ function lockNow(){
 
 /* ---------------- NAVIGATION ---------------- */
 
+// ড্যাশবোর্ড/সেটিংস/অর্ডার্স/স্টক-রিমাইন্ডার পেজে + বাটনের কোনো কাজ নেই (দ্র.
+// handleFabClick ও openAddSheet — এই পেজগুলোতে চাপলে কিছুই হয় না), তাই এখানে বাটনটা
+// লুকানো থাকে। এই লিস্টটা এখন একটাই জায়গায় রাখা হলো (আগে শুধু goPage()-এ ছিল) যাতে
+// renderAll()/enterApp()-এ প্রথমবার অ্যাপ খোলার সময়ও একই নিয়ম প্রয়োগ হয়।
+const FAB_HIDDEN_PAGES = ['settings','dashboard','orders','stockalerts'];
+function updateFabVisibility(page){
+  document.getElementById('fabAdd').style.display = FAB_HIDDEN_PAGES.includes(page) ? 'none' : 'flex';
+}
 function goPage(page){
   state.currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -5705,8 +5899,7 @@ function goPage(page){
   applyPageBarColor(page);
   const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings', inventory:'ইনভেন্টরি', stockalerts:'স্টক রিমাইন্ডার'};
   document.getElementById('topPageLabel').textContent = labels[page];
-  const fabHiddenPages = ['settings','dashboard','orders','stockalerts'];
-  document.getElementById('fabAdd').style.display = fabHiddenPages.includes(page) ? 'none' : 'flex';
+  updateFabVisibility(page);
   // ----------------------------------------------------------------------
   // ট্যাপ করার সাথে সাথেই যেন উইন্ডো/পেজ চোখে instantly বদলে যায় (০% ল্যাগ):
   // উপরের সব কাজ (active class, লেবেল, bottom-nav হাইলাইট) already সস্তা এবং
@@ -7096,10 +7289,9 @@ function receiptCardHTML(group){
         <span class="rc-item-name">🚚 Delivery Charge</span>
         <span class="rc-item-amt">${fmtMoney(groupDeliveryCharge)}</span>
       </div>` : '';
-  // QR payload — invoice no., grand total (incl. delivery charge) and the
-  // customer's phone, in a simple readable "Label: value" format so any
-  // generic QR scanner shows something meaningful, not just raw data.
-  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  // QR payload — এখন ইনভয়েসের একটা পাবলিক ভেরিফিকেশন লিংক (দ্র. qrPayloadFor, উপরে) —
+  // স্ক্যান করলে কাস্টমার সরাসরি যাচাই পেজে গিয়ে আসল ইনভয়েসের তথ্য দেখতে পারবে।
+  const qrText = qrPayloadFor(first, invoiceNo, totalLabel, grandTotal);
   return `
   <div class="receipt-card">
     <div class="rc-accent"></div>
@@ -7220,7 +7412,7 @@ function receiptCardThermal80HTML(group){
         <span class="th-item-name">🚚 Delivery Charge</span>
         <span class="th-item-amt">${fmtMoney(groupDeliveryCharge)}</span>
       </div>` : '';
-  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  const qrText = qrPayloadFor(first, invoiceNo, totalLabel, grandTotal);
   return `
   <div class="thermal-card thermal-card-80">
     <div class="th-head-row">
@@ -7294,7 +7486,7 @@ function receiptCardDigitalHTML(group){
           <td></td>
           <td class="di-num">${fmtMoney(groupDeliveryCharge)}</td>
         </tr>` : '';
-  const qrText = `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+  const qrText = qrPayloadFor(first, invoiceNo, totalLabel, grandTotal);
   return `
   <div class="digital-invoice">
     <div class="di-head">
@@ -7363,6 +7555,75 @@ function resetDynamicPageStyle(){
   const pageStyle = document.getElementById('dynamicPageStyle');
   if(pageStyle) pageStyle.textContent = '';
 }
+/* ---------------- QR VERIFICATION (public, no-login lookup) ----------------
+   প্রতিটা ইনভয়েসের জন্য একটা স্থায়ী "Verification ID" থাকে (প্রথমবার প্রিন্ট করার
+   সময় জেনারেট হয়ে সেই sale রো-তেই সেভ হয়ে যায়, তাই বারবার প্রিন্ট করলেও একই কোড
+   থাকে)। রিসিটের QR কোডে এখন থেকে শুধু টেক্সট না, একটা ভেরিফিকেশন লিংক
+   (…?verify=<id>) বসানো হয় — কাস্টমার স্ক্যান করলে সরাসরি একটা পাবলিক পেজে গিয়ে
+   আসল ইনভয়েসের তথ্য (পণ্য, দাম, দোকানের নাম) দেখতে পারবে, কোনো লগইন ছাড়াই।
+   ডেটা রাখা হয় Firebase-এর আলাদা পাবলিক নোডে ("verify/<verificationId>") —
+   দোকানের সাধারণ ডেটা ("shops/<uid>/…") থেকে সম্পূর্ণ আলাদা ও সীমিত, যাতে দোকানের
+   পুরো ডেটাবেজ উন্মুক্ত না হয়ে যায়, শুধু ওই একটা ইনভয়েসের সংক্ষিপ্ত তথ্যই থাকে। */
+// রিসিটের QR-এ কী বসবে তা এখান থেকে ঠিক হয় — sale-এ ইতিমধ্যে vid থাকলে (অর্থাৎ
+// printReceipts() একবার চালানো হয়ে গেছে) সরাসরি ভেরিফিকেশন লিংক বসে, স্ক্যান করলে
+// কাস্টমার পাবলিক ভেরিফাই পেজে চলে যাবে। এখনো vid বসানো না হয়ে থাকলে (যেমন প্রিভিউ
+// রেন্ডার) আগের মতো প্লেইন-টেক্সট সামারি দেখানো হয়, যাতে QR খালি না থাকে।
+function qrPayloadFor(first, invoiceNo, totalLabel, grandTotal){
+  if(first.vid) return verificationUrlFor(first.vid);
+  return `Invoice: ${invoiceNo}\n${totalLabel}: ${fmtMoney(grandTotal)}\nPhone: ${(first.phone || '-').trim()}`;
+}
+function ensureVerificationId(sale){
+  if(sale.vid) return sale.vid;
+  // দোকানের uid + লোকাল sale id মিলিয়ে গ্লোবালি ইউনিক কোড বানানো হলো (idCounter
+  // প্রতি দোকানে আলাদাভাবে গোনা হয় বলে শুধু sale.id দিয়ে যথেষ্ট না)।
+  const raw = (currentUid || 'local') + '_' + sale.id + '_' + Date.now().toString(36);
+  let hash = 0;
+  for(let i=0;i<raw.length;i++){ hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0; }
+  sale.vid = 'V' + Math.abs(hash).toString(36).toUpperCase() + Date.now().toString(36).slice(-3).toUpperCase();
+  return sale.vid;
+}
+function verifyBaseUrl(){
+  // হোস্টেড লিংক — ইউজার যেখান থেকেই অ্যাপ খুলুন (custom domain হলেও), verify মোড
+  // একই origin-এই কাজ করে (দ্র. getVerifyIdFromUrl, উপরে), তাই বর্তমান origin-ই ব্যবহার করা নিরাপদ।
+  return window.location.origin + window.location.pathname;
+}
+function verificationUrlFor(vid){
+  return verifyBaseUrl() + '?verify=' + encodeURIComponent(vid);
+}
+// রিসিট প্রিন্ট করার সময় প্রতিটা গ্রুপের (এক ইনভয়েসের সব রো একসাথে) জন্য পাবলিক
+// verify/<id> নোডে একটা সংক্ষিপ্ত, স্বয়ংসম্পূর্ণ স্ন্যাপশট লেখা হয় — দোকানের currency/
+// নাম/লোগো নিজেই এই স্ন্যাপশটে থাকে, তাই ভেরিফাই পেজে দোকানের বাকি ডেটা লাগবে না।
+function pushVerificationRecord(group, vid){
+  if(!fbDb || !currentUid) return; // অফলাইনে বা লগইন ছাড়া থাকলে চুপচাপ স্কিপ — QR তখনও প্রিন্ট হবে, শুধু অনলাইন হলে পরে ভেরিফাই করা যাবে
+  const rows = Array.isArray(group) ? group : [group];
+  const first = rows[0];
+  const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
+  const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const items = [];
+  rows.forEach(r => {
+    if(Array.isArray(r.items) && r.items.length > 1){
+      r.items.forEach(it => items.push({ name: it.name || '—', qty: it.qty || 1, total: (it.qty || 1) * (it.price || 0) }));
+    } else {
+      items.push({ name: r.name || '—', qty: r.qty || 1, total: r.total || 0 });
+    }
+  });
+  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
+  const payload = stripUndefinedDeep({
+    shopName: state.company.name || 'My Business',
+    currency: state.company.currency || '৳',
+    invoiceNo,
+    date: first.date,
+    customerName: first.party || 'Walk-in Customer',
+    customerPhone: first.phone || '',
+    items,
+    deliveryCharge: rows.reduce((s,r)=> s + (r.deliveryCharge || 0), 0),
+    total: grandTotal,
+    paymentMethod: first.payment || '',
+    paymentStatus: isCOD ? 'due' : 'paid',
+    createdAt: Date.now()
+  });
+  fbDb.ref('verify/' + vid).set(payload).catch(err => console.error('Verification record push failed:', err));
+}
 function printReceipts(){
   const checked = Array.from(document.querySelectorAll('.receiptChk:checked')).map(c => c.value);
   if(checked.length === 0){ showToast('Select at least one sale to print'); return; }
@@ -7370,6 +7631,21 @@ function printReceipts(){
   const format = getSelectedReceiptFormat();
   const groups = groupReceiptRows(rows);
   const printArea = document.getElementById('printArea');
+
+  // প্রতিটা ইনভয়েস-গ্রুপের প্রথম রো-তে একটা স্থায়ী ভেরিফিকেশন আইডি বসিয়ে (না থাকলে
+  // নতুন বানিয়ে) পাবলিক verify/ নোডে পুশ করা হচ্ছে — যাতে QR স্ক্যান করে যে কেউ (লগইন
+  // ছাড়াই) এই নির্দিষ্ট ইনভয়েসটা যাচাই করতে পারে। sale অবজেক্টে vid বসানো হচ্ছে বলে
+  // saveState() দিয়ে সেটাও লোকাল/ক্লাউডে সেভ হয়ে যাচ্ছে, তাই একই ইনভয়েস পরে আবার
+  // প্রিন্ট করলে আগেরই কোড ও লিংক পুনরায় ব্যবহৃত হবে।
+  let vidsAssigned = false;
+  groups.forEach(g => {
+    const first = g[0];
+    const vid = ensureVerificationId(first);
+    if(first.vid !== vid) return;
+    vidsAssigned = true;
+    pushVerificationRecord(g, vid);
+  });
+  if(vidsAssigned) saveState();
 
   if(format === 'thermal58' || format === 'thermal80'){
     // থার্মাল রোল প্রিন্টার — একটার পর একটা স্লিপ, প্রতিটাই আলাদা "পেজ" (রোল কাগজে
@@ -7869,7 +8145,14 @@ function savePinChange(){
 function bioSupported(){
   return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && navigator.credentials.get);
 }
-function getBioCredKey(){ return 'bioCred_' + (currentUid || 'local'); }
+// instant boot-এ লক স্ক্রিন বানানো হয় Firebase-এর currentUid জানার *আগেই* — সেই মুহূর্তে
+// এখানে শুধু currentUid দেখলে ভুল key ('bioCred_local') চেক হতো, ফলে নম্বরগুলো সাথে সাথে
+// এলেও ফিঙ্গারপ্রিন্ট আইকনটা দেরিতে (currentUid সেট হওয়ার পর, ব্যাকগ্রাউন্ডে দ্বিতীয়বার
+// buildKeypad() চলার সময়) আসত। lastKnownVerifiedUid এই ডিভাইসে আগের সফল লগইন থেকে
+// localStorage-এ সিঙ্ক্রোনাসভাবেই আগে থেকে পড়া থাকে (দ্র. উপরে), তাই currentUid এখনো
+// না জানা থাকলে সেটাকেই fallback হিসেবে ব্যবহার করা হলো — এতে সঠিক ক্রেডেনশিয়াল-key
+// প্রথমবারেই মিলে যায় এবং সংখ্যা ও ফিঙ্গার আইকন একসাথেই দেখা যায়।
+function getBioCredKey(){ return 'bioCred_' + (currentUid || lastKnownVerifiedUid || 'local'); }
 function hasBioCredential(){ return !!localStorage.getItem(getBioCredKey()); }
 function abToB64(buf){
   const bytes = new Uint8Array(buf);
@@ -9385,6 +9668,11 @@ function renderAll(){
   document.getElementById('topCoName').textContent = state.company.name;
   applyBrandMark();
   applyPageBarColor(state.currentPage);
+  // অ্যাপ প্রথমবার খোলার সময় (enterApp → renderAll) এতদিন goPage() একেবারেই চলত না —
+  // তাই ড্যাশবোর্ড ডিফল্ট পেজ হওয়া সত্ত্বেও + বাটন তার CSS ডিফল্ট (display:flex) নিয়েই
+  // দেখা যেত, প্রথমবার দেখা যেত অথচ অন্য পেজে গিয়ে ফিরলে goPage() চলার পর ঠিকই লুকিয়ে
+  // যেত। এখন এখানেও goPage()-এর মতোই নিয়ম প্রয়োগ হচ্ছে, তাই প্রথমবারেই সামঞ্জস্যপূর্ণ থাকে।
+  updateFabVisibility(state.currentPage);
   // আগে এখানে renderDashboard() ও renderSettings() — দুটোই — সবসময় নিঃশর্তভাবে চলত,
   // অ্যাপ বুট হওয়ার সময়ও (যখন Settings পেজ আদৌ দৃশ্যমানই না)। renderSettings() নিজে
   // বেশ ভারী (৬টা chip লিস্ট + Products + Videos + Drive/Sheet sync স্ট্যাটাস রিবিল্ড করে) —
