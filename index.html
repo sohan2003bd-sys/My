@@ -1440,18 +1440,18 @@
   #verifyScreen{
     position:fixed; inset:0; z-index:100000;
     width:100%; height:100vh; height:100dvh;
-    background:linear-gradient(160deg, var(--green-900) 0%, var(--green-800) 55%, var(--green-700) 100%);
+    background:#F5EAD0;
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   .v-wrap{ max-width:480px; margin:0 auto; padding:28px 18px 40px; min-height:100%; }
   .v-brandrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
   .v-brandmark{ width:34px; height:34px; border-radius:10px; background:var(--gold-bright); color:var(--green-900);
     display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex:none; }
-  .v-brandtext{ color:#fff; font-family:'Fraunces',serif; font-weight:600; font-size:17px; }
-  .v-brandtext span{ display:block; font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:12px; color:rgba(255,255,255,0.65); margin-top:1px; }
+  .v-brandtext{ color:var(--ink); font-family:'Fraunces',serif; font-weight:600; font-size:17px; }
+  .v-brandtext span{ display:block; font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:12px; color:rgba(27,36,32,0.62); margin-top:1px; }
   .v-body{ min-height:60vh; display:flex; flex-direction:column; }
-  .v-loading{ margin:auto; text-align:center; color:rgba(255,255,255,0.85); display:flex; flex-direction:column; align-items:center; gap:14px; }
-  .v-spinner{ width:34px; height:34px; border-radius:50%; border:3px solid rgba(255,255,255,0.25); border-top-color:#fff; animation:vspin 0.8s linear infinite; }
+  .v-loading{ margin:auto; text-align:center; color:rgba(27,36,32,0.75); display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .v-spinner{ width:34px; height:34px; border-radius:50%; border:3px solid rgba(27,36,32,0.15); border-top-color:var(--green-700); animation:vspin 0.8s linear infinite; }
   @keyframes vspin{ to{ transform:rotate(360deg); } }
   .v-card{ background:var(--card); border-radius:20px; padding:22px 20px 20px; box-shadow:var(--shadow-lift); }
   .v-status{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
@@ -1468,14 +1468,41 @@
   .v-items{ margin:14px 0; border:1px solid var(--rule); border-radius:12px; overflow:hidden; }
   .v-item-line{ display:flex; justify-content:space-between; gap:10px; padding:9px 12px; font-size:13px; border-bottom:1px solid var(--rule); }
   .v-item-line:last-child{ border-bottom:none; }
+  .v-item-verify-link{ padding:0 12px 9px; margin-top:-6px; border-bottom:1px solid var(--rule); }
+  .v-item-verify-link:last-child{ border-bottom:none; }
+  .v-item-verify-link a{ font-size:11.5px; font-weight:600; color:var(--blue-600); text-decoration:none; }
+  .v-item-verify-link a:active{ opacity:0.7; }
+  .v-invoice-link-box{ margin-top:14px; text-align:center; }
+  .v-invoice-link-box a{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--blue-600); text-decoration:none; padding:9px 16px; border:1px solid var(--blue-500); border-radius:20px; }
+  .v-invoice-link-box a:active{ opacity:0.7; }
   .v-total-row{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
   .v-total-row .k{ font-weight:600; color:var(--ink); }
   .v-total-row .v{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:18px; color:var(--green-700); }
-  .v-footnote{ margin-top:18px; text-align:center; font-size:11.5px; color:rgba(255,255,255,0.55); line-height:1.6; }
+  .v-footnote{ margin-top:18px; text-align:center; font-size:11.5px; color:rgba(27,36,32,0.55); line-height:1.6; }
   .v-shopname{ font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--ink); margin-bottom:1px; }
   .v-badge{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:8px; }
   .v-badge.paid{ background:var(--profit-bg); color:var(--green-700); }
   .v-badge.due{ background:var(--loss-bg); color:var(--loss); }
+  .v-badge.active{ background:var(--profit-bg); color:var(--green-700); }
+  .v-badge.soon{ background:#FCF3E3; color:var(--gold); }
+  .v-badge.expired{ background:var(--loss-bg); color:var(--loss); }
+  .v-badge.none{ background:var(--paper-deep); color:var(--muted); }
+
+  /* ---------- Product authenticity card (part of the same #verifyScreen, rendered
+     when the URL has ?pverify=<id> instead of ?verify=<id> — see renderProductVerifyScreen) ---------- */
+  .v-product-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .v-product-photo{ width:64px; height:64px; border-radius:14px; object-fit:cover; flex:none; background:var(--paper-deep); border:1px solid var(--rule); }
+  .v-product-photo-ph{ width:64px; height:64px; border-radius:14px; flex:none; background:var(--paper-deep); display:flex; align-items:center; justify-content:center; font-size:26px; }
+  .v-product-name{ font-family:'Fraunces',serif; font-weight:600; font-size:16.5px; color:var(--ink); line-height:1.3; }
+  .v-support-box{ margin-top:14px; padding:14px; border-radius:14px; background:var(--profit-bg); }
+  .v-support-title{ font-size:11px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase; color:var(--green-700); margin-bottom:6px; }
+  .v-support-row{ font-size:12.5px; color:var(--ink); line-height:1.7; }
+
+  /* ---------- Generate-authenticity-QR sheet (shop owner side, inside the app) ---------- */
+  .pv-qr-canvas-wrap{ display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--rule); border-radius:16px; padding:16px; margin:6px 0 14px; }
+  .pv-qr-canvas-wrap canvas{ width:190px; height:190px; image-rendering:pixelated; }
+  .pv-link-box{ display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--rule); border-radius:10px; padding:9px 11px; font-size:11.5px; color:var(--muted); word-break:break-all; }
+  .qa-icon-btn{ flex:none; background:none; border:none; padding:4px; color:var(--green-700); }
 
   /* ---------- Splash screen (launch animation) ----------
      ব্যাকগ্রাউন্ড ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটা ট্যাগও এই একই
@@ -1623,7 +1650,7 @@
   <div class="v-wrap">
     <div class="v-brandrow">
       <div class="v-brandmark">✓</div>
-      <div class="v-brandtext">MY SHOP <span>Verification</span></div>
+      <div class="v-brandtext">MY SHOP <span id="verifyBrandSub">Verification</span></div>
     </div>
     <div id="verifyBody" class="v-body">
       <div class="v-loading">
@@ -2567,6 +2594,9 @@
           <button class="quick-action-btn" onclick="goPage('stockalerts')" aria-label="Stock Alerts">
             <span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span><span class="qa-lbl">রিমাইন্ডার</span>
           </button>
+          <button class="quick-action-btn" onclick="goPage('warranty')" aria-label="Warranty">
+            <span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg></span><span class="qa-lbl">ওয়ারেন্টি</span>
+          </button>
         </div>
         <div class="list-search-wrap" id="itemSearchWrap">
           <div class="list-search-box">
@@ -2590,6 +2620,29 @@
       <div class="section-title"><span>স্টক রিমাইন্ডার</span></div>
       <div class="helper-text" style="margin:0 0 10px;">যেসব পণ্যের স্টক রিমাইন্ডার সীমার নিচে নেমে গেছে বা শেষ হয়ে গেছে, সেগুলো সবচেয়ে কম স্টক অনুযায়ী সাজানো — সবচেয়ে জরুরিটা সবার উপরে।</div>
       <div class="ledger-card" id="stockAlertsList"></div>
+    </section>
+
+    <!-- ============ WARRANTY PAGE ============ -->
+    <section class="page" id="page-warranty">
+      <div class="quick-actions-card">
+        <div class="list-search-wrap open">
+          <div class="list-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="warrantySearchInput" placeholder="Serial/IMEI, কাস্টমারের নাম বা ফোন দিয়ে খোঁজ করুন" oninput="renderWarrantyList()">
+          </div>
+        </div>
+      </div>
+      <div class="segmented" id="warrantyStatusTabs" style="margin:10px 0;">
+        <button data-wstatus="__all__" class="active" onclick="setWarrantyStatusFilter('__all__', this)">সব</button>
+        <button data-wstatus="active" onclick="setWarrantyStatusFilter('active', this)">চলমান</button>
+        <button data-wstatus="soon" onclick="setWarrantyStatusFilter('soon', this)">শীঘ্রই শেষ</button>
+        <button data-wstatus="expired" onclick="setWarrantyStatusFilter('expired', this)">মেয়াদোত্তীর্ণ</button>
+      </div>
+      <div class="section-title">
+        <span>ওয়ারেন্টি তালিকা</span>
+        <span class="num" id="warrantyCountLbl">0</span>
+      </div>
+      <div class="ledger-card" id="warrantyList"></div>
     </section>
 
   </main>
@@ -2637,7 +2690,7 @@
   <form id="txnForm" onsubmit="return saveTxn(event)">
     <div class="field">
       <label>Date</label>
-      <input type="date" id="fDate" required>
+      <input type="date" id="fDate" required oninput="updateFWarrantyHint()">
     </div>
     <div class="field" id="fRefWrap">
       <label id="fRefLabel">Invoice No</label>
@@ -2645,13 +2698,13 @@
     </div>
     <div class="field">
       <label id="fNameLabel">Product / Service</label>
-      <input type="text" id="fName" placeholder="Item name" list="fNameList" required oninput="updateFNameCogsHint()">
+      <input type="text" id="fName" placeholder="Item name" list="fNameList" required oninput="updateFNameCogsHint(); updateFWarrantyHint();">
       <datalist id="fNameList"></datalist>
       <div id="fNameCogsHint" class="fname-cogs-hint" style="display:none;"></div>
     </div>
     <div class="field">
       <label>Category</label>
-      <select id="fCategory" required onchange="updateFNameCogsHint()"></select>
+      <select id="fCategory" required onchange="updateFNameCogsHint(); updateFWarrantyHint();"></select>
     </div>
     <div class="row2" id="qtyPriceRow">
       <div class="field">
@@ -2684,8 +2737,14 @@
       <input type="text" id="fAddress" placeholder="Customer address">
     </div>
     <div class="field" id="fProductIdWrap">
-      <label>Product ID</label>
-      <input type="text" id="fProductId" placeholder="e.g. SKU-1001">
+      <label>Product ID / SKU</label>
+      <input type="text" id="fProductId" placeholder="e.g. SKU-1001" list="fSkuList" oninput="updateFNameCogsHint(); updateFWarrantyHint();">
+      <datalist id="fSkuList"></datalist>
+    </div>
+    <div class="field" id="fSerialWrap">
+      <label id="fSerialLabel">Serial / IMEI Number</label>
+      <input type="text" id="fSerial" placeholder="e.g. 356789104561234">
+      <div id="fWarrantyHint" class="fname-cogs-hint" style="display:none;"></div>
     </div>
     <div class="field">
       <label>Payment Method</label>
@@ -2739,6 +2798,10 @@
         <label>স্টক রিমাইন্ডার (এর নিচে নামলে সতর্ক করবে)</label>
         <input type="number" id="iLowStock" min="0" step="any" placeholder="যেমন: 5">
       </div>
+    </div>
+    <div class="field">
+      <label>ওয়ারেন্টি মেয়াদ (মাস) — ঐচ্ছিক</label>
+      <input type="number" id="iWarrantyMonths" min="0" step="1" placeholder="যেমন: 12 (খালি রাখলে ওয়ারেন্টি ট্র্যাক হবে না)">
     </div>
     <div class="field">
       <label>কেনার তারিখ</label>
@@ -2974,6 +3037,29 @@
   <div class="cal-grid" id="calGrid"></div>
   <button class="btn btn-primary" style="margin-top:16px;" onclick="applyCustomDates()">Show Report</button>
   <button class="btn btn-ghost" style="margin-top:10px;" onclick="clearCustomDates()">Clear all dates</button>
+</div>
+
+<!-- ===================== PRODUCT AUTHENTICITY QR SHEET ===================== 
+     Serial/IMEI দেওয়া একটা বিক্রয়ের জন্য একটা স্থায়ী "Product Verification ID" (pvid)
+     জেনারেট করে পাবলিক "productVerify/<pvid>" নোডে পুশ করা হয় (দ্র. ensureProductVerificationId,
+     pushProductVerificationRecord)। এই QR স্ক্যান করলে কাস্টমার লগইন ছাড়াই একটা পাবলিক
+     পেজে গিয়ে পণ্যের Verified/Authentic status, নাম+ছবি, Serial/Product ID, Verification
+     Date, Warranty Status ও দোকানের অফিসিয়াল সাপোর্ট তথ্য দেখতে পারবে (দ্র. renderProductVerifyScreen)। -->
+<div class="overlay" id="pvQrOverlay" onclick="closePvQrSheet()"></div>
+<div class="sheet" id="pvQrSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closePvQrSheet()">✕</button>
+  <h2>🔖 Product Authenticity QR</h2>
+  <div class="helper-text" style="margin-top:0;">এই QR কোডটা পণ্যের গায়ে/বক্সে/রিসিটে বসিয়ে দিন — কাস্টমার স্ক্যান করলেই লগইন ছাড়া পণ্যের আসল/ভেরিফায়েড তথ্য দেখতে পাবেন।</div>
+  <div class="pv-qr-canvas-wrap"><canvas id="pvQrCanvas"></canvas></div>
+  <div class="pv-link-box">
+    <span id="pvQrLinkText" style="flex:1;">—</span>
+    <button type="button" class="qa-icon-btn" onclick="copyPvLink()" aria-label="Copy link">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+    </button>
+  </div>
+  <button type="button" class="btn btn-primary" style="width:100%; margin-top:14px;" onclick="sharePvLink()">শেয়ার করুন</button>
+  <button type="button" class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="closePvQrSheet()">বন্ধ করুন</button>
 </div>
 
 <style>
@@ -4523,7 +4609,7 @@ let listSearchQuery = { sales:'', purchase:'', expense:'' };
 // otherwise the page you're switching to just becomes visible as-is (it was
 // never destroyed — .page{display:none} only hides it, the DOM stays intact)
 // while every other page does zero work in the background.
-let dirtyPages = { dashboard:true, sales:true, purchase:true, expense:true, orders:true, settings:true, inventory:true, stockalerts:true };
+let dirtyPages = { dashboard:true, sales:true, purchase:true, expense:true, orders:true, settings:true, inventory:true, stockalerts:true, warranty:true };
 function markAllPagesDirty(){
   Object.keys(dirtyPages).forEach(k => dirtyPages[k] = true);
 }
@@ -4867,6 +4953,7 @@ function loadShopData(uid){
     if(!state.settings.videos) state.settings.videos = [];
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories = ["ইলেকট্রনিক্স","কসমেটিক্স","খাদ্যপণ্য","পোশাক","অন্যান্য"];
     if(!state.settings.productCategories || !state.settings.productCategories.length) state.settings.productCategories = ["শিশুদের খেলনা","লাইফস্টাইল পণ্য","পোশাক","অন্যান্য"];
+    backfillInventoryLinks(); // পুরনো Sales/Purchase এন্ট্রিকে Inventory আইটেমের সাথে ID/SKU দিয়ে জুড়ে দেয় (দ্র. উপরে)
     saveState(true); // caches locally too — skip Drive auto-backup schedule; this fires on every app open, not on real edits
   });
 }
@@ -5481,7 +5568,7 @@ function runVerifyMode(vid){
   if(splashEl) splashEl.style.display = 'none';
   const screen = document.getElementById('verifyScreen');
   if(screen) screen.style.display = 'block';
-  setThemeColor('#0F3830');
+  setThemeColor('#F5EAD0');
   // Firebase compat SDK-গুলো <head>-এ defer করা — DOMContentLoaded/লোড শেষ হওয়ার
   // অপেক্ষা না করে এখানে সরাসরি চেষ্টা করলে firebase এখনো undefined থাকতে পারে,
   // তাই রেডি না হওয়া পর্যন্ত অল্প অল্প করে অপেক্ষা করা হচ্ছে (max ~5s)।
@@ -5550,7 +5637,8 @@ function renderVerifyScreen(data){
       <div class="v-item-line">
         <span>${escapeHTML(it.name || '—')}${it.qty && it.qty > 1 ? ` × ${it.qty}` : ''}</span>
         <span class="num">${money(it.total || 0)}</span>
-      </div>`).join('');
+      </div>
+      ${it.pvid ? `<div class="v-item-verify-link"><a href="${escapeHTML(verifyBaseUrl() + '?pverify=' + encodeURIComponent(it.pvid))}">🔖 এই পণ্যের আসল/নকল যাচাই করুন</a></div>` : ''}`).join('');
   const deliveryHTML = data.deliveryCharge > 0 ? `
       <div class="v-item-line">
         <span>🚚 Delivery Charge</span>
@@ -5582,11 +5670,144 @@ function renderVerifyScreen(data){
     <div class="v-footnote">MY SHOP দ্বারা সুরক্ষিত ইনভয়েস ভেরিফিকেশন সিস্টেম<br>এই পেজটি শুধু তথ্য যাচাইয়ের জন্য — লগইন প্রয়োজন হয় না</div>`;
 }
 
+/* ---------------- PRODUCT AUTHENTICITY QR MODE (public, no login) ----------------
+   URL-এ ?pverify=<id> থাকলে (পণ্যের গায়ে/বক্সে/রিসিটে বসানো Authenticity QR স্ক্যান
+   করলে কাস্টমার এখানে আসে) — উপরের ইনভয়েস-ভেরিফিকেশনের মতোই একই #verifyScreen শেল
+   ব্যবহার হয়, শুধু ভিন্ন পাবলিক ডেটা-নোড ("productVerify/<id>") ও ভিন্ন রেন্ডার
+   ফাংশন (renderProductVerifyScreen, নিচে) দিয়ে — যাতে দুটো আলাদা ধরনের QR (ইনভয়েস
+   বনাম পণ্যের আসল/নকল যাচাই) একই কোডবেসের একই প্যাটার্ন পুনর্ব্যবহার করতে পারে। */
+function getProductVerifyIdFromUrl(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const v = params.get('pverify');
+    return v ? v.trim() : null;
+  }catch(e){ return null; }
+}
+const PRODUCT_VERIFY_MODE_ID = getProductVerifyIdFromUrl();
+if(PRODUCT_VERIFY_MODE_ID){
+  document.documentElement.classList.add('verify-mode-active');
+}
+function runProductVerifyMode(pvid){
+  const splashEl = document.getElementById('splashScreen');
+  if(splashEl) splashEl.style.display = 'none';
+  const screen = document.getElementById('verifyScreen');
+  if(screen) screen.style.display = 'block';
+  const sub = document.getElementById('verifyBrandSub');
+  if(sub) sub.textContent = 'Product Authenticity';
+  setThemeColor('#F5EAD0');
+  let waited = 0;
+  const tryInit = () => {
+    if(typeof firebase !== 'undefined' && firebase.apps){
+      fetchAndRenderProductVerification(pvid);
+      return;
+    }
+    waited += 100;
+    if(waited > 5000){ renderProductVerifyScreen(undefined); return; }
+    setTimeout(tryInit, 100);
+  };
+  tryInit();
+}
+function fetchAndRenderProductVerification(pvid){
+  try{
+    if(!fbApp){ fbApp = firebase.initializeApp(FIREBASE_CONFIG); }
+    if(!fbDb){ fbDb = firebase.database(); }
+    fbDb.ref('productVerify/' + pvid).once('value')
+      .then(snap => renderProductVerifyScreen(snap.exists() ? snap.val() : null))
+      .catch(err => { console.error('Product verification fetch failed:', err); renderProductVerifyScreen(undefined); });
+  }catch(err){
+    console.error('Product verification init failed:', err);
+    renderProductVerifyScreen(undefined);
+  }
+}
+// data: object → পাওয়া গেছে ও দেখানো হবে। null → এই আইডিতে কিছু নেই (fake/নকল পণ্যের QR
+// হতে পারে)। undefined → নেটওয়ার্ক/অন্য কোনো এরর, তথ্য পাওয়া গেল না।
+function renderProductVerifyScreen(data){
+  const box = document.getElementById('verifyBody');
+  if(!box) return;
+  if(data === null){
+    box.innerHTML = `
+      <div class="v-card">
+        <div class="v-status bad">
+          <div class="v-status-icon">✕</div>
+          <div>
+            <div class="v-status-title">যাচাই করা যায়নি</div>
+            <div class="v-status-sub">এই কোডের সাথে মিলে এমন কোনো পণ্য পাওয়া যায়নি</div>
+          </div>
+        </div>
+      </div>
+      <div class="v-footnote">এই কোড ভুয়া বা নকল পণ্যের হতে পারে। সন্দেহ হলে বিক্রেতার সাথে সরাসরি যোগাযোগ করুন।</div>`;
+    return;
+  }
+  if(data === undefined){
+    box.innerHTML = `
+      <div class="v-card">
+        <div class="v-status bad">
+          <div class="v-status-icon">!</div>
+          <div>
+            <div class="v-status-title">সংযোগ সমস্যা</div>
+            <div class="v-status-sub">যাচাই করতে ইন্টারনেট সংযোগ দরকার</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="location.reload()">🔄 আবার চেষ্টা করুন</button>
+      </div>`;
+    return;
+  }
+  // warrantyStatus() নিচে (Warranty পেজের জন্য) সংজ্ঞায়িত — function declaration বলে
+  // হয়েস্টিং-এর কারণে এখান থেকেও নিরাপদে কল করা যায়।
+  const wStatus = data.warrantyExpiry ? warrantyStatus(data.warrantyExpiry) : null;
+  const wCls = wStatus ? wStatus.cls : 'none';
+  const wLabel = wStatus
+    ? `${wStatus.cls === 'expired' ? 'মেয়াদোত্তীর্ণ' : 'চলমান'} · মেয়াদ শেষ: ${fmtDate(data.warrantyExpiry)}`
+    : 'ওয়ারেন্টি প্রযোজ্য নয়';
+  const photoHTML = data.productImage
+    ? `<img class="v-product-photo" src="${escapeHTML(data.productImage)}" alt="" onerror="this.outerHTML='<div class=&quot;v-product-photo-ph&quot;>📦</div>'">`
+    : `<div class="v-product-photo-ph">📦</div>`;
+  const verifiedDateStr = data.verifiedDate ? fmtDate(data.verifiedDate) : '—';
+  const supportRows = [];
+  if(data.shopPhone) supportRows.push(`📞 ${escapeHTML(data.shopPhone)}`);
+  if(data.shopEmail) supportRows.push(`✉️ ${escapeHTML(data.shopEmail)}`);
+  if(data.shopAddress) supportRows.push(`📍 ${escapeHTML(data.shopAddress)}`);
+  if(data.shopFacebook) supportRows.push(`📘 ${escapeHTML(data.shopFacebook)}`);
+  box.innerHTML = `
+    <div class="v-card">
+      <div class="v-status ok">
+        <div class="v-status-icon">✓</div>
+        <div>
+          <div class="v-status-title">Verified — Authentic Product</div>
+          <div class="v-status-sub">এই পণ্যটি সরাসরি বিক্রেতার সিস্টেম থেকে যাচাই করা হয়েছে</div>
+        </div>
+      </div>
+      <div class="v-divider"></div>
+      <div class="v-product-head">
+        ${photoHTML}
+        <div class="v-product-name">${escapeHTML(data.productName || '—')}</div>
+      </div>
+      <div class="v-row"><span class="k">Serial / IMEI No.</span><span class="v num">${escapeHTML(data.serial || '—')}</span></div>
+      ${data.productId ? `<div class="v-row"><span class="k">Product ID</span><span class="v num">${escapeHTML(data.productId)}</span></div>` : ''}
+      ${data.invoiceNo ? `<div class="v-row"><span class="k">Invoice No.</span><span class="v num">${escapeHTML(data.invoiceNo)}</span></div>` : ''}
+      <div class="v-row"><span class="k">Verification Date</span><span class="v">${escapeHTML(verifiedDateStr)}</span></div>
+      <div class="v-row"><span class="k">Warranty Status</span><span class="v"><span class="v-badge ${wCls}" style="margin-top:0;">${escapeHTML(wLabel)}</span></span></div>
+      ${supportRows.length ? `
+      <div class="v-support-box">
+        <div class="v-support-title">Official Brand / Support</div>
+        <div class="v-shopname">${escapeHTML(data.shopName || 'My Business')}</div>
+        <div class="v-support-row">${supportRows.join('<br>')}</div>
+      </div>` : `<div class="v-shopname" style="margin-top:14px;">${escapeHTML(data.shopName || 'My Business')}</div>`}
+      ${data.invoiceVid ? `<div class="v-invoice-link-box"><a href="${escapeHTML(verifyBaseUrl() + '?verify=' + encodeURIComponent(data.invoiceVid))}">🧾 এই পণ্যটি যে ইনভয়েসে বিক্রি হয়েছে সেটা দেখুন</a></div>` : ''}
+    </div>
+    <div class="v-footnote">MY SHOP দ্বারা সুরক্ষিত প্রোডাক্ট অথেনটিসিটি ভেরিফিকেশন সিস্টেম<br>এই পেজটি শুধু তথ্য যাচাইয়ের জন্য — লগইন প্রয়োজন হয় না</div>`;
+}
+
 let instantBooted = false;
 (function instantBootFromCache(){
   if(VERIFY_MODE_ID){
     // ভেরিফিকেশন মোডে স্বাভাবিক দোকান-বুট ফ্লো সম্পূর্ণ এড়িয়ে যাওয়া হচ্ছে
     runVerifyMode(VERIFY_MODE_ID);
+    return;
+  }
+  if(PRODUCT_VERIFY_MODE_ID){
+    // প্রোডাক্ট-অথেনটিসিটি মোডেও একইভাবে স্বাভাবিক দোকান-বুট ফ্লো এড়িয়ে যাওয়া হচ্ছে
+    runProductVerifyMode(PRODUCT_VERIFY_MODE_ID);
     return;
   }
   try{
@@ -5617,7 +5838,7 @@ function setThemeColor(hex){
   meta.setAttribute('content', hex);
 }
 function bootApp(){
-  if(VERIFY_MODE_ID) return; // ভেরিফিকেশন মোড ইতিমধ্যে instantBootFromCache-এই সামলানো হয়ে গেছে
+  if(VERIFY_MODE_ID || PRODUCT_VERIFY_MODE_ID) return; // ভেরিফিকেশন মোড ইতিমধ্যে instantBootFromCache-এই সামলানো হয়ে গেছে
   if(!instantBooted){
     loadState(); // warm local cache immediately so onboarding can detect existing local data
     applyBrandMark(); // so the splash screen shows the right logo/initial right away
@@ -5880,11 +6101,11 @@ function lockNow(){
 
 /* ---------------- NAVIGATION ---------------- */
 
-// ড্যাশবোর্ড/সেটিংস/অর্ডার্স/স্টক-রিমাইন্ডার পেজে + বাটনের কোনো কাজ নেই (দ্র.
+// ড্যাশবোর্ড/সেটিংস/অর্ডার্স/স্টক-রিমাইন্ডার/ওয়ারেন্টি পেজে + বাটনের কোনো কাজ নেই (দ্র.
 // handleFabClick ও openAddSheet — এই পেজগুলোতে চাপলে কিছুই হয় না), তাই এখানে বাটনটা
 // লুকানো থাকে। এই লিস্টটা এখন একটাই জায়গায় রাখা হলো (আগে শুধু goPage()-এ ছিল) যাতে
 // renderAll()/enterApp()-এ প্রথমবার অ্যাপ খোলার সময়ও একই নিয়ম প্রয়োগ হয়।
-const FAB_HIDDEN_PAGES = ['settings','dashboard','orders','stockalerts'];
+const FAB_HIDDEN_PAGES = ['settings','dashboard','orders','stockalerts','warranty'];
 function updateFabVisibility(page){
   document.getElementById('fabAdd').style.display = FAB_HIDDEN_PAGES.includes(page) ? 'none' : 'flex';
 }
@@ -5900,7 +6121,7 @@ function goPage(page){
     document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   }
   applyPageBarColor(page);
-  const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings', inventory:'ইনভেন্টরি', stockalerts:'স্টক রিমাইন্ডার'};
+  const labels = {dashboard:'Dashboard', sales:'Sales Ledger', purchase:'Purchase Ledger', expense:'Expense Ledger', orders:'Live Orders', settings:'Settings', inventory:'ইনভেন্টরি', stockalerts:'স্টক রিমাইন্ডার', warranty:'ওয়ারেন্টি'};
   document.getElementById('topPageLabel').textContent = labels[page];
   updateFabVisibility(page);
   // ----------------------------------------------------------------------
@@ -5928,6 +6149,7 @@ function goPage(page){
     if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
     if(page === 'inventory' && dirtyPages.inventory){ listVisibleCounts.inventory = LIST_PAGE_SIZE; renderItems(); dirtyPages.inventory = false; }
     if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
+    if(page === 'warranty' && dirtyPages.warranty){ renderWarrantyList(); dirtyPages.warranty = false; }
   };
   if(dirtyPages[page]){
     requestAnimationFrame(()=> requestAnimationFrame(runHeavyRender));
@@ -6139,9 +6361,14 @@ function sumAndCountInRange(list, range){
 function buildInvItemIndex(){
   const byNameCat = new Map();
   const byName = new Map();
+  const byId = new Map();
+  const bySku = new Map();
   const list = state.invItems || [];
   for(let i=0;i<list.length;i++){
     const it = list[i];
+    byId.set(String(it.id), it);
+    const skuNm = String(it.sku||'').trim().toLowerCase();
+    if(skuNm && !bySku.has(skuNm)) bySku.set(skuNm, it);
     const nm = String(it.name||'').trim().toLowerCase();
     if(!nm) continue;
     if(it.category){
@@ -6150,9 +6377,20 @@ function buildInvItemIndex(){
     }
     if(!byName.has(nm)) byName.set(nm, it);
   }
-  return { byNameCat, byName };
+  return { byNameCat, byName, byId, bySku };
 }
-function findInvItemIndexed(index, name, category){
+// opts: { linkItemId, sku } — findInvItemForDeduction-এর মতোই অগ্রাধিকার (id → sku → নাম)
+function findInvItemIndexed(index, name, category, opts){
+  opts = opts || {};
+  if(opts.linkItemId != null){
+    const byId = index.byId.get(String(opts.linkItemId));
+    if(byId) return byId;
+  }
+  const skuVal = String(opts.sku || '').trim().toLowerCase();
+  if(skuVal){
+    const bySku = index.bySku.get(skuVal);
+    if(bySku) return bySku;
+  }
   const nm = String(name || '').trim().toLowerCase();
   if(!nm) return null;
   if(category){
@@ -6169,7 +6407,7 @@ function computeCOGSDetailed(range){
       s.items.forEach(it=>{
         const qty = it.qty || 0;
         if(qty <= 0) return;
-        const item = findInvItemIndexed(index, it.name, s.category);
+        const item = findInvItemIndexed(index, it.name, s.category, { linkItemId: it.linkItemId, sku: it.productId });
         if(item && item.costPrice != null && item.costPrice >= 0){
           cogs += qty * item.costPrice;
         } else {
@@ -6180,7 +6418,7 @@ function computeCOGSDetailed(range){
     }
     const qty = s.qty || 0;
     if(qty <= 0) return;
-    const item = findInvItemIndexed(index, s.name, s.category);
+    const item = findInvItemIndexed(index, s.name, s.category, { linkItemId: s.linkItemId, sku: s.productId });
     if(item && item.costPrice != null && item.costPrice >= 0){
       cogs += qty * item.costPrice;
     } else {
@@ -6188,6 +6426,35 @@ function computeCOGSDetailed(range){
     }
   });
   return { cogs, uncosted };
+}
+/* ---------------- INVENTORY LINK BACKFILL ----------------
+   এই ফিচার আসার আগে সেভ হওয়া পুরনো Sales/Purchase এন্ট্রিতে linkItemId নেই — অ্যাপ খোলার
+   সময় (loadShopData-তে) একবার চুপচাপ চালিয়ে সেগুলোকে (নাম/SKU মিলিয়ে) Inventory আইটেমের
+   সাথে জুড়ে দেওয়া হয়, যাতে ভবিষ্যতে পণ্যের নাম বদলালেও পুরনো এন্ট্রিগুলোর স্টক/COGS হিসাব
+   ভুল না হয়ে যায়। ইতিমধ্যে-লিংকড এন্ট্রি সাথে সাথে স্কিপ হয়ে যায় বলে বারবার চালানো নিরাপদ ও সস্তা। */
+function backfillInventoryLinks(){
+  if(!state.invItems || !state.invItems.length) return false;
+  const index = buildInvItemIndex();
+  let changed = false;
+  (state.sales || []).forEach(s => {
+    if(Array.isArray(s.items) && s.items.length){
+      s.items.forEach(it => {
+        if(it.linkItemId != null) return;
+        const item = findInvItemIndexed(index, it.name, s.category, { sku: it.productId });
+        if(item){ it.linkItemId = item.id; changed = true; }
+      });
+      return;
+    }
+    if(s.linkItemId != null) return;
+    const item = findInvItemIndexed(index, s.name, s.category, { sku: s.productId });
+    if(item){ s.linkItemId = item.id; changed = true; }
+  });
+  (state.purchases || []).forEach(p => {
+    if(p.linkItemId != null) return;
+    const item = findInvItemIndexed(index, p.name, p.category, { sku: p.productId });
+    if(item){ p.linkItemId = item.id; changed = true; }
+  });
+  return changed;
 }
 
 /* Stock Value: বর্তমানে ইনভেন্টরিতে থাকা প্রতিটি পণ্যের মজুদ পরিমাণ × তার Cost Price —
@@ -6560,7 +6827,25 @@ function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;',
 /* ---------------- AUTO STOCK DEDUCTION (Sales & confirmed Orders auto-reduce Inventory) ---------------- */
 // ক্যাটাগরি অনুযায়ী মিলিয়ে ইনভেন্টরি আইটেম খোঁজা হয় (নাম + ক্যাটেগরি দুটোই মিললে সবচেয়ে নির্ভুল ম্যাচ,
 // না মিললে শুধু নাম দিয়ে চেষ্টা করা হয় — অনলাইন অর্ডারের আইটেমে ক্যাটেগরি থাকে না বলে)
-function findInvItemForDeduction(name, category){
+/* ---------------- PRODUCT ID/SKU LINKING ----------------
+   আগে Sales/Purchase এন্ট্রি Inventory আইটেমের সাথে শুধু নাম+ক্যাটাগরি টেক্সট মিলিয়ে যুক্ত হতো —
+   বানান/স্পেস একটু আলাদা হলে বা একই নামের দুটো পণ্য থাকলে ভুল আইটেম থেকে স্টক কাটত বা
+   COGS/Profit হিসাব থেকে বাদ পড়ত। এখন তিন ধাপে মেলানো হয়, শক্তিশালী থেকে দুর্বল ক্রমে:
+   1) opts.linkItemId — এই এন্ট্রি সেভ হওয়ার সময় যে Inventory আইটেমের id-র সাথে সরাসরি
+      জুড়ে দেওয়া হয়েছিল সেটা (সবচেয়ে নির্ভরযোগ্য — পরে পণ্যের নাম বদলালেও এই লিংক অক্ষুণ্ন থাকে)।
+   2) opts.sku — ফর্মে টাইপ/স্ক্যান করা Product ID/SKU, Inventory-র sku ফিল্ডের সাথে মেলানো হয়।
+   3) নাম+ক্যাটাগরি → শুধু নাম — আগের মতোই fallback, পুরনো এন্ট্রি বা ম্যানুয়াল টাইপের জন্য। */
+function findInvItemForDeduction(name, category, opts){
+  opts = opts || {};
+  if(opts.linkItemId != null){
+    const byId = state.invItems.find(x => String(x.id) === String(opts.linkItemId));
+    if(byId) return byId;
+  }
+  const skuVal = String(opts.sku || '').trim().toLowerCase();
+  if(skuVal){
+    const bySku = state.invItems.find(x => String(x.sku||'').trim().toLowerCase() === skuVal);
+    if(bySku) return bySku;
+  }
   const nm = String(name || '').trim().toLowerCase();
   if(!nm) return null;
   if(category){
@@ -6570,9 +6855,10 @@ function findInvItemForDeduction(name, category){
   return state.invItems.find(x => String(x.name||'').trim().toLowerCase() === nm) || null;
 }
 // qtyDelta: ঋণাত্মক (negative) = বিক্রি হয়েছে (স্টক থেকে বিয়োগ), ধনাত্মক (positive) = ফেরত/সংশোধন (স্টকে যোগ)
-function adjustInvStock(name, category, qtyDelta){
+// opts: { linkItemId, sku } — দ্র. findInvItemForDeduction উপরে
+function adjustInvStock(name, category, qtyDelta, opts){
   if(!qtyDelta) return;
-  const item = findInvItemForDeduction(name, category);
+  const item = findInvItemForDeduction(name, category, opts);
   if(!item || item.stockQty == null) return; // এই পণ্যের স্টক গণনা করা হয় না — বাদ দেওয়া হলো
   const before = item.stockQty;
   const after = before + qtyDelta;
@@ -6592,9 +6878,9 @@ function adjustInvStock(name, category, qtyDelta){
    ওয়েটেড এভারেজ (weighted average) পদ্ধতিতে আপডেট হয়, যাতে ভিন্ন সময়ে ভিন্ন দামে কেনা স্টক
    মিশ্রিত থাকলেও গড় ক্রয়মূল্য নির্ভুল থাকে। এন্ট্রি বাতিল/সংশোধনের রিভার্সাল কলে unitCost দেওয়া
    হয় না, তাই সেই সময় Cost Price অপরিবর্তিত থাকে (গড় বিকৃত হয় না)। */
-function adjustInvStockFromPurchase(name, category, qtyDelta, unitCost){
+function adjustInvStockFromPurchase(name, category, qtyDelta, unitCost, opts){
   if(!qtyDelta) return { matched:false };
-  const item = findInvItemForDeduction(name, category);
+  const item = findInvItemForDeduction(name, category, opts);
   if(!item || item.stockQty == null) return { matched:false }; // এই পণ্যটি Inventory-তে ট্র্যাক করা হয় না — বাদ দেওয়া হলো
   const before = Math.max(0, item.stockQty);
   if(qtyDelta > 0 && unitCost != null && unitCost >= 0){
@@ -6640,10 +6926,12 @@ function editTxn(type, id){
   document.getElementById('fPhone').value = t.phone || '';
   document.getElementById('fAddress').value = t.address || '';
   document.getElementById('fProductId').value = t.productId || '';
+  document.getElementById('fSerial').value = t.serial || '';
   document.getElementById('fPayment').value = t.payment || '';
   document.getElementById('fNotes').value = t.notes || '';
   updateComputedTotal();
   updateFNameCogsHint();
+  updateFWarrantyHint();
   openSheetEl();
 }
 function deleteTxn(type, id){
@@ -6658,12 +6946,12 @@ function deleteTxn(type, id){
       // ফেরত দেওয়া হচ্ছে), তাই স্টক ফেরত সঠিকভাবে হয়। items না থাকলে (ম্যানুয়াল এন্ট্রি)
       // আগের মতো একক name/qty দিয়ে।
       if(Array.isArray(t.items) && t.items.length){
-        t.items.forEach(it => adjustInvStock(it.name, null, it.qty || 0));
+        t.items.forEach(it => adjustInvStock(it.name, null, it.qty || 0, { linkItemId: it.linkItemId, sku: it.productId }));
       } else {
-        adjustInvStock(t.name, t.category, t.qty || 0); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
+        adjustInvStock(t.name, t.category, t.qty || 0, { linkItemId: t.linkItemId, sku: t.productId }); // বিক্রি বাতিল হলো — স্টকে ফেরত দেওয়া হলো
       }
     } else if(type === 'purchase'){
-      adjustInvStockFromPurchase(t.name, t.category, -(t.qty || 0)); // ক্রয় বাতিল হলো — স্টক থেকে বাদ দেওয়া হলো (Cost Price অপরিবর্তিত)
+      adjustInvStockFromPurchase(t.name, t.category, -(t.qty || 0), undefined, { linkItemId: t.linkItemId, sku: t.productId }); // ক্রয় বাতিল হলো — স্টক থেকে বাদ দেওয়া হলো (Cost Price অপরিবর্তিত)
     }
     list.splice(idx,1);
     saveState();
@@ -6689,7 +6977,10 @@ function configureSheetForType(type){
   const showSalesExtra = type === 'sales';
   document.getElementById('fPhoneWrap').style.display = showSalesExtra ? 'block' : 'none';
   document.getElementById('fAddressWrap').style.display = showSalesExtra ? 'block' : 'none';
-  document.getElementById('fProductIdWrap').style.display = showSalesExtra ? 'block' : 'none';
+  // Product ID/SKU এখন Sales ও Purchase দুটোতেই দেখানো হয় — দুই দিকেই Inventory-র
+  // সাথে ID-ভিত্তিক লিংক তৈরির জন্য দরকার (আগে শুধু Sales ফর্মে ছিল)।
+  document.getElementById('fProductIdWrap').style.display = (type === 'sales' || type === 'purchase') ? 'block' : 'none';
+  document.getElementById('fSerialWrap').style.display = showSalesExtra ? 'block' : 'none';
 
   const catSelect = document.getElementById('fCategory');
   const cats = type === 'sales' ? state.settings.salesCategories : type === 'purchase' ? state.settings.purchaseCategories : state.settings.expenseCategories;
@@ -6718,6 +7009,18 @@ function configureSheetForType(type){
       fNameList.innerHTML = '';
     }
   }
+  // Product ID/SKU-ভিত্তিক লিংকিং: Inventory-তে যেসব আইটেমের SKU সেট করা আছে সেগুলো
+  // অটোকমপ্লিট হিসেবে দেখানো হয়, যাতে টাইপ করে/বেছে নিয়ে সঠিক আইটেমের সাথে সরাসরি জোড়া
+  // লাগানো যায় (নাম না মিললেও)।
+  const fSkuList = document.getElementById('fSkuList');
+  if(fSkuList){
+    if(type === 'sales' || type === 'purchase'){
+      const skus = Array.from(new Set((state.invItems || []).map(x => (x.sku || '').trim()).filter(Boolean)));
+      fSkuList.innerHTML = skus.map(s => `<option value="${escapeHTML(s)}"></option>`).join('');
+    } else {
+      fSkuList.innerHTML = '';
+    }
+  }
   const hintEl = document.getElementById('fNameCogsHint');
   if(hintEl) hintEl.style.display = 'none';
 }
@@ -6731,13 +7034,15 @@ function updateFNameCogsHint(){
   const hint = document.getElementById('fNameCogsHint');
   if(!hint) return;
   const type = state.editing ? state.editing.type : state.currentPage;
-  if(type !== 'sales'){ hint.style.display = 'none'; return; }
+  if(type !== 'sales' && type !== 'purchase'){ hint.style.display = 'none'; return; }
   const catEl = document.getElementById('fCategory');
   const category = catEl ? catEl.value : '';
-  const orderItems = (state.editing && Array.isArray(state.editing.items)) ? state.editing.items : null;
+  const skuEl = document.getElementById('fProductId');
+  const skuVal = skuEl ? skuEl.value.trim() : '';
+  const orderItems = (type === 'sales' && state.editing && Array.isArray(state.editing.items)) ? state.editing.items : null;
   if(orderItems && orderItems.length){
     const lines = orderItems.map(it=>{
-      const item = findInvItemForDeduction(it.name, category);
+      const item = findInvItemForDeduction(it.name, category, { linkItemId: it.linkItemId, sku: it.productId });
       if(item && item.costPrice != null && item.costPrice >= 0){
         return `✓ "${it.name}" ×${it.qty || 1} — ইনভেন্টরির সাথে মিলেছে, COGS-এ যুক্ত হবে`;
       } else if(item){
@@ -6747,7 +7052,7 @@ function updateFNameCogsHint(){
       }
     });
     const anyUnmatched = orderItems.some(it=>{
-      const item = findInvItemForDeduction(it.name, category);
+      const item = findInvItemForDeduction(it.name, category, { linkItemId: it.linkItemId, sku: it.productId });
       return !(item && item.costPrice != null && item.costPrice >= 0);
     });
     hint.style.display = 'block';
@@ -6757,21 +7062,81 @@ function updateFNameCogsHint(){
   }
   const nameEl = document.getElementById('fName');
   const name = nameEl ? nameEl.value.trim() : '';
-  if(!name){ hint.style.display = 'none'; return; }
-  const item = findInvItemForDeduction(name, category);
+  if(!name && !skuVal){ hint.style.display = 'none'; return; }
+  // Product ID/SKU টাইপ করা থাকলে সেটাকেই আগে মেলানো হয় (দ্র. findInvItemForDeduction) —
+  // তাই SKU দিয়ে ঠিক পণ্য বেছে নিলে নাম যা-ই টাইপ হোক, সঠিক আইটেমই ধরা পড়বে।
+  const item = findInvItemForDeduction(name, category, { sku: skuVal });
   hint.style.display = 'block';
+  const idTag = item ? ` (Inventory ID #${item.id}${item.sku ? ' · SKU ' + item.sku : ''})` : '';
+  if(type === 'purchase'){
+    if(item){
+      hint.className = 'fname-cogs-hint matched';
+      hint.textContent = `✓ ইনভেন্টরির "${item.name}"${idTag} এর সাথে লিংক হবে — স্টক ও গড় ক্রয়মূল্য এই আইটেমেই আপডেট হবে`;
+    } else if((state.invItems||[]).length){
+      hint.className = 'fname-cogs-hint unmatched';
+      hint.textContent = `⚠ ইনভেন্টরিতে এই নামে/SKU-তে পণ্য পাওয়া যায়নি — এই ক্রয় স্টকে যোগ হবে না`;
+    } else {
+      hint.style.display = 'none';
+    }
+    return;
+  }
   if(item && item.costPrice != null && item.costPrice >= 0){
     hint.className = 'fname-cogs-hint matched';
-    hint.textContent = `✓ ইনভেন্টরির "${item.name}" এর সাথে মিলেছে (Cost Price ${fmtMoney(item.costPrice)}) — COGS-এ যুক্ত হবে`;
+    hint.textContent = `✓ ইনভেন্টরির "${item.name}"${idTag} এর সাথে মিলেছে (Cost Price ${fmtMoney(item.costPrice)}) — COGS-এ যুক্ত হবে`;
   } else if(item){
     hint.className = 'fname-cogs-hint unmatched';
-    hint.textContent = `⚠ ইনভেন্টরিতে "${item.name}" পণ্যটি আছে কিন্তু Cost Price সেট নেই — এই বিক্রয় COGS-এ যুক্ত হবে না`;
+    hint.textContent = `⚠ ইনভেন্টরির "${item.name}"${idTag} এর সাথে মিলেছে কিন্তু Cost Price সেট নেই — এই বিক্রয় COGS-এ যুক্ত হবে না`;
   } else if((state.invItems||[]).length){
     hint.className = 'fname-cogs-hint unmatched';
-    hint.textContent = `⚠ ইনভেন্টরিতে এই নামে কোনো পণ্য পাওয়া যায়নি — বানান/স্পেস মিলিয়ে দেখুন, নাহলে COGS-এ যুক্ত হবে না`;
+    hint.textContent = `⚠ ইনভেন্টরিতে এই নামে/SKU-তে কোনো পণ্য পাওয়া যায়নি — বানান/স্পেস মিলিয়ে দেখুন, নাহলে COGS-এ যুক্ত হবে না`;
   } else {
     hint.style.display = 'none';
   }
+}
+/* ---------------- WARRANTY HINT (Sales ফর্ম) ----------------
+   fName-এ যে পণ্যের নাম টাইপ হচ্ছে সেটা Inventory-র সাথে মিলে ও সেই পণ্যে
+   warrantyMonths সেট করা থাকলে, Serial/IMEI ফিল্ডের নিচে একটা হিন্ট দেখানো হয় —
+   "এই বিক্রয়ের ওয়ারেন্টি মেয়াদ শেষ হবে [তারিখ]"। এটা শুধু প্রিভিউ/গাইড, আসল
+   warrantyExpiry কম্পিউট ও সেভ হয় saveTxn()-এ (দ্র. নিচে) — Order থেকে আসা
+   একাধিক-পণ্যের এন্ট্রিতে (items array) এই হিন্ট দেখানো হয় না, কারণ Serial/IMEI
+   ফিল্ডটা একক-পণ্য এন্ট্রির জন্যই (একটা ফিল্ডে একাধিক সিরিয়াল রাখা যায় না)। */
+function updateFWarrantyHint(){
+  const hint = document.getElementById('fWarrantyHint');
+  if(!hint) return;
+  const type = state.editing ? state.editing.type : state.currentPage;
+  const orderItems = (state.editing && Array.isArray(state.editing.items)) ? state.editing.items : null;
+  if(type !== 'sales' || orderItems){ hint.style.display = 'none'; return; }
+  const nameEl = document.getElementById('fName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  const catEl = document.getElementById('fCategory');
+  const category = catEl ? catEl.value : '';
+  const skuEl = document.getElementById('fProductId');
+  const skuVal = skuEl ? skuEl.value.trim() : '';
+  if(!name && !skuVal){ hint.style.display = 'none'; return; }
+  const item = findInvItemForDeduction(name, category, { sku: skuVal });
+  if(item && item.warrantyMonths != null && item.warrantyMonths > 0){
+    const dateEl = document.getElementById('fDate');
+    const baseDate = (dateEl && dateEl.value) ? dateEl.value : todayISO();
+    const expiry = addMonthsToDate(baseDate, item.warrantyMonths);
+    hint.style.display = 'block';
+    hint.className = 'fname-cogs-hint matched';
+    hint.textContent = `🛡️ এই পণ্যের ওয়ারেন্টি ${item.warrantyMonths} মাস — মেয়াদ শেষ হবে ${fmtDateBn(expiry)} (Serial/IMEI দিলে ওয়ারেন্টি পেজে ট্র্যাক হবে)`;
+  } else {
+    hint.style.display = 'none';
+  }
+}
+// তারিখে মাস যোগ করে নতুন ISO তারিখ (YYYY-MM-DD) রিটার্ন করে — মাসের শেষ দিনের কাছাকাছি
+// তারিখে (যেমন ৩১ জানুয়ারি) সাধারণ setMonth() ব্যবহার করলে ফেব্রুয়ারিতে ৩১ তারিখ না
+// থাকায় JS নিজে থেকে মার্চে গড়িয়ে যায় (৩ মার্চ হয়ে যেত) — তাই টার্গেট মাসে দিন গণনা করে
+// প্রয়োজনে সেই মাসের শেষ দিনে ক্ল্যাম্প (clamp) করা হচ্ছে (লিপ ইয়ারও সঠিকভাবে ধরা পড়ে)।
+function addMonthsToDate(isoDate, months){
+  const d = new Date(isoDate + 'T00:00:00');
+  const targetMonth = d.getMonth() + Number(months || 0);
+  const targetDate = new Date(d.getFullYear(), targetMonth, 1);
+  const daysInTargetMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
+  targetDate.setDate(Math.min(d.getDate(), daysInTargetMonth));
+  const pad = n => String(n).padStart(2, '0');
+  return targetDate.getFullYear() + '-' + pad(targetDate.getMonth() + 1) + '-' + pad(targetDate.getDate());
 }
 function updateComputedTotal(){
   const type = state.editing ? state.editing.type : state.currentPage;
@@ -6794,6 +7159,26 @@ function saveTxn(e){
   try{
   const { type, id } = state.editing;
   const total = updateComputedTotal();
+  const serialVal = type === 'sales' ? document.getElementById('fSerial').value.trim() : undefined;
+  const productIdVal = (type === 'sales' || type === 'purchase') ? document.getElementById('fProductId').value.trim() : undefined;
+  const nameValRaw = document.getElementById('fName').value.trim();
+  const catValRaw = document.getElementById('fCategory').value;
+  // Product ID/SKU দেওয়া থাকলে সেটাকেই আগে ইনভেন্টরির সাথে মেলানো হয় (নামের চেয়ে বেশি
+  // নির্ভরযোগ্য, বানান ভিন্ন হলেও ঠিক পণ্যটাই ধরা পড়ে)। যে আইটেম মিলল তার id (linkItemId)
+  // স্থায়ীভাবে এই এন্ট্রির সাথে সেভ হয়ে যায় — এরপর ইনভেন্টরিতে পণ্যের নাম বদলালেও এই
+  // এন্ট্রির স্টক-বিয়োগ/COGS হিসাব ভুল হবে না, কারণ নাম না, id ধরে খোঁজা হবে।
+  const matchedItem = (type === 'sales' || type === 'purchase')
+    ? findInvItemForDeduction(nameValRaw, catValRaw, { sku: productIdVal })
+    : null;
+  // বিক্রির সময় মিলে যাওয়া আইটেমে warrantyMonths থাকলে সেটা দিয়ে warrantyExpiry এখনই
+  // হিসাব করে sale-এর সাথে "স্ন্যাপশট" করে সেভ করা হচ্ছে — পরে ওই পণ্যের ওয়ারেন্টি মেয়াদ
+  // Inventory-তে বদলালেও এই আগের বিক্রিগুলোর ওয়ারেন্টি মেয়াদ অপরিবর্তিত থাকবে (যা বিক্রির
+  // সময় প্রতিশ্রুতি দেওয়া হয়েছিল সেটাই বহাল থাকে)।
+  let warrantyMonthsVal, warrantyExpiryVal;
+  if(type === 'sales' && matchedItem && matchedItem.warrantyMonths != null && matchedItem.warrantyMonths > 0){
+    warrantyMonthsVal = matchedItem.warrantyMonths;
+    warrantyExpiryVal = addMonthsToDate(document.getElementById('fDate').value, matchedItem.warrantyMonths);
+  }
   const payload = stripUndefinedDeep({
     date: document.getElementById('fDate').value,
     ref: document.getElementById('fRef').value.trim(),
@@ -6804,7 +7189,11 @@ function saveTxn(e){
     party: document.getElementById('fParty').value.trim(),
     phone: type === 'sales' ? document.getElementById('fPhone').value.trim() : undefined,
     address: type === 'sales' ? document.getElementById('fAddress').value.trim() : undefined,
-    productId: type === 'sales' ? document.getElementById('fProductId').value.trim() : undefined,
+    productId: productIdVal,
+    linkItemId: matchedItem ? matchedItem.id : undefined,
+    serial: serialVal,
+    warrantyMonths: warrantyMonthsVal,
+    warrantyExpiry: warrantyExpiryVal,
     payment: document.getElementById('fPayment').value,
     notes: document.getElementById('fNotes').value.trim(),
     total
@@ -6815,8 +7204,22 @@ function saveTxn(e){
   if(id){
     const t = list.find(x => String(x.id) === String(id));
     const oldQty = t.qty, oldName = t.name, oldCategory = t.category;
+    const oldLinkItemId = t.linkItemId, oldProductId = t.productId;
     const oldItems = (type === 'sales' && Array.isArray(t.items) && t.items.length) ? t.items : null;
     Object.assign(t, payload);
+    // stripUndefinedDeep payload থেকে undefined কী বাদ দেয় বলে, warrantyMonths/warrantyExpiry
+    // payload-এ না থাকলে (যেমন এডিট করার পর পণ্যটা আর ওয়ারেন্টিযুক্ত পণ্যের সাথে না মেলায়)
+    // Object.assign সেই পুরনো মান t-তে রেখেই দিত (স্টেল ডেটা) — তাই সেক্ষেত্রে স্পষ্টভাবে মুছে দেওয়া হলো।
+    if(type === 'sales' && !('warrantyMonths' in payload)){
+      delete t.warrantyMonths;
+      delete t.warrantyExpiry;
+    }
+    // stripUndefinedDeep-এর কারণে matchedItem না পেলে payload-এ linkItemId থাকে না —
+    // সেক্ষেত্রে আগের এন্ট্রির স্টেল লিংক (যদি থাকে) মুছে দেওয়া হলো, নাহলে ভুল আইটেমের সাথে
+    // জোড়া লেগেই থেকে যেত।
+    if((type === 'sales' || type === 'purchase') && !('linkItemId' in payload)){
+      delete t.linkItemId;
+    }
     if(type === 'sales'){
       if(oldItems){
         // Orders থেকে আসা বিক্রয়ের প্রকৃত পণ্য-ভিত্তিক পরিমাণ items অ্যারেতে থাকে, যেটা এই
@@ -6824,17 +7227,17 @@ function saveTxn(e){
         // তাই এখানে স্টক ছোঁয়া হচ্ছে না, নাহলে না-মেলা summary name দিয়ে স্টক ভুলভাবে বদলে যেত
         // (আগে এটা নীরবেই ঘটত, কিন্তু কোনো প্রভাব ছাড়াই — এখন ইচ্ছাকৃতভাবে এড়ানো হলো)
       } else {
-        // আগের এন্ট্রির পরিমাণ স্টকে ফেরত দিয়ে, নতুন পরিমাণ আবার বিয়োগ করা হচ্ছে —
-        // এতে এন্ট্রি এডিট করলেও ইনভেন্টরির হিসাব সঠিক থাকবে
-        adjustInvStock(oldName, oldCategory, oldQty || 0);
-        adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+        // আগের এন্ট্রির পরিমাণ স্টকে ফেরত দিয়ে, নতুন পরিমাণ আবার বিয়োগ করা হচ্ছে — দুই দিকেই
+        // linkItemId/SKU দিয়ে সঠিক আইটেম খুঁজে বের করা হয়, শুধু নাম দিয়ে নয়
+        adjustInvStock(oldName, oldCategory, oldQty || 0, { linkItemId: oldLinkItemId, sku: oldProductId });
+        adjustInvStock(payload.name, payload.category, -(payload.qty || 0), { linkItemId: payload.linkItemId, sku: payload.productId });
       }
       fraudWarning = checkTxnFraudFlags(t, list);
     } else if(type === 'purchase'){
       // পুরনো ক্রয়ের পরিমাণ স্টক থেকে বাদ দিয়ে (Cost Price অপরিবর্তিত রেখে), নতুন পরিমাণ + দাম
       // দিয়ে আবার যোগ করা হচ্ছে — Cost Price ওয়েটেড এভারেজ পদ্ধতিতে আপডেট হয়
-      adjustInvStockFromPurchase(oldName, oldCategory, -(oldQty || 0));
-      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
+      adjustInvStockFromPurchase(oldName, oldCategory, -(oldQty || 0), undefined, { linkItemId: oldLinkItemId, sku: oldProductId });
+      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price, { linkItemId: payload.linkItemId, sku: payload.productId });
       if(r.matched) stockNote = ' · ইনভেন্টরি স্টক সমন্বয় হয়েছে';
     }
     showToast((fraudWarning || 'Entry updated') + stockNote);
@@ -6844,12 +7247,12 @@ function saveTxn(e){
     payload.id = idCounter++;
     list.push(payload);
     if(type === 'sales'){
-      adjustInvStock(payload.name, payload.category, -(payload.qty || 0));
+      adjustInvStock(payload.name, payload.category, -(payload.qty || 0), { linkItemId: payload.linkItemId, sku: payload.productId });
       fraudWarning = checkTxnFraudFlags(payload, list);
     } else if(type === 'purchase'){
       // নতুন ক্রয় এন্ট্রি সরাসরি সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price-এ যোগ হয়ে যায় —
       // আলাদা করে ম্যানুয়ালি Inventory পেজে গিয়ে দুটো সিস্টেম মিলিয়ে রাখতে হয় না
-      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
+      const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price, { linkItemId: payload.linkItemId, sku: payload.productId });
       if(r.matched) stockNote = ' · ইনভেন্টরি স্টক +' + (payload.qty || 0) + ' হয়েছে';
     }
     showToast((fraudWarning || 'Entry saved') + stockNote);
@@ -6960,6 +7363,7 @@ function openItemSheet(id){
     document.getElementById('iSellPrice').value = item.sellPrice != null ? item.sellPrice : '';
     document.getElementById('iStockQty').value = item.stockQty != null ? item.stockQty : '';
     document.getElementById('iLowStock').value = item.lowStock != null ? item.lowStock : '';
+    document.getElementById('iWarrantyMonths').value = item.warrantyMonths != null ? item.warrantyMonths : '';
     document.getElementById('iPurchaseDate').value = item.purchaseDate || '';
     document.getElementById('iSupplierName').value = item.supplierName || '';
     document.getElementById('iSupplierPhone').value = item.supplierPhone || '';
@@ -7003,6 +7407,7 @@ function saveItem(e){
     sellPrice: num('iSellPrice'),
     stockQty: num('iStockQty'),
     lowStock: num('iLowStock'),
+    warrantyMonths: num('iWarrantyMonths'),
     purchaseDate: document.getElementById('iPurchaseDate').value || '',
     supplierName: document.getElementById('iSupplierName').value.trim(),
     supplierPhone: document.getElementById('iSupplierPhone').value.trim(),
@@ -7185,6 +7590,76 @@ function renderStockAlerts(){
           </div>`;
       }).join('')
     : `<div class="empty-state">এখনো কোনো পণ্যের স্টক রিমাইন্ডার সীমার নিচে নামেনি</div>`;
+}
+
+/* ---------------- WARRANTY TRACKING ----------------
+   যেসব বিক্রয়ে Serial/IMEI দেওয়া আছে (সাথে সাথে warrantyExpiry কম্পিউট হয়ে
+   sale-এর সাথেই সেভ করা থাকে, দ্র. saveTxn()) সেগুলো দিয়ে এই পেজে একটা সার্চযোগ্য
+   তালিকা দেখানো হয় — কাস্টমার ফোন করে "আমার প্রোডাক্ট নষ্ট হয়ে গেছে" বললে সিরিয়াল/
+   ফোন নম্বর দিয়ে সাথে সাথে খুঁজে ওয়ারেন্টি আছে কিনা দেখা যাবে। */
+let warrantyStatusFilter = '__all__';
+// মেয়াদ শেষ হতে ৭ দিন বা তার কম বাকি থাকলে "শীঘ্রই শেষ" — stockStatus()-এর মতোই
+// রঙ/লেবেল কনভেনশন মেনে চলা হলো যাতে অ্যাপ জুড়ে সামঞ্জস্য থাকে।
+function warrantyStatus(expiryISO){
+  if(!expiryISO) return null;
+  const today = todayISO();
+  const daysLeft = Math.round((new Date(expiryISO + 'T00:00:00') - new Date(today + 'T00:00:00')) / 86400000);
+  if(daysLeft < 0) return { cls:'expired', label:'মেয়াদোত্তীর্ণ', daysLeft };
+  if(daysLeft <= 7) return { cls:'soon', label:`${daysLeft} দিন বাকি`, daysLeft };
+  return { cls:'active', label:`${daysLeft} দিন বাকি`, daysLeft };
+}
+function setWarrantyStatusFilter(status, btn){
+  warrantyStatusFilter = status;
+  document.querySelectorAll('#warrantyStatusTabs button').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderWarrantyList();
+}
+function renderWarrantyList(){
+  const searchEl = document.getElementById('warrantySearchInput');
+  const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  let list = state.sales
+    .filter(s => s.serial && String(s.serial).trim())
+    .map(s => Object.assign({}, s, { _status: warrantyStatus(s.warrantyExpiry) }))
+    .filter(s => {
+      if(warrantyStatusFilter === '__all__') return true;
+      if(!s._status) return false; // warrantyExpiry নেই (পুরনো এন্ট্রি বা সিরিয়াল দেওয়া হয়েছে কিন্তু পণ্যে ওয়ারেন্টি মেয়াদ সেট নেই) — নির্দিষ্ট স্ট্যাটাস ফিল্টারে দেখানো হবে না
+      return s._status.cls === warrantyStatusFilter;
+    });
+  if(q){
+    list = list.filter(s =>
+      String(s.serial || '').toLowerCase().includes(q) ||
+      String(s.party || '').toLowerCase().includes(q) ||
+      String(s.phone || '').toLowerCase().includes(q)
+    );
+  }
+  list.sort((a,b)=>{
+    // মেয়াদোত্তীর্ণ/শীঘ্রই-শেষ সবার উপরে (সবচেয়ে জরুরিটা আগে), তারপর সাম্প্রতিক বিক্রয় আগে
+    const da = a._status ? a._status.daysLeft : Infinity;
+    const db = b._status ? b._status.daysLeft : Infinity;
+    if(da !== db) return da - db;
+    return sortKey(a) < sortKey(b) ? 1 : -1;
+  });
+  document.getElementById('warrantyCountLbl').textContent = list.length;
+  document.getElementById('warrantyList').innerHTML = list.length
+    ? list.map(s => {
+        const badgeColor = { expired:'var(--loss)', soon:'var(--gold)', active:'var(--green-600)' }[s._status ? s._status.cls : 'active'] || 'var(--muted)';
+        const badgeLabel = s._status ? s._status.label : 'মেয়াদ অজানা';
+        const expiryLine = s.warrantyExpiry ? `মেয়াদ শেষ: ${fmtDateBn(s.warrantyExpiry)}` : 'ওয়ারেন্টি মেয়াদ সেট নেই';
+        return `
+          <div class="txn-row" onclick="editTxn('sales', ${JSON.stringify(s.id)})" style="cursor:pointer;">
+            <div style="min-width:0; flex:1;">
+              <div style="font-weight:600; font-size:13.5px;">${escapeHTML(s.name || '—')}</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">Serial: ${escapeHTML(s.serial)}</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:1px;">${escapeHTML(s.party || 'Walk-in')}${s.phone ? ' · ' + escapeHTML(s.phone) : ''}</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:1px;">${escapeHTML(expiryLine)}</div>
+            </div>
+            <div style="flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <span style="font-size:10.5px; font-weight:700; color:#fff; background:${badgeColor}; padding:4px 8px; border-radius:8px; white-space:nowrap;">${escapeHTML(badgeLabel)}</span>
+              <button type="button" class="mini-btn" title="Product Authenticity QR তৈরি করুন" style="width:auto; padding:0 8px; gap:3px; font-size:10.5px; font-weight:700;" onclick="event.stopPropagation(); openProductVerifyQr(${JSON.stringify(s.id)})">🔖 QR</button>
+            </div>
+          </div>`;
+      }).join('')
+    : `<div class="empty-state">${q || warrantyStatusFilter !== '__all__' ? 'এই খোঁজ/ফিল্টারে কিছু পাওয়া যায়নি' : 'এখনো কোনো বিক্রয়ে Serial/IMEI যোগ করা হয়নি — Sales এন্ট্রিতে Serial/IMEI দিলে এখানে দেখা যাবে'}</div>`;
 }
 
 /* ---------------- SALES RECEIPTS / BARCODE PRINTING ---------------- */
@@ -7602,15 +8077,32 @@ function pushVerificationRecord(group, vid){
   const first = rows[0];
   const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
   const grandTotal = rows.reduce((sum, r) => sum + (r.total || 0), 0);
+  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
   const items = [];
+  // Invoice ↔ Product-Authenticity QR লিংক: এই ইনভয়েসের কোনো রো-তে Serial/IMEI
+  // দেওয়া থাকলে (single-product এন্ট্রি — একাধিক-পণ্যের items[] সাব-লাইনে আলাদা
+  // Serial ট্র্যাক করা হয় না), সেটার জন্য এখানেই Product Verification ID অটো
+  // জেনারেট/পুশ করা হচ্ছে — Warranty পেজে গিয়ে আলাদা করে QR বাটনে চাপতে হবে না।
+  // ফলে ইনভয়েস QR স্ক্যান করলেই সেই লাইনে "🔖 Verify Product" বাটন দেখা যাবে
+  // (দ্র. renderVerifyScreen), আর প্রোডাক্ট QR স্ক্যান করলে উল্টো দিকে ইনভয়েস নাম্বার
+  // ও "ফুল ইনভয়েস দেখুন" লিংক দেখা যাবে (দ্র. renderProductVerifyScreen)।
+  let newPvidAssigned = false;
   rows.forEach(r => {
     if(Array.isArray(r.items) && r.items.length > 1){
       r.items.forEach(it => items.push({ name: it.name || '—', qty: it.qty || 1, total: (it.qty || 1) * (it.price || 0) }));
     } else {
-      items.push({ name: r.name || '—', qty: r.qty || 1, total: r.total || 0 });
+      const itemObj = { name: r.name || '—', qty: r.qty || 1, total: r.total || 0 };
+      if(r.serial && String(r.serial).trim()){
+        const hadPvid = !!r.pvid;
+        ensureProductVerificationId(r);
+        if(!hadPvid) newPvidAssigned = true;
+        pushProductVerificationRecord(r, invoiceNo, vid);
+        itemObj.pvid = r.pvid;
+      }
+      items.push(itemObj);
     }
   });
-  const invoiceNo = (first.ref && String(first.ref).trim()) ? String(first.ref).trim() : shortSlipId(first);
+  if(newPvidAssigned) saveState(); // নতুন pvid বসলে সেটাও লোকাল/ক্লাউডে সেভ হওয়া দরকার
   const payload = stripUndefinedDeep({
     shopName: state.company.name || 'My Business',
     currency: state.company.currency || '৳',
@@ -7627,6 +8119,102 @@ function pushVerificationRecord(group, vid){
   });
   fbDb.ref('verify/' + vid).set(payload).catch(err => console.error('Verification record push failed:', err));
 }
+
+/* ---------------- PRODUCT AUTHENTICITY QR (shop-owner side) ----------------
+   Warranty পেজে "🔖 QR" বাটনে ট্যাপ করলে একটা স্থায়ী "Product Verification ID"
+   (pvid) জেনারেট হয়ে সেই sale রো-তেই সেভ হয়ে যায় (ঠিক উপরের ইনভয়েস vid-এর মতোই
+   প্যাটার্ন), এবং একটা সংক্ষিপ্ত পাবলিক স্ন্যাপশট "productVerify/<pvid>" নোডে পুশ
+   করা হয় — QR স্ক্যান করলে যে কেউ (লগইন ছাড়াই) পণ্যের Verified/Authentic status,
+   নাম+ছবি, Serial/Product ID, Verification Date, Warranty Status ও দোকানের অফিসিয়াল
+   সাপোর্ট তথ্য দেখতে পারবে (দ্র. renderProductVerifyScreen, উপরে)। */
+function ensureProductVerificationId(sale){
+  if(sale.pvid) return sale.pvid;
+  const raw = (currentUid || 'local') + '_pv_' + sale.id + '_' + Date.now().toString(36);
+  let hash = 0;
+  for(let i=0;i<raw.length;i++){ hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0; }
+  sale.pvid = 'P' + Math.abs(hash).toString(36).toUpperCase() + Date.now().toString(36).slice(-3).toUpperCase();
+  // "Verification Date" স্থায়ীভাবে প্রথমবার জেনারেট করার দিনটাই থাকে — পরে তথ্য
+  // আপডেট হয়ে রেকর্ড আবার পুশ হলেও (যেমন এন্ট্রি এডিট করার পর) এই তারিখ বদলায় না।
+  sale.pvDate = todayISO();
+  return sale.pvid;
+}
+function productVerificationUrlFor(pvid){
+  return verifyBaseUrl() + '?pverify=' + encodeURIComponent(pvid);
+}
+// Inventory-তে মিলে যাওয়া আইটেমের ছবি (photo) পাওয়া গেলে সেটাই "Product Image"
+// হিসেবে পাবলিক রেকর্ডে বসে — না মিললে খালি থাকে, ভেরিফাই পেজে তখন একটা প্লেসহোল্ডার
+// আইকন দেখানো হয় (দ্র. renderProductVerifyScreen)।
+// invoiceNoOverride/invoiceVidOverride ঐচ্ছিক — ইনভয়েস প্রিন্ট করার সময়
+// pushVerificationRecord() থেকে কল হলে গ্রুপের invoiceNo/vid পাঠানো হয় (কারণ
+// মাল্টি-রো ইনভয়েসে vid শুধু প্রথম রো-তে বসে, প্রতিটা রো-তে না)। Warranty পেজ থেকে
+// সরাসরি "🔖 QR" বাটনে চাপলে (openProductVerifyQr) এই দুটো প্যারামিটার দেওয়া হয় না,
+// তখন sale নিজের ref/vid থেকেই ফলব্যাক করে।
+function pushProductVerificationRecord(sale, invoiceNoOverride, invoiceVidOverride){
+  if(!fbDb || !currentUid) return false; // অফলাইনে/লগইন ছাড়া চুপচাপ স্কিপ — QR তখনও দেখানো হবে, শুধু অনলাইন হলে পরে যাচাই করা যাবে
+  const matchedItem = findInvItemForDeduction(sale.name, sale.category, { linkItemId: sale.linkItemId, sku: sale.productId });
+  const invoiceNo = (invoiceNoOverride && String(invoiceNoOverride).trim()) || (sale.ref && String(sale.ref).trim()) || '';
+  const invoiceVid = (invoiceVidOverride && String(invoiceVidOverride).trim()) || sale.vid || '';
+  const payload = stripUndefinedDeep({
+    shopName: state.company.name || 'My Business',
+    shopPhone: state.company.contactPhone || '',
+    shopEmail: state.company.footerEmail || '',
+    shopAddress: state.company.footerAddress || '',
+    shopFacebook: state.company.footerFacebook || '',
+    productName: sale.name || '—',
+    productImage: (matchedItem && matchedItem.photo) || '',
+    serial: sale.serial || '',
+    productId: sale.productId || (matchedItem && matchedItem.sku) || sale.ref || '',
+    // ইনভয়েস QR ↔ প্রোডাক্ট QR — একটা থেকে অন্যটায় যাওয়ার জন্য (দ্র. renderProductVerifyScreen)
+    invoiceNo,
+    invoiceVid,
+    warrantyMonths: sale.warrantyMonths || null,
+    warrantyExpiry: sale.warrantyExpiry || null,
+    verifiedDate: sale.pvDate || todayISO(),
+    createdAt: Date.now()
+  });
+  fbDb.ref('productVerify/' + sale.pvid).set(payload).catch(err => console.error('Product verification record push failed:', err));
+  return true;
+}
+// Warranty লিস্টের "🔖 QR" বাটনে ট্যাপ করলে কল হয় — pvid জেনারেট/পুনর্ব্যবহার করে,
+// পাবলিক রেকর্ড পুশ করে, তারপর QR কোড ও লিংক-সহ ছোট শিটটা খোলে।
+function openProductVerifyQr(saleId){
+  const sale = state.sales.find(s => String(s.id) === String(saleId));
+  if(!sale){ showToast('এন্ট্রি খুঁজে পাওয়া যায়নি'); return; }
+  if(!sale.serial || !String(sale.serial).trim()){ showToast('আগে Serial/IMEI নম্বর যোগ করুন'); return; }
+  const hadPvid = !!sale.pvid;
+  ensureProductVerificationId(sale);
+  const pushed = pushProductVerificationRecord(sale);
+  if(!hadPvid) saveState();
+  const url = productVerificationUrlFor(sale.pvid);
+  document.getElementById('pvQrLinkText').textContent = url;
+  drawQRCode(document.getElementById('pvQrCanvas'), url);
+  document.getElementById('pvQrOverlay').classList.add('open');
+  document.getElementById('pvQrSheet').classList.add('open');
+  if(!pushed) showToast('⚠️ ইন্টারনেট সংযোগ নেই — অনলাইন হলে আবার এই বাটনে ট্যাপ করুন, নাহলে QR স্ক্যান করলে "সংযোগ সমস্যা" দেখাবে');
+}
+function closePvQrSheet(){
+  document.getElementById('pvQrOverlay').classList.remove('open');
+  document.getElementById('pvQrSheet').classList.remove('open');
+}
+function copyPvLink(){
+  const text = (document.getElementById('pvQrLinkText').textContent || '').trim();
+  if(!text || text === '—') return;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(() => showToast('লিংক কপি হয়েছে')).catch(() => showToast('কপি করতে সমস্যা হয়েছে'));
+  } else {
+    showToast('কপি করতে সমস্যা হয়েছে');
+  }
+}
+function sharePvLink(){
+  const text = (document.getElementById('pvQrLinkText').textContent || '').trim();
+  if(!text || text === '—') return;
+  if(navigator.share){
+    navigator.share({ title: 'Product Authenticity Verification', url: text }).catch(() => {});
+  } else {
+    copyPvLink();
+  }
+}
+
 function printReceipts(){
   const checked = Array.from(document.querySelectorAll('.receiptChk:checked')).map(c => c.value);
   if(checked.length === 0){ showToast('Select at least one sale to print'); return; }
@@ -9599,9 +10187,17 @@ function confirmOrder(orderId){
   const invoiceRef = (order.orderId && String(order.orderId).trim())
     ? String(order.orderId).trim()
     : ('OID-' + String(idCounter++).padStart(7, '0'));
-  // অর্ডার কনফার্ম হওয়ার সাথে সাথে প্রতিটা প্রোডাক্টের স্টক অটো-মাইনাস (নাম মিলিয়ে; অনলাইন অর্ডারের
-  // আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে নাম মিলিয়ে খোঁজা হয়)
-  items.forEach(it => adjustInvStock(it.name, null, -(it.qty || 1)));
+  // অর্ডার কনফার্ম হওয়ার সাথে সাথে প্রতিটা প্রোডাক্টের স্টক অটো-মাইনাস — অর্ডারে productId/SKU
+  // দেওয়া থাকলে সেটা দিয়ে আগে মেলানো হয় (নাম না মিললেও ঠিক আইটেম ধরা পড়ে), নাহলে নাম দিয়ে
+  // (অনলাইন অর্ডারের আইটেমে নির্দিষ্ট ক্যাটেগরি থাকে না, তাই ইনভেন্টরির সব ক্যাটেগরি জুড়ে খোঁজা হয়)।
+  // যে আইটেম মিলল তার id প্রতিটা লাইনের সাথে (linkItemId) স্থায়ীভাবে সেভ করা হচ্ছে, যাতে পরের
+  // COGS/Profit হিসাব এবং ভবিষ্যতের যেকোনো এডিট/রিভার্সালও নাম না, id ধরে সঠিকভাবে কাজ করে।
+  const invIndex = buildInvItemIndex();
+  const itemsWithLink = items.map(it => {
+    const matched = findInvItemIndexed(invIndex, it.name, null, { sku: it.productId });
+    return { name: it.name || 'Item', qty: it.qty || 1, price: it.price || 0, productId: it.productId || undefined, linkItemId: matched ? matched.id : undefined };
+  });
+  itemsWithLink.forEach(it => adjustInvStock(it.name, null, -(it.qty || 1), { linkItemId: it.linkItemId, sku: it.productId }));
   // Delivery charge: order.total may include a delivery/shipping charge on top of
   // the item prices — folded into this single row's total instead of its own line.
   const itemsSum = items.reduce((s, it) => s + (it.qty || 1) * (it.price || 0), 0);
@@ -9625,15 +10221,16 @@ function confirmOrder(orderId){
     phone: order.phone || '',
     address: order.address || '',
     productId: items.length === 1 ? (items[0].productId || '') : '',
+    linkItemId: itemsWithLink.length === 1 ? itemsWithLink[0].linkItemId : undefined,
     payment: order.paymentMethod || '',
     notes: order.notes || '',
     total: grandTotal, // numeric — app-এর ড্যাশবোর্ড/হিসাবের জন্য এটা সংখ্যাই থাকে
     // রিসিট প্রিন্টে প্রোডাক্ট লিস্টের পর "Delivery Charge" আলাদা লাইনে দেখানোর জন্য —
     // total ফিল্ডের হিসাব আগের মতোই থাকে (delivery তার মধ্যে যোগ করাই আছে), এটা শুধু প্রিন্টের জন্য বাড়তি তথ্য
     deliveryCharge: deliveryCharge > 0 ? deliveryCharge : 0,
-    // শুধু রিসিট প্রিন্টে প্রতিটি প্রোডাক্ট আলাদা লাইনে দেখানোর জন্য — বাকি সব জায়গায়
-    // (লেজার/শিট/ড্যাশবোর্ড) আগের মতোই সামারাইজড name ফিল্ড ব্যবহার হয়, এটাতে হাত পড়ে না।
-    items: items.map(it => ({ name: it.name || 'Item', qty: it.qty || 1, price: it.price || 0 }))
+    // প্রতিটা লাইন এখন productId/linkItemId-সহ — রিসিট প্রিন্টে প্রতি-প্রোডাক্ট লাইন দেখানোর
+    // পাশাপাশি এটাই এখন COGS/স্টক ম্যাচিং-এর নির্ভরযোগ্য উৎস (দ্র. computeCOGSDetailed)।
+    items: itemsWithLink
   };
   state.sales.push(saleEntry);
   // শিটে Total কলামে ডেলিভারি চার্জ সহ দেখানো হয়, যেমন: 456 (D60)
@@ -10232,7 +10829,7 @@ function saveRsEntries(){
         // রিসিট স্ক্যান করে ক্রয় সেভ করলেও সংশ্লিষ্ট Inventory আইটেমের স্টক ও Cost Price
         // অটো-আপডেট হবে — সাধারণ ফর্ম দিয়ে ক্রয় এন্ট্রি করার মতোই
         const r = adjustInvStockFromPurchase(payload.name, payload.category, payload.qty || 0, payload.price);
-        if(r.matched) stockMatchedCount++;
+        if(r.matched){ stockMatchedCount++; payload.linkItemId = r.item.id; }
       }
       syncToSheet(type, 'create', payload);
     });
@@ -10334,6 +10931,7 @@ makeSheetSwipeable('receiptSheet', 'receiptOverlay', closeReceiptSheet);
 makeSheetSwipeable('aiInsightsSheet', 'aiInsightsOverlay', closeAiInsights);
 makeSheetSwipeable('receiptScanSheet', 'receiptScanOverlay', closeReceiptScanSheet);
 makeSheetSwipeable('dateRangeSheet', 'dateRangeOverlay', closeDateRangeSheet);
+makeSheetSwipeable('pvQrSheet', 'pvQrOverlay', closePvQrSheet);
 </script>
 </body>
 </html>
