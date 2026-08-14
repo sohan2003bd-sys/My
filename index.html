@@ -5685,6 +5685,28 @@ function buildLegacyRecordPatchUpdate(){
   pendingLegacyRecordPatches.forEach(p=>{ updates[p.module+'/'+p.id] = p.value; });
   return updates;
 }
+// আসল বাগ এখানেই ছিল: Firebase-এর ref.update({sales: state.sales, ...}) কল করলে
+// 'sales' নোডের পুরো ভ্যালুটাই বদলে যায় (চাইল্ড-বাই-চাইল্ড মার্জ হয় না) — আর একটা প্লেইন
+// জাভাস্ক্রিপ্ট অ্যারে (state.sales) পাঠালে Firebase সেটাকে ইনডেক্স-কী দিয়ে (0,1,2…) সেভ করে,
+// অথচ সাধারণ রেকর্ড-প্যাচ (queueLegacyRecordPatch) প্রতিটা এন্ট্রি তার নিজের id দিয়ে
+// (sales/<id>) সেভ করে। একই ডেটার জন্য দুই রকম কী-স্কিম মিশে গিয়ে, আর যেকোনো "full" সিঙ্ক
+// (যেমন অফলাইন এন্ট্রি/অর্ডার কনফার্মের পরপরই রিফ্রেশ দিলে চলা pushOfflineEditsFirst পাথ)
+// লোকাল মেমোরিতে থাকা অ্যারে দিয়ে পুরো নোডটা ওভাররাইট করে দিত — ক্লাউডে থাকা কিন্তু লোকাল
+// অ্যারেতে (কোনো কারণে) না-থাকা যেকোনো আগের এন্ট্রি চিরতরে মুছে যেত। এই ফাংশন সেই "full"
+// লিস্টগুলোকেও id-কী দিয়ে ছোট ছোট প্যাচে ভেঙে দেয়, যাতে কোনো সিঙ্ক মোডই আর গোটা মডিউল
+// ওভাররাইট/ডিলিট করতে না পারে — শুধু যোগ/আপডেট করতে পারে।
+function buildFullModuleKeyedUpdates(modulesMap){
+  const updates = {};
+  Object.keys(modulesMap).forEach(moduleName=>{
+    const arr = modulesMap[moduleName];
+    (Array.isArray(arr) ? arr : []).forEach(rec=>{
+      if(rec && rec.id != null && String(rec.id).trim()!==''){
+        updates[moduleName+'/'+String(rec.id)] = rec;
+      }
+    });
+  });
+  return updates;
+}
 
 let isSigningUp = false;
 let otpAutoSent = false;
@@ -5735,11 +5757,13 @@ function initFirebaseCore(){
           const pushStep = pushOfflineEditsFirst
             ? (window.MYSHOP_SCALABLE_SYNC_V26 && typeof window.MYSHOP_SCALABLE_SYNC_V26.syncState==='function'
                 ? window.MYSHOP_SCALABLE_SYNC_V26.syncState({alsoLegacy:true})
-                : shopRef().update(stripUndefinedDeep({
-                    company: state.company, settings: state.settings, security: state.security,
-                    sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-                    warrantyClaims: state.warrantyClaims, invItems: state.invItems, idCounter
-                  })))
+                : shopRef().update(stripUndefinedDeep(Object.assign(
+                    { company: state.company, settings: state.settings, security: state.security, idCounter },
+                    buildFullModuleKeyedUpdates({
+                      sales: state.sales, purchases: state.purchases, expenses: state.expenses,
+                      warrantyClaims: state.warrantyClaims, invItems: state.invItems
+                    })
+                  ))))
             : Promise.resolve();
           pushStep.then(()=>{
             clearLegacyRecordPatches();
@@ -5936,17 +5960,16 @@ function syncShopToCloud(syncMode){
         const updates = buildLegacyRecordPatchUpdate();
         writePromise = Object.keys(updates).length ? shopRef().update(updates) : Promise.resolve();
       }else{
-        writePromise = shopRef().update(stripUndefinedDeep({
-          company: state.company,
-          settings: state.settings,
-          security: state.security,
-          sales: state.sales,
-          purchases: state.purchases,
-          expenses: state.expenses,
-          warrantyClaims: state.warrantyClaims,
-          invItems: state.invItems,
-          idCounter
-        }));
+        // NOTE: sales/purchases/expenses/warrantyClaims/invItems are sent as id-keyed
+        // patches (never as raw arrays) — see buildFullModuleKeyedUpdates() above for why.
+        const fullUpdates = Object.assign(
+          { company: state.company, settings: state.settings, security: state.security, idCounter },
+          buildFullModuleKeyedUpdates({
+            sales: state.sales, purchases: state.purchases, expenses: state.expenses,
+            warrantyClaims: state.warrantyClaims, invItems: state.invItems
+          })
+        );
+        writePromise = shopRef().update(stripUndefinedDeep(fullUpdates));
       }
     }catch(err){ writePromise=Promise.reject(err); }
     Promise.resolve(writePromise).then(()=>{
@@ -10656,11 +10679,13 @@ function restoreFromDrive(){
           // refreshed during that short window, startup will push the local restored
           // state first instead of loading the older cloud snapshot over it.
           setOfflineEditsPending(true);
-          shopRef().update(stripUndefinedDeep({
-            company: state.company, settings: state.settings, security: state.security,
-            sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-            warrantyClaims: state.warrantyClaims, invItems: state.invItems, idCounter
-          })).then(()=>{
+          shopRef().update(stripUndefinedDeep(Object.assign(
+            { company: state.company, settings: state.settings, security: state.security, idCounter },
+            buildFullModuleKeyedUpdates({
+              sales: state.sales, purchases: state.purchases, expenses: state.expenses,
+              warrantyClaims: state.warrantyClaims, invItems: state.invItems
+            })
+          ))).then(()=>{
             setOfflineEditsPending(false);
           }).catch(err=>{
             console.error('Drive restore cloud persist failed:', err);
@@ -15921,7 +15946,17 @@ try{if(new URLSearchParams(location.search).get('dashboard24')==='1')console.inf
        the app works unchanged with the user's existing Firebase Security Rules. */
     const o=options||{};
     if(o.alsoLegacy && typeof shopRef==='function'){
-      await shopRef().update(stripUndefinedDeep({company:state.company,settings:state.settings,security:state.security,sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,idCounter}));
+      // Ledger modules are pushed as id-keyed child patches, never as raw arrays: a raw
+      // array here would fully replace shops/{uid}/sales (etc.) with whatever happens to
+      // be in local memory at that moment, silently deleting any cloud record missing
+      // from it. This is the exact path that ran right after "offline edit → refresh".
+      const legacyUpdates = (typeof buildFullModuleKeyedUpdates==='function')
+        ? Object.assign(
+            {company:state.company,settings:state.settings,security:state.security,idCounter},
+            buildFullModuleKeyedUpdates({sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems})
+          )
+        : {company:state.company,settings:state.settings,security:state.security,sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,idCounter};
+      await shopRef().update(stripUndefinedDeep(legacyUpdates));
     }
     return {enabled:true,legacyRulesCompatible:true,writes:0,deleted:0};
   }
