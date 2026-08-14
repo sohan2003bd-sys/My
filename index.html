@@ -5590,7 +5590,7 @@ function applyPendingMutationJournal(){
     Object.assign(state.security,j.security||{});
     if(Array.isArray(j.orders)) state.orders=j.orders;
     if(Number(j.idCounter)>0) idCounter=Math.max(Number(idCounter)||1,Number(j.idCounter));
-    const targets={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems};
+    const targets={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders};
     (j.patches||[]).forEach(p=>{
       const list=targets[p.module]; if(!list || p.id==null) return;
       const idx=list.findIndex(x=>String(x&&x.id)===String(p.id));
@@ -5656,10 +5656,12 @@ function loadState(){
         state.orders = cachedOrders ? (JSON.parse(cachedOrders) || []) : (d.orders || []);
       }catch(_e){ state.orders = d.orders || []; }
       idCounter = d.idCounter || 1;
+      ensureIdCounterAheadOfState();
     }
     // Replay the synchronous mutation journal AFTER the normal cache. This is the
     // critical refresh/offline recovery path for edits made just before reload.
     const replayed=applyPendingMutationJournal();
+    ensureIdCounterAheadOfState();
     return !!raw || replayed;
   }catch(err){
     try{return applyPendingMutationJournal();}catch(_e){return false;}
@@ -5701,11 +5703,42 @@ function buildFullModuleKeyedUpdates(modulesMap){
     const arr = modulesMap[moduleName];
     (Array.isArray(arr) ? arr : []).forEach(rec=>{
       if(rec && rec.id != null && String(rec.id).trim()!==''){
-        updates[moduleName+'/'+String(rec.id)] = rec;
+        // Each record is written under its own stable Firebase child key.
+        updates[moduleName+'/'+String(rec.id)] = stripUndefinedDeep(rec);
       }
     });
   });
   return updates;
+}
+
+/* Keep the numeric ID generator strictly ahead of every existing record.
+   Record-mode sync previously did not persist idCounter, so after refresh Firebase
+   could return an old counter and the next entry reused an existing id, overwriting
+   that child and making older entries appear to disappear. */
+function ensureIdCounterAheadOfState(){
+  let next = Math.max(1, Number(idCounter) || 1);
+  [state.sales,state.purchases,state.expenses,state.warrantyClaims,state.invItems].forEach(list=>{
+    (Array.isArray(list) ? list : []).forEach(row=>{
+      const n=Number(row && row.id);
+      if(Number.isSafeInteger(n) && n >= next) next=n+1;
+    });
+  });
+  idCounter=next;
+  return next;
+}
+
+/* If an older build already lost cloud children because of the stale-id bug,
+   the device cache may still contain the missing records. When the local copy is
+   strictly larger than the cloud copy, preserve/merge those local records instead
+   of allowing a refresh to erase the last recoverable copy. */
+function mergeCloudRowsPreservingLocal(localArr, cloudArr){
+  const local=Array.isArray(localArr)?localArr:[];
+  const cloud=Array.isArray(cloudArr)?cloudArr:[];
+  if(!local.length) return cloud;
+  const map=new Map();
+  cloud.forEach(r=>{ if(r && r.id!=null) map.set(String(r.id),r); });
+  local.forEach(r=>{ if(r && r.id!=null) map.set(String(r.id),r); });
+  return Array.from(map.values());
 }
 
 let isSigningUp = false;
@@ -5761,7 +5794,7 @@ function initFirebaseCore(){
                     { company: state.company, settings: state.settings, security: state.security, idCounter },
                     buildFullModuleKeyedUpdates({
                       sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-                      warrantyClaims: state.warrantyClaims, invItems: state.invItems
+                      warrantyClaims: state.warrantyClaims, invItems: state.invItems, orders: state.orders
                     })
                   ))))
             : Promise.resolve();
@@ -5817,8 +5850,14 @@ async function loadShopData(uid){
   if(typeof SCALABLE_MODE !== 'undefined' && SCALABLE_MODE && window.MYSHOP_SCALABLE_LOAD_V22){
     try{
       if(window.MYSHOP_SCALABLE_BOOT_V26 && typeof window.MYSHOP_SCALABLE_BOOT_V26.boot==='function') await window.MYSHOP_SCALABLE_BOOT_V26.boot();
+      // Keep a snapshot of the local cache before the cloud loader replaces state.
+      const localRecovery={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders};
       const result=await window.MYSHOP_SCALABLE_LOAD_V22.load(uid);
       if(readVersionAtStart!==__dataMutationVersion || offlineEditsPending){ try{ loadState(); }catch(_e){} return {localPending:true,staleCloudRead:true}; }
+      Object.keys(localRecovery).forEach(m=>{
+        state[m]=mergeCloudRowsPreservingLocal(localRecovery[m],state[m]);
+      });
+      ensureIdCounterAheadOfState();
       backfillInventoryLinks();
       cacheStateLocally(false); // cache only; never rewrite the whole Firebase tree on startup
       try{ localStorage.setItem('myshop_scalable_ready_v26','1'); }catch(e){}
@@ -5849,6 +5888,7 @@ async function loadShopData(uid){
       return out;
     };
     const baseRef=fbDb.ref('shops/'+uid);
+    const localRecovery={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders};
     const [company,settings,security,idCounterSnap, ...rows]=await Promise.all([
       baseRef.child('company').once('value'),
       baseRef.child('settings').once('value'),
@@ -5860,8 +5900,9 @@ async function loadShopData(uid){
     Object.assign(state.company,company.val()||{});
     Object.assign(state.settings,settings.val()||{});
     Object.assign(state.security,security.val()||{});
-    modules.forEach((m,i)=>{ state[m]=rows[i]||[]; });
+    modules.forEach((m,i)=>{ state[m]=mergeCloudRowsPreservingLocal(localRecovery[m],rows[i]||[]); });
     idCounter=idCounterSnap.val()||1;
+    ensureIdCounterAheadOfState();
     if(!state.settings.products) state.settings.products=[];
     if(!state.settings.videos) state.settings.videos=[];
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories=['ইলেকট্রনিক্স','কসমেটিক্স','খাদ্যপণ্য','পোশাক','অন্যান্য'];
@@ -5957,16 +5998,21 @@ function syncShopToCloud(syncMode){
     let writePromise;
     try{
       if(mode === 'record' && pendingLegacyRecordPatches.size){
+        ensureIdCounterAheadOfState();
         const updates = buildLegacyRecordPatchUpdate();
-        writePromise = Object.keys(updates).length ? shopRef().update(updates) : Promise.resolve();
+        // idCounter must travel with every record-mode save; otherwise refresh loads
+        // a stale counter and the next record can overwrite an existing Firebase key.
+        updates.idCounter = idCounter;
+        writePromise = Object.keys(updates).length ? shopRef().update(stripUndefinedDeep(updates)) : Promise.resolve();
       }else{
+        ensureIdCounterAheadOfState();
         // NOTE: sales/purchases/expenses/warrantyClaims/invItems are sent as id-keyed
         // patches (never as raw arrays) — see buildFullModuleKeyedUpdates() above for why.
         const fullUpdates = Object.assign(
           { company: state.company, settings: state.settings, security: state.security, idCounter },
           buildFullModuleKeyedUpdates({
             sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-            warrantyClaims: state.warrantyClaims, invItems: state.invItems
+            warrantyClaims: state.warrantyClaims, invItems: state.invItems, orders: state.orders
           })
         );
         writePromise = shopRef().update(stripUndefinedDeep(fullUpdates));
@@ -10683,7 +10729,7 @@ function restoreFromDrive(){
             { company: state.company, settings: state.settings, security: state.security, idCounter },
             buildFullModuleKeyedUpdates({
               sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-              warrantyClaims: state.warrantyClaims, invItems: state.invItems
+              warrantyClaims: state.warrantyClaims, invItems: state.invItems, orders: state.orders
             })
           ))).then(()=>{
             setOfflineEditsPending(false);
@@ -11206,7 +11252,9 @@ function listenOrders(){
   }
 
   const ctl = window.__myshopOrderWindow = {
-    orderMap:new Map(),
+    // Start from the device cache so a just-confirmed/cancelled/deleted order is
+    // not replaced by an older Firebase snapshot while its mutation is still queued.
+    orderMap:new Map((Array.isArray(state.orders)?state.orders:[]).map(o=>[String(o.id),o])),
     liveQuery:null,
     query:null,
     mode:'createdAt',
@@ -11228,7 +11276,24 @@ function listenOrders(){
     });
   };
 
+  const pendingOrderValue=(id)=>{
+    try{
+      const key='orders/'+String(id);
+      const patch=pendingLegacyRecordPatches.get(key);
+      return patch ? patch.value : undefined;
+    }catch(_e){ return undefined; }
+  };
+
   const publish=()=>{
+    // Re-apply any queued local order mutations over the live Firebase window.
+    // Firebase may legitimately return the previous status until the queued write
+    // reaches the server; that older snapshot must never undo a local confirmation.
+    pendingLegacyRecordPatches.forEach(p=>{
+      if(String(p.module)!=='orders') return;
+      const id=String(p.id);
+      if(p.value===null) ctl.orderMap.delete(id);
+      else ctl.orderMap.set(id,Object.assign({id},p.value));
+    });
     state.orders=sortRows(Array.from(ctl.orderMap.values()));
     __dataMutationVersion++;
     cacheOrdersLocally();
@@ -11263,18 +11328,24 @@ function listenOrders(){
     ctl.liveQuery.on('child_added',snap=>{
       const id=String(snap.key), value=snap.val()||{};
       const existed=ctl.orderMap.has(id);
-      ctl.orderMap.set(id,Object.assign({id},value));
+      const pending=pendingOrderValue(id);
+      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? value : (pending||{})));
       publish();
       if(!ctl.initialSync && !existed && (value.status||'pending')==='pending'){
         notifyNewOrder(Object.assign({id},value));
       }
     });
     ctl.liveQuery.on('child_changed',snap=>{
-      ctl.orderMap.set(String(snap.key),Object.assign({id:String(snap.key)},snap.val()||{}));
+      const id=String(snap.key);
+      const pending=pendingOrderValue(id);
+      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? (snap.val()||{}) : (pending||{})));
       publish();
     });
     ctl.liveQuery.on('child_removed',snap=>{
-      ctl.orderMap.delete(String(snap.key));
+      const id=String(snap.key);
+      const pending=pendingOrderValue(id);
+      if(pending===undefined || pending===null) ctl.orderMap.delete(id);
+      else ctl.orderMap.set(id,Object.assign({id},pending));
       publish();
     });
   };
@@ -11306,8 +11377,13 @@ function listenOrders(){
     return rows;
   }).then(rows=>{
     sortRows(rows);
+    // Keep local pending order mutations authoritative over this initial cloud read.
     ctl.orderMap.clear();
-    rows.slice(-WINDOW).forEach(o=>ctl.orderMap.set(String(o.id),o));
+    rows.slice(-WINDOW).forEach(o=>{
+      const id=String(o.id);
+      const pending=pendingOrderValue(id);
+      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? o : (pending||{})));
+    });
     setCursorFromRows(rows.slice(-WINDOW));
     ctl.hasOlder = rows.length >= WINDOW;
     ctl.legacyChecked = true;
@@ -11985,8 +12061,9 @@ function orderCardHTML(o){
   </div>`;
 }
 function confirmOrder(orderId){
-  const order = state.orders.find(o => o.id === orderId);
+  const order = state.orders.find(o => String(o.id) === String(orderId));
   if(!order) return;
+  if(String(order.status||'pending') === 'confirmed'){ showToast('এই অর্ডারটি ইতিমধ্যে Confirmed'); return; }
   const items = Array.isArray(order.items) && order.items.length ? order.items : [{ name: 'Order', qty: 1, price: order.total || 0 }];
   // অনলাইন অর্ডার ফর্ম থেকে আসা অর্ডারে নিজস্ব orderId (যেমন OID-0000383) থাকে — কাস্টমারের
   // কনফার্মেশন পেজে সেই একই আইডি দেখানো হয়, তাই এই সেলস এন্ট্রি/রিসিটেও ঠিক সেটাই ব্যবহার করা হচ্ছে,
@@ -12042,6 +12119,13 @@ function confirmOrder(orderId){
   };
   state.sales.push(saleEntry);
   queueLegacyRecordPatch('sales', saleEntry.id, saleEntry);
+  // Persist the confirmation locally as well. The Firebase update can be queued
+  // while offline, but a browser refresh otherwise loses the confirmed status.
+  order.status = 'confirmed';
+  order.confirmedAt = Date.now();
+  queueLegacyRecordPatch('orders', order.id, order);
+  cacheOrdersLocally();
+  persistPendingMutationJournal();
   // শিটে Total কলামে ডেলিভারি চার্জ সহ দেখানো হয়, যেমন: 456 (D60)
   const totalForSheet = deliveryCharge > 0 ? `${numText(grandTotal)} (D${numText(deliveryCharge)})` : numText(grandTotal);
   syncToSheet('sales', 'create', { ...saleEntry, total: totalForSheet });
@@ -12053,14 +12137,30 @@ function confirmOrder(orderId){
   showToast('Order confirmed and added to Sales');
 }
 function cancelOrder(orderId){
-  if(!fbDb) return;
-  const patch={status:'cancelled',cancelledAt:Date.now()}; shopRef('orders/' + orderId).update(patch).catch(err=>{console.error('Order cancel failed:',err);showToast('অর্ডার আপডেট করা যায়নি');});
+  const order = state.orders.find(o => String(o.id) === String(orderId));
+  if(!order) return;
+  order.status='cancelled';
+  order.cancelledAt=Date.now();
+  queueLegacyRecordPatch('orders', order.id, order);
+  cacheOrdersLocally();
+  persistPendingMutationJournal();
+  saveState(false, 'record');
+  if(fbDb) shopRef('orders/' + orderId).update({status:'cancelled',cancelledAt:order.cancelledAt}).catch(err=>{console.error('Order cancel failed:',err);showToast('অর্ডার আপডেট করা যায়নি');});
+  renderOrders();
   showToast('Order marked as cancelled');
 }
 function deleteOrderPermanently(orderId){
-  if(!fbDb) return;
   if(!confirm('Remove this order from the list permanently? This cannot be undone.')) return;
-  shopRef('orders/' + orderId).remove().catch(err=>{ console.error('Order delete failed:',err); showToast('অর্ডার মুছতে সমস্যা হয়েছে'); });
+  const idx=state.orders.findIndex(o=>String(o.id)===String(orderId));
+  if(idx>=0){
+    state.orders.splice(idx,1);
+    queueLegacyRecordPatch('orders', orderId, null);
+    cacheOrdersLocally();
+    persistPendingMutationJournal();
+    saveState(false,'record');
+  }
+  if(fbDb) shopRef('orders/' + orderId).remove().catch(err=>{ console.error('Order delete failed:',err); showToast('অর্ডার মুছতে সমস্যা হয়েছে'); });
+  renderOrders();
 }
 
 /* ---------------- TOAST ---------------- */
@@ -15953,9 +16053,9 @@ try{if(new URLSearchParams(location.search).get('dashboard24')==='1')console.inf
       const legacyUpdates = (typeof buildFullModuleKeyedUpdates==='function')
         ? Object.assign(
             {company:state.company,settings:state.settings,security:state.security,idCounter},
-            buildFullModuleKeyedUpdates({sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems})
+            buildFullModuleKeyedUpdates({sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders})
           )
-        : {company:state.company,settings:state.settings,security:state.security,sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,idCounter};
+        : {company:state.company,settings:state.settings,security:state.security,sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders,idCounter};
       await shopRef().update(stripUndefinedDeep(legacyUpdates));
     }
     return {enabled:true,legacyRulesCompatible:true,writes:0,deleted:0};
@@ -16387,26 +16487,44 @@ function startHighScaleOrderListener_DISABLED() {
     if(offlineEditsPending || localStorage.getItem(PENDING_MUTATION_JOURNAL_KEY)){ try{loadState();}catch(_e){} return {localPending:true}; }
     const database=db();
     if(!database) throw new Error('Firebase Database unavailable');
+
+    // Never let a bounded first-page read replace a larger, recoverable local cache.
+    const localRecovery = {
+      sales:Array.isArray(state.sales)?state.sales.slice():[],
+      purchases:Array.isArray(state.purchases)?state.purchases.slice():[],
+      expenses:Array.isArray(state.expenses)?state.expenses.slice():[],
+      warrantyClaims:Array.isArray(state.warrantyClaims)?state.warrantyClaims.slice():[],
+      invItems:Array.isArray(state.invItems)?state.invItems.slice():[],
+      orders:Array.isArray(state.orders)?state.orders.slice():[]
+    };
+
     const base=database.ref('shops/'+uid);
+    const nonOrderModules=MODULES.filter(m=>m!=='orders');
     const snaps=await Promise.all([
       base.child('company').once('value'),base.child('settings').once('value'),
       base.child('security').once('value'),base.child('idCounter').once('value'),
-      ...MODULES.map(m=>page(uid,m,null,FIRST_PAGE))
+      ...nonOrderModules.map(m=>page(uid,m,null,FIRST_PAGE))
     ]);
     if(loadVersion!==__dataMutationVersion || offlineEditsPending){ try{loadState();}catch(_e){} return {localPending:true,staleCloudRead:true}; }
     Object.assign(state.company,snaps[0].val()||{});
     Object.assign(state.settings,snaps[1].val()||{});
     Object.assign(state.security,snaps[2].val()||{});
-    if(typeof idCounter!=='undefined') idCounter=snaps[3].val()||1;
-    MODULES.forEach((m,i)=>{ state[m]=snaps[4+i].items||[]; });
-    // Orders are already handled by the dedicated live/paged order engine.
+    if(typeof idCounter!=='undefined') idCounter=Math.max(Number(snaps[3].val())||1, Number(idCounter)||1);
+    nonOrderModules.forEach((m,i)=>{
+      const cloudPage=snaps[4+i] && Array.isArray(snaps[4+i].items) ? snaps[4+i].items : [];
+      state[m]=typeof mergeCloudRowsPreservingLocal==='function' ? mergeCloudRowsPreservingLocal(localRecovery[m],cloudPage) : cloudPage;
+    });
+
+    // Orders are live/paged separately. If the read fails, keep the local copy.
     try{
       const ord=await page(uid,'orders',null,100);
-      state.orders=ord.items||[];
-    }catch(_e){ state.orders=[]; }
+      const cloudOrders=Array.isArray(ord.items)?ord.items:[];
+      state.orders=typeof mergeCloudRowsPreservingLocal==='function' ? mergeCloudRowsPreservingLocal(localRecovery.orders,cloudOrders) : cloudOrders;
+    }catch(_e){ state.orders=localRecovery.orders; }
+
+    try{ensureIdCounterAheadOfState();}catch(_e){}
     try{backfillInventoryLinks();}catch(_e){}
     try{localStorage.setItem(META,JSON.stringify({uid,completed:false,at:Date.now()}));}catch(_e){}
-    // Return immediately. Historical records are fetched without blocking first paint.
     setTimeout(()=>hydrateAll(uid),0);
     return {version:VERSION,bounded:true,fastInitial:true,backgroundHydration:true,initialCounts:Object.fromEntries(MODULES.map(m=>[m,state[m].length]))};
   }
