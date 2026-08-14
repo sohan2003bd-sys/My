@@ -1615,53 +1615,65 @@
     }
     #printArea.print-format-digital .digital-invoice-page:last-child{ page-break-after:auto; }
   }
-  /* ---------- Digital Invoice — exact visual style matched to the 2nd reference design; DATA LOGIC UNCHANGED ---------- */
-  .digital-invoice-page{box-sizing:border-box;background:#fff;color:#10234f}
-  .digital-invoice{font-family:'IBM Plex Sans',Arial,sans-serif;color:#10234f;background:#fff;min-height:100%;box-sizing:border-box;overflow:hidden}
+  /* ---------- Digital Invoice — exact visual style matched to the green "Ad4tech" reference design; DATA LOGIC UNCHANGED ---------- */
+  .digital-invoice-page{box-sizing:border-box;background:#fff;color:#1a1a1a}
+  .digital-invoice{font-family:'IBM Plex Sans',Arial,sans-serif;color:#1a1a1a;background:#fff;min-height:100%;box-sizing:border-box;overflow:hidden;padding:16mm 14mm 12mm}
 
-  /* Reference palette: deep navy + vivid blue + white */
-  .di-hero{position:relative;height:43mm;overflow:hidden;background:#1687d8;color:#fff;padding:0 14mm;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between}
-  .di-hero:before{content:"";position:absolute;left:-17mm;top:-11mm;width:124mm;height:64mm;background:#06184d;border-radius:0 0 49mm 0;transform:rotate(-1deg);z-index:1}
-  .di-hero:after{content:"";position:absolute;left:80mm;top:-13mm;width:8mm;height:68mm;background:#fff;border-radius:50%;transform:rotate(-7deg);z-index:2;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
-  .di-hero-title{position:relative;z-index:4;margin-top:12.5mm;font-size:29pt;letter-spacing:.01em;font-weight:800;line-height:1;color:#fff}
-  .di-hero-logo{position:relative;z-index:4;margin-top:11.5mm;width:43mm;height:21mm;display:flex;align-items:center;justify-content:flex-end;font-size:14pt;font-weight:800;text-transform:uppercase;text-align:right;color:#fff}
-  .di-hero-logo img{max-width:43mm;max-height:21mm;object-fit:contain;background:transparent;border-radius:4px}
+  /* Reference palette: emerald green + white + near-black text */
+  .di-title{text-align:center;font-size:27pt;font-weight:800;color:#068B68;letter-spacing:.03em;margin-bottom:9mm}
 
-  .di-body{padding:10mm 14mm 8mm;box-sizing:border-box}
-  .di-party-row{display:grid;grid-template-columns:1fr auto;gap:12mm;align-items:start;margin-bottom:8mm}
-  .di-label{font-size:8.5pt;color:#6d7480;font-weight:600;margin-bottom:1.5mm}
-  .di-val{font-size:13.5pt;font-weight:800;color:#12234b;line-height:1.2}
-  .di-sub{font-size:9.5pt;color:#33415d;margin-top:1.5mm;line-height:1.45}
-  .di-meta-box{min-width:52mm;text-align:right}
-  .di-meta-line{font-size:9.5pt;margin-top:1.8mm;white-space:nowrap;color:#16264a}
-  .di-meta-line .k{font-weight:700;color:#14264d;margin-right:6px}.di-meta-line .v{font-weight:700;font-family:'IBM Plex Mono',monospace;color:#17284e}
+  .di-headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;margin-bottom:5mm}
+  .di-co-name{font-size:14.5pt;font-weight:800;color:#068B68;margin-bottom:1.8mm;line-height:1.2}
+  .di-co-addr{font-size:9.3pt;color:#242424;line-height:1.55}
+  .di-logo{flex:none;max-width:44mm;max-height:20mm;display:flex;align-items:center;justify-content:flex-end}
+  .di-logo img{max-width:44mm;max-height:20mm;object-fit:contain}
+  .di-logo-fallback{width:15mm;height:15mm;border-radius:3mm;background:#068B68;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15pt;font-weight:800}
 
-  .di-table-wrap{border-radius:0;overflow:hidden;margin-top:3mm}
-  table.di-table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:0;color:#1d2a43}
-  table.di-table th{background:#06184d;color:#fff;border:0;padding:3.6mm 3mm;font-size:9pt;font-weight:700;text-align:left}
-  table.di-table th:first-child{padding-left:3mm}
-  table.di-table td{border:0;border-bottom:1px solid #c9cdd4;padding:3.9mm 3mm;background:#fff}
+  .di-rule{height:1.3px;background:#068B68;margin-bottom:5mm}
+
+  .di-partyrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;margin-bottom:6mm}
+  .di-billto{flex:1;min-width:0}
+  .di-section-label{font-size:11.5pt;font-weight:800;color:#068B68;margin-bottom:1.8mm}
+  .di-billname{font-size:11pt;font-weight:700;color:#111;line-height:1.35}
+  .di-billsub{font-size:9.3pt;color:#242424;line-height:1.5}
+  .di-meta{flex:none;text-align:right;min-width:52mm}
+  .di-meta-row{display:flex;justify-content:flex-end;align-items:baseline;margin-bottom:1.5mm}
+  .di-meta-row .k{font-size:9.5pt;color:#6b7280;white-space:nowrap;margin-right:2mm}
+  .di-meta-row .v{font-size:9.5pt;font-weight:700;color:#111;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+  .di-meta-row.main{margin-bottom:2.2mm}
+  .di-meta-row.main .k{font-size:13.5pt;font-weight:800;color:#111;font-family:inherit;margin-right:2mm}
+  .di-meta-row.main .v{font-size:13.5pt;font-weight:800;color:#111}
+
+  table.di-table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:0 0 6mm;color:#1c1c1c}
+  table.di-table th{background:#068B68;color:#fff;border:0;padding:3.2mm 3mm;font-size:9.3pt;font-weight:700;text-align:left}
+  table.di-table th:first-child{padding-left:3.5mm}
+  table.di-table td{border:0;border-bottom:1px solid #e7e9ec;padding:3.4mm 3mm;background:#fff}
+  table.di-table td:first-child{padding-left:3.5mm}
   table.di-table th.di-num,table.di-table td.di-num{text-align:right;font-family:'IBM Plex Mono',monospace}
-  table.di-table tbody tr:last-child td{border-bottom:1px solid #aeb5c0}
-  .di-delivery-row td{font-weight:700;background:#f8fafc!important}
+  table.di-table tbody tr:last-child td{border-bottom:1.3px solid #068B68}
+  .di-delivery-row td{font-weight:700;background:#f7faf9!important}
 
-  .di-bottom-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12mm;margin-top:7mm;align-items:start}
-  .di-payment{font-size:9pt;color:#263550;line-height:1.55}
-  .di-payment-title{font-size:10pt;font-weight:800;color:#14264d;margin-bottom:2mm}
-  .di-summary{font-size:9.5pt}
-  .di-summary-line{display:flex;justify-content:space-between;gap:8mm;margin-bottom:2.5mm;color:#26364f}
-  .di-summary-line strong{font-weight:700;color:#14264d}
-  .di-total-row{display:flex;justify-content:space-between;align-items:center;gap:10mm;margin-top:3mm;background:#07184d;color:#fff;border-radius:0;padding:3.2mm 4mm}
-  .di-total-row .k{font-size:11pt;font-weight:800;letter-spacing:.04em;color:#fff}.di-total-row .v{font-size:14pt;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff}
+  .di-bottom-grid{display:flex;justify-content:space-between;gap:10mm;align-items:flex-start;margin-bottom:8mm}
+  .di-payment{flex:1;min-width:0;padding-top:1mm;font-size:9pt;color:#263550}
+  .di-payment-title{font-size:11.5pt;font-weight:800;color:#068B68;margin-bottom:1.8mm}
+  .di-pay-pair{margin-bottom:2.5mm}
+  .di-pay-sub{font-size:9.3pt;color:#6b7280}
+  .di-pay-val{font-size:10.3pt;font-weight:700;color:#111;margin-top:0.6mm}
+  .di-summary{flex:none;min-width:62mm;font-size:9.5pt}
+  .di-summary-box{border-top:1px solid #068B68;border-bottom:1px solid #068B68;padding:2.2mm 0}
+  .di-summary-box2{margin-top:3mm;border-top:1px solid #068B68;border-bottom:1px solid #068B68;padding:2.2mm 0}
+  .di-summary-line{display:flex;justify-content:space-between;gap:8mm;padding:0.8mm 0;color:#242424}
+  .di-summary-line strong{font-weight:700;color:#111;font-family:'IBM Plex Mono',monospace}
+  .di-total-row{display:flex;justify-content:space-between;align-items:center;gap:10mm;padding:0.8mm 0}
+  .di-total-row .k{font-size:11.5pt;font-weight:800;color:#111}.di-total-row .v{font-size:11.5pt;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#111}
 
-  .di-barcode{margin-top:6mm;text-align:center;padding-top:3.5mm;border-top:1px dashed #cbd1da}
-  .di-barcode-box{width:62mm;max-width:100%;margin:0 auto;box-sizing:border-box;background:#fff;border:1px solid #d1d6de;border-radius:1mm;padding:2mm 3mm}
-  .di-barcode-box canvas{width:100%;height:11mm;image-rendering:pixelated;display:block}.di-pid{font-size:7.5pt;letter-spacing:.1em;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-top:1mm;color:#17284e}
-
-  .di-footer-row{display:grid;grid-template-columns:1fr 1fr;gap:15mm;margin-top:14mm;align-items:end}
-  .di-contact{font-size:8.8pt;color:#33415a;line-height:1.5;border-left:1mm solid #07184d;padding-left:3mm}
-  .di-sign{text-align:right;font-size:8.8pt;color:#26364f}.di-sign-line{border-top:1px solid #4d596b;margin-left:auto;width:55mm;margin-bottom:2mm}
-  .di-foot{text-align:center;font-size:8.5pt;color:#687282;margin-top:4mm;font-style:italic}
+  .di-signrow{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16mm}
+  .di-qr-box{flex:none;width:26mm;box-sizing:border-box}
+  .di-qr-box canvas{width:26mm;height:26mm;image-rendering:pixelated;display:block;border:1px solid #e7e9ec}
+  .di-pid{font-size:7.3pt;letter-spacing:.08em;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-top:1mm;color:#6b7280}
+  .di-sign{text-align:center;font-size:9pt;color:#111;min-width:55mm}
+  .di-sign-line{border-top:1px solid #9aa0a8;margin-bottom:2mm}
+  .di-foot{text-align:center;font-size:8.3pt;color:#8b909a;margin-top:8mm;font-style:italic}
 
   @media print{
     #printArea.print-format-digital{padding:0!important;background:#fff!important}
@@ -9716,7 +9728,7 @@ function receiptCardDigitalHTML(group){
   const isCOD = /cash\s*on\s*delivery|^\s*cod\s*$|ক্যাশ\s*অন\s*ডেলিভারি/i.test(String(first.payment || '').trim());
   const totalLabel = isCOD ? 'Total Payable' : 'Total Paid';
   const initial = escapeHTML(companyName.trim().charAt(0).toUpperCase() || 'M');
-  const logoHTML = logo ? `<img src="${escapeHTML(logo)}" alt="${escapeHTML(companyName)}">` : `<span>${initial}</span>`;
+  const logoHTML = logo ? `<img src="${escapeHTML(logo)}" alt="${escapeHTML(companyName)}">` : `<span class="di-logo-fallback">${initial}</span>`;
   let rowNum = 0;
   const itemRowsHTML = rows.map(r => {
     if(Array.isArray(r.items) && r.items.length > 1){
@@ -9736,53 +9748,55 @@ function receiptCardDigitalHTML(group){
   const taxDisplay = taxAmount ? fmtMoney(taxAmount) : '—';
   return `
   <div class="digital-invoice">
-    <div class="di-hero">
-      <div class="di-hero-title">INVOICE</div>
-      <div class="di-hero-logo">${logoHTML}</div>
+    <div class="di-title">INVOICE</div>
+    <div class="di-headrow">
+      <div>
+        <div class="di-co-name">${escapeHTML(companyName)}</div>
+        ${footerAddress ? `<div class="di-co-addr">${escapeHTML(footerAddress)}</div>` : ''}
+        ${contactPhone ? `<div class="di-co-addr">Mobile: ${escapeHTML(contactPhone)}</div>` : ''}
+        ${footerEmail ? `<div class="di-co-addr">Email: ${escapeHTML(footerEmail)}</div>` : ''}
+      </div>
+      <div class="di-logo">${logoHTML}</div>
     </div>
-    <div class="di-body">
-      <div class="di-party-row">
-        <div>
-          <div class="di-label">Invoice To:</div>
-          <div class="di-val">${escapeHTML(first.party || 'Walk-in Customer')}</div>
-          ${first.phone ? `<div class="di-sub">${escapeHTML(first.phone)}</div>` : ''}
-          ${first.address ? `<div class="di-sub">${escapeHTML(first.address)}</div>` : ''}
-        </div>
-        <div class="di-meta-box">
-          <div class="di-meta-line"><span class="k">Invoice #</span> <span class="v">${escapeHTML(invoiceNo)}</span></div>
-          <div class="di-meta-line"><span class="k">Date</span> <span class="v">${fmtDate(first.date)}</span></div>
-          ${first.payment ? `<div class="di-meta-line"><span class="k">Payment</span> <span class="v">${escapeHTML(first.payment)}</span></div>` : ''}
-        </div>
+    <div class="di-rule"></div>
+    <div class="di-partyrow">
+      <div class="di-billto">
+        <div class="di-section-label">Bill To</div>
+        <div class="di-billname">${escapeHTML(first.party || 'Walk-in Customer')}</div>
+        ${first.phone ? `<div class="di-billsub">${escapeHTML(first.phone)}</div>` : ''}
+        ${first.address ? `<div class="di-billsub">${escapeHTML(first.address)}</div>` : ''}
       </div>
-      <div class="di-table-wrap">
-        <table class="di-table">
-          <thead><tr><th class="di-num">SL.</th><th>Product Description</th><th class="di-num">Qty.</th><th class="di-num">Price</th><th class="di-num">Total</th></tr></thead>
-          <tbody>${itemRowsHTML}${deliveryRowHTML}</tbody>
-        </table>
+      <div class="di-meta">
+        <div class="di-meta-row main"><span class="k">Invoice No :</span><span class="v">${escapeHTML(invoiceNo)}</span></div>
+        <div class="di-meta-row"><span class="k">Date :</span><span class="v">${fmtDate(first.date)}</span></div>
+        ${first.payment ? `<div class="di-meta-row"><span class="k">Payment :</span><span class="v">${escapeHTML(first.payment)}</span></div>` : ''}
       </div>
-      <div class="di-bottom-grid">
-        <div class="di-payment">
-          <div class="di-payment-title">Payment Info</div>
-          ${first.payment ? `<div><strong>Method:</strong> ${escapeHTML(first.payment)}</div>` : ''}
-          ${first.phone ? `<div><strong>Phone:</strong> ${escapeHTML(first.phone)}</div>` : ''}
-          ${first.address ? `<div><strong>Address:</strong> ${escapeHTML(first.address)}</div>` : ''}
-        </div>
-        <div class="di-summary">
-          <div class="di-summary-line"><strong>Sub Total</strong><span>${fmtMoney(subtotal)}</span></div>
+    </div>
+    <table class="di-table">
+      <thead><tr><th>Sl.</th><th>Description</th><th class="di-num">Qty</th><th class="di-num">Rate</th><th class="di-num">Amount</th></tr></thead>
+      <tbody>${itemRowsHTML}${deliveryRowHTML}</tbody>
+    </table>
+    <div class="di-bottom-grid">
+      <div class="di-payment">
+        <div class="di-payment-title">Payment Info</div>
+        ${first.payment ? `<div class="di-pay-pair"><div class="di-pay-sub">Method</div><div class="di-pay-val">${escapeHTML(first.payment)}</div></div>` : ''}
+        ${first.phone ? `<div class="di-pay-pair"><div class="di-pay-sub">Phone</div><div class="di-pay-val">${escapeHTML(first.phone)}</div></div>` : ''}
+        ${first.address ? `<div class="di-pay-pair"><div class="di-pay-sub">Address</div><div class="di-pay-val">${escapeHTML(first.address)}</div></div>` : ''}
+      </div>
+      <div class="di-summary">
+        <div class="di-summary-box"><div class="di-summary-line"><strong>Sub Total</strong><span>${fmtMoney(subtotal)}</span></div></div>
+        <div class="di-summary-box2">
           ${groupDeliveryCharge > 0 ? `<div class="di-summary-line"><strong>Shipping</strong><span>${fmtMoney(groupDeliveryCharge)}</span></div>` : ''}
           ${taxAmount ? `<div class="di-summary-line"><strong>Tax</strong><span>${fmtMoney(taxAmount)}</span></div>` : ''}
           <div class="di-total-row"><span class="k">${escapeHTML(totalLabel)}</span><span class="v">${fmtMoney(grandTotal)}</span></div>
         </div>
       </div>
-      <div class="di-barcode">
-        <div class="di-barcode-box"><canvas class="bc-canvas" data-value="${escapeHTML(invoiceNo)}" height="50"></canvas><div class="di-pid">${escapeHTML(invoiceNo)}</div></div>
-      </div>
-      <div class="di-footer-row">
-        <div class="di-contact"><strong>For Any Query:</strong>${footerEmail ? `<br>Email us: ${escapeHTML(footerEmail)}` : ''}${contactPhone ? `<br>Call us: ${escapeHTML(contactPhone)}` : ''}${footerAddress ? `<br>${escapeHTML(footerAddress)}` : ''}</div>
-        <div class="di-sign"><div class="di-sign-line"></div><strong>Authorized Signature</strong></div>
-      </div>
-      <div class="di-foot">Thank you for your business</div>
     </div>
+    <div class="di-signrow">
+      <div class="di-qr-box"><canvas class="qr-canvas" data-value="${escapeHTML(qrText)}"></canvas><div class="di-pid">${escapeHTML(invoiceNo)}</div></div>
+      <div class="di-sign"><div class="di-sign-line"></div><strong>Authorized Signature</strong></div>
+    </div>
+    <div class="di-foot">Thank you for your business</div>
   </div>`;
 }
 // একাধিক ফরম্যাটেই (A4 / Thermal 58mm / Thermal 80mm / Digital Invoice) একই
