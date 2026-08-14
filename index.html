@@ -5254,6 +5254,8 @@ const todayISO = () => toLocalISODate(new Date());
 
 /* ---------------- PERSISTENCE (local cache) ---------------- */
 const OFFLINE_PENDING_KEY = 'myshop_offline_pending_v1';
+const PENDING_MUTATION_JOURNAL_KEY = 'myshop_pending_mutation_journal_v2';
+let __cloudSyncGeneration = 0;
 // আগে এই ফ্ল্যাগটা শুধু মেমরিতে (JS variable) রাখা হতো — অফলাইনে এন্ট্রি করার পর অ্যাপ পুরোপুরি
 // বন্ধ করে আবার খুললে (পেজ রিলোড) এই ফ্ল্যাগ রিসেট হয়ে যেত। ফলে অনলাইনে ফিরে আসার পর অ্যাপ
 // বুঝতেই পারতো না যে ডিভাইসে সিঙ্ক-না-হওয়া অফলাইন এন্ট্রি আছে, আর সরাসরি ক্লাউডের পুরনো ডেটা
@@ -5277,6 +5279,49 @@ function cacheOrdersLocally(){
   }catch(_e){ return false; }
 }
 
+function persistPendingMutationJournal(){
+  try{
+    const patches=[];
+    pendingLegacyRecordPatches.forEach(p=>patches.push({module:p.module,id:p.id,value:p.value}));
+    const journal={
+      version:2,
+      at:Date.now(),
+      company:state.company,
+      settings:state.settings,
+      security:state.security,
+      idCounter,
+      orders:Array.isArray(state.orders)?state.orders.slice(0,500):[],
+      patches
+    };
+    localStorage.setItem(PENDING_MUTATION_JOURNAL_KEY, JSON.stringify(journal));
+    return true;
+  }catch(_e){ return false; }
+}
+function clearPendingMutationJournal(){
+  try{ localStorage.removeItem(PENDING_MUTATION_JOURNAL_KEY); }catch(_e){}
+}
+function applyPendingMutationJournal(){
+  try{
+    const raw=localStorage.getItem(PENDING_MUTATION_JOURNAL_KEY);
+    if(!raw) return false;
+    const j=JSON.parse(raw);
+    if(!j || j.version!==2) return false;
+    Object.assign(state.company,j.company||{});
+    Object.assign(state.settings,j.settings||{});
+    Object.assign(state.security,j.security||{});
+    if(Array.isArray(j.orders)) state.orders=j.orders;
+    if(Number(j.idCounter)>0) idCounter=Math.max(Number(idCounter)||1,Number(j.idCounter));
+    const targets={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems};
+    (j.patches||[]).forEach(p=>{
+      const list=targets[p.module]; if(!list || p.id==null) return;
+      const idx=list.findIndex(x=>String(x&&x.id)===String(p.id));
+      if(p.value===null){ if(idx>=0) list.splice(idx,1); return; }
+      if(idx>=0) list[idx]=p.value; else list.push(p.value);
+    });
+    APP_DATA_VERSION++;
+    return true;
+  }catch(_e){ return false; }
+}
 function cacheStateLocally(showError){
   try{
     const payload = {
@@ -5288,9 +5333,11 @@ function cacheStateLocally(showError){
       expenses: state.expenses,
       warrantyClaims: state.warrantyClaims,
       invItems: state.invItems,
+      orders: Array.isArray(state.orders)?state.orders.slice(0,500):[],
       idCounter
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    if(!offlineEditsPending) { try{ localStorage.removeItem(PENDING_MUTATION_JOURNAL_KEY); }catch(_e){} }
     return true;
   }catch(err){
     if(showError) showToast('Could not save — device storage may be full');
@@ -5299,36 +5346,44 @@ function cacheStateLocally(showError){
 }
 function saveState(skipDriveSchedule, syncMode){
   APP_DATA_VERSION++;
-  __dataMutationVersion++; // প্রতিটা লোকাল সেভ/এন্ট্রিতে বাড়ে, যাতে ব্যাকগ্রাউন্ডে চলা পুরনো ক্লাউড রিড এটাকে ওভাররাইট করতে না পারে
-  markAllPagesDirty(); // any data write can affect what a page would show — force fresh renders on next visit
-  // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
-  // instead of waiting on the JSON.stringify + localStorage write to finish first.
+  __dataMutationVersion++;
+  markAllPagesDirty();
+  // IMPORTANT: every local mutation is marked pending immediately, not only offline.
+  // A refresh can otherwise let a stale Firebase snapshot replace a just-entered record
+  // before the 600ms cloud debounce completes.
+  setOfflineEditsPending(true);
+  persistPendingMutationJournal();
+  // Keep the old deferred full-cache write for performance. The small journal above is
+  // synchronous and is replayed on startup, so a refresh cannot lose the latest edit.
   setTimeout(()=>cacheStateLocally(true), 0);
-  if(!navigator.onLine) setOfflineEditsPending(true); // অফলাইনে করা পরিবর্তন — কানেকশন ফিরলে ক্লাউডে পাঠাতে হবে
   syncShopToCloud(syncMode || 'full');
   if(!skipDriveSchedule) scheduleAutoDriveBackup();
 }
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return false;
-    const d = JSON.parse(raw);
-    Object.assign(state.company, d.company || {});
-    Object.assign(state.settings, d.settings || {});
-    Object.assign(state.security, d.security || {});
-    state.sales = d.sales || [];
-    state.purchases = d.purchases || [];
-    state.expenses = d.expenses || [];
-    state.warrantyClaims = d.warrantyClaims ? Object.values(d.warrantyClaims) : [];
-    state.invItems = d.invItems || [];
-    try{
-      const cachedOrders = localStorage.getItem(ORDERS_CACHE_KEY);
-      state.orders = cachedOrders ? (JSON.parse(cachedOrders) || []) : (d.orders || []);
-    }catch(_e){ state.orders = d.orders || []; }
-    idCounter = d.idCounter || 1;
-    return true;
+    if(raw){
+      const d = JSON.parse(raw);
+      Object.assign(state.company, d.company || {});
+      Object.assign(state.settings, d.settings || {});
+      Object.assign(state.security, d.security || {});
+      state.sales = d.sales || [];
+      state.purchases = d.purchases || [];
+      state.expenses = d.expenses || [];
+      state.warrantyClaims = d.warrantyClaims ? Object.values(d.warrantyClaims) : [];
+      state.invItems = d.invItems || [];
+      try{
+        const cachedOrders = localStorage.getItem(ORDERS_CACHE_KEY);
+        state.orders = cachedOrders ? (JSON.parse(cachedOrders) || []) : (d.orders || []);
+      }catch(_e){ state.orders = d.orders || []; }
+      idCounter = d.idCounter || 1;
+    }
+    // Replay the synchronous mutation journal AFTER the normal cache. This is the
+    // critical refresh/offline recovery path for edits made just before reload.
+    const replayed=applyPendingMutationJournal();
+    return !!raw || replayed;
   }catch(err){
-    return false;
+    try{return applyPendingMutationJournal();}catch(_e){return false;}
   }
 }
 
@@ -5343,6 +5398,7 @@ function queueLegacyRecordPatch(module, id, value){
   if(id == null || String(id).trim()==='') return;
   const key = String(module)+'/'+String(id);
   pendingLegacyRecordPatches.set(key, {module:String(module), id:String(id), value:value===null ? null : stripUndefinedDeep(value)});
+  try{ if(typeof state!=='undefined' && typeof persistPendingMutationJournal==='function') persistPendingMutationJournal(); }catch(_e){}
 }
 function clearLegacyRecordPatches(){ pendingLegacyRecordPatches.clear(); }
 function buildLegacyRecordPatchUpdate(){
@@ -5450,10 +5506,16 @@ function initFirebaseCore(){
 function shopRef(path){ return fbDb.ref('shops/' + currentUid + (path ? '/' + path : '')); }
 
 async function loadShopData(uid){
+  const readVersionAtStart=__dataMutationVersion;
+  if(offlineEditsPending && localStorage.getItem(PENDING_MUTATION_JOURNAL_KEY)){
+    try{ loadState(); }catch(_e){}
+    return {localPending:true,skippedCloudRead:true};
+  }
   if(typeof SCALABLE_MODE !== 'undefined' && SCALABLE_MODE && window.MYSHOP_SCALABLE_LOAD_V22){
     try{
       if(window.MYSHOP_SCALABLE_BOOT_V26 && typeof window.MYSHOP_SCALABLE_BOOT_V26.boot==='function') await window.MYSHOP_SCALABLE_BOOT_V26.boot();
       const result=await window.MYSHOP_SCALABLE_LOAD_V22.load(uid);
+      if(readVersionAtStart!==__dataMutationVersion || offlineEditsPending){ try{ loadState(); }catch(_e){} return {localPending:true,staleCloudRead:true}; }
       backfillInventoryLinks();
       cacheStateLocally(false); // cache only; never rewrite the whole Firebase tree on startup
       try{ localStorage.setItem('myshop_scalable_ready_v26','1'); }catch(e){}
@@ -5491,13 +5553,12 @@ async function loadShopData(uid){
       baseRef.child('idCounter').once('value'),
       ...modules.map(loadAll)
     ]);
+    if(readVersionAtStart!==__dataMutationVersion || offlineEditsPending){ try{ loadState(); }catch(_e){} return {localPending:true,staleCloudRead:true}; }
     Object.assign(state.company,company.val()||{});
     Object.assign(state.settings,settings.val()||{});
     Object.assign(state.security,security.val()||{});
-    // সরাসরি ওভাররাইটের বদলে merge — উপরের scalable load()-এ একই কারণে করা ফিক্সের মতোই,
-    // যাতে লোড চলাকালীন করা কোনো লোকাল এন্ট্রি ক্লাউডের (তখনও পুরনো) ডেটা দিয়ে মুছে না যায়।
-    modules.forEach((m,i)=>{ state[m] = mergeRecordsById(state[m], rows[i]||[]); });
-    idCounter = computeSafeIdCounter([state.sales,state.purchases,state.expenses,state.invItems], idCounterSnap.val()||1, idCounter);
+    modules.forEach((m,i)=>{ state[m]=rows[i]||[]; });
+    idCounter=idCounterSnap.val()||1;
     if(!state.settings.products) state.settings.products=[];
     if(!state.settings.videos) state.settings.videos=[];
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories=['ইলেকট্রনিক্স','কসমেটিক্স','খাদ্যপণ্য','পোশাক','অন্যান্য'];
@@ -5587,11 +5648,11 @@ function syncShopToCloud(syncMode){
   if(!fbDb || !currentUid) return;
   clearTimeout(cloudSyncTimer);
   const mode = syncMode === 'record' ? 'record' : 'full';
+  const generation=++__cloudSyncGeneration;
+  const mutationAtStart=APP_DATA_VERSION;
   cloudSyncTimer = setTimeout(()=>{
     let writePromise;
     try{
-      // Offline recovery and explicit full-sync callers retain the original complete
-      // write semantics. Normal ledger edits use only the changed child nodes.
       if(mode === 'record' && pendingLegacyRecordPatches.size){
         const updates = buildLegacyRecordPatchUpdate();
         writePromise = Object.keys(updates).length ? shopRef().update(updates) : Promise.resolve();
@@ -5608,19 +5669,23 @@ function syncShopToCloud(syncMode){
           idCounter
         }));
       }
-    }catch(err){
-      writePromise = Promise.reject(err);
-    }
+    }catch(err){ writePromise=Promise.reject(err); }
     Promise.resolve(writePromise).then(()=>{
+      // If another edit happened while this request was in flight, the newer edit
+      // remains pending and must not be marked synced by this older response.
+      if(generation!==__cloudSyncGeneration || mutationAtStart!==APP_DATA_VERSION) return;
       if(mode === 'record') clearLegacyRecordPatches();
+      clearPendingMutationJournal();
       setOfflineEditsPending(false);
     }).catch((err)=>{
       setOfflineEditsPending(true);
+      persistPendingMutationJournal();
       console.error('Cloud sync failed:', err);
       if(navigator.onLine) showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন');
     });
   }, 600);
 }
+
 
 const WELCOME_SEEN_KEY = 'myshop_welcome_seen_v1';
 function showAuthScreen(){
@@ -15260,29 +15325,11 @@ async function load(uid,opts){
     if(state.company) Object.assign(state.company,base[0].val()||{});
     if(state.settings) Object.assign(state.settings,base[1].val()||{});
     if(state.security) Object.assign(state.security,base[2].val()||{});
-    // এই পুরো লোড শেষ হতে (একাধিক পেজে করে) কিছুটা সময় লাগে। এই সময়ের মধ্যে ইউজার যদি
-    // নতুন সেল/পারচেজ/এক্সপেন্স/ইত্যাদি এন্ট্রি করেন, সেটা সাথে সাথে state-এ যোগ হয়ে যায়,
-    // কিন্তু ক্লাউডে পাঠানো হয় আলাদাভাবে ডিবাউন্স করে (তখনো পাঠানো নাও হয়ে থাকতে পারে)।
-    // আগে এখানে state[name]=rows দিয়ে সরাসরি ওভাররাইট করা হতো — ফলে এই লোড শেষ হওয়ার সময়
-    // ক্লাউডের (তখনও পুরনো) ডেটা দিয়ে RAM-এর সদ্য-করা এন্ট্রিটা মুছে যেত, আর তারপর
-    // cacheStateLocally() কল হয়ে সেই মোছা অবস্থাটাই localStorage-এ সেভ হয়ে যেত — তাই
-    // রিফ্রেশ দিলে এন্ট্রিটা আর ফিরে আসতো না। এখন id মিলিয়ে merge করা হয় (Drive restore-এ
-    // ব্যবহৃত mergeRecordsById-এর মতোই) — ডিভাইসে থাকা কোনো এন্ট্রি কখনো মোছা হয় না, ক্লাউডের
-    // শুধু নতুন/অনুপস্থিত এন্ট্রিগুলোই যোগ হয়।
-    const assign=(name,rows)=>{
-      try{
-        state[name] = (typeof mergeRecordsById==='function') ? mergeRecordsById(state[name],rows) : (rows||[]);
-      }catch(_e){}
-    };
+    const assign=(name,rows)=>{try{state[name]=rows}catch(_e){}};
     fullResults.forEach(x=>assign(x.module,x.items));
     assign('orders',ordersItems);
   }
-  if(typeof idCounter!=='undefined'){
-    const cloudIdCounter=base[3].val()||1;
-    idCounter=(typeof computeSafeIdCounter==='function' && typeof state!=='undefined')
-      ? computeSafeIdCounter([state.sales,state.purchases,state.expenses,state.invItems],cloudIdCounter,idCounter)
-      : cloudIdCounter;
-  }
+  if(typeof idCounter!=='undefined') idCounter=base[3].val()||1;
 
   return Object.freeze({
     version:VERSION,bounded:true,requestPageSize:size,
@@ -15921,17 +15968,19 @@ function startHighScaleOrderListener_DISABLED() {
   }
   async function hydrateAll(uid){
     if(hydrating) return;
+    const hydrationVersion=typeof __dataMutationVersion!=='undefined'?__dataMutationVersion:0;
     hydrating=true; stopped=false;
     try{
       /* One module at a time: concurrent 50K hydration creates CPU/GC bursts
          on low-memory Android devices and can delay touch dispatch. */
       for(const module of MODULES){
-        if(stopped) break;
+        if(stopped || hydrationVersion!==__dataMutationVersion || offlineEditsPending) break;
         await hydrateModule(uid,module);
       }
+      if(hydrationVersion!==__dataMutationVersion || offlineEditsPending) return;
       try{ localStorage.setItem(META,JSON.stringify({uid,completed:true,at:Date.now()})); }catch(_e){}
       try{
-        const persist=()=>{ try{ if(typeof cacheStateLocally==='function') cacheStateLocally(false); }catch(_e){} };
+        const persist=()=>{ try{ if(!offlineEditsPending && typeof cacheStateLocally==='function') cacheStateLocally(false); }catch(_e){} };
         if('requestIdleCallback' in window) window.requestIdleCallback(persist,{timeout:1200});
         else setTimeout(persist,1200);
       }catch(_e){}
@@ -15946,6 +15995,8 @@ function startHighScaleOrderListener_DISABLED() {
   }
 
   async function fastLoad(uid){
+    const loadVersion=typeof __dataMutationVersion!=='undefined'?__dataMutationVersion:0;
+    if(offlineEditsPending || localStorage.getItem(PENDING_MUTATION_JOURNAL_KEY)){ try{loadState();}catch(_e){} return {localPending:true}; }
     const database=db();
     if(!database) throw new Error('Firebase Database unavailable');
     const base=database.ref('shops/'+uid);
@@ -15954,6 +16005,7 @@ function startHighScaleOrderListener_DISABLED() {
       base.child('security').once('value'),base.child('idCounter').once('value'),
       ...MODULES.map(m=>page(uid,m,null,FIRST_PAGE))
     ]);
+    if(loadVersion!==__dataMutationVersion || offlineEditsPending){ try{loadState();}catch(_e){} return {localPending:true,staleCloudRead:true}; }
     Object.assign(state.company,snaps[0].val()||{});
     Object.assign(state.settings,snaps[1].val()||{});
     Object.assign(state.security,snaps[2].val()||{});
