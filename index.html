@@ -5854,7 +5854,13 @@ function verifyOtpCode(){
     const rec = snap.val();
     if(!rec){
       // অন্য কোথাও থেকে আগেই ভেরিফাই হয়ে গেছে
-      loadShopData(currentUid).then(()=>{ enterOrLock(); });
+      loadShopData(currentUid).then(()=>{ enterOrLock(); }).catch(err=>{
+        // loadShopData ব্যর্থ হলেও এখানে আটকে থাকা যাবে না — নাহলে ইউজার এই OTP
+        // স্ক্রিনেই চিরকাল আটকে থাকবেন, কোনো এরর মেসেজ ছাড়াই। ক্যাশ করা ডেটা দিয়েই
+        // অ্যাপ খুলে দেওয়া হলো (enterOrLock নিজে থেকেই লোকাল state ব্যবহার করে)।
+        console.error('loadShopData failed after email verification check:', err);
+        enterOrLock();
+      });
       return;
     }
     if(Date.now() > rec.expiresAt){
@@ -5869,6 +5875,11 @@ function verifyOtpCode(){
     }
     fbDb.ref('shops/' + currentUid + '/emailVerification').remove().then(()=>{
       loadShopData(currentUid).then(()=>{
+        enterOrLock();
+      }).catch(err=>{
+        // এখানেও একই কারণে — loadShopData ব্যর্থ হলে ইউজার যেন কোড-ভেরিফিকেশন স্ক্রিনে
+        // আটকে না থাকেন, ক্যাশ করা ডেটা দিয়েই অ্যাপ খুলে দেওয়া হলো।
+        console.error('loadShopData failed after code verification:', err);
         enterOrLock();
       });
     });
@@ -7814,6 +7825,18 @@ window.addEventListener('scroll', closeAllTxnMenus, true);
 window.addEventListener('resize', closeAllTxnMenus);
 document.addEventListener('click', closeAllTxnMenus);
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+// href-এ বসানোর আগে URL-এর স্কিম যাচাই — http/https ছাড়া অন্য কিছু (যেমন javascript:)
+// হলে খালি স্ট্রিং রিটার্ন করে, যাতে ইউজার-টাইপ করা লিংক (যেমন Warranty Claim-এর
+// Document URL) থেকে স্ক্রিপ্ট-ইনজেকশন সম্ভব না হয় — escapeHTML শুধু HTML ক্যারেক্টার
+// এস্কেপ করে, URL স্কিম চেক করে না, তাই এই আলাদা গার্ডটা দরকার।
+function safeHref(url){
+  const s = String(url || '').trim();
+  if(!/^https?:\/\//i.test(s)) return '';
+  try{
+    const u = new URL(s);
+    return (u.protocol === 'http:' || u.protocol === 'https:') ? s : '';
+  }catch(e){ return ''; }
+}
 
 /* ---------------- AUTO STOCK DEDUCTION (Sales & confirmed Orders auto-reduce Inventory) ---------------- */
 // ক্যাটাগরি অনুযায়ী মিলিয়ে ইনভেন্টরি আইটেম খোঁজা হয় (নাম + ক্যাটেগরি দুটোই মিললে সবচেয়ে নির্ভুল ম্যাচ,
@@ -8803,7 +8826,7 @@ function openWarrantyDetailSheet(saleId){
     <div class="warranty-kv"><span class="k">Service Center</span><span class="v">${escapeHTML(c.serviceCenter||'—')}</span></div><div class="warranty-kv"><span class="k">Expected Return</span><span class="v">${c.expectedDate?escapeHTML(fmtDateBn(c.expectedDate)):'—'}</span></div>
     <div class="warranty-kv"><span class="k">Resolution</span><span class="v">${escapeHTML(c.resolution||'—')}</span></div><div class="warranty-kv"><span class="k">Cost</span><span class="v">${escapeHTML(fmtMoney(c.cost||0))}</span></div>
     ${c.serviceHistoryText?`<div class="wc-meta" style="margin-top:8px;"><strong>Service History:</strong><br>${escapeHTML(c.serviceHistoryText).replace(/\\n/g,'<br>')}</div>`:''}
-    ${c.documentUrl?`<div style="margin-top:8px;"><a href="${escapeHTML(c.documentUrl)}" target="_blank" rel="noopener" style="color:var(--blue-700);font-size:12px;">📄 Service document</a></div>`:''}
+    ${c.documentUrl && safeHref(c.documentUrl)?`<div style="margin-top:8px;"><a href="${escapeHTML(safeHref(c.documentUrl))}" target="_blank" rel="noopener" style="color:var(--blue-700);font-size:12px;">📄 Service document</a></div>`:''}
     <div class="warranty-detail-actions"><button class="btn btn-ghost" type="button" onclick="openWarrantyClaimSheet(null,${JSON.stringify(c.id)})">Edit Claim</button><button class="btn btn-danger" type="button" onclick="deleteWarrantyClaim(${JSON.stringify(c.id)})">Delete</button></div></div>`).join(''):`<div class="empty-state" style="padding:24px 10px;">এই পণ্যের কোনো Warranty Claim নেই।</div>`;
   body.innerHTML=`<div class="warranty-detail-card"><div class="warranty-detail-head">${photo}<div style="min-width:0;"><div class="warranty-detail-title">${escapeHTML(sale.name||'—')}</div><div class="warranty-detail-sub">${escapeHTML(sale.party||'Walk-in')} · ${escapeHTML(sale.phone||'')}</div></div></div>
     <div class="warranty-kv"><span class="k">Serial / IMEI</span><span class="v num">${escapeHTML(sale.serial||'—')}</span></div><div class="warranty-kv"><span class="k">Product ID / SKU</span><span class="v">${escapeHTML(sale.productId||item?.sku||'—')}</span></div>
