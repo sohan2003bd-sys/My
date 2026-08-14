@@ -310,19 +310,50 @@
   .main-menu-divider{height:1px;background:var(--rule,#e6e9e7);margin:8px 10px;}
   .main-menu-drive{
     flex:none;border-top:1px solid var(--rule,#e6e9e7);
-    padding:10px 2px 0;
+    padding:12px 2px 0;
   }
   .main-menu-drive-card{
-    display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;
-    background:#F1F8F4;border:1px solid #D7EBDD;
+    display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:14px;
+    background:linear-gradient(150deg,#F7FAF8 0%,#FFFFFF 70%);border:1px solid #E3ECE6;
+    box-shadow:0 2px 10px rgba(15,56,48,.05);
+    transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
   }
-  .main-menu-drive-card .drive-dot{width:9px;height:9px;border-radius:50%;background:#3B9670;flex:none;}
+  .main-menu-drive-card.is-connected{border-color:#C7EAD3;background:linear-gradient(150deg,#EFFAF3 0%,#FFFFFF 72%);box-shadow:0 3px 12px rgba(59,150,112,.10);}
+  .main-menu-drive-card.is-syncing{border-color:#C6DBF7;background:linear-gradient(150deg,#EEF4FE 0%,#FFFFFF 72%);}
+  .drive-logo{
+    width:38px;height:38px;border-radius:11px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:#FFFFFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 8px rgba(15,56,48,.09);
+  }
+  .drive-logo svg{width:18px;height:auto;display:block;}
   .main-menu-drive-card .drive-copy{min-width:0;flex:1;}
-  .main-menu-drive-card strong{display:block;font-size:13px;color:var(--green-900);}
-  .main-menu-drive-card span{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;}
-  .main-menu-drive-actions{display:flex;gap:6px;margin-top:7px;}
-  .main-menu-drive-actions button{flex:1;min-height:36px;border-radius:10px;border:1px solid #D6E8DC;background:#fff;color:var(--green-900);font:inherit;font-size:11px;font-weight:700;}
-  .main-menu-drive-actions button:active{transform:scale(.98);}
+  .drive-title-row{display:flex;align-items:center;gap:7px;}
+  .drive-title-row strong{font-size:13px;color:var(--green-900);font-weight:700;letter-spacing:.01em;}
+  .drive-badge{
+    font-size:9px;font-weight:750;letter-spacing:.03em;text-transform:uppercase;
+    padding:2.5px 7px 2.5px 6px;border-radius:20px;flex:none;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .drive-badge .b-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;}
+  .drive-badge.st-connected{background:#E1F5E9;color:#1F7A46;}
+  .drive-badge.st-off{background:#FBEEDA;color:#B4740F;}
+  .drive-badge.st-syncing{background:#E5EFFE;color:#1B5FD6;}
+  .drive-badge.st-syncing .b-dot{animation:driveDotPulse 1s ease-in-out infinite;}
+  @keyframes driveDotPulse{0%,100%{opacity:.3;transform:scale(.65);}50%{opacity:1;transform:scale(1);}}
+  .main-menu-drive-card .drive-sub{display:block;font-size:10.5px;color:var(--muted);margin-top:2.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .main-menu-drive-actions{display:flex;gap:6px;margin-top:8px;}
+  .main-menu-drive-actions button{
+    flex:1;min-height:37px;border-radius:11px;border:1px solid #D6E8DC;background:#fff;color:var(--green-900);
+    font:inherit;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;
+    transition:transform .12s ease,background .15s ease,box-shadow .15s ease,opacity .15s ease;
+  }
+  .main-menu-drive-actions button svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+  .main-menu-drive-actions button:active{transform:scale(.97);}
+  .main-menu-drive-actions button.primary{background:linear-gradient(150deg,#1674f5,#0e5adb);color:#fff;border-color:transparent;box-shadow:0 5px 14px rgba(22,116,245,.28);}
+  .main-menu-drive-actions button.primary:active{box-shadow:0 3px 8px rgba(22,116,245,.22);}
+  .main-menu-drive-actions button:disabled{opacity:.55;pointer-events:none;}
+  .main-menu-drive-actions button .spin{animation:driveSpin .8s linear infinite;}
+  @keyframes driveSpin{to{transform:rotate(360deg);}}
   /* Premium 3-line menu: lightweight, touch-friendly, GPU-composited animation */
   .main-menu-overlay{transition:opacity .22s ease,background-color .22s ease;}
   .main-menu-drawer{
@@ -377,7 +408,7 @@
   .main-menu-settings-list{animation:none;}
   .main-menu-settings-list.open .main-menu-settings-item{animation:mmSubIn .22s ease both;}
   .main-menu-settings-item:nth-child(2){animation-delay:.02s}.main-menu-settings-item:nth-child(3){animation-delay:.04s}.main-menu-settings-item:nth-child(4){animation-delay:.06s}.main-menu-settings-item:nth-child(5){animation-delay:.08s}.main-menu-settings-item:nth-child(6){animation-delay:.10s}
-  .main-menu-settings-item .msi-icon{color:#1674f5;font-size:15px;}
+  .main-menu-settings-item .msi-icon{color:#1674f5;}
   @keyframes mmSubIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
   @media (prefers-reduced-motion:reduce){.main-menu-drawer,.main-menu-item,.main-menu-icon,.main-menu-chevron,.main-menu-overlay{transition:none!important}.main-menu-settings-list.open .main-menu-settings-item{animation:none!important;}}
 
@@ -385,10 +416,18 @@
   .main-menu-settings-toggle{cursor:pointer;}
   .main-menu-settings-list{display:none;padding:2px 10px 8px;}
   .main-menu-settings-list.open{display:block;}
-  .main-menu-settings-item{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-left:3px solid #D6E8DC;border-radius:10px;background:rgba(255,255,255,.72);color:var(--ink);font:inherit;font-size:12px;font-weight:600;text-align:left;margin:4px 0;box-sizing:border-box;}
-  .main-menu-settings-item:active{transform:scale(.985);background:#EAF5EE;}
-  .main-menu-settings-item .msi-icon{width:22px;text-align:center;flex:none;}
-  .main-menu-settings-item .msi-text{flex:1;}
+  .main-menu-settings-item{width:100%;display:flex;align-items:center;gap:11px;padding:9px 10px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.78);color:var(--ink);font:inherit;font-size:12.5px;font-weight:650;text-align:left;margin:5px 0;box-sizing:border-box;transition:background .15s ease,transform .1s ease,border-color .15s ease,box-shadow .15s ease;}
+  .main-menu-settings-item:hover{background:#fff;border-color:rgba(22,116,245,.10);box-shadow:0 4px 12px rgba(15,56,48,.05);}
+  .main-menu-settings-item:active{transform:scale(.97);background:#EAF5EE;border-color:rgba(22,116,245,.14);}
+  .main-menu-settings-item .msi-icon{
+    width:31px;height:31px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;
+    background:linear-gradient(145deg,#f4f8f6,#e8efeb);color:#1674f5;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 7px rgba(15,56,48,.07);
+    transition:transform .18s ease,background .18s ease,color .18s ease;
+  }
+  .main-menu-settings-item .msi-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .main-menu-settings-item:active .msi-icon{transform:scale(.9);}
+  .main-menu-settings-item .msi-text{flex:1;line-height:1.32;}
   .settings-page-local-nav{display:none !important;}
   @media (min-width:521px){
     .main-menu-drawer{left:max(calc(50% - 260px),0px);}
@@ -784,39 +823,94 @@
   .navbtn.active svg{ stroke-width:2.6; }
   .dot-ind{ display:none; }
 
-  /* ---------- Forms / inputs ---------- */
-  .field{ margin-bottom:14px; }
-  .fname-cogs-hint{ font-size:12px; margin-top:5px; line-height:1.4; }
+  /* ---------- Forms / inputs (স্মার্ট, আধুনিক ইনপুট সিস্টেম) ---------- */
+  .field{ margin-bottom:16px; position:relative; }
+  .fname-cogs-hint{ font-size:12px; margin-top:6px; line-height:1.4; display:flex; align-items:center; gap:5px; animation:fieldFadeIn .2s ease both; }
   .fname-cogs-hint.matched{ color: var(--green-600); }
   .fname-cogs-hint.unmatched{ color: var(--loss); }
-  .field label{ display:block; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .field label{
+    display:flex; align-items:center; gap:5px;
+    font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:600;
+    margin-bottom:7px;
+    transition:color .18s ease, transform .18s ease;
+  }
+  .field:focus-within label{ color:var(--green-700); }
+  /* বেস ইনপুট শেল: কার্ড ব্যাকগ্রাউন্ড থেকে স্পষ্টভাবে আলাদা হয়ে "ভাসমান" অনুভূতি দেয় */
   .field input, .field select, .field textarea{
-    width:100%; border:1.5px solid var(--paper-deep); background:var(--paper); border-radius:11px;
-    padding:11px 12px; font-size:14.5px; color:var(--ink); outline:none;
-    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    width:100%; border:1.5px solid rgba(15,56,48,0.10);
+    background:linear-gradient(180deg, #FFFFFF, #FBFBFA);
+    border-radius:13px;
+    padding:12.5px 14px; font-size:14.5px; color:var(--ink); outline:none;
+    box-shadow:0 1px 2px rgba(15,40,34,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
+    transition:border-color .2s cubic-bezier(.22,.8,.2,1), box-shadow .2s cubic-bezier(.22,.8,.2,1),
+      transform .2s cubic-bezier(.22,.8,.2,1), background .2s ease;
   }
+  .field input::placeholder, .field textarea::placeholder{ color:#A8ABA3; }
+  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(15,56,48,0.20); }
   .field input:focus, .field select:focus, .field textarea:focus{
-    border-color:var(--green-600); background:#fff; box-shadow:0 0 0 3px rgba(46,125,91,0.15);
+    border-color:var(--green-600); background:#fff;
+    box-shadow:0 0 0 4px rgba(46,125,91,0.13), 0 6px 16px rgba(15,56,48,0.08);
+    transform:translateY(-1px);
   }
+  .field input:disabled, .field select:disabled, .field textarea:disabled{ opacity:.6; background:var(--paper-deep); transform:none; box-shadow:none; }
+  .field input:required:valid, .field select:required:valid{ /* keep quiet by default, no distracting green everywhere */ }
+  .field input[readonly]{ background:var(--paper); color:var(--muted); box-shadow:none; }
+  @keyframes fieldFadeIn{ from{ opacity:0; transform:translateY(-3px); } to{ opacity:1; transform:translateY(0); } }
+
+  /* কাস্টম সিলেক্ট অ্যারো — নেটিভ ব্রাউজার অ্যারোর বদলে থিমের সাথে মিলিয়ে */
+  .field select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B9670' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
+    padding-right:36px; cursor:pointer;
+  }
+  .field select option{ color:var(--ink); background:#fff; }
+
+  /* টেক্সটএরিয়া */
+  .field textarea{ resize:vertical; min-height:64px; line-height:1.5; }
+
+  /* ফাইল ইনপুট (ছবি/রিসিট আপলোড) — চিপ-স্টাইল বাটন */
+  .field input[type="file"]{
+    padding:9px 10px; font-size:12.5px; color:var(--muted); background:var(--paper); box-shadow:none;
+  }
+  .field input[type="file"]::file-selector-button{
+    border:none; background:linear-gradient(135deg, var(--green-700), var(--green-900)); color:#fff;
+    padding:8px 14px; border-radius:9px; font-size:12.5px; font-weight:600; margin-right:10px;
+    transition:transform .12s ease, box-shadow .12s ease; box-shadow:0 3px 8px rgba(15,56,48,0.25);
+  }
+  .field input[type="file"]::file-selector-button:active{ transform:scale(0.96); }
+  .field input[type="date"], .field input[type="time"]{ color-scheme:light; }
+
+  /* সাধারণ (নন-সুইচ) চেকবক্স/রেডিও — একটু বড়, থিম রঙে */
+  .field input[type="checkbox"], .field input[type="radio"]{
+    width:19px; height:19px; accent-color:var(--green-600); box-shadow:none; cursor:pointer;
+  }
+
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .computed-total{
-    background:linear-gradient(135deg, var(--tint-profit)); border:1px solid rgba(15,56,48,0.08); border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
+    background:linear-gradient(135deg, var(--tint-profit)); border:1px solid rgba(15,56,48,0.08); border-radius:14px; padding:13px 15px;
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 8px rgba(15,56,48,0.05);
+    transition:box-shadow .18s ease;
   }
-  .computed-total .v{ font-size:18px; font-weight:700; color:var(--green-800); }
+  .computed-total .v{ font-size:18.5px; font-weight:700; color:var(--green-800); letter-spacing:-.01em; }
 
   .btn{
-    width:100%; padding:13px; border-radius:12px; border:none; font-weight:600; font-size:14.5px;
+    width:100%; padding:14px; border-radius:13px; border:none; font-weight:600; font-size:14.5px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
     will-change:transform;
     transform:translateZ(0);
-    transition:transform .1s ease, box-shadow .15s ease;
+    transition:transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease, filter .15s ease, background .15s ease;
   }
-  .btn:active{ transform:scale(0.98); transition-duration:.04s; }
-  .btn:disabled{ opacity:0.6; pointer-events:none; }
-  .btn-primary{ background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; box-shadow:0 8px 18px rgba(15,56,48,0.28); }
-  .btn-primary:active{ background:var(--blue-900); }
-  .btn-gold{ background:linear-gradient(135deg, var(--gold-bright), var(--gold)); color:var(--green-900); box-shadow:var(--shadow-gold); }
-  .btn-ghost{ background:transparent; color:var(--muted); border:1.5px solid var(--paper-deep); }
+  .btn:active{ transform:scale(0.97); transition-duration:.05s; }
+  .btn:disabled{ opacity:0.55; pointer-events:none; filter:grayscale(.2); }
+  .btn-primary{ background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; box-shadow:0 10px 22px rgba(15,56,48,0.26), inset 0 1px 0 rgba(255,255,255,0.16); }
+  .btn-primary:active{ background:var(--blue-900); box-shadow:0 4px 10px rgba(15,56,48,0.3); }
+  .btn-gold{ background:linear-gradient(135deg, var(--gold-bright), var(--gold)); color:var(--green-900); box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .btn-ghost{ background:transparent; color:var(--muted); border:1.5px solid rgba(15,56,48,0.12); box-shadow:none; }
+  .btn-ghost:active{ background:rgba(15,56,48,0.05); }
   .btn-danger{ background:var(--loss-bg); color:var(--loss); }
+  .btn-danger:active{ background:#f5d9d1; }
 
   /* ---------- Modal / bottom sheet ----------
      iOS-style presentation curve (cubic-bezier(.32,.72,0,1)) used throughout for
@@ -824,7 +918,7 @@
   .overlay{
     position:fixed; inset:0; background:rgba(15,24,20,0.5); z-index:60;
     opacity:0; pointer-events:none;
-    transition:opacity .14s ease;
+    transition:opacity .2s ease;
     /* backdrop-filter removed: expensive on mid-range Android GPUs */
   }
   .overlay.open{ opacity:1; pointer-events:auto; }
@@ -832,19 +926,19 @@
   .sheet{
     position:fixed; left:0; right:0; bottom:0; z-index:61;
     max-width:520px; margin:0 auto; background:var(--paper);
-    border-radius:22px 22px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom));
+    border-radius:24px 24px 0 0; padding:14px 18px calc(20px + env(safe-area-inset-bottom));
     transform:translateY(110%);
-    transition:transform .18s cubic-bezier(.22,.8,.2,1);
+    transition:transform .32s cubic-bezier(.22,.8,.2,1);
     max-height:88vh; overflow-y:auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    box-shadow:0 -20px 50px rgba(15,40,34,0.25);
+    box-shadow:0 -24px 60px rgba(15,40,34,0.28);
     border-top:3px solid var(--gold);
   }
   .sheet.open{ transform:translateY(0); }
   .sheet.dragging{ transition:none; }
   .sheet-handle{
-    width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 14px;
+    width:38px;height:4px;background:var(--paper-deep); border-radius:3px; margin:0 auto 16px;
     /* Bigger invisible touch target than the visible bar, so the drag-to-close
        gesture is easy to grab with a thumb without enlarging it visually. */
     position:relative;
@@ -853,8 +947,22 @@
     content:""; position:absolute; left:50%; top:50%;
     width:120px; height:36px; transform:translate(-50%,-50%);
   }
-  .sheet h2{ font-size:19px; margin:0 0 16px; }
-  .sheet-close{ position:absolute; right:16px; top:18px; background:none; border:none; font-size:20px; color:var(--muted); }
+  .sheet h2{
+    font-size:19px; margin:0 0 18px; padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+    display:flex; align-items:center; gap:8px;
+  }
+  .sheet-close{
+    position:absolute; right:14px; top:14px; z-index:2;
+    width:32px; height:32px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(15,56,48,0.06); border:none; font-size:17px; color:var(--muted);
+    transition:background .15s ease, transform .12s ease;
+  }
+  .sheet-close:active{ background:rgba(15,56,48,0.14); transform:scale(0.92); }
+  .sheet form{ animation:sheetContentRise .34s cubic-bezier(.22,.8,.2,1) both; }
+  @keyframes sheetContentRise{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ .sheet form{ animation:none; } }
 
   /* ---------- Login (premium ledger-vault design) ---------- */
   #onboardingScreen, #lockScreen, #verifyEmailScreen{
@@ -924,6 +1032,10 @@
     .login-mark::after{ animation:none; display:none; }
   }
   #onboardingScreen a, #lockScreen a, #verifyEmailScreen a{ color:rgba(245,239,221,0.7) !important; }
+  .remember-row{ display:flex; align-items:center; justify-content:space-between; margin:-6px 0 16px; font-size:12.5px; }
+  .remember-row label{ display:flex; align-items:center; gap:7px; color:rgba(245,239,221,0.72); cursor:pointer; }
+  .remember-row input[type="checkbox"]{ width:16px; height:16px; accent-color:#D9AF6B; cursor:pointer; margin:0; }
+  .remember-row .forgot-link{ color:#D9AF6B; font-weight:600; }
 
   .auth-divider{ display:flex; align-items:center; gap:10px; margin:18px 0; color:rgba(245,239,221,0.45); font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
   .auth-divider::before, .auth-divider::after{ content:""; flex:1; height:1px; background:rgba(217,175,107,0.25); }
@@ -939,16 +1051,6 @@
   .btn-google svg{ width:18px; height:18px; flex-shrink:0; }
   .auth-social-row{ display:flex; gap:10px; }
   .auth-social-row .btn-google{ width:auto; flex:1; }
-  .btn-facebook{
-    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
-    background:#1877F2; color:#FFFFFF; border:1px solid rgba(0,0,0,0.06); border-radius:12px;
-    padding:11px 14px; font-size:14px; font-weight:600; cursor:pointer;
-    box-shadow:0 12px 26px rgba(0,0,0,0.35), 0 0 0 1px rgba(217,175,107,0.16); transition:box-shadow .15s ease, transform .15s ease;
-  }
-  .btn-facebook:hover{ box-shadow:0 16px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(217,175,107,0.28); }
-  .btn-facebook:active{ transform:scale(0.98); }
-  .btn-facebook:disabled{ opacity:.6; cursor:default; }
-  .btn-facebook svg{ width:18px; height:18px; flex-shrink:0; }
   .btn-phone-toggle{ flex:0 0 auto; width:48px; padding:11px 0; font-size:18px; }
   .btn-phone-toggle.active{ box-shadow:0 0 0 2px var(--gold), 0 12px 26px rgba(0,0,0,0.35); }
   #phoneAuthForm{ margin-top:14px; }
@@ -964,6 +1066,10 @@
   #onboardingScreen .field label, #verifyEmailScreen .field label{ color:rgba(245,239,221,0.55); }
   #onboardingScreen .field input, #onboardingScreen .field select{
     background:rgba(255,255,255,0.07); border:1.5px solid rgba(217,175,107,0.24); border-radius:13px; color:#F5EFDD;
+  }
+  #onboardingScreen .field select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9AF6B' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
   }
   #onboardingScreen .field input::placeholder{ color:rgba(245,239,221,0.35); }
   #onboardingScreen .field select option{ color:#1B2420; }
@@ -1012,6 +1118,10 @@
   #onboardingScreen.light-auth .field input, #onboardingScreen.light-auth .field select{
     background:#F0EAD9; border:1.5px solid rgba(27,36,32,0.08); border-radius:13px; color:#1B2420;
   }
+  #onboardingScreen.light-auth .field select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B8863E' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
+  }
   #onboardingScreen.light-auth .field input::placeholder{ color:#9A9488; }
   #onboardingScreen.light-auth .field select option{ color:#1B2420; }
   #onboardingScreen.light-auth .field input:focus, #onboardingScreen.light-auth .field select:focus{
@@ -1029,11 +1139,6 @@
     box-shadow:none;
   }
   #onboardingScreen.light-auth .btn-google:hover{ box-shadow:0 4px 14px rgba(27,36,32,0.08); }
-  #onboardingScreen.light-auth .btn-facebook{
-    background:#1877F2; color:#FFFFFF; border:1px solid rgba(27,36,32,0.06);
-    box-shadow:none;
-  }
-  #onboardingScreen.light-auth .btn-facebook:hover{ box-shadow:0 4px 14px rgba(24,119,242,0.28); }
   #onboardingScreen.light-auth .login-hint{
     background:linear-gradient(120deg, rgba(242,114,42,0.08), rgba(242,114,42,0.02));
     border:1px solid rgba(242,114,42,0.16); color:#6B6355;
@@ -1118,6 +1223,10 @@
   #verifyEmailScreen .field input, #verifyEmailScreen .field select{
     background:rgba(255,255,255,0.07); border:1.5px solid rgba(217,175,107,0.24); border-radius:13px;
   }
+  #verifyEmailScreen .field select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9AF6B' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
+  }
   #verifyEmailScreen .field input:focus{
     border-color:#D9AF6B; background:rgba(255,255,255,0.1); box-shadow:0 0 0 4px rgba(217,175,107,0.18);
   }
@@ -1156,9 +1265,9 @@
   .toggle-row .k{ font-size:13.5px; font-weight:500; }
   .switch{ position:relative; width:44px; height:26px; flex:none; }
   .switch input{ opacity:0; width:0; height:0; }
-  .slider{ position:absolute; inset:0; background:var(--paper-deep); border-radius:20px; transition:.2s; cursor:pointer; }
-  .slider::before{ content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
-  .switch input:checked + .slider{ background:var(--blue-700); }
+  .slider{ position:absolute; inset:0; background:var(--paper-deep); border-radius:20px; transition:background .22s cubic-bezier(.22,.8,.2,1); cursor:pointer; box-shadow:inset 0 1px 3px rgba(0,0,0,0.08); }
+  .slider::before{ content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .26s cubic-bezier(.34,1.56,.64,1); box-shadow:0 1px 3px rgba(0,0,0,0.3); }
+  .switch input:checked + .slider{ background:var(--blue-700); box-shadow:inset 0 1px 3px rgba(0,0,0,0.08), 0 0 0 3px rgba(47,111,237,0.14); }
   .switch input:checked + .slider::before{ transform:translateX(18px); }
   .lock-dots{ display:flex; gap:14px; justify-content:center; margin:18px 0 22px; }
   .lock-dots .d{ width:14px; height:14px; border-radius:50%; background:var(--paper-deep); border:1.5px solid var(--paper-deep); transition:.15s; }
@@ -1235,11 +1344,21 @@
   .settings-subpage.active{ display:block; }
   .settings-empty-hint{ text-align:center; color:var(--muted); font-size:13px; padding:70px 24px; line-height:1.7; }
   .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
-  .chip{ background:var(--tint-profit); border:1px solid rgba(15,56,48,0.08); border-radius:20px; padding:7px 10px 7px 13px; font-size:12.5px; display:flex; align-items:center; gap:7px; color:var(--green-800); font-weight:500; }
-  .chip button{ border:none; background:rgba(15,56,48,0.12); width:16px;height:16px;border-radius:50%; font-size:9px; display:flex;align-items:center;justify-content:center; color:var(--green-800); }
+  .chip{ background:var(--tint-profit); border:1px solid rgba(15,56,48,0.08); border-radius:20px; padding:7px 10px 7px 13px; font-size:12.5px; display:flex; align-items:center; gap:7px; color:var(--green-800); font-weight:500; transition:transform .12s ease, box-shadow .12s ease; }
+  .chip button{ border:none; background:rgba(15,56,48,0.12); width:16px;height:16px;border-radius:50%; font-size:9px; display:flex;align-items:center;justify-content:center; color:var(--green-800); transition:background .12s ease, transform .12s ease; }
+  .chip button:active{ background:rgba(179,67,45,0.2); color:var(--loss); transform:scale(0.88); }
   .chip-add{ display:flex; gap:8px; }
-  .chip-add input{ flex:1; }
-  .chip-add button{ padding:0 14px; border-radius:10px; border:none; background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; font-size:13px; font-weight:600; }
+  .chip-add input{
+    flex:1; border:1.5px solid rgba(15,56,48,0.10); background:linear-gradient(180deg, #FFFFFF, #FBFBFA);
+    border-radius:11px; padding:10px 12px; font-size:13.5px; color:var(--ink); outline:none;
+    transition:border-color .18s ease, box-shadow .18s ease;
+  }
+  .chip-add input:focus{ border-color:var(--green-600); box-shadow:0 0 0 3px rgba(46,125,91,0.13); }
+  .chip-add button{
+    padding:0 16px; border-radius:11px; border:none; background:linear-gradient(135deg, var(--blue-700), var(--blue-900)); color:#fff; font-size:13px; font-weight:600;
+    box-shadow:0 4px 10px rgba(15,56,48,0.2); transition:transform .14s cubic-bezier(.34,1.56,.64,1);
+  }
+  .chip-add button:active{ transform:scale(0.94); }
   .field-inline{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--rule); }
   .field-inline:last-child{ border-bottom:none; }
   .field-inline .k{ font-size:13.5px; color:var(--ink); font-weight:500; }
@@ -1832,39 +1951,138 @@
     .wc-track{ transition:none; }
   }
 
-/* Settings home: dark grouped-list design only on the Settings page */
-#page-settings{background:#171717 !important; color:#f2f2f2; min-height:100%; padding-bottom:28px;}
-#page-settings.settings-section-open{background:#fff !important; color:#171717 !important;}
-#page-settings .settings-nav-title{color:#fff !important;}
-#page-settings .settings-home-panel{display:block; max-width:680px; margin:0 auto; padding:14px 18px 30px; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
-#page-settings .settings-home-brand{display:flex; align-items:center; gap:14px; padding:4px 2px 20px;}
-#page-settings .settings-home-back{width:42px;height:42px;border:0;background:transparent;color:#f4f4f4;font-size:38px;line-height:1;cursor:pointer;padding:0;}
-#page-settings .settings-home-title{font-size:29px;font-weight:700;letter-spacing:-.4px;color:#f5f5f5;}
-#page-settings .settings-home-subtitle{font-size:13px;color:#8e8e8e;margin-top:2px;}
-#page-settings .settings-home-group{background:#292929;border-radius:22px;padding:0 16px;margin:0 0 18px;overflow:hidden;border:1px solid rgba(255,255,255,.035);box-shadow:none;}
-#page-settings .settings-home-row{width:100%;min-height:66px;display:flex;align-items:center;gap:15px;border:0;border-bottom:1px solid rgba(255,255,255,.075);background:transparent;color:#eee;text-align:left;padding:0 8px;cursor:pointer;font:inherit;}
-#page-settings .settings-home-row:last-child{border-bottom:0;}
-#page-settings .settings-home-row:active{background:#333;}
-#page-settings .shr-icon{width:30px;min-width:30px;text-align:center;font-size:23px;filter:grayscale(.15);}
-#page-settings .shr-text{flex:1;font-size:17px;font-weight:450;letter-spacing:.05px;color:#ededed;}
-#page-settings .shr-arrow{font-size:31px;line-height:1;color:#777;margin-left:8px;font-weight:300;}
+/* Settings — clean light UI. The old black Settings page is removed completely. */
+#page-settings{
+  background:#f7f8f5 !important;
+  color:var(--ink,#1B2420) !important;
+  min-height:100%;
+  padding:14px 0 28px;
+}
+#page-settings .settings-home-panel{
+  display:block;
+  width:100%;
+  max-width:none;
+  margin:0 auto;
+  padding:0 12px 10px;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:transparent;
+  color:var(--ink,#1B2420);
+  overflow:visible;
+}
+#page-settings .settings-home-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:2px 4px 12px;
+}
+#page-settings .settings-home-back{
+  width:40px;
+  height:40px;
+  border:1px solid rgba(15,56,48,.10);
+  border-radius:50%;
+  background:#fff;
+  color:#26332f;
+  font-size:30px;
+  line-height:1;
+  cursor:pointer;
+  padding:0 0 3px;
+  box-shadow:0 2px 8px rgba(15,56,48,.07);
+}
+#page-settings .settings-home-title{font-size:24px;font-weight:750;letter-spacing:-.4px;color:#1d2b26;line-height:1.1;}
+#page-settings .settings-home-subtitle{font-size:12px;color:#7b8782;margin-top:2px;}
+
+/* All 19 Settings menus stay available in one compact, horizontally scrollable strip. */
+#page-settings .settings-home-group{
+  display:flex;
+  flex:0 0 auto;
+  width:max-content;
+  gap:8px;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  padding:0;
+  margin:0;
+  overflow:visible;
+}
+#page-settings .settings-home-panel{
+  overflow-x:auto;
+  overflow-y:visible;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+#page-settings .settings-home-panel::-webkit-scrollbar{display:none;}
+#page-settings .settings-home-panel > .settings-home-group:first-of-type{margin-left:0;}
+#page-settings .settings-home-row{
+  width:auto;
+  min-width:max-content;
+  min-height:54px;
+  height:54px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid rgba(15,56,48,.09);
+  border-radius:15px;
+  background:#fff;
+  color:#35413d;
+  text-align:left;
+  padding:0 13px;
+  cursor:pointer;
+  font:inherit;
+  box-shadow:0 3px 12px rgba(15,56,48,.07);
+  transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease, background .12s ease;
+}
+#page-settings .settings-home-row:active{transform:scale(.98);background:#f4faf7;}
+#page-settings .settings-home-row.settings-menu-active{
+  background:#eff9f4;
+  border-color:rgba(46,125,91,.34);
+  box-shadow:0 4px 14px rgba(46,125,91,.10);
+}
+#page-settings .shr-icon{width:24px;min-width:24px;text-align:center;font-size:20px;color:#2e7d5b;filter:none;}
+#page-settings .shr-icon svg{width:20px;height:20px;display:block;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#page-settings .shr-text{flex:none;font-size:13px;font-weight:650;letter-spacing:0;color:#35413d;white-space:nowrap;}
+#page-settings .shr-arrow{display:none;}
 #page-settings .settings-empty-hint{display:none !important;}
+
+/* The selected Settings form appears below the menu strip on a normal white card. */
 #page-settings .settings-subpage{display:none;}
-#page-settings .settings-subpage.active{display:block;background:#fff;color:#1f2937;margin:0;padding:14px 18px 32px;max-width:680px;margin-inline:auto;min-height:100%;}
+#page-settings .settings-subpage.active{
+  display:block;
+  background:#fff;
+  color:#1f2937;
+  margin:10px 12px 0;
+  padding:18px 18px 32px;
+  max-width:680px;
+  margin-inline:auto;
+  min-height:100%;
+  border:1px solid rgba(15,56,48,.07);
+  border-radius:22px;
+  box-shadow:0 6px 24px rgba(15,56,48,.08);
+}
 #page-settings .settings-subpage.active h3{color:#111827 !important;}
 #page-settings .settings-subpage.active label{color:#374151;}
 #page-settings .settings-subpage.active .field{color:#1f2937;}
-#page-settings .settings-subpage.active input,#page-settings .settings-subpage.active textarea,#page-settings .settings-subpage.active select{background:#fff;color:#111827;border-color:#d1d5db;}
+#page-settings .settings-subpage.active input,
+#page-settings .settings-subpage.active textarea,
+#page-settings .settings-subpage.active select{background:#fff;color:#111827;border-color:#d1d5db;}
+#page-settings .settings-subpage.active select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B9670' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;}
 #page-settings .settings-subpage.active .card,#page-settings .settings-subpage.active .ledger-card{background:#fff;color:#1f2937;border-color:#e5e7eb;}
 #page-settings .settings-subpage.active .helper-text,#page-settings .settings-subpage.active small{color:#6b7280;}
 #page-settings .settings-subpage.active button{color:#111827;}
-#page-settings.settings-section-open .settings-home-panel{display:none;}
-#page-settings.settings-section-open .settings-empty-hint{display:none !important;}
+#page-settings .settings-subpage.active .btn-primary{color:#fff;}
+#page-settings .settings-subpage.active .btn-gold{color:var(--green-900);}
+#page-settings .settings-subpage.active .btn-danger{color:var(--loss);}
+
 @media (max-width:520px){
-  #page-settings .settings-home-panel{padding:10px 16px 28px;}
-  #page-settings .settings-home-group{border-radius:20px;padding:0 12px;margin-bottom:15px;}
-  #page-settings .settings-home-row{min-height:62px;gap:13px;padding:0 6px;}
-  #page-settings .shr-text{font-size:16px;}
+  #page-settings{padding-top:10px;}
+  #page-settings .settings-home-panel{padding:0 10px 8px;}
+  #page-settings .settings-home-brand{padding:2px 2px 10px;}
+  #page-settings .settings-home-title{font-size:21px;}
+  #page-settings .settings-home-back{width:38px;height:38px;font-size:28px;}
+  #page-settings .settings-home-row{min-height:50px;height:50px;padding:0 11px;border-radius:14px;}
+  #page-settings .shr-text{font-size:12px;}
+  #page-settings .shr-icon{width:22px;min-width:22px;}
+  #page-settings .shr-icon svg{width:18px;height:18px;}
+  #page-settings .settings-subpage.active{margin:8px 8px 0;padding:15px 14px 28px;border-radius:20px;}
 }
 </style>
 <script>
@@ -1983,46 +2201,6 @@ window.MYSHOP_V6_AUDIT = {
 .main-menu-settings-item .msi-icon{transition:transform .18s ease,background .18s ease,color .18s ease;}
 </style>
 
-<style id="settings-smart-menu-design">
-/* Premium Settings menu — visual layer only; navigation/functionality unchanged */
-#page-settings .settings-home-panel{max-width:720px;padding:12px 16px 34px;}
-#page-settings .settings-home-brand{padding:6px 4px 22px;gap:12px;}
-#page-settings .settings-home-back{width:44px;height:44px;border-radius:14px;background:#242424;color:#fff;font-size:32px;display:grid;place-items:center;transition:transform .2s ease,background .2s ease;}
-#page-settings .settings-home-back:active{transform:scale(.92);background:#303030;}
-#page-settings .settings-home-title{font-size:28px;font-weight:750;letter-spacing:-.5px;}
-#page-settings .settings-home-subtitle{color:#909090;font-size:12.5px;}
-#page-settings .settings-home-group{background:#202020;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:5px 12px;margin-bottom:14px;box-shadow:0 10px 28px rgba(0,0,0,.16);}
-#page-settings .settings-home-row{position:relative;min-height:68px;padding:0 6px;gap:13px;border-bottom:1px solid rgba(255,255,255,.065);transition:background .18s ease,transform .18s ease;overflow:hidden;}
-#page-settings .settings-home-row::after{content:"";position:absolute;left:0;top:50%;width:3px;height:0;border-radius:3px;transform:translateY(-50%);background:var(--set-color);transition:height .2s ease;}
-#page-settings .settings-home-row:hover{background:rgba(255,255,255,.035);}
-#page-settings .settings-home-row:hover::after{height:28px;}
-#page-settings .settings-home-row:active{background:rgba(255,255,255,.07);transform:scale(.992);}
-#page-settings .shr-icon{width:40px;min-width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-size:0;background:var(--set-bg);color:var(--set-color);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);transition:transform .22s ease,box-shadow .22s ease;}
-#page-settings .settings-home-row:hover .shr-icon{transform:translateY(-1px) scale(1.055);box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 6px 14px rgba(0,0,0,.16);}
-#page-settings .shr-icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-#page-settings .shr-text{font-size:15.5px;font-weight:550;color:#ededed;}
-#page-settings .shr-arrow{font-size:28px;color:#777;transition:transform .2s ease,color .2s ease;}
-#page-settings .settings-home-row:hover .shr-arrow{transform:translateX(3px);color:#bbb;}
-#page-settings .settings-home-group:nth-of-type(2) .settings-home-row{--set-color:#4da3ff;--set-bg:rgba(77,163,255,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row{--set-color:#a78bfa;--set-bg:rgba(167,139,250,.13);}
-#page-settings .settings-home-group:nth-of-type(4) .settings-home-row{--set-color:#f59e5b;--set-bg:rgba(245,158,91,.13);}
-#page-settings .settings-home-group:nth-of-type(2) .settings-home-row:nth-child(2){--set-color:#27c78a;--set-bg:rgba(39,199,138,.13);}
-#page-settings .settings-home-group:nth-of-type(2) .settings-home-row:nth-child(3){--set-color:#e879f9;--set-bg:rgba(232,121,249,.13);}
-#page-settings .settings-home-group:nth-of-type(2) .settings-home-row:nth-child(4){--set-color:#f6c453;--set-bg:rgba(246,196,83,.13);}
-#page-settings .settings-home-group:nth-of-type(2) .settings-home-row:nth-child(5){--set-color:#ff5f6d;--set-bg:rgba(255,95,109,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(2){--set-color:#f472b6;--set-bg:rgba(244,114,182,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(3){--set-color:#22c55e;--set-bg:rgba(34,197,94,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(4){--set-color:#60a5fa;--set-bg:rgba(96,165,250,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(5){--set-color:#38bdf8;--set-bg:rgba(56,189,248,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(6){--set-color:#fb923c;--set-bg:rgba(251,146,60,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(7){--set-color:#c084fc;--set-bg:rgba(192,132,252,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(8){--set-color:#facc15;--set-bg:rgba(250,204,21,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(9){--set-color:#22d3ee;--set-bg:rgba(34,211,238,.13);}
-#page-settings .settings-home-group:nth-of-type(3) .settings-home-row:nth-child(10){--set-color:#a78bfa;--set-bg:rgba(167,139,250,.13);}
-@media(max-width:520px){#page-settings .settings-home-panel{padding:10px 12px 28px}#page-settings .settings-home-row{min-height:64px}#page-settings .shr-text{font-size:15px}}
-@media(prefers-reduced-motion:reduce){#page-settings .settings-home-row,#page-settings .shr-icon,#page-settings .shr-arrow,#page-settings .settings-home-back{transition:none!important}}
-</style>
-
 <style id="native-launch-polish">
 html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}
 #splashScreen{background:linear-gradient(180deg,#F8F0DF 0%,#F5EAD0 100%);}
@@ -2071,6 +2249,141 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
   .main-menu-item:hover .main-menu-chevron{transform:none!important;color:#9aa6a1!important;}
 }
 </style>
+
+<style id="settings-light-final-fix">
+/* FINAL SETTINGS UI: no black Settings surface anywhere */
+#page-settings{
+  background:#f7f8f5 !important;
+  color:#1b2420 !important;
+}
+#page-settings .settings-home-panel{
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:wrap !important;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  max-width:none;
+  padding:10px 12px 28px !important;
+  background:transparent !important;
+  overflow-x:auto !important;
+  overflow-y:visible !important;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+#page-settings .settings-home-panel::-webkit-scrollbar{display:none;}
+#page-settings .settings-home-brand{
+  flex:0 0 100% !important;
+  width:100%;
+  background:transparent !important;
+  color:#1b2420 !important;
+  padding:2px 2px 8px !important;
+}
+#page-settings .settings-home-back{
+  background:#fff !important;
+  color:#26332f !important;
+  border:1px solid rgba(15,56,48,.10) !important;
+  box-shadow:0 2px 8px rgba(15,56,48,.07) !important;
+}
+#page-settings .settings-home-title,
+#page-settings .settings-home-subtitle{color:#1b2420 !important;}
+#page-settings .settings-home-subtitle{color:#7b8782 !important;}
+
+#page-settings .settings-home-group{
+  display:contents !important;
+}
+#page-settings .settings-home-row{
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:max-content !important;
+  min-height:50px !important;
+  height:50px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding:0 11px !important;
+  border:1px solid rgba(15,56,48,.09) !important;
+  border-radius:14px !important;
+  background:#fff !important;
+  color:#35413d !important;
+  box-shadow:0 3px 12px rgba(15,56,48,.07) !important;
+  border-bottom:1px solid rgba(15,56,48,.09) !important;
+  overflow:visible !important;
+}
+#page-settings .settings-home-row::after{display:none !important;}
+#page-settings .settings-home-row:hover,
+#page-settings .settings-home-row:active{
+  background:#f4faf7 !important;
+}
+#page-settings .settings-home-row.settings-menu-active{
+  background:#eff9f4 !important;
+  color:#0f3830 !important;
+  border-color:rgba(46,125,91,.34) !important;
+  box-shadow:0 4px 14px rgba(46,125,91,.10) !important;
+}
+#page-settings .shr-icon{
+  width:22px !important;
+  min-width:22px !important;
+  height:22px !important;
+  border-radius:8px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:transparent !important;
+  color:#2e7d5b !important;
+  font-size:18px !important;
+  box-shadow:none !important;
+}
+#page-settings .shr-icon svg{
+  width:18px !important;
+  height:18px !important;
+  stroke:currentColor !important;
+  fill:none !important;
+}
+#page-settings .shr-text{
+  color:#35413d !important;
+  font-size:12px !important;
+  font-weight:650 !important;
+  white-space:nowrap !important;
+}
+#page-settings .settings-home-row.settings-menu-active .shr-text{
+  color:#0f3830 !important;
+}
+#page-settings .shr-arrow{display:none !important;}
+
+#page-settings .settings-empty-hint{display:none !important;}
+#page-settings .settings-subpage{display:none !important;}
+#page-settings .settings-subpage.active{
+  display:block !important;
+  background:#fff !important;
+  color:#1f2937 !important;
+  margin:8px auto 0 !important;
+  padding:16px 14px 30px !important;
+  width:calc(100% - 16px);
+  max-width:680px;
+  border:1px solid rgba(15,56,48,.07) !important;
+  border-radius:20px !important;
+  box-shadow:0 6px 24px rgba(15,56,48,.08) !important;
+}
+#page-settings .settings-subpage.active h2,
+#page-settings .settings-subpage.active h3{color:#111827 !important;}
+#page-settings .settings-subpage.active label,
+#page-settings .settings-subpage.active .field-label{color:#374151 !important;}
+#page-settings .settings-subpage.active input,
+#page-settings .settings-subpage.active textarea,
+#page-settings .settings-subpage.active select{
+  background:#fff !important;
+  color:#111827 !important;
+  border-color:#d1d5db !important;
+}
+#page-settings .settings-subpage.active .card,
+#page-settings .settings-subpage.active .ledger-card{
+  background:#fff !important;
+  color:#1f2937 !important;
+  border-color:#e5e7eb !important;
+}
+#page-settings .settings-subpage.active .btn-primary{color:#fff !important;}
+</style>
+
 </head>
 <body>
 <!-- ===================== QR VERIFICATION SCREEN (public, no login) =====================
@@ -2257,13 +2570,6 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 </button>
 </div>
 <div class="login-error" id="googleAuthError"></div>
-<div class="auth-social-row" style="margin-top:10px;">
-<button class="btn-facebook" id="facebookAuthBtn" onclick="handleFacebookAuth()" type="button">
-<svg fill="#FFFFFF" viewbox="0 0 24 24"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"></path></svg>
-<span id="facebookAuthBtnText">Continue with Facebook</span>
-</button>
-</div>
-<div class="login-error" id="facebookAuthError"></div>
 <div class="login-hint">প্রতিটা দোকানের ডাটা আলাদাভাবে ও নিরাপদে ক্লাউডে সংরক্ষিত থাকে।</div>
 </div>
 </div>
@@ -2357,40 +2663,40 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 <button class="main-menu-item" data-main-page="stockalerts" onclick="mainMenuGo('stockalerts')"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="main-menu-text">Stock Alerts</span><span class="main-menu-chevron">›</span></button>
 <button class="main-menu-item" data-main-page="warranty" onclick="mainMenuGo('warranty')"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="m9 12 2 2 4-5"/></svg></span><span class="main-menu-text">Warranty</span><span class="main-menu-chevron">›</span></button>
 <button class="main-menu-item" onclick="openMainMenuAI()"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.3 4.7L18 9l-4.7 1.3L12 15l-1.3-4.7L6 9l4.7-1.3L12 3Z"/><path d="m19 15 .7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7L19 15Z"/></svg></span><span class="main-menu-text">AI Business Insights</span><span class="main-menu-chevron">›</span></button>
-<button class="main-menu-item main-menu-settings-toggle" onclick="toggleHomeSettingsMenu()" type="button"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m4.9 7.5 1.2-2 2.4 1a8 8 0 0 1 2-.9L11 3h2l.5 2.6a8 8 0 0 1 2 .9l2.4-1 1.2 2-1.9 1.8c.2.7.3 1.4.3 2.2s-.1 1.5-.3 2.2l1.9 1.8-1.2 2-2.4-1a8 8 0 0 1-2 .9L13 21h-2l-.5-2.6a8 8 0 0 1-2-.9l-2.4 1-1.2-2 1.9-1.8A8 8 0 0 1 4.5 12c0-.8.1-1.5.3-2.2L2.9 8l1.2-2"/></svg></span><span class="main-menu-text">Settings</span><span class="main-menu-chevron" id="homeSettingsChevron">›</span></button>
+<button class="main-menu-item main-menu-settings-toggle" onclick="toggleHomeSettingsMenu()" type="button"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span><span class="main-menu-text">Settings</span><span class="main-menu-chevron" id="homeSettingsChevron">›</span></button>
 <div aria-label="Settings options" class="main-menu-settings-list" id="homeSettingsList">
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk1')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M7 9h10M7 13h10M7 17h6"/></svg></span><span class="msi-text">Business Profile</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk2')"><span class="msi-icon">🚚</span><span class="msi-text">Landing Page — Contact &amp; Delivery</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk3')"><span class="msi-icon">📇</span><span class="msi-text">Landing Page — Footer Contact</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk4')"><span class="msi-icon">💳</span><span class="msi-text">Landing Page — Payment</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk5')"><span class="msi-icon">🔔</span><span class="msi-text">Order Notification (Telegram)</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk6')"><span class="msi-icon">📈</span><span class="msi-text">Sales Categories</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk7')"><span class="msi-icon">📉</span><span class="msi-text">Purchase Categories</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk8')"><span class="msi-icon">💰</span><span class="msi-text">Expense Categories</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk9')"><span class="msi-icon">💳</span><span class="msi-text">Payment Methods</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk10')"><span class="msi-icon">📄</span><span class="msi-text">Export Report (PDF)</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk11')"><span class="msi-icon">🔒</span><span class="msi-text">App Lock</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk12')"><span class="msi-icon">💾</span><span class="msi-text">Data Backup</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk13')"><span class="msi-icon">☁️</span><span class="msi-text">Cloud Account</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk14')"><span class="msi-icon">🔔</span><span class="msi-text">Order Notifications</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk15')"><span class="msi-icon">🛒</span><span class="msi-text">Products Catalog</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk16')"><span class="msi-icon">🎬</span><span class="msi-text">Info Videos</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk17')"><span class="msi-icon">📦</span><span class="msi-text">Inventory Categories</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk18')"><span class="msi-icon">🤖</span><span class="msi-text">AI Receipt Scanner</span></button>
-<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk19')"><span class="msi-icon">📊</span><span class="msi-text">Google Sheet Sync</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk2')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="1.6"/><circle cx="17.3" cy="19" r="1.6"/></svg></span><span class="msi-text">Landing Page — Contact &amp; Delivery</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk3')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.3" r="2"/><path d="M5.5 16c.7-1.7 1.9-2.5 3-2.5s2.3.8 3 2.5"/><path d="M14.5 9.3h4M14.5 12.8h4"/></svg></span><span class="msi-text">Landing Page — Footer Contact</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk4')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 14h4"/></svg></span><span class="msi-text">Landing Page — Payment</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk5')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="m3 11 18-8-7 18-3.5-7L3 11Z"/><path d="M10.5 14 15 9.5"/></svg></span><span class="msi-text">Order Notification (Telegram)</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk6')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><span class="msi-text">Sales Categories</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk7')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="m3 7 6 6 4-4 8 8"/><path d="M15 17h6v-6"/></svg></span><span class="msi-text">Purchase Categories</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk8')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12a1 1 0 0 1 1 1v2.2"/><path d="M4 7v10a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3.6"/><rect x="14.5" y="10.8" width="6" height="5" rx="1.2"/><circle cx="16.7" cy="13.3" r=".6" fill="currentColor" stroke="none"/></svg></span><span class="msi-text">Expense Categories</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk9')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="2" y="8" width="16" height="11" rx="2"/><path d="M2 12.5h16"/><path d="M7 6h13a2 2 0 0 1 2 2v9"/></svg></span><span class="msi-text">Payment Methods</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk10')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M12 12.5v5.5M9.7 15.7 12 18l2.3-2.3"/></svg></span><span class="msi-text">Export Report (PDF)</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk11')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="msi-text">App Lock</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk12')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span><span class="msi-text">Data Backup</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk13')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M6.5 18.5a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 16.6 8.1 4 4 0 0 1 16.5 16" fill="none"/><path d="M6.5 18.5H16a3.5 3.5 0 0 0 .5-6.9" fill="none"/></svg></span><span class="msi-text">Cloud Account</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk14')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/><circle cx="17.5" cy="6" r="2.6" fill="currentColor" stroke="none"/></svg></span><span class="msi-text">Order Notifications</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk15')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M6 6.8V5a2 2 0 0 1 2-2h1.8L18 11.2l-6.8 6.8L2 8.8V6.8Z"/><circle cx="8.7" cy="7.7" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="msi-text">Products Catalog</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk16')"><span class="msi-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.3v7.4l6.3-3.7Z" fill="currentColor" stroke="none"/></svg></span><span class="msi-text">Info Videos</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk17')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M12 3 21 8l-9 5-9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></svg></span><span class="msi-text">Inventory Categories</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk18')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M18 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M6 20H4a2 2 0 0 1-2-2v-2"/><rect x="7.3" y="8" width="9.4" height="8" rx="1.3"/></svg></span><span class="msi-text">AI Receipt Scanner</span></button>
+<button class="main-menu-settings-item" onclick="homeSettingsGo('sblk19')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9.3h18"/><path d="M9.3 9.3V20M15 9.3V20"/></svg></span><span class="msi-text">Google Sheet Sync</span></button>
 </div>
 </nav>
 <div class="main-menu-drive">
-<div class="main-menu-drive-card">
-<span class="drive-dot" id="mainMenuDriveDot"></span>
+<div class="main-menu-drive-card" id="mainMenuDriveCard">
+<span class="drive-logo" aria-hidden="true"><svg viewBox="0 0 87.3 78"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"></path><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3L1.2 44.7c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"></path><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"></path><path d="M43.65 25L57.4 1.2C56 .4 54.45 0 52.8 0H34.5c-1.65 0-3.2.45-4.6 1.2z" fill="#00832d"></path><path d="M59.7 53h-32.1l-13.75 23.8c1.4.8 2.95 1.2 4.6 1.2h50.4c1.65 0 3.2-.45 4.6-1.2z" fill="#2684fc"></path><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.05 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"></path></svg></span>
 <div class="drive-copy">
-<strong>Google Drive Sync</strong>
-<span id="mainMenuDriveStatus">Backup &amp; restore</span>
+<div class="drive-title-row"><strong>Google Drive</strong><span class="drive-badge st-off" id="mainMenuDriveBadge"><span class="b-dot"></span><span id="mainMenuDriveBadgeText">Not connected</span></span></div>
+<span class="drive-sub" id="mainMenuDriveStatus">Connect to back up your data automatically</span>
 </div>
 </div>
 <div class="main-menu-drive-actions">
-<button onclick="mainMenuDriveConnect()" type="button">Connect</button>
-<button onclick="mainMenuDriveBackup()" type="button">Backup Now</button>
+<button class="primary" id="mainMenuDriveConnectBtn" onclick="mainMenuDriveConnect()" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg><span>Connect</span></button>
+<button id="mainMenuDriveBackupBtn" onclick="mainMenuDriveBackup()" style="display:none;" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path></svg><span id="mainMenuDriveBackupBtnText">Backup Now</span></button>
 </div>
 </div>
 </aside>
@@ -2608,39 +2914,12 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 </section>
 <!-- ============ SETTINGS PAGE ============ -->
 <section class="page" id="page-settings">
-<div aria-label="Settings" class="settings-home-panel" id="settingsHomePanel">
-<div class="settings-home-brand">
-<button aria-label="Back" class="settings-home-back" onclick="goPage('dashboard')" type="button">‹</button>
-<div class="settings-home-title-wrap">
-<div class="settings-home-title">Settings</div>
-<div class="settings-home-subtitle" id="settingsHomeCompany">Business settings</div>
-</div>
-</div>
-<div class="settings-home-group">
-<button class="settings-home-row" onclick="homeSettingsGo('sblk1')"><span class="shr-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.4 3.1-5 7-5s6.2 1.6 7 5"/></svg></span><span class="shr-text">Business Profile</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk2')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="18" cy="18" r="1.8"/></svg></span><span class="shr-text">Contact &amp; Delivery</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk3')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="shr-text">Footer Contact Info</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk4')"><span class="shr-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span><span class="shr-text">Payment &amp; Checkout</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk5')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="shr-text">Telegram Notifications</span><span class="shr-arrow">›</span></button>
-</div>
-<div class="settings-home-group">
-<button class="settings-home-row" onclick="homeSettingsGo('sblk6')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg></span><span class="shr-text">Sales Categories</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk7')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M8 15l2-3 2 2 2-4 2 5"/></svg></span><span class="shr-text">Purchase Categories</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk8')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg></span><span class="shr-text">Expense Categories</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk9')"><span class="shr-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10"/></svg></span><span class="shr-text">Payment Methods</span><span class="shr-arrow">›</span></button>
-</div>
-<div class="settings-home-group">
-<button class="settings-home-row" onclick="homeSettingsGo('sblk10')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h5M8 13h8M8 17h6"/></svg></span><span class="shr-text">Export Report (PDF)</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk11')"><span class="shr-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span class="shr-text">App Lock</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk12')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="shr-text">Data Backup</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk13')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M6 18V8a6 6 0 0 1 12 0v10"/><path d="M4 18h16M9 21h6"/></svg></span><span class="shr-text">Cloud Account</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk14')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="shr-text">Order Notifications</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk15')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M3 7h13v11H3z"/><path d="M16 10h3l2 3v5h-5z"/><circle cx="7" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/></svg></span><span class="shr-text">Products Catalog</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk16')"><span class="shr-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="shr-text">Info Videos</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk17')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v12H4z"/><path d="M8 8V5h8v3M9 13h6"/></svg></span><span class="shr-text">Inventory Categories</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk18')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M12 3l3 6 6 1-4.5 4.5L17.5 21 12 18l-5.5 3 1-6.5L3 10l6-1z"/></svg></span><span class="shr-text">AI Receipt Scanner</span><span class="shr-arrow">›</span></button>
-<button class="settings-home-row" onclick="homeSettingsGo('sblk19')"><span class="shr-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M7 9h10M7 13h6"/><path d="M18 17l2 2 3-3"/></svg></span><span class="shr-text">Google Sheet Sync</span><span class="shr-arrow">›</span></button>
-</div>
+<div class="settings-editor-head" id="settingsEditorHead" aria-hidden="false">
+  <button class="settings-editor-back" type="button" onclick="closeSettingsEditor()" aria-label="Back to Dashboard">‹</button>
+  <div class="settings-editor-title-wrap">
+    <div class="settings-editor-title" id="settingsEditorTitle">Settings</div>
+    <div class="settings-editor-subtitle">Edit settings</div>
+  </div>
 </div>
 <div class="settings-empty-hint" id="settingsEmptyHint"></div>
 <div class="settings-block settings-subpage" id="sblk1">
@@ -6031,58 +6310,6 @@ function handleGoogleAuth(){
     });
 }
 
-function handleFacebookAuth(){
-  const btn = document.getElementById('facebookAuthBtn');
-  const btnText = document.getElementById('facebookAuthBtnText');
-  const errBox = document.getElementById('facebookAuthError');
-  errBox.style.display = 'none';
-  btn.disabled = true; btnText.textContent = 'অপেক্ষা করুন…';
-
-  isSigningUp = true; // onAuthStateChanged-কে থামিয়ে রাখি, নিজেই এন্ট্রি ফ্লো চালাবো
-  initFirebaseCore();
-  const provider = new firebase.auth.FacebookAuthProvider();
-  const hadLocalData = !!localStorage.getItem(STORAGE_KEY);
-
-  fbAuth.signInWithPopup(provider)
-    .then(result => {
-      currentUid = result.user.uid;
-      const isNewUser = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
-      if(isNewUser){
-        // নতুন Facebook ইউজার: বিদ্যমান স্থানীয় ডাটা (থাকলে) এই একাউন্টের প্রাথমিক কপি হিসেবে আপলোড হবে
-        if(!state.company.name) state.company.name = result.user.displayName || 'My Business';
-        if(!state.company.currency) state.company.currency = '৳';
-        return shopRef().set(stripUndefinedDeep({
-          company: state.company,
-          settings: state.settings,
-          security: state.security,
-          sales: state.sales,
-          purchases: state.purchases,
-          expenses: state.expenses,
-          warrantyClaims: state.warrantyClaims,
-          invItems: state.invItems,
-          idCounter
-        })).then(()=>{
-          if(hadLocalData) showToast('আপনার আগের ডাটা ক্লাউডে যোগ হয়ে গেছে ✅');
-          saveState();
-        });
-      }
-    })
-    .then(()=>{
-      // Facebook ইমেইল আগে থেকেই ভেরিফাইড ধরে নেওয়া হয়, তাই OTP ধাপ বাদ — সরাসরি ডাটা লোড করে ঢুকে যাবে
-      return loadShopData(currentUid).then(()=>{
-        isSigningUp = false;
-        enterOrLock();
-      });
-    })
-    .catch(err => {
-      isSigningUp = false;
-      btn.disabled = false; btnText.textContent = 'Continue with Facebook';
-      if(err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
-      errBox.textContent = firebaseErrorBn(err);
-      errBox.style.display = 'block';
-    });
-}
-
 function firebaseErrorBn(err){
   const map = {
     'auth/email-already-in-use': 'এই ইমেইল দিয়ে আগে থেকেই একাউন্ট আছে — Log In করুন।',
@@ -6642,6 +6869,9 @@ function enterApp(){
   document.getElementById('app').style.display = 'block';
   setThemeColor('#1E7A4C'); // মূল অ্যাপের সবুজ টপবারের সাথে ম্যাচ
   markTabUnlocked();
+  // Refresh-এর পর আগের খোলা page-টাই আগে restore করতে হবে।
+  // না হলে state-এর default dashboard দিয়ে renderAll() শুরু হয়ে যায়।
+  restoreCurrentPage();
   renderAll();
   listenOrders();
   markScreenDecided();
@@ -6901,9 +7131,7 @@ function toggleHomeSettingsMenu(){
 }
 function homeSettingsGo(id){
   closeMainMenu();
-  // Open the settings page and target section in the same navigation action.
-  // The old nested-rAF sequence could race with goPage()'s own deferred render,
-  // making the first tap appear to do nothing and the second tap work.
+  // Directly open the requested Settings editor. The Settings Home/menu page is gone.
   goPage('settings');
   const openTarget = ()=>{
     if(typeof renderSettings==='function'){
@@ -6912,11 +7140,8 @@ function homeSettingsGo(id){
     }
     if(typeof openSettingsSection==='function') openSettingsSection(id);
   };
-  if(typeof requestAnimationFrame==='function'){
-    requestAnimationFrame(()=>requestAnimationFrame(openTarget));
-  } else {
-    setTimeout(openTarget, 0);
-  }
+  if(typeof requestAnimationFrame==='function') requestAnimationFrame(()=>requestAnimationFrame(openTarget));
+  else setTimeout(openTarget,0);
 }
 function mainMenuGo(page){
   closeMainMenu();
@@ -6946,13 +7171,57 @@ function mainMenuDriveBackup(){
     else { goPage('settings'); }
   });
 }
+function driveRelativeTime(iso){
+  if(!iso) return null;
+  const then = new Date(iso).getTime();
+  if(isNaN(then)) return null;
+  const diffMs = Date.now() - then;
+  if(diffMs < 60000) return 'just now';
+  const min = Math.floor(diffMs/60000);
+  if(min < 60) return min + 'm ago';
+  const hr = Math.floor(min/60);
+  if(hr < 24) return hr + 'h ago';
+  const day = Math.floor(hr/24);
+  if(day < 7) return day + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
 function updateMainMenuDriveStatus(){
-  const el=document.getElementById('mainMenuDriveStatus');
-  const dot=document.getElementById('mainMenuDriveDot');
-  if(!el) return;
-  const connected=!!(typeof driveAccessToken!=='undefined' && driveAccessToken);
-  el.textContent=connected ? 'Connected • Backup available' : 'Not connected • Tap Connect';
-  if(dot) dot.style.background=connected ? '#3B9670' : '#D39B36';
+  const card=document.getElementById('mainMenuDriveCard');
+  const badge=document.getElementById('mainMenuDriveBadge');
+  const badgeText=document.getElementById('mainMenuDriveBadgeText');
+  const sub=document.getElementById('mainMenuDriveStatus');
+  const connectBtn=document.getElementById('mainMenuDriveConnectBtn');
+  const backupBtn=document.getElementById('mainMenuDriveBackupBtn');
+  const backupBtnText=document.getElementById('mainMenuDriveBackupBtnText');
+  if(!card) return;
+  const meta=(typeof loadDriveMeta==='function') ? loadDriveMeta() : {};
+  const connected=!!meta.connected;
+  const syncing=!!(typeof driveBackupInFlight!=='undefined' && driveBackupInFlight);
+  card.classList.toggle('is-connected', connected && !syncing);
+  card.classList.toggle('is-syncing', syncing);
+  if(badge){
+    badge.classList.remove('st-connected','st-off','st-syncing');
+    badge.classList.add(syncing ? 'st-syncing' : (connected ? 'st-connected' : 'st-off'));
+  }
+  if(badgeText) badgeText.textContent = syncing ? 'Syncing' : (connected ? 'Connected' : 'Not connected');
+  if(sub){
+    if(syncing){
+      sub.textContent = 'Backing up your data…';
+    } else if(connected){
+      const rel = driveRelativeTime(meta.lastBackupAt);
+      sub.textContent = meta.email
+        ? (meta.email + (rel ? ' · backed up ' + rel : ' · no backup yet'))
+        : (rel ? 'Last backup ' + rel : 'Connected · no backup yet');
+    } else {
+      sub.textContent = 'Connect to back up your data automatically';
+    }
+  }
+  if(connectBtn) connectBtn.style.display = connected ? 'none' : 'flex';
+  if(backupBtn){
+    backupBtn.style.display = connected ? 'flex' : 'none';
+    backupBtn.disabled = syncing;
+  }
+  if(backupBtnText) backupBtnText.textContent = syncing ? 'Syncing…' : 'Backup Now';
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMainMenu(); });
 
@@ -6976,6 +7245,7 @@ function __getNavBtn(page){ return __navBtnCache[page] || (__navBtnCache[page]=d
 function goPage(page){
   const navRenderToken = ++NAV_RENDER_TOKEN;
   state.currentPage = page;
+  rememberCurrentPage(page);
   /* O(1) page activation: never scan every .page element on navigation. */
   const nextPageEl=__getPageEl(page);
   if(!__activePageEl) __activePageEl=document.querySelector('.page.active');
@@ -9612,29 +9882,72 @@ function previewLogoUrl(){
   }
 }
 /* Settings navigation has one source of truth: the Home three-line menu / Settings home list. */
-function openSettingsSection(id){
-  const settingsPage = document.getElementById('page-settings');
-  if(settingsPage) settingsPage.classList.add('settings-section-open');
-  document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
-  const section = document.getElementById(id);
-  if(!section) return;
-  section.classList.add('active');
-  const hint = document.getElementById('settingsEmptyHint');
-  if(hint) hint.style.display = 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if(id === 'sblk12'){
-    const meta = loadDriveMeta();
-    if(meta.connected && !(driveAccessToken && Date.now() < driveTokenExpiresAt - 30000)){
-      getValidDriveToken(() => {});
+const SETTINGS_SECTION_SESSION_KEY = 'myshop_active_settings_section_v1';
+const CURRENT_PAGE_SESSION_KEY = 'myshop_current_page_v1';
+
+function rememberCurrentPage(page){
+  try{
+    if(page && document.getElementById('page-' + page)){
+      sessionStorage.setItem(CURRENT_PAGE_SESSION_KEY, page);
     }
+  }catch(_e){}
+}
+
+function restoreCurrentPage(){
+  try{
+    const saved = sessionStorage.getItem(CURRENT_PAGE_SESSION_KEY);
+    const allowed = ['dashboard','sales','purchase','expense','orders','settings','inventory','stockalerts','warranty'];
+    if(saved && allowed.includes(saved) && document.getElementById('page-' + saved)){
+      state.currentPage = saved;
+    }
+  }catch(_e){}
+}
+
+function updateSettingsEditorHeader(id){
+  const titleEl = document.getElementById('settingsEditorTitle');
+  const section = document.getElementById(id);
+  if(!titleEl) return;
+  let title = section ? (section.querySelector('h2,h3')?.textContent || '') : '';
+  title = title.replace(/^[^\p{L}\p{N}]*/u,'').trim();
+  if(!title){
+    const titles={sblk1:'Business Profile',sblk2:'Contact & Delivery',sblk3:'Footer Contact Info',sblk4:'Payment & Checkout',sblk5:'Telegram Notifications',sblk6:'Sales Categories',sblk7:'Purchase Categories',sblk8:'Expense Categories',sblk9:'Payment Methods',sblk10:'Export Report (PDF)',sblk11:'App Lock',sblk12:'Data Backup',sblk13:'Cloud Account',sblk14:'Order Notifications',sblk15:'Products Catalog',sblk16:'Info Videos',sblk17:'Inventory Categories',sblk18:'AI Receipt Scanner',sblk19:'Google Sheet Sync'};
+    title=titles[id]||'Settings';
+  }
+  titleEl.textContent=title||'Settings';
+}
+function openSettingsSection(id){
+  rememberCurrentPage('settings');
+  const section=document.getElementById(id);
+  if(!section) return;
+  const settingsPage=document.getElementById('page-settings');
+  if(settingsPage) settingsPage.classList.add('settings-section-open');
+  document.querySelectorAll('#page-settings .settings-subpage').forEach(el=>el.classList.remove('active'));
+  section.classList.add('active');
+  updateSettingsEditorHeader(id);
+  const editorHead=document.getElementById('settingsEditorHead');
+  if(editorHead) editorHead.setAttribute('aria-hidden','false');
+  try{sessionStorage.setItem(SETTINGS_SECTION_SESSION_KEY,id);}catch(_e){}
+  const hint=document.getElementById('settingsEmptyHint');
+  if(hint) hint.style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='sblk12'){
+    const meta=loadDriveMeta();
+    if(meta.connected && !(driveAccessToken && Date.now()<driveTokenExpiresAt-30000)) getValidDriveToken(()=>{});
   }
 }
+function closeSettingsEditor(){
+  try{sessionStorage.removeItem(SETTINGS_SECTION_SESSION_KEY);}catch(_e){}
+  goPage('dashboard');
+}
 function resetSettingsView(){
-  const settingsPage = document.getElementById('page-settings');
-  if(settingsPage) settingsPage.classList.remove('settings-section-open');
-  document.querySelectorAll('.settings-subpage').forEach(el => el.classList.remove('active'));
-  const hint = document.getElementById('settingsEmptyHint');
-  if(hint) hint.style.display = 'block';
+  const subpages=document.querySelectorAll('#page-settings .settings-subpage');
+  subpages.forEach(el=>el.classList.remove('active'));
+  let savedSection='';
+  try{savedSection=sessionStorage.getItem(SETTINGS_SECTION_SESSION_KEY)||'';}catch(_e){}
+  const target=(savedSection && document.getElementById(savedSection))?savedSection:'sblk1';
+  if(document.getElementById(target)) openSettingsSection(target);
+  const hint=document.getElementById('settingsEmptyHint');
+  if(hint) hint.style.display='none';
 }
 function toggleDragModeUI(){
   const toggle = document.getElementById('dragModeToggle');
@@ -10397,17 +10710,19 @@ function renderDriveSettingsUI(){
   const meta = loadDriveMeta();
   const notConnected = document.getElementById('driveNotConnectedBlock');
   const connected = document.getElementById('driveConnectedBlock');
-  if(!notConnected || !connected) return;
-  if(meta.connected){
-    notConnected.style.display = 'none';
-    connected.style.display = 'block';
-    document.getElementById('driveAccountEmailLabel').textContent = meta.email || '—';
-    document.getElementById('driveLastBackupLabel').textContent =
-      t('label_last_backup') + ' ' + (meta.lastBackupAt ? new Date(meta.lastBackupAt).toLocaleString() : '—');
-  } else {
-    notConnected.style.display = 'block';
-    connected.style.display = 'none';
+  if(notConnected && connected){
+    if(meta.connected){
+      notConnected.style.display = 'none';
+      connected.style.display = 'block';
+      document.getElementById('driveAccountEmailLabel').textContent = meta.email || '—';
+      document.getElementById('driveLastBackupLabel').textContent =
+        t('label_last_backup') + ' ' + (meta.lastBackupAt ? new Date(meta.lastBackupAt).toLocaleString() : '—');
+    } else {
+      notConnected.style.display = 'block';
+      connected.style.display = 'none';
+    }
   }
+  if(typeof updateMainMenuDriveStatus==='function') updateMainMenuDriveStatus();
 }
 
 /* ---------------- PDF REPORT EXPORT ---------------- */
@@ -11884,6 +12199,17 @@ function getVisibleOrdersForUI(list) {
 }
 </script>
 <style id="dynamicPageStyle"></style>
+
+<style id="settings-direct-edit-final">
+/* SETTINGS DIRECT-EDIT MODE: no Settings Home/menu page. */
+#page-settings .settings-editor-head{display:flex !important;align-items:center;gap:10px;padding:10px 12px 14px;background:#f7f8f5;}
+#page-settings .settings-editor-back{width:42px;height:42px;flex:0 0 42px;border:1px solid rgba(15,56,48,.10);border-radius:50%;background:#fff;color:#26332f;font-size:30px;line-height:1;padding:0 0 3px;box-shadow:0 2px 8px rgba(15,56,48,.07);}
+#page-settings .settings-editor-title{color:#1b2420;font-size:21px;font-weight:750;line-height:1.15;}
+#page-settings .settings-editor-subtitle{color:#7b8782;font-size:12px;margin-top:2px;}
+#page-settings .settings-subpage.active{display:block !important;margin:0 10px 28px !important;width:auto !important;max-width:680px !important;border-radius:20px !important;}
+#page-settings .settings-subpage:not(.active){display:none !important;}
+@media (max-width:520px){#page-settings .settings-editor-head{padding:8px 10px 12px;}#page-settings .settings-editor-back{width:40px;height:40px;flex-basis:40px;font-size:28px;}#page-settings .settings-editor-title{font-size:19px;}}
+</style>
 <style id="performanceV2">
 /* ================= PERFORMANCE V2 — TOUCH/SCROLL PATH =================
    Keep Android's compositor in charge of scrolling. Avoid JS-blocked touchmove,
@@ -11915,6 +12241,10 @@ html, body { overscroll-behavior-y: contain; }
   background:#fff !important;
   color:#171717 !important;
   border-color:#d8d8d8 !important;
+}
+#page-settings .settings-subpage.active select{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B9670' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") !important;
+  background-repeat:no-repeat !important; background-position:right 12px center !important; background-size:16px !important;
 }
 #page-settings .settings-subpage.active .card,
 #page-settings .settings-subpage.active .ledger-card{
@@ -16200,35 +16530,7 @@ function startHighScaleOrderListener_DISABLED() {
 })();
 </script>
 
-<script id="main-menu-instant-touch-fix">
-/* Prevent long-press on main-menu items from triggering a delayed click or visual hover state.
-   The action is committed on finger-down, exactly once. */
-(function(){
-  function init(){
-    const drawer=document.getElementById('mainMenuDrawer');
-    if(!drawer) return;
-    drawer.addEventListener('pointerdown', function(e){
-      const btn=e.target.closest('.main-menu-item[data-main-page]');
-      if(!btn) return;
-      if(e.pointerType==='mouse' && e.button!==0) return;
-      e.preventDefault();
-      e.stopPropagation();
-      if(btn.dataset.menuPointerHandled==='1') return;
-      btn.dataset.menuPointerHandled='1';
-      if(typeof mainMenuGo==='function') mainMenuGo(btn.dataset.mainPage);
-      setTimeout(function(){ delete btn.dataset.menuPointerHandled; }, 600);
-    }, true);
-    drawer.addEventListener('click', function(e){
-      const btn=e.target.closest('.main-menu-item[data-main-page]');
-      if(!btn || btn.dataset.menuPointerHandled!=='1') return;
-      e.preventDefault();
-      e.stopPropagation();
-    }, true);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true});
-  else init();
-})();
-</script>
+
 </body>
 </html>
 
