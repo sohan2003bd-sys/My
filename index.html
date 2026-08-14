@@ -5299,6 +5299,7 @@ function cacheStateLocally(showError){
 }
 function saveState(skipDriveSchedule, syncMode){
   APP_DATA_VERSION++;
+  __dataMutationVersion++; // প্রতিটা লোকাল সেভ/এন্ট্রিতে বাড়ে, যাতে ব্যাকগ্রাউন্ডে চলা পুরনো ক্লাউড রিড এটাকে ওভাররাইট করতে না পারে
   markAllPagesDirty(); // any data write can affect what a page would show — force fresh renders on next visit
   // Local cache write is deferred a tick so the UI (list/dashboard) updates immediately,
   // instead of waiting on the JSON.stringify + localStorage write to finish first.
@@ -5493,8 +5494,10 @@ async function loadShopData(uid){
     Object.assign(state.company,company.val()||{});
     Object.assign(state.settings,settings.val()||{});
     Object.assign(state.security,security.val()||{});
-    modules.forEach((m,i)=>{ state[m]=rows[i]||[]; });
-    idCounter=idCounterSnap.val()||1;
+    // সরাসরি ওভাররাইটের বদলে merge — উপরের scalable load()-এ একই কারণে করা ফিক্সের মতোই,
+    // যাতে লোড চলাকালীন করা কোনো লোকাল এন্ট্রি ক্লাউডের (তখনও পুরনো) ডেটা দিয়ে মুছে না যায়।
+    modules.forEach((m,i)=>{ state[m] = mergeRecordsById(state[m], rows[i]||[]); });
+    idCounter = computeSafeIdCounter([state.sales,state.purchases,state.expenses,state.invItems], idCounterSnap.val()||1, idCounter);
     if(!state.settings.products) state.settings.products=[];
     if(!state.settings.videos) state.settings.videos=[];
     if(!state.settings.invCategories || !state.settings.invCategories.length) state.settings.invCategories=['ইলেকট্রনিক্স','কসমেটিক্স','খাদ্যপণ্য','পোশাক','অন্যান্য'];
@@ -15257,11 +15260,29 @@ async function load(uid,opts){
     if(state.company) Object.assign(state.company,base[0].val()||{});
     if(state.settings) Object.assign(state.settings,base[1].val()||{});
     if(state.security) Object.assign(state.security,base[2].val()||{});
-    const assign=(name,rows)=>{try{state[name]=rows}catch(_e){}};
+    // এই পুরো লোড শেষ হতে (একাধিক পেজে করে) কিছুটা সময় লাগে। এই সময়ের মধ্যে ইউজার যদি
+    // নতুন সেল/পারচেজ/এক্সপেন্স/ইত্যাদি এন্ট্রি করেন, সেটা সাথে সাথে state-এ যোগ হয়ে যায়,
+    // কিন্তু ক্লাউডে পাঠানো হয় আলাদাভাবে ডিবাউন্স করে (তখনো পাঠানো নাও হয়ে থাকতে পারে)।
+    // আগে এখানে state[name]=rows দিয়ে সরাসরি ওভাররাইট করা হতো — ফলে এই লোড শেষ হওয়ার সময়
+    // ক্লাউডের (তখনও পুরনো) ডেটা দিয়ে RAM-এর সদ্য-করা এন্ট্রিটা মুছে যেত, আর তারপর
+    // cacheStateLocally() কল হয়ে সেই মোছা অবস্থাটাই localStorage-এ সেভ হয়ে যেত — তাই
+    // রিফ্রেশ দিলে এন্ট্রিটা আর ফিরে আসতো না। এখন id মিলিয়ে merge করা হয় (Drive restore-এ
+    // ব্যবহৃত mergeRecordsById-এর মতোই) — ডিভাইসে থাকা কোনো এন্ট্রি কখনো মোছা হয় না, ক্লাউডের
+    // শুধু নতুন/অনুপস্থিত এন্ট্রিগুলোই যোগ হয়।
+    const assign=(name,rows)=>{
+      try{
+        state[name] = (typeof mergeRecordsById==='function') ? mergeRecordsById(state[name],rows) : (rows||[]);
+      }catch(_e){}
+    };
     fullResults.forEach(x=>assign(x.module,x.items));
     assign('orders',ordersItems);
   }
-  if(typeof idCounter!=='undefined') idCounter=base[3].val()||1;
+  if(typeof idCounter!=='undefined'){
+    const cloudIdCounter=base[3].val()||1;
+    idCounter=(typeof computeSafeIdCounter==='function' && typeof state!=='undefined')
+      ? computeSafeIdCounter([state.sales,state.purchases,state.expenses,state.invItems],cloudIdCounter,idCounter)
+      : cloudIdCounter;
+  }
 
   return Object.freeze({
     version:VERSION,bounded:true,requestPageSize:size,
