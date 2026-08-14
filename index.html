@@ -8378,6 +8378,34 @@ function scheduleTxnFormOptions(){
 function configureSheetForType(type){
   const isExpense = type === 'expense';
   const titleMap = { sales:'Sale', purchase:'Purchase', expense:'Expense' };
+
+  // IMPORTANT: HTML native validation runs before onsubmit/saveTxn().
+  // Several fields are only visible for Sales/Purchase, but the original
+  // markup still had `required` on some of them. When Expense was selected
+  // those hidden required fields could block the Save button entirely,
+  // especially when offline because there was no cloud flow to mask it.
+  // Required fields must follow the active transaction type.
+  const setReq = (id, required) => {
+    const el = document.getElementById(id);
+    if(el) el.required = !!required;
+  };
+  setReq('fDate', true);
+  setReq('fName', true);
+  setReq('fCategory', !isExpense);
+  setReq('fQty', !isExpense);
+  setReq('fPrice', !isExpense);
+  setReq('fAmount', isExpense);
+  setReq('fParty', !isExpense);
+  setReq('fPhone', false);
+  setReq('fAddress', false);
+  setReq('fProductId', false);
+  setReq('fSerial', false);
+  setReq('fWarrantyType', false);
+  setReq('fWarrantyProvider', false);
+  setReq('fWarrantyCardNo', false);
+  setReq('fWarrantyTerms', false);
+  setReq('fPayment', false);
+  setReq('fNotes', false);
   document.getElementById('sheetTitle').textContent = (state.editing.id ? 'Edit ' : 'Add ') + titleMap[type];
   document.getElementById('fRefWrap').style.display = isExpense ? 'none' : 'block';
   document.getElementById('fRefLabel').textContent = type === 'sales' ? 'Invoice No' : 'Reference No';
@@ -8552,6 +8580,31 @@ function updateComputedTotal(){
 }
 function saveTxn(e){
   e.preventDefault();
+  // Deterministic validation for Android/WebView + offline mode.
+  // Native HTML validation may differ across browsers; do the same check here
+  // so the user always receives a clear message instead of a dead Save button.
+  try{
+    const activeType = state.editing && state.editing.type;
+    const dateEl = document.getElementById('fDate');
+    const nameEl = document.getElementById('fName');
+    const catEl = document.getElementById('fCategory');
+    const qtyEl = document.getElementById('fQty');
+    const priceEl = document.getElementById('fPrice');
+    const amountEl = document.getElementById('fAmount');
+    if(!dateEl.value){ showToast('তারিখ দিন'); dateEl.focus(); return false; }
+    if(!nameEl.value.trim()){ showToast('নাম/বিবরণ দিন'); nameEl.focus(); return false; }
+    if(activeType !== 'expense'){
+      if(!catEl.value){ showToast('ক্যাটেগরি নির্বাচন করুন'); catEl.focus(); return false; }
+      if(!(Number(qtyEl.value) > 0)){ showToast('পরিমাণ দিন'); qtyEl.focus(); return false; }
+      if(!(Number(priceEl.value) >= 0)){ showToast('মূল্য দিন'); priceEl.focus(); return false; }
+    }else{
+      if(!(Number(amountEl.value) >= 0)){ showToast('খরচের পরিমাণ দিন'); amountEl.focus(); return false; }
+    }
+  }catch(validationErr){
+    console.error('transaction validation failed:', validationErr);
+    showToast('ফর্ম যাচাই করতে সমস্যা হয়েছে — আবার চেষ্টা করুন');
+    return false;
+  }
   // পুরো ফাংশনটা try/catch এ মোড়ানো হলো — আগে অপ্রত্যাশিত এরর হলে (যেমন কোনো DOM
   // এলিমেন্ট খুঁজে না পাওয়া) সেভ নীরবে থেমে যেত, কোনো বার্তা ছাড়াই বোঝা যেত না কেন
   // সেভ হলো না। এখন অন্তত একটা toast বার্তা দেখাবে।
@@ -11235,169 +11288,82 @@ function setFirebaseStatus(msg, connected){
 let knownOrderIds = null;
 let scalableOrdersQuery = null;
 function listenOrders(){
-  if(!fbDb || !currentUid) return;
-  initFCMForegroundHandler();
-  if(typeof Notification !== 'undefined' && Notification.permission === 'granted') registerPushToken();
+  try{
+    if(ordersUnsub){ ordersUnsub(); ordersUnsub=null; }
+    if(!state.uid) return;
+    const database=db();
+    if(!database) return;
 
-  const ordersPath = shopRef('orders');
-  const WINDOW = 200;
-  const LIVE_WINDOW = 50;
+    const ref=database.ref('shops/'+state.uid+'/orders');
+    const getJournal=()=>(()=>{try{const raw=localStorage.getItem('myshop_pending_mutation_journal_v2');const a=raw?JSON.parse(raw):[];return Array.isArray(a)?a:[];}catch(_e){return[];}})();
 
-  if(window.__myshopOrderWindow){
-    try{
-      const old=window.__myshopOrderWindow;
-      if(old.liveQuery) old.liveQuery.off();
-      if(old.query) old.query.off();
-    }catch(e){}
-  }
+    const pendingOrderMutation=(id)=>{
+      try{
+        const journal=getJournal();
+        for(let i=journal.length-1;i>=0;i--){
+          const m=journal[i];
+          if(m && m.module==='orders' && String(m.id||'')===String(id)
+             && (m.op==='upsert' || m.op==='delete')) return m;
+        }
+      }catch(_e){}
+      return null;
+    };
 
-  const ctl = window.__myshopOrderWindow = {
-    // Start from the device cache so a just-confirmed/cancelled/deleted order is
-    // not replaced by an older Firebase snapshot while its mutation is still queued.
-    orderMap:new Map((Array.isArray(state.orders)?state.orders:[]).map(o=>[String(o.id),o])),
-    liveQuery:null,
-    query:null,
-    mode:'createdAt',
-    cursor:null,
-    hasOlder:true,
-    loadingOlder:false,
-    legacyChecked:false,
-    initialSync:true,
-    windowSize:WINDOW,
-    liveWindowSize:LIVE_WINDOW,
-    pageIndex:0
-  };
+    const applyCloudOrder=(id,value)=>{
+      const key=String(id);
+      const pending=pendingOrderMutation(key);
 
-  const sortRows=(arr)=>{
-    return arr.sort((a,b)=>{
-      const ta=Number(a.createdAt)||0, tb=Number(b.createdAt)||0;
-      if(tb!==ta) return tb-ta;
-      return String(b.id||'').localeCompare(String(a.id||''));
-    });
-  };
-
-  const pendingOrderValue=(id)=>{
-    try{
-      const key='orders/'+String(id);
-      const patch=pendingLegacyRecordPatches.get(key);
-      return patch ? patch.value : undefined;
-    }catch(_e){ return undefined; }
-  };
-
-  const publish=()=>{
-    // Re-apply any queued local order mutations over the live Firebase window.
-    // Firebase may legitimately return the previous status until the queued write
-    // reaches the server; that older snapshot must never undo a local confirmation.
-    pendingLegacyRecordPatches.forEach(p=>{
-      if(String(p.module)!=='orders') return;
-      const id=String(p.id);
-      if(p.value===null) ctl.orderMap.delete(id);
-      else ctl.orderMap.set(id,Object.assign({id},p.value));
-    });
-    state.orders=sortRows(Array.from(ctl.orderMap.values()));
-    __dataMutationVersion++;
-    cacheOrdersLocally();
-    updateOrdersBadge();
-    dirtyPages.orders=true;
-    if(state.currentPage==='orders'){
-      renderOrders();
-      dirtyPages.orders=false;
-    }
-  };
-
-  const setCursorFromRows=(rows)=>{
-    if(!rows.length){ ctl.cursor=null; return; }
-    const asc=sortRows(rows.slice()).reverse();
-    const oldest=asc[0];
-    if(ctl.mode==='createdAt'){
-      ctl.cursor={
-        createdAt:Number(oldest.createdAt)||0,
-        id:String(oldest.id||'')
-      };
-    }else{
-      ctl.cursor={id:String(oldest.id||'')};
-    }
-  };
-
-  const attachLive=()=>{
-    if(ctl.liveQuery){ try{ctl.liveQuery.off();}catch(e){} }
-    ctl.liveQuery = ctl.mode==='createdAt'
-      ? ordersPath.orderByChild('createdAt').limitToLast(LIVE_WINDOW)
-      : ordersPath.orderByKey().limitToLast(LIVE_WINDOW);
-
-    ctl.liveQuery.on('child_added',snap=>{
-      const id=String(snap.key), value=snap.val()||{};
-      const existed=ctl.orderMap.has(id);
-      const pending=pendingOrderValue(id);
-      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? value : (pending||{})));
-      publish();
-      if(!ctl.initialSync && !existed && (value.status||'pending')==='pending'){
-        notifyNewOrder(Object.assign({id},value));
+      // Local unsynced mutation is authoritative over a stale Firebase snapshot.
+      if(pending){
+        if(pending.op==='delete'){
+          state.orders=(state.orders||[]).filter(o=>String(o.id)!==key);
+          return;
+        }
+        const local=state.orders.find(o=>String(o.id)===key);
+        if(local) return;
+        if(pending.payload) upsertOrderIntoStore(pending.payload);
+        return;
       }
-    });
-    ctl.liveQuery.on('child_changed',snap=>{
-      const id=String(snap.key);
-      const pending=pendingOrderValue(id);
-      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? (snap.val()||{}) : (pending||{})));
-      publish();
-    });
-    ctl.liveQuery.on('child_removed',snap=>{
-      const id=String(snap.key);
-      const pending=pendingOrderValue(id);
-      if(pending===undefined || pending===null) ctl.orderMap.delete(id);
-      else ctl.orderMap.set(id,Object.assign({id},pending));
-      publish();
-    });
-  };
 
-  const readCreatedAtWindow=()=>ordersPath.orderByChild('createdAt').limitToLast(WINDOW).once('value');
+      if(value==null){
+        state.orders=(state.orders||[]).filter(o=>String(o.id)!==key);
+        return;
+      }
 
-  const readLegacyWindow=()=>ordersPath.orderByKey().limitToLast(WINDOW).once('value');
+      const cloud={id:key,...value};
+      const local=state.orders.find(o=>String(o.id)===key);
+      if(local){
+        const localUpdated=Number(local.updatedAt||local.updated_at||0);
+        const cloudUpdated=Number(cloud.updatedAt||cloud.updated_at||0);
+        if(localUpdated && cloudUpdated && localUpdated>cloudUpdated) return;
+      }
+      upsertOrderIntoStore(cloud);
+    };
 
-  readCreatedAtWindow().then(snap=>{
-    const rows=[];
-    snap.forEach(child=>{
-      rows.push(Object.assign({id:String(child.key)},child.val()||{}));
-    });
+    const onAdded=snap=>applyCloudOrder(snap.key,snap.val());
+    const onChanged=snap=>applyCloudOrder(snap.key,snap.val());
+    const onRemoved=snap=>{
+      const key=String(snap.key);
+      const pending=pendingOrderMutation(key);
+      if(pending){ 
+        if(pending.op==='delete') state.orders=(state.orders||[]).filter(o=>String(o.id)!==key);
+        return;
+      }
+      state.orders=(state.orders||[]).filter(o=>String(o.id)!==key);
+      try{renderOrders();}catch(_e){}
+      try{renderAll();}catch(_e){}
+    };
 
-    const missing=rows.filter(o=>!(Number.isFinite(Number(o.createdAt)) && Number(o.createdAt)>0)).length;
+    ref.on('child_added',onAdded);
+    ref.on('child_changed',onChanged);
+    ref.on('child_removed',onRemoved);
 
-    // Mixed legacy/new datasets: do NOT discard legacy records. Merge a bounded
-    // push-key window with the createdAt window, dedupe by id, then paginate
-    // future history in push-key mode so every legacy record remains reachable.
-    if(missing>0){
-      ctl.mode='key';
-      return readLegacyWindow().then(legacySnap=>{
-        const merged=new Map();
-        rows.forEach(o=>merged.set(String(o.id),o));
-        legacySnap.forEach(child=>merged.set(String(child.key),Object.assign({id:String(child.key)},child.val()||{})));
-        return Array.from(merged.values());
-      });
-    }
-    return rows;
-  }).then(rows=>{
-    sortRows(rows);
-    // Keep local pending order mutations authoritative over this initial cloud read.
-    ctl.orderMap.clear();
-    rows.slice(-WINDOW).forEach(o=>{
-      const id=String(o.id);
-      const pending=pendingOrderValue(id);
-      ctl.orderMap.set(id,Object.assign({id}, pending===undefined ? o : (pending||{})));
-    });
-    setCursorFromRows(rows.slice(-WINDOW));
-    ctl.hasOlder = rows.length >= WINDOW;
-    ctl.legacyChecked = true;
-    ctl.initialSync=false;
-    publish();
-    attachLive();
-  }).catch(err=>{
-    console.warn('[Orders] initial bounded read failed:',err);
-    ctl.initialSync=false;
-  });
-
-  pushProductsToFirebase();
-  pushVideosToFirebase();
-  setFirebaseStatus('',true);
+    ordersUnsub=()=>{
+      try{ref.off('child_added',onAdded);}catch(_e){}
+      try{ref.off('child_changed',onChanged);}catch(_e){}
+      try{ref.off('child_removed',onRemoved);}catch(_e){}
+    };
+  }catch(e){ console.warn('orders listener unavailable',e); }
 }
 
 /* Fetch older orders only when the user asks for them. Supports both the
