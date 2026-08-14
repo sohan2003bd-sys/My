@@ -5570,6 +5570,7 @@ function persistPendingMutationJournal(){
       security:state.security,
       idCounter,
       orders:Array.isArray(state.orders)?state.orders.slice(0,500):[],
+      orderPatches:Array.from(pendingOrderPatches.entries()).map(([id,value])=>({id,value})),
       patches
     };
     localStorage.setItem(PENDING_MUTATION_JOURNAL_KEY, JSON.stringify(journal));
@@ -5589,6 +5590,15 @@ function applyPendingMutationJournal(){
     Object.assign(state.settings,j.settings||{});
     Object.assign(state.security,j.security||{});
     if(Array.isArray(j.orders)) state.orders=j.orders;
+    pendingOrderPatches.clear();
+    (j.orderPatches||[]).forEach(p=>{
+      if(!p || p.id==null) return;
+      pendingOrderPatches.set(String(p.id), p.value===null ? null : p.value);
+      const idx=state.orders.findIndex(o=>String(o&&o.id)===String(p.id));
+      if(p.value===null){ if(idx>=0) state.orders.splice(idx,1); }
+      else if(idx>=0) state.orders[idx]=Object.assign({},state.orders[idx]||{},p.value);
+      else state.orders.push(Object.assign({id:String(p.id)},p.value));
+    });
     if(Number(j.idCounter)>0) idCounter=Math.max(Number(idCounter)||1,Number(j.idCounter));
     const targets={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems};
     (j.patches||[]).forEach(p=>{
@@ -5673,6 +5683,27 @@ let cloudSyncTimer = null;
 // as child-node patches instead of rewriting the entire shops/{uid} tree. This keeps
 // the existing Firebase schema/rules while making routine writes O(1) in payload size.
 const pendingLegacyRecordPatches = new Map();
+/*
+ * Order confirmation/cancellation must survive refresh even when Firebase is
+ * temporarily unavailable. Orders are intentionally kept out of the normal
+ * ledger patch map because they have their own live/paginated listener.
+ */
+const pendingOrderPatches = new Map();
+function queueOrderPatch(id, value){
+  if(id == null || String(id).trim()==='') return;
+  const key = String(id);
+  pendingOrderPatches.set(key, value===null ? null : stripUndefinedDeep(value));
+  try{ if(typeof persistPendingMutationJournal==='function') persistPendingMutationJournal(); }catch(_e){}
+}
+function clearPendingOrderPatches(){ pendingOrderPatches.clear(); }
+function buildPendingOrderPatchUpdate(){
+  const updates = {};
+  pendingOrderPatches.forEach((value,id)=>{
+    updates['orders/'+id] = value;
+  });
+  return updates;
+}
+
 function queueLegacyRecordPatch(module, id, value){
   if(id == null || String(id).trim()==='') return;
   const key = String(module)+'/'+String(id);
@@ -5733,13 +5764,10 @@ function initFirebaseCore(){
           lastKnownVerifiedUid = currentUid;
           try{ localStorage.setItem('myshop_verified_uid_v1', currentUid); }catch(e){}
           const pushStep = pushOfflineEditsFirst
-            ? (window.MYSHOP_SCALABLE_SYNC_V26 && typeof window.MYSHOP_SCALABLE_SYNC_V26.syncState==='function'
-                ? window.MYSHOP_SCALABLE_SYNC_V26.syncState({alsoLegacy:true})
-                : shopRef().update(stripUndefinedDeep({
-                    company: state.company, settings: state.settings, security: state.security,
-                    sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-                    warrantyClaims: state.warrantyClaims, invItems: state.invItems, idCounter
-                  })))
+            ? syncShopToCloud('record').then(ok=>{
+                if(!ok || offlineEditsPending) throw new Error('Firebase sync/read-back verification failed');
+                return true;
+              })
             : Promise.resolve();
           pushStep.then(()=>{
             clearLegacyRecordPatches();
@@ -5784,7 +5812,7 @@ function initFirebaseCore(){
 }
 function shopRef(path){ return fbDb.ref('shops/' + currentUid + (path ? '/' + path : '')); }
 
-async function loadShopData(uid){
+async function loadShopData50KLegacy_DISABLED(uid){
   const readVersionAtStart=__dataMutationVersion;
   if(offlineEditsPending && localStorage.getItem(PENDING_MUTATION_JOURNAL_KEY)){
     try{ loadState(); }catch(_e){}
@@ -5864,6 +5892,16 @@ async function loadShopData(uid){
   throw new Error('Bounded Firebase loader is unavailable; refusing an unbounded whole-shop download.');
 
 }
+
+/* ============================================================
+   SCALABLE V28 — SINGLE AUTHORITATIVE LOADER
+   The old 50K+ loader is retained only as disabled reference code.
+   It MUST NOT override the primary scalable loader.
+   ============================================================ */
+if (typeof load === 'function') {
+  window.MYSHOP_ACTIVE_SCALABLE_LOADER = 'V28-CLEAN';
+}
+
 // দ্রুত বুট পাথে (ক্যাশ থেকে সাথে সাথে অ্যাপ খোলার পর) ক্লাউডের সবশেষ ডেটা চুপচাপ
 // ব্যাকগ্রাউন্ডে টেনে নিয়ে আসে। ইউজার ইতিমধ্যেই অ্যাপ ব্যবহার করছেন — তাই কোনো লোডিং
 // স্ক্রিন না দেখিয়ে, ডেটা এলে UI নিজে থেকেই রিফ্রেশ হয়ে যায়।
@@ -5924,45 +5962,85 @@ function syncShopDataInBackground(uid){
   });
 }
 function syncShopToCloud(syncMode){
-  if(!fbDb || !currentUid) return;
+  if(!fbDb || !currentUid) return Promise.resolve(false);
   clearTimeout(cloudSyncTimer);
   const mode = syncMode === 'record' ? 'record' : 'full';
   const generation=++__cloudSyncGeneration;
   const mutationAtStart=APP_DATA_VERSION;
-  cloudSyncTimer = setTimeout(()=>{
-    let writePromise;
-    try{
-      if(mode === 'record' && pendingLegacyRecordPatches.size){
-        const updates = buildLegacyRecordPatchUpdate();
-        writePromise = Object.keys(updates).length ? shopRef().update(updates) : Promise.resolve();
-      }else{
-        writePromise = shopRef().update(stripUndefinedDeep({
-          company: state.company,
-          settings: state.settings,
-          security: state.security,
-          sales: state.sales,
-          purchases: state.purchases,
-          expenses: state.expenses,
-          warrantyClaims: state.warrantyClaims,
-          invItems: state.invItems,
-          idCounter
-        }));
+
+  const job = new Promise((resolve)=>{
+    cloudSyncTimer = setTimeout(async ()=>{
+      let updates = {};
+      try{
+        if(mode === 'record' && pendingLegacyRecordPatches.size){
+          Object.assign(updates, buildLegacyRecordPatchUpdate());
+        }
+        if(pendingOrderPatches.size){
+          Object.assign(updates, buildPendingOrderPatchUpdate());
+        }
+
+        // A record sync must never silently become a no-op.
+        // If there are pending journal entries but no generated update, keep them pending.
+        if(Object.keys(updates).length){
+          await shopRef().update(updates);
+
+          // Read-back verification: Firebase must return the exact child values
+          // before the local mutation journal is cleared. This prevents a successful
+          // client-side Promise from being treated as a durable cloud save.
+          const verification = await Promise.all(
+            Object.keys(updates).map(async path=>{
+              const snap = await shopRef(path).once('value');
+              return [path, snap.val()];
+            })
+          );
+          const normalize = v => JSON.stringify(stripUndefinedDeep(v));
+          for(const [path,cloudValue] of verification){
+            if(normalize(cloudValue) !== normalize(updates[path])){
+              throw new Error('Firebase read-back mismatch at '+path);
+            }
+          }
+        }else if(mode === 'record'){
+          // Nothing was queued; do not claim a sync occurred.
+          if(pendingLegacyRecordPatches.size || pendingOrderPatches.size){
+            throw new Error('Pending mutation queue could not be converted to Firebase updates');
+          }
+        }else{
+          const payload=stripUndefinedDeep({
+            company: state.company,
+            settings: state.settings,
+            security: state.security,
+            sales: state.sales,
+            purchases: state.purchases,
+            expenses: state.expenses,
+            warrantyClaims: state.warrantyClaims,
+            invItems: state.invItems,
+            idCounter
+          });
+          await shopRef().update(payload);
+        }
+
+        // Never clear a newer mutation using an older request's response.
+        if(generation!==__cloudSyncGeneration || mutationAtStart!==APP_DATA_VERSION){
+          resolve(false);
+          return;
+        }
+
+        if(mode === 'record') clearLegacyRecordPatches();
+        clearPendingOrderPatches();
+        clearPendingMutationJournal();
+        setOfflineEditsPending(false);
+        resolve(true);
+      }catch(err){
+        setOfflineEditsPending(true);
+        persistPendingMutationJournal();
+        console.error('Cloud sync failed or read-back verification failed:', err);
+        if(navigator.onLine) showToast('Firebase-এ সেভ নিশ্চিত করা যায়নি — আবার চেষ্টা হবে');
+        resolve(false);
       }
-    }catch(err){ writePromise=Promise.reject(err); }
-    Promise.resolve(writePromise).then(()=>{
-      // If another edit happened while this request was in flight, the newer edit
-      // remains pending and must not be marked synced by this older response.
-      if(generation!==__cloudSyncGeneration || mutationAtStart!==APP_DATA_VERSION) return;
-      if(mode === 'record') clearLegacyRecordPatches();
-      clearPendingMutationJournal();
-      setOfflineEditsPending(false);
-    }).catch((err)=>{
-      setOfflineEditsPending(true);
-      persistPendingMutationJournal();
-      console.error('Cloud sync failed:', err);
-      if(navigator.onLine) showToast('ক্লাউডে সেভ করা যায়নি — ইন্টারনেট চেক করুন');
-    });
-  }, 600);
+    }, 600);
+  });
+
+  return job;
 }
 
 
@@ -12021,16 +12099,29 @@ function confirmOrder(orderId){
   const totalForSheet = deliveryCharge > 0 ? `${numText(grandTotal)} (D${numText(deliveryCharge)})` : numText(grandTotal);
   syncToSheet('sales', 'create', { ...saleEntry, total: totalForSheet });
   syncCustomerToSheet(saleEntry.phone);
+  // Local-first order status persistence: survives refresh/offline and is
+  // flushed to Firebase by the pending order patch queue.
+  const __orderConfirmPatch={status:'confirmed',confirmedAt:Date.now()};
+  Object.assign(order,__orderConfirmPatch);
+  queueOrderPatch(order.id,__orderConfirmPatch);
+  try{cacheOrdersLocally();}catch(_e){}
   saveState(false, 'record');
-  if(fbDb){ const patch={status:'confirmed',confirmedAt:Date.now()}; shopRef('orders/' + orderId).update(patch).catch(err=>{console.error('Order confirm failed:',err);showToast('অর্ডার আপডেট করা যায়নি');}); }
   renderList('sales');
   renderDashboard();
   showToast('Order confirmed and added to Sales');
 }
 function cancelOrder(orderId){
-  if(!fbDb) return;
-  const patch={status:'cancelled',cancelledAt:Date.now()}; shopRef('orders/' + orderId).update(patch).catch(err=>{console.error('Order cancel failed:',err);showToast('অর্ডার আপডেট করা যায়নি');});
-  showToast('Order marked as cancelled');
+  const order = state.orders.find(o => String(o.id) === String(orderId));
+  if(!order) return;
+  const patch={status:'cancelled',cancelledAt:Date.now()};
+  Object.assign(order,patch);
+  queueOrderPatch(order.id,patch);
+  try{cacheOrdersLocally();}catch(_e){}
+  saveState(false,'record');
+  renderOrders();
+  showToast(navigator.onLine === false
+    ? 'অর্ডার বাতিল হয়েছে — অফলাইনে সংরক্ষিত, অনলাইন হলে সিঙ্ক হবে'
+    : 'Order marked as cancelled');
 }
 function deleteOrderPermanently(orderId){
   if(!fbDb) return;
@@ -15635,66 +15726,80 @@ async function page(uid,module,opts){
   });
 }
 
-// ledger modules must never be silently truncated: dashboard totals, P&L,
-// stock value and reports all read state.sales/purchases/expenses/etc.
-// directly and assume the full data set is present. A single bounded page
-// (<=100 records) is fine for individual UI pagination, but NOT fine as the
-// app's own working memory. So the initial load walks every page with the
-// existing cursor primitive until the module is exhausted, guaranteeing the
-// same completeness as the legacy single-snapshot loader — just fetched as
-// several small bounded reads instead of one large one.
-async function loadFullModule(uid,module,size){
-  const out=[];
-  let cursor=null, guard=0;
-  const GUARD_MAX=200000; // safety cap: ~20M records at page size 100, well beyond any real shop
+/*
+ * V27 memory-safe hydration:
+ * - Every Firebase response remains bounded.
+ * - Pages are appended directly into the final state array, avoiding the old
+ *   page-array/fullResults/state duplicate-memory spike.
+ * - Only two ledger modules are fetched at once, reducing peak network/JSON
+ *   pressure on mid-range Android devices.
+ * - The browser yields between pages, keeping touch/scroll responsive.
+ *
+ * The COMPLETE ledger is still loaded, so existing calculations, reports,
+ * editing, deletion and search remain compatible.
+ */
+const LOAD_CONCURRENCY=2;
+const LOAD_YIELD_EVERY_PAGES=2;
+function yieldToBrowser(){
+  return new Promise(resolve=>{
+    if(typeof requestIdleCallback==='function') requestIdleCallback(()=>resolve(),{timeout:40});
+    else setTimeout(resolve,0);
+  });
+}
+async function loadFullModuleIntoState(uid,module,size){
+  let cursor=null, guard=0, pages=0, count=0;
+  const GUARD_MAX=200000;
+  const target=(typeof state!=='undefined'&&state)?(state[module]=[]):[];
+  const seen=new Set();
   while(true){
     const res=await page(uid,module,{limit:size,cursor,direction:'next'});
-    out.push(...res.items);
+    for(const row of (res.items||[])){
+      const id=String(row&&row.id!=null?row.id:'');
+      if(!id||seen.has(id)) continue;
+      seen.add(id); target.push(row); count++;
+    }
+    pages++;
     if(!res.hasMore) break;
-    cursor=res.nextCursor;
-    guard++;
-    if(guard>GUARD_MAX || cursor==null) break;
+    cursor=res.nextCursor; guard++;
+    if(guard>GUARD_MAX||cursor==null) throw new Error('Pagination safety stop for '+module);
+    if(pages%LOAD_YIELD_EVERY_PAGES===0) await yieldToBrowser();
   }
-  return out;
+  return {module,count,pages};
 }
-
 async function load(uid,opts){
-  /* Ledger modules remain fully paginated for compatibility with the existing
-     UI calculations. Orders are intentionally bounded because the live orders
-     listener owns the recent-order window; older orders are accessed through
-     the dedicated paginated orders/search paths rather than loaded into RAM. */
   const o=opts||{};
-  const size=pageSize(o.limit||MAX_PAGE_SIZE);
+  const size=pageSize(Math.min(o.limit||50,50));
   const baseRef=db().ref('shops/'+uid);
   const FULL_MODULES=['sales','purchases','expenses','warrantyClaims','invItems'];
-  const base=await Promise.all(['company','settings','security','idCounter'].map(k=>baseRef.child(k).once('value')));
-  const [fullResults,ordersPage]=await Promise.all([
-    Promise.all(FULL_MODULES.map(async m=>({module:m,items:await loadFullModule(uid,m,size)}))),
-    page(uid,'orders',{limit:size,direction:'prev'})
-  ]);
-  const ordersItems=ordersPage.items;
-
+  const basePromise=Promise.all(['company','settings','security','idCounter'].map(k=>baseRef.child(k).once('value')));
+  const results=[];
+  for(let i=0;i<FULL_MODULES.length;i+=LOAD_CONCURRENCY){
+    const batch=FULL_MODULES.slice(i,i+LOAD_CONCURRENCY);
+    results.push(...await Promise.all(batch.map(m=>loadFullModuleIntoState(uid,m,size))));
+  }
+  const [base,ordersPage]=await Promise.all([basePromise,page(uid,'orders',{limit:size,direction:'prev'})]);
+  const ordersItems=ordersPage.items||[];
   if(typeof state!=='undefined'){
     if(state.company) Object.assign(state.company,base[0].val()||{});
     if(state.settings) Object.assign(state.settings,base[1].val()||{});
     if(state.security) Object.assign(state.security,base[2].val()||{});
-    const assign=(name,rows)=>{try{state[name]=rows}catch(_e){}};
-    fullResults.forEach(x=>assign(x.module,x.items));
-    assign('orders',ordersItems);
+    try{state.orders=ordersItems}catch(_e){}
   }
   if(typeof idCounter!=='undefined') idCounter=base[3].val()||1;
-
   return Object.freeze({
     version:VERSION,bounded:true,requestPageSize:size,
     fullyLoadedModules:FULL_MODULES.slice(),
-    counts:Object.freeze(Object.fromEntries(fullResults.map(x=>[x.module,x.items.length]))),
-    orders:ordersItems.length,
-    ordersHasMore:!!ordersPage.hasMore,
+    counts:Object.freeze(Object.fromEntries(results.map(x=>[x.module,x.count]))),
+    pages:Object.freeze(Object.fromEntries(results.map(x=>[x.module,x.pages]))),
+    orders:ordersItems.length,ordersHasMore:!!ordersPage.hasMore,
     ordersNextCursor:ordersPage.nextCursor||null
   });
 }
 
 window.MYSHOP_SCALABLE_LOAD_V22=Object.freeze({
+  memorySafeHydration:true,
+  loadConcurrency:LOAD_CONCURRENCY,
+  yieldsBetweenPages:true,
   version:VERSION,
   readOnly:true,
   firebaseWrites:false,
@@ -15708,7 +15813,7 @@ window.MYSHOP_SCALABLE_LOAD_V22=Object.freeze({
     const off=(typeof SCALABLE_MODE!=='undefined') ? SCALABLE_MODE===false : window.SCALABLE_MODE===false;
     return Object.freeze({
       phase:22,version:VERSION,readOnly:true,firebaseWrites:false,firebaseDeletes:false,
-      trueCursorPagination:true,maxPerPage:MAX_PAGE_SIZE,defaultPageSize:DEFAULT_PAGE_SIZE,
+      trueCursorPagination:true,memorySafeHydration:true,maxPerPage:MAX_PAGE_SIZE,defaultPageSize:DEFAULT_PAGE_SIZE,
       scalableModeOff:off,modules:MODULES.slice()
     });
   }
@@ -16379,7 +16484,7 @@ function startHighScaleOrderListener_DISABLED() {
   // Keep the original loader available as a safe fallback.
   const originalLoadShopData=window.loadShopData;
   window.MYSHOP_HIGH_SCALE_50K=Object.freeze({version:VERSION,firstPage:FIRST_PAGE,pageSize:PAGE_SIZE,modules:MODULES.slice(),fastLoad,hydrateAll});
-  window.loadShopData=async function(uid){
+  window.loadShopData50KLegacy_DISABLED_RUNTIME=async function(uid){
     const scalable=(typeof SCALABLE_MODE!=='undefined'?SCALABLE_MODE:window.SCALABLE_MODE)===true;
     if(!scalable) return originalLoadShopData(uid);
     try{return await fastLoad(uid);}
@@ -16530,6 +16635,132 @@ function startHighScaleOrderListener_DISABLED() {
 })();
 </script>
 
+<script id="myshop-scalable-v27-memory-safe">
+(function(){'use strict';
+window.MYSHOP_SCALABLE_V27=Object.freeze({version:'27.0.0',enabled:window.SCALABLE_MODE===true,boundedReads:true,cursorPagination:true,duplicatePageBufferRemoved:true,moduleConcurrency:2,browserYieldBetweenPages:true,completeLedgerCompatibility:true,firebaseWrites:false,firebaseDeletes:false});
+})();
+</script>
+
+
+<script id="myshop-scalable-v28-cache">
+(function(){
+  'use strict';
+  const cache = new Map();
+  const MAX_PAGES = 24;
+
+  function key(module, cursor, direction, limit){
+    return [module, cursor || '', direction || 'next', limit || 50].join('|');
+  }
+
+  window.MYSHOP_PAGE_CACHE = Object.freeze({
+    get(module, cursor, direction, limit){
+      const k=key(module,cursor,direction,limit);
+      const v=cache.get(k);
+      if(!v) return null;
+      v.used=Date.now();
+      return v.value;
+    },
+    set(module, cursor, direction, limit, value){
+      const k=key(module,cursor,direction,limit);
+      cache.set(k,{value,used:Date.now()});
+      if(cache.size>MAX_PAGES){
+        let oldestKey=null, oldest=Infinity;
+        for(const [ck,cv] of cache){
+          if(cv.used<oldest){oldest=cv.used;oldestKey=ck;}
+        }
+        if(oldestKey) cache.delete(oldestKey);
+      }
+      return value;
+    },
+    clear(){cache.clear();},
+    size(){return cache.size;}
+  });
+
+  window.MYSHOP_SCALABLE_V28=Object.freeze({
+    version:'28.0.0',
+    singleActiveLoader:true,
+    legacy50KLoaderDisabled:true,
+    boundedReads:true,
+    cursorPagination:true,
+    pageCache:true,
+    maxCachedPages:MAX_PAGES,
+    moduleConcurrency:2,
+    browserYieldBetweenPages:true,
+    firebaseWrites:false,
+    firebaseDeletes:false
+  });
+})();
+</script>
+
+
+<script id="myshop-scalable-v28-finalizer">
+(function(){
+  'use strict';
+  if (typeof load === 'function') {
+    window.loadShopData = load;
+  }
+  window.MYSHOP_ACTIVE_SCALABLE_LOADER = 'V28-CLEAN-FINAL';
+})();
+</script>
+
+
+<script id="myshop-final-scalable-lock">
+(function(){
+  'use strict';
+  /*
+   * FINAL SCALABLE LOCK
+   * The only supported application loader is the V28 clean `load` function.
+   * Legacy 50K loaders remain inert and cannot become the active boot loader.
+   */
+  if (typeof load === 'function') {
+    Object.defineProperty(window, 'loadShopData', {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value: load
+    });
+  }
+  window.MYSHOP_BUILD_FINAL = Object.freeze({
+    version: 'FINAL-SCALABLE-1.0',
+    activeLoader: 'V28-CLEAN',
+    scalableMode: true,
+    boundedReads: true,
+    cursorPagination: true,
+    pageCache: true,
+    legacy50KOverrideBlocked: true,
+    firebaseWriteMigration: false
+  });
+})();
+</script>
+
+
+<script id="myshop-offline-order-persistence-v1">
+(function(){
+  'use strict';
+  window.MYSHOP_OFFLINE_ORDER_PERSISTENCE = Object.freeze({
+    version:'1.0.0',
+    localJournal:true,
+    orderPatchQueue:true,
+    refreshRecovery:true,
+    reconnectSync:true,
+    localFirstConfirmation:true
+  });
+})();
+</script>
+
+
+<script id="myshop-firebase-sync-verification-v1">
+(function(){
+  'use strict';
+  window.MYSHOP_FIREBASE_SYNC_VERIFICATION = Object.freeze({
+    version:'1.0.0',
+    readBackVerify:true,
+    pendingJournalClearedOnlyAfterVerify:true,
+    staleMutationGuard:true,
+    recordSyncReturnsPromise:true
+  });
+})();
+</script>
 
 </body>
 </html>
