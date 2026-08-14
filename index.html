@@ -2061,6 +2061,16 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
   #bottomNav .navbtn{contain:layout paint;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
 </style>
 <style id="nav-performance-ultra">#bottomNav{contain:layout paint;isolation:isolate;}#bottomNav .navbtn{contain:layout paint;backface-visibility:hidden;-webkit-backface-visibility:hidden;}</style>
+
+<style id="main-menu-touch-safe">
+/* Touch-safe main menu: long-press must never leave a hover/pressed visual state. */
+@media (hover: none), (pointer: coarse){
+  .main-menu-item:hover{background:transparent!important;border-color:transparent!important;box-shadow:none!important;}
+  .main-menu-item:hover::before{transform:scaleY(0)!important;}
+  .main-menu-item:hover .main-menu-icon{transform:none!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 3px 10px rgba(15,56,48,.06)!important;}
+  .main-menu-item:hover .main-menu-chevron{transform:none!important;color:#9aa6a1!important;}
+}
+</style>
 </head>
 <body>
 <!-- ===================== QR VERIFICATION SCREEN (public, no login) =====================
@@ -4994,6 +5004,9 @@ var qrcode = function() {
    optional Cloud Sync URL in Settings.
    ========================================================= */
 const STORAGE_KEY = 'khatabook_v1';
+const ORDERS_CACHE_KEY = 'myshop_orders_cache_v1';
+// Prevent an older background cloud read from overwriting a just-restored/local mutation.
+let __dataMutationVersion = 0;
 
 // Shared Firebase project — every shop's data lives isolated under /shops/{uid}/
 const FIREBASE_CONFIG = {
@@ -5256,6 +5269,14 @@ function setOfflineEditsPending(val){
     else localStorage.removeItem(OFFLINE_PENDING_KEY);
   }catch(e){}
 }
+function cacheOrdersLocally(){
+  try{
+    const rows = Array.isArray(state.orders) ? state.orders.slice(0, 500) : [];
+    localStorage.setItem(ORDERS_CACHE_KEY, JSON.stringify(rows));
+    return true;
+  }catch(_e){ return false; }
+}
+
 function cacheStateLocally(showError){
   try{
     const payload = {
@@ -5299,6 +5320,10 @@ function loadState(){
     state.expenses = d.expenses || [];
     state.warrantyClaims = d.warrantyClaims ? Object.values(d.warrantyClaims) : [];
     state.invItems = d.invItems || [];
+    try{
+      const cachedOrders = localStorage.getItem(ORDERS_CACHE_KEY);
+      state.orders = cachedOrders ? (JSON.parse(cachedOrders) || []) : (d.orders || []);
+    }catch(_e){ state.orders = d.orders || []; }
     idCounter = d.idCounter || 1;
     return true;
   }catch(err){
@@ -5479,7 +5504,15 @@ async function loadShopData(uid){
     try{
       const recentOrders=await pageFn(uid,'orders',{limit:size,direction:'prev'});
       state.orders=recentOrders.items||[];
-    }catch(_orderErr){ state.orders=[]; }
+    }catch(_orderErr){
+      // Keep the last known local/live orders when a bounded cloud read fails.
+      // A transient refresh/network error must never blank the Orders page.
+      try{
+        const cachedOrders = localStorage.getItem(ORDERS_CACHE_KEY);
+        if(cachedOrders) state.orders = JSON.parse(cachedOrders) || state.orders || [];
+      }catch(_e){}
+    }
+    cacheOrdersLocally();
     backfillInventoryLinks();
     cacheStateLocally(false);
     return {version:'legacy-bounded-fallback-v1',bounded:true,fullyLoadedModules:modules.slice(),orders:state.orders.length};
@@ -5530,8 +5563,18 @@ function refreshCurrentPageNonBlocking(){
   __backgroundRefreshTimer=setTimeout(run,220);
 }
 function syncShopDataInBackground(uid){
+  const readVersion = __dataMutationVersion;
   loadShopData(uid).then(() => {
     if(currentUid !== uid) return;
+    // If a restore/local mutation happened while this cloud read was in flight,
+    // its older result is stale. Re-apply the just-saved local state instead of
+    // letting the old cloud snapshot erase it after refresh.
+    if(readVersion !== __dataMutationVersion){
+      try{ loadState(); }catch(_e){}
+      cacheOrdersLocally();
+      if(document.getElementById('app').style.display !== 'none') refreshCurrentPageNonBlocking();
+      return;
+    }
     if(document.getElementById('app').style.display !== 'none') refreshCurrentPageNonBlocking();
   }).catch(err => {
     console.warn('ব্যাকগ্রাউন্ড সিঙ্ক ব্যর্থ:', err);
@@ -10199,7 +10242,28 @@ function restoreFromDrive(){
         // idCounter-ও এখন সবচেয়ে বড় id-এর চেয়ে নিরাপদভাবে এগিয়ে রাখা হয় — নাহলে Drive-এর পুরনো
         // (ছোট) idCounter বসে গিয়ে ভবিষ্যতে নতুন এন্ট্রির id বিদ্যমান কোনো এন্ট্রির সাথে সংঘর্ষ করতে পারত।
         idCounter = computeSafeIdCounter([state.sales, state.purchases, state.expenses, state.invItems], d.idCounter, idCounter);
-        saveState();
+        // Mark this as a new local data generation before persisting. Any older
+        // background Firebase read that finishes later will be discarded.
+        __dataMutationVersion++;
+        cacheStateLocally(true);
+        cacheOrdersLocally();
+        if(fbDb && currentUid){
+          // Keep the pending flag until the cloud write is confirmed. If the app is
+          // refreshed during that short window, startup will push the local restored
+          // state first instead of loading the older cloud snapshot over it.
+          setOfflineEditsPending(true);
+          shopRef().update(stripUndefinedDeep({
+            company: state.company, settings: state.settings, security: state.security,
+            sales: state.sales, purchases: state.purchases, expenses: state.expenses,
+            warrantyClaims: state.warrantyClaims, invItems: state.invItems, idCounter
+          })).then(()=>{
+            setOfflineEditsPending(false);
+          }).catch(err=>{
+            console.error('Drive restore cloud persist failed:', err);
+            setOfflineEditsPending(true);
+            if(navigator.onLine) showToast('ডাটা ডিভাইসে সেভ হয়েছে, কিন্তু ক্লাউডে সেভ হয়নি — আবার চেষ্টা হবে');
+          });
+        }
         renderAll();
         showToast('Drive থেকে ডাটা যোগ করা হয়েছে — ডিভাইসের বিদ্যমান কোনো ডাটা মোছা হয়নি');
       }).catch(() => showToast('Restore ব্যর্থ হয়েছে'));
@@ -10735,6 +10799,8 @@ function listenOrders(){
 
   const publish=()=>{
     state.orders=sortRows(Array.from(ctl.orderMap.values()));
+    __dataMutationVersion++;
+    cacheOrdersLocally();
     updateOrdersBadge();
     dirtyPages.orders=true;
     if(state.currentPage==='orders'){
@@ -16035,6 +16101,36 @@ function startHighScaleOrderListener_DISABLED() {
     const oldInvalidate=root.invalidatePerformanceCaches;
     root.invalidatePerformanceCaches=function(){ cache.clear(); return oldInvalidate(); };
   }
+})();
+</script>
+
+<script id="main-menu-instant-touch-fix">
+/* Prevent long-press on main-menu items from triggering a delayed click or visual hover state.
+   The action is committed on finger-down, exactly once. */
+(function(){
+  function init(){
+    const drawer=document.getElementById('mainMenuDrawer');
+    if(!drawer) return;
+    drawer.addEventListener('pointerdown', function(e){
+      const btn=e.target.closest('.main-menu-item[data-main-page]');
+      if(!btn) return;
+      if(e.pointerType==='mouse' && e.button!==0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if(btn.dataset.menuPointerHandled==='1') return;
+      btn.dataset.menuPointerHandled='1';
+      if(typeof mainMenuGo==='function') mainMenuGo(btn.dataset.mainPage);
+      setTimeout(function(){ delete btn.dataset.menuPointerHandled; }, 600);
+    }, true);
+    drawer.addEventListener('click', function(e){
+      const btn=e.target.closest('.main-menu-item[data-main-page]');
+      if(!btn || btn.dataset.menuPointerHandled!=='1') return;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
 })();
 </script>
 </body>
