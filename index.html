@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<meta content="#F5EAD0" name="theme-color"/>
+<meta content="#FAF3E4" name="theme-color"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
@@ -405,19 +405,61 @@
   .main-menu-text{font-size:14px;font-weight:650;letter-spacing:.005em;}
   .main-menu-chevron{font-size:21px;font-weight:300;color:#9aa6a1;transition:transform .2s ease,color .2s ease;}
   .main-menu-item:hover .main-menu-chevron,.main-menu-item:focus-visible .main-menu-chevron{transform:translateX(3px);color:#1674f5;}
-  .main-menu-settings-list{animation:none;}
-  .main-menu-settings-list.open .main-menu-settings-item{animation:mmSubIn .22s ease both;}
-  .main-menu-settings-item:nth-child(2){animation-delay:.02s}.main-menu-settings-item:nth-child(3){animation-delay:.04s}.main-menu-settings-item:nth-child(4){animation-delay:.06s}.main-menu-settings-item:nth-child(5){animation-delay:.08s}.main-menu-settings-item:nth-child(6){animation-delay:.10s}
+  /* =====================================================================
+     ফেসবুক-স্টাইল "Settings" অ্যাকর্ডিয়ন — হোম মেনুর Settings রো-তে চাপলে
+     এখন হুট করে দেখানো/লুকানো (display:none↔block) না হয়ে, CSS grid-এর
+     0fr→1fr টেকনিক দিয়ে মসৃণভাবে height অ্যানিমেট করে খোলে/বন্ধ হয় — ঠিক
+     ফেসবুকের Settings & Privacy মেনুর মতো। রো-টাও নিজে হালকা হাইলাইট হয়ে
+     "উপরে উঠে" (elevate) যায় এবং নিচের লিস্টের সাথে একটাই কার্ডের মতো
+     মিশে যায়, যাতে সাথে সাথে বোঝা যায় এর ভেতরে আরও অনেকগুলো অপশন আছে।
+     ===================================================================== */
+  .main-menu-settings-toggle{
+    cursor:pointer; position:relative; z-index:1;
+    transition:background .24s ease,border-color .24s ease,box-shadow .24s ease,border-radius .28s ease .04s;
+  }
+  .main-menu-settings-toggle.expanded{
+    background:linear-gradient(90deg,#eef8f3,#f7fbf9);
+    border-color:rgba(22,116,245,.12);
+    box-shadow:0 4px 14px rgba(15,56,48,.06);
+    border-radius:13px 13px 4px 4px;
+    margin-bottom:0;
+    transition:background .24s ease,border-color .24s ease,box-shadow .24s ease,border-radius .12s ease;
+  }
+  .main-menu-settings-toggle.expanded .main-menu-icon{
+    background:linear-gradient(145deg,#1674f5,#0753cf); color:#fff;
+    box-shadow:0 7px 16px rgba(22,116,245,.24);
+  }
+  .main-menu-settings-toggle.expanded::before{transform:scaleY(1);}
+  .settings-chevron{transition:transform .3s cubic-bezier(.22,.85,.2,1),color .2s ease;}
+  .main-menu-settings-toggle.expanded .settings-chevron,
+  .main-menu-settings-toggle.expanded:hover .settings-chevron,
+  .main-menu-settings-toggle.expanded:focus-visible .settings-chevron{transform:rotate(90deg); color:#1674f5;}
+
+  .main-menu-settings-list{
+    display:grid; grid-template-rows:0fr; overflow:hidden;
+    transition:grid-template-rows .36s cubic-bezier(.22,.85,.2,1);
+    background:linear-gradient(180deg,#e7f4ee 0%,#eef8f3 100%);
+    box-shadow:inset 0 2px 8px rgba(15,56,48,.08), inset 0 -1px 0 rgba(255,255,255,.6);
+    border-radius:4px 4px 13px 13px; margin-bottom:4px;
+  }
+  .main-menu-settings-list.open{grid-template-rows:1fr;}
+  .main-menu-settings-list .mms-inner{min-height:0; overflow:hidden; padding:6px 10px 10px;}
+  .main-menu-settings-list .main-menu-settings-item{animation:none;}
+  .main-menu-settings-list.open .main-menu-settings-item{animation:mmSubIn .26s cubic-bezier(.22,.85,.2,1) both;}
+  .main-menu-settings-item:nth-child(n+2){animation-delay:calc(.018s * var(--i,1));}
+  .main-menu-settings-item:nth-child(1){--i:1}.main-menu-settings-item:nth-child(2){--i:2}.main-menu-settings-item:nth-child(3){--i:3}.main-menu-settings-item:nth-child(4){--i:4}.main-menu-settings-item:nth-child(5){--i:5}.main-menu-settings-item:nth-child(6){--i:6}.main-menu-settings-item:nth-child(7){--i:7}.main-menu-settings-item:nth-child(8){--i:8}.main-menu-settings-item:nth-child(9){--i:9}.main-menu-settings-item:nth-child(10){--i:10}.main-menu-settings-item:nth-child(11){--i:11}.main-menu-settings-item:nth-child(12){--i:12}.main-menu-settings-item:nth-child(13){--i:13}.main-menu-settings-item:nth-child(14){--i:14}.main-menu-settings-item:nth-child(15){--i:15}.main-menu-settings-item:nth-child(16){--i:16}.main-menu-settings-item:nth-child(17){--i:17}.main-menu-settings-item:nth-child(18){--i:18}.main-menu-settings-item:nth-child(19){--i:19}
   .main-menu-settings-item .msi-icon{color:#1674f5;}
-  @keyframes mmSubIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-  @media (prefers-reduced-motion:reduce){.main-menu-drawer,.main-menu-item,.main-menu-icon,.main-menu-chevron,.main-menu-overlay{transition:none!important}.main-menu-settings-list.open .main-menu-settings-item{animation:none!important;}}
+  @keyframes mmSubIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){
+    .main-menu-drawer,.main-menu-item,.main-menu-icon,.main-menu-chevron,.main-menu-overlay,.main-menu-settings-list,.settings-chevron{transition:none!important}
+    .main-menu-settings-list.open .main-menu-settings-item{animation:none!important;}
+    .main-menu-settings-list{grid-template-rows:0fr;}
+    .main-menu-settings-list.open{grid-template-rows:1fr;}
+  }
 
   /* Settings options are now part of the HOME 3-line menu; keep the settings page clean. */
-  .main-menu-settings-toggle{cursor:pointer;}
-  .main-menu-settings-list{display:none;padding:2px 10px 8px;}
-  .main-menu-settings-list.open{display:block;}
-  .main-menu-settings-item{width:100%;display:flex;align-items:center;gap:11px;padding:9px 10px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.78);color:var(--ink);font:inherit;font-size:12.5px;font-weight:650;text-align:left;margin:5px 0;box-sizing:border-box;transition:background .15s ease,transform .1s ease,border-color .15s ease,box-shadow .15s ease;}
-  .main-menu-settings-item:hover{background:#fff;border-color:rgba(22,116,245,.10);box-shadow:0 4px 12px rgba(15,56,48,.05);}
+  .main-menu-settings-item{width:100%;display:flex;align-items:center;gap:11px;padding:9px 10px;border:1px solid rgba(255,255,255,.5);border-radius:12px;background:rgba(255,255,255,.42);color:var(--ink);font:inherit;font-size:12.5px;font-weight:650;text-align:left;margin:5px 0;box-sizing:border-box;transition:background .15s ease,transform .1s ease,border-color .15s ease,box-shadow .15s ease;}
+  .main-menu-settings-item:hover{background:rgba(255,255,255,.72);border-color:rgba(22,116,245,.10);box-shadow:0 4px 12px rgba(15,56,48,.05);}
   .main-menu-settings-item:active{transform:scale(.97);background:#EAF5EE;border-color:rgba(22,116,245,.14);}
   .main-menu-settings-item .msi-icon{
     width:31px;height:31px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;
@@ -1089,7 +1131,7 @@
     background:
       radial-gradient(circle at 16% 8%, rgba(184,134,62,0.05), transparent 42%),
       radial-gradient(circle at 88% 92%, rgba(184,134,62,0.05), transparent 46%),
-      #F3EFE6;
+      #F8F5EE;
   }
   #onboardingScreen.light-auth::before, #onboardingScreen.light-auth::after{ content:none; }
   #onboardingScreen.light-auth .login-card{
@@ -1578,32 +1620,115 @@
     font-family:'Fraunces', serif; font-style:italic; }
 
 
-  /* ---------- Receipt format dropdown ---------- */
+  /* ---------- Receipt format dropdown: unique branded "ticket-stack" design ----------
+     আগের ডিজাইনটা জেনেরিক ছিল এবং অ্যাপের সবুজ/গোল্ড ব্র্যান্ড রঙের বদলে অপ্রাসঙ্গিক
+     নীল রঙ (#2b8cff/#eaf3ff) ব্যবহার করত। এখানে সম্পূর্ণ নতুন, ইউনিক ভিজ্যুয়াল
+     ভাষা: ট্রিগারটা এখন একটা টিকিট/রিসিট-স্টাবের মতো দেখতে — বামে একটা খাঁজকাটা
+     (perforated) সবুজ-গোল্ড ব্যাজ, ডানে একটা ঘোরানো গোল শেভরন বাটন। মেনু খুললে
+     প্রতিটা অপশন একটা ছোট কার্ডের মতো — সিলেক্ট করা অপশনে সবুজ বাঁ-পাশের বার,
+     ব্র্যান্ড গ্রেডিয়েন্ট ব্যাজ, আর একটা গোল চেক-বাবল (জেনেরিক ✓ টেক্সটের বদলে)।
+     ডাটা/ভ্যালু/JS হুক সব same থাকছে — শুধু visual layer বদলেছে। */
   .rf-select{position:relative;width:100%;z-index:30}
-  .rf-select-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border:1px solid var(--rule);border-radius:12px;background:var(--surface,#fff);color:var(--text,#1B2420);font:inherit;text-align:left;cursor:pointer;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
-  .rf-select-trigger:active{transform:translateY(1px)}
-  .rf-select.open .rf-select-trigger{border-color:var(--blue-500,#2b8cff);box-shadow:0 0 0 3px rgba(43,140,255,.12)}
-  .rf-select-trigger .rf-current{display:flex;align-items:center;gap:10px;min-width:0}
-  .rf-select-trigger .rf-current-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#eaf3ff;flex:none;font-size:17px}
+  .rf-select-trigger{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:11px 14px 11px 11px;border:1.5px solid var(--rule);border-radius:16px;
+    background:linear-gradient(180deg, #FFFFFF 0%, #FBFAF6 100%);
+    color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-sizing:border-box;
+    box-shadow:0 1px 0 rgba(15,40,34,0.03);
+    transition:border-color .16s ease, box-shadow .16s ease, transform .12s ease;
+  }
+  .rf-select-trigger:active{transform:scale(0.99)}
+  .rf-select.open .rf-select-trigger{
+    border-color:var(--green-600);
+    box-shadow:0 0 0 3px rgba(59,150,112,0.14);
+  }
+  .rf-select-trigger .rf-current{display:flex;align-items:center;gap:11px;min-width:0}
+  /* ব্র্যান্ড গ্রেডিয়েন্ট ব্যাজ — জেনেরিক পেস্টেল বক্সের বদলে */
+  .rf-select-trigger .rf-current-icon{
+    width:38px;height:38px;border-radius:12px;flex:none;font-size:18px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(155deg, var(--green-600) 0%, var(--green-800) 100%);
+    box-shadow:0 4px 10px rgba(15,56,48,0.22);
+    position:relative;
+  }
+  /* ছোট্ট খাঁজকাটা টিকিট-স্টাব ইফেক্ট — বাম বাজের গায়ে দুটো ছিদ্র */
+  .rf-select-trigger .rf-current-icon::before,
+  .rf-select-trigger .rf-current-icon::after{
+    content:'';position:absolute;left:50%;width:5px;height:5px;border-radius:50%;
+    background:#FBFAF6;transform:translateX(-50%);
+  }
+  .rf-select-trigger .rf-current-icon::before{ top:-2.5px; }
+  .rf-select-trigger .rf-current-icon::after{ bottom:-2.5px; }
   .rf-select-trigger .rf-current-text{min-width:0}
-  .rf-select-trigger .rf-current-name{font-weight:700;font-size:13.5px;line-height:1.25}
+  .rf-select-trigger .rf-current-name{font-weight:700;font-size:13.5px;line-height:1.25;color:var(--ink)}
   .rf-select-trigger .rf-current-desc{font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rf-select-chevron{font-size:16px;opacity:.7;transition:transform .16s;flex:none}
-  .rf-select.open .rf-select-chevron{transform:rotate(180deg)}
-  .rf-select-menu{position:absolute;left:0;right:0;top:calc(100% + 7px);padding:6px;border:1px solid var(--rule);border-radius:14px;background:var(--surface,#fff);box-shadow:0 16px 40px rgba(12,27,40,.18);display:none;max-height:300px;overflow:auto;-webkit-overflow-scrolling:touch}
-  .rf-select.open .rf-select-menu{display:block}
-  .rf-select-option{width:100%;display:flex;align-items:center;gap:10px;padding:10px;border:0;border-radius:10px;background:transparent;text-align:left;color:inherit;cursor:pointer}
-  .rf-select-option:hover,.rf-select-option.active{background:rgba(43,140,255,.09)}
-  .rf-select-option .rf-opt-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;background:#f0f4f8;font-size:17px}
+  /* গোল, ভরাট শেভরন বাটন — সাধারণ টেক্সট ক্যারেটের বদলে */
+  .rf-select-chevron{
+    flex:none;width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(59,150,112,0.10);color:var(--green-700);
+    font-size:13px;transition:transform .2s cubic-bezier(.34,1.4,.64,1), background .16s ease;
+  }
+  .rf-select.open .rf-select-chevron{transform:rotate(180deg);background:rgba(184,134,62,0.16);color:var(--gold)}
+  .rf-select-menu{
+    position:absolute;left:0;right:0;top:calc(100% + 8px);padding:7px;
+    border:1px solid var(--rule);border-radius:18px;
+    background:#FFFFFF;
+    box-shadow:0 18px 42px rgba(15,40,34,0.20), 0 0 0 1px rgba(15,56,48,0.03);
+    display:none;max-height:320px;overflow:auto;-webkit-overflow-scrolling:touch;
+  }
+  .rf-select.open .rf-select-menu{
+    display:block;
+    animation:rfMenuPop .16s cubic-bezier(.34,1.3,.64,1);
+  }
+  @keyframes rfMenuPop{
+    from{ opacity:0; transform:translateY(-6px) scale(0.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .rf-select-option{
+    position:relative;width:100%;display:flex;align-items:center;gap:11px;
+    padding:10px 12px 10px 14px;margin-bottom:3px;border:0;border-radius:13px;
+    background:transparent;text-align:left;color:inherit;cursor:pointer;
+    transition:background .12s ease;
+  }
+  .rf-select-option:last-child{ margin-bottom:0; }
+  .rf-select-option:active{background:rgba(59,150,112,0.07)}
+  .rf-select-option.active{background:linear-gradient(90deg, rgba(59,150,112,0.10) 0%, rgba(59,150,112,0.03) 100%)}
+  /* সিলেক্ট করা অপশনে বাঁ পাশে একটা সবুজ accent bar */
+  .rf-select-option.active::before{
+    content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;
+    background:linear-gradient(180deg, var(--green-500), var(--green-700));
+  }
+  .rf-select-option .rf-opt-icon{
+    width:36px;height:36px;border-radius:11px;flex:none;font-size:16.5px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper-deep);color:var(--ink);
+    transition:background .14s ease, box-shadow .14s ease;
+  }
+  .rf-select-option.active .rf-opt-icon{
+    background:linear-gradient(155deg, var(--green-600) 0%, var(--green-800) 100%);
+    box-shadow:0 3px 8px rgba(15,56,48,0.24);
+  }
   .rf-select-option .rf-opt-info{min-width:0;flex:1}
-  .rf-select-option .rf-opt-name{font-weight:700;font-size:13px}
+  .rf-select-option .rf-opt-name{font-weight:700;font-size:13px;color:var(--ink)}
   .rf-select-option .rf-opt-desc{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.35}
-  .rf-select-option .rf-opt-check{margin-left:auto;opacity:0;font-weight:800;color:var(--blue-600,#1680e8)}
-  .rf-select-option.active .rf-opt-check{opacity:1}
+  /* জেনেরিক ✓ টেক্সটের বদলে একটা গোল "চেক-বাবল" — unchecked অবস্থায় একটা খালি রিং */
+  .rf-select-option .rf-opt-check{
+    margin-left:auto;flex:none;width:21px;height:21px;border-radius:50%;
+    border:1.6px solid var(--rule);display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;color:transparent;background:transparent;
+    transition:all .16s cubic-bezier(.34,1.4,.64,1);
+  }
+  .rf-select-option.active .rf-opt-check{
+    border-color:var(--green-600);
+    background:linear-gradient(155deg, var(--green-500), var(--green-700));
+    color:#fff;
+    transform:scale(1.06);
+  }
   .rf-select-native-radios{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
   @media (max-width:520px){
-    .rf-select-menu{max-height:250px}
-    .rf-select-trigger{padding:12px}
+    .rf-select-menu{max-height:260px}
+    .rf-select-trigger{padding:10px 12px 10px 10px}
   }
 
   /* ---------- Printable Digital Invoice — one formal A4 invoice per order ---------- */
@@ -1725,32 +1850,82 @@
     font-size:12px; display:flex; align-items:center; justify-content:center;
   }
 
-  /* ---------- Pull-to-refresh indicator ---------- */
+  /* ---------- Pull-to-refresh indicator: custom "digital orbit" design ----------
+     আগের প্লেইন সার্কুলার-অ্যারো আইকনের বদলে একটা ইউনিক, ব্র্যান্ড-রঙা ডিজিটাল
+     ইন্ডিকেটর — একটা ঘূর্ণায়মান গ্রেডিয়েন্ট রিং, তার চারপাশে কক্ষপথে (orbit) তিনটা
+     পালস-করা ডট, আর মাঝে একটা লজার-এর মতো ছোট্ট ব্র্যান্ড ডট। টানার সময় রিং-টা
+     আঙুলের গতির সাথে ঘোরে; ছেড়ে দিলে "ready" গোল্ড রঙে বদলায়; রিফ্রেশ চলাকালীন
+     ডটগুলো অরবিটে স্পিন করতে থাকে আর মাঝের ডট নিঃশ্বাসের মতো পালস করে। */
   #ptrIndicator{
     position:fixed; top:0; left:50%; z-index:9000;
-    width:42px; height:42px; margin-left:-21px;
-    transform:translateY(-60px);
-    background:#FFFFFF; border-radius:50%;
+    width:48px; height:48px; margin-left:-24px;
+    transform:translateY(-64px);
+    background:#FFFFFF;
+    border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 20px rgba(15,40,34,0.22);
+    box-shadow:0 8px 22px rgba(15,40,34,0.24), 0 0 0 1px rgba(15,56,48,0.05) inset;
     transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease;
     opacity:0; pointer-events:none;
   }
   #ptrIndicator.visible{ opacity:1; }
-  #ptrIndicator svg{
-    width:20px; height:20px; color:var(--green-700);
-    transition:transform .1s linear;
+  #ptrIndicator .ptr-orbit{
+    position:relative;
+    width:30px; height:30px;
+    border-radius:50%;
+    /* কনিক গ্রেডিয়েন্ট রিং — সাধারণ বর্ডার-স্পিনারের বদলে একটা "ডিজিটাল" আভা */
+    background:conic-gradient(from 0deg, var(--green-700) 0deg, var(--green-500) 90deg, transparent 180deg, transparent 360deg);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    transition:background .18s ease;
   }
-  #ptrIndicator.ready svg{ color:var(--gold); }
-  #ptrIndicator.spinning svg{ animation:ptrSpin .7s linear infinite; }
+  #ptrIndicator.ready .ptr-orbit{
+    background:conic-gradient(from 0deg, var(--gold) 0deg, var(--gold-bright) 90deg, transparent 180deg, transparent 360deg);
+  }
+  #ptrIndicator .ptr-core{
+    position:absolute; top:50%; left:50%;
+    width:7px; height:7px; margin:-3.5px 0 0 -3.5px;
+    border-radius:50%;
+    background:var(--green-700);
+    box-shadow:0 0 0 3px rgba(59,150,112,0.16);
+    transition:background .18s ease, box-shadow .18s ease;
+  }
+  #ptrIndicator.ready .ptr-core{
+    background:var(--gold);
+    box-shadow:0 0 0 3px rgba(224,172,83,0.22);
+  }
+  #ptrIndicator .ptr-dot{
+    position:absolute; top:50%; left:50%;
+    width:4px; height:4px; margin:-2px 0 0 -2px;
+    border-radius:50%;
+    background:var(--green-600);
+    transform-origin:2px 2px;
+  }
+  #ptrIndicator.ready .ptr-dot{ background:var(--gold-bright); }
+  #ptrIndicator .ptr-dot:nth-child(1){ transform:rotate(0deg) translateX(15px); }
+  #ptrIndicator .ptr-dot:nth-child(2){ transform:rotate(120deg) translateX(15px); }
+  #ptrIndicator .ptr-dot:nth-child(3){ transform:rotate(240deg) translateX(15px); }
+  #ptrIndicator.spinning .ptr-orbit{ animation:ptrOrbitSpin .85s linear infinite; }
+  #ptrIndicator.spinning .ptr-core{ animation:ptrCorePulse 0.85s ease-in-out infinite; }
+  #ptrIndicator.spinning .ptr-dot:nth-child(1){ animation:ptrDotSpin1 .85s linear infinite; }
+  #ptrIndicator.spinning .ptr-dot:nth-child(2){ animation:ptrDotSpin2 .85s linear infinite; }
+  #ptrIndicator.spinning .ptr-dot:nth-child(3){ animation:ptrDotSpin3 .85s linear infinite; }
   #ptrIndicator.snap{ transition:transform .25s cubic-bezier(.34,1.4,.64,1), opacity .2s ease; }
-  @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
+  @keyframes ptrOrbitSpin{ to{ transform:rotate(360deg); } }
+  @keyframes ptrCorePulse{
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(1.35); opacity:0.72; }
+  }
+  @keyframes ptrDotSpin1{ from{ transform:rotate(0deg) translateX(15px); } to{ transform:rotate(360deg) translateX(15px); } }
+  @keyframes ptrDotSpin2{ from{ transform:rotate(120deg) translateX(15px); } to{ transform:rotate(480deg) translateX(15px); } }
+  @keyframes ptrDotSpin3{ from{ transform:rotate(240deg) translateX(15px); } to{ transform:rotate(600deg) translateX(15px); } }
+  /* টানার সময় (এখনো spinning নয়) সাদামাটাভাবে রিংটা আঙুলের সাথে মিলিয়ে ঘোরে —
+     JS থেকে rotate() ইনলাইন ট্রান্সফর্মে বসে, এখানে আলাদা কিছু লাগে না। */
 
   /* ---------- QR Verification screen (public, no login) ---------- */
   #verifyScreen{
     position:fixed; inset:0; z-index:100000;
     width:100%; height:100vh; height:100dvh;
-    background:#F5EAD0;
+    background:#FAF3E4;
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   .v-wrap{ max-width:480px; margin:0 auto; padding:28px 18px 40px; min-height:100%; }
@@ -1830,14 +2005,14 @@
   .qa-icon-btn{ flex:none; background:none; border:none; padding:4px; color:var(--green-700); }
 
   /* ---------- Splash screen (launch animation) ----------
-     ব্যাকগ্রাউন্ড ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটা ট্যাগও এই একই
-     কালারে সেট করা আছে, তাই এই সময় ফোনের স্ট্যাটাস বার/টপবারও একই ক্রিম কালার দেখাবে।
+     ব্যাকগ্রাউন্ড হালকা ক্রিম কালার (#FAF3E4) — <head>-এর theme-color মেটা ট্যাগও এই একই
+     কালারে সেট করা আছে, তাই এই সময় ফোনের স্ট্যাটাস বার/টপবারও একই হালকা ক্রিম কালার দেখাবে।
      (এরপর onboarding/lock/app স্ক্রিনে গেলে সেই স্ক্রিনগুলোর নিজস্ব কালারে বদলে যায় —
      দ্র. setThemeColor কলগুলো, নিচের বড় script-এ)। */
   #splashScreen{
     position:fixed; inset:0; z-index:99999;
     width:100%; height:100vh; height:100dvh;
-    background:#F5EAD0;
+    background:#FAF3E4;
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
     transition:opacity .6s ease;
@@ -2214,8 +2389,8 @@ window.MYSHOP_V6_AUDIT = {
 </style>
 
 <style id="native-launch-polish">
-html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}
-#splashScreen{background:linear-gradient(180deg,#F8F0DF 0%,#F5EAD0 100%);}
+html,body{background:#FAF3E4;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}
+#splashScreen{background:linear-gradient(180deg,#FCF8ED 0%,#FAF3E4 100%);}
 #splashScreen .stage:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.42),transparent 42%);pointer-events:none;}
 #splashScreen .icon{width:96px;height:96px;filter:drop-shadow(0 16px 28px rgba(15,56,48,.18));}
 #splashScreen .icon.show{animation:nativeIconSettle .9s cubic-bezier(.2,.8,.2,1) both;}
@@ -2396,6 +2571,2125 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 #page-settings .settings-subpage.active .btn-primary{color:#fff !important;}
 </style>
 
+
+<style id="data-entry-form-optimization">
+/* ================================================================
+   DATA-ENTRY FORM OPTIMIZATION
+   Visual/UX only: no business logic, IDs, handlers or data rules changed.
+   Designed for small Android screens and long transaction forms.
+   ================================================================ */
+
+.sheet{
+  /* More usable vertical space without making the sheet feel full-screen. */
+  max-height:94svh;
+  padding:10px 14px calc(14px + env(safe-area-inset-bottom));
+  border-top-width:2px;
+  box-shadow:0 -18px 42px rgba(15,40,34,.22);
+}
+
+.sheet-handle{
+  width:42px;
+  height:4px;
+  margin:1px auto 10px;
+  background:#D7DDD8;
+}
+
+.sheet h2{
+  font-size:18px;
+  line-height:1.2;
+  margin:0 0 12px;
+  padding:0 40px 10px 2px;
+  min-height:34px;
+}
+
+.sheet-close{
+  right:12px;
+  top:10px;
+  width:36px;
+  height:36px;
+  border-radius:11px;
+}
+
+/* Compact field rhythm: less vertical dead-space, same touch-friendly controls. */
+.sheet form .field{
+  margin-bottom:10px;
+}
+
+.sheet form .field label{
+  font-size:10.5px;
+  letter-spacing:.045em;
+  margin:0 0 4px 2px;
+}
+
+.sheet form .field input,
+.sheet form .field select,
+.sheet form .field textarea{
+  min-height:42px;
+  padding:10px 12px;
+  border-radius:11px;
+  font-size:14px;
+  box-shadow:0 1px 2px rgba(15,40,34,.035);
+}
+
+.sheet form .field textarea{
+  min-height:58px;
+  line-height:1.4;
+}
+
+.sheet form .field input:focus,
+.sheet form .field select:focus,
+.sheet form .field textarea:focus{
+  box-shadow:0 0 0 3px rgba(46,125,91,.12);
+  transform:none;
+}
+
+.sheet form .row2{
+  gap:8px;
+}
+
+.sheet form .row2 .field{
+  margin-bottom:10px;
+}
+
+.sheet form .fname-cogs-hint{
+  font-size:11px;
+  margin:4px 2px 0;
+  line-height:1.32;
+}
+
+.sheet form .computed-total{
+  margin:2px 0 10px;
+  padding:11px 13px;
+  border-radius:12px;
+}
+
+.sheet form .computed-total .v{
+  font-size:17px;
+}
+
+.sheet form > .btn{
+  min-height:46px;
+  padding:11px 14px;
+  border-radius:12px;
+  font-size:14px;
+}
+
+/* Keep the two main actions easy to reach on long forms. */
+#txnForm > .btn-primary,
+#itemForm > .btn-primary{
+  position:sticky;
+  bottom:0;
+  z-index:3;
+}
+
+#txnForm > .btn-ghost,
+#itemForm > .btn-ghost{
+  margin-top:7px !important;
+}
+
+/* Avoid a giant blank gap around image previews in inventory. */
+#iPhotoPreview{
+  max-height:110px;
+  width:auto;
+  object-fit:cover;
+}
+
+/* On narrow phones, stack only where two columns would become cramped. */
+@media (max-width:430px){
+  .sheet{
+    max-height:96svh;
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .sheet form .row2{
+    gap:7px;
+  }
+
+  .sheet form .field input,
+  .sheet form .field select,
+  .sheet form .field textarea{
+    min-height:40px;
+    padding:9px 11px;
+    font-size:13.5px;
+  }
+
+  .sheet form .field label{
+    font-size:10px;
+  }
+}
+
+/* Very small screens: preserve readable controls while avoiding cramped 2-up fields. */
+@media (max-width:360px){
+  .sheet form .row2{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .sheet form .row2 .field{
+    margin-bottom:10px;
+  }
+
+  .sheet h2{
+    font-size:17px;
+  }
+}
+
+/* Respect users who disable motion. */
+@media (prefers-reduced-motion:reduce){
+  .sheet form,
+  .sheet,
+  .sheet-close,
+  .sheet form .field input,
+  .sheet form .field select,
+  .sheet form .field textarea{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+</style>
+
+
+<style id="ultra-smooth-transaction-sheet">
+/* =========================================================
+   ULTRA-SMOOTH SALES / PURCHASE / EXPENSE SHEET
+   Animation-only optimization. Business/data logic untouched.
+   ========================================================= */
+
+/* Keep the compositor doing the movement; avoid layout work during the slide. */
+#overlay,
+#txnSheet{
+  will-change:opacity, transform;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  -webkit-transform:translate3d(0,110%,0);
+  transform:translate3d(0,110%,0);
+}
+
+#overlay{
+  will-change:opacity;
+  transition:opacity 280ms cubic-bezier(.22,1,.36,1);
+}
+
+#overlay.open{
+  opacity:1;
+}
+
+#txnSheet{
+  transition:
+    transform 420ms cubic-bezier(.16,1,.3,1),
+    box-shadow 420ms cubic-bezier(.16,1,.3,1);
+  contain:layout paint style;
+  transform:translate3d(0,110%,0);
+}
+
+#txnSheet.open{
+  transform:translate3d(0,0,0);
+}
+
+/* The form itself should appear with the sheet, not run a second animation
+   that can look like shaking/jumping on slower Android GPUs. */
+#txnSheet form{
+  animation:none !important;
+  transform:none !important;
+  opacity:1;
+}
+
+/* During the slide, prevent accidental expensive visual effects. */
+#txnSheet.dragging{
+  transition:none !important;
+  will-change:transform;
+}
+
+#overlay.dragging{
+  transition:none !important;
+  will-change:opacity;
+}
+
+/* Smoother close: don't let focus transitions visually fight the sheet motion. */
+#txnSheet .field input:focus,
+#txnSheet .field select:focus,
+#txnSheet .field textarea:focus{
+  transform:none;
+}
+
+/* Native-feeling active press without bounce/jitter. */
+#txnSheet .btn{
+  transition:transform 120ms ease, box-shadow 180ms ease, background 160ms ease;
+}
+#txnSheet .btn:active{
+  transform:scale(.985);
+}
+
+/* Reduce paint cost on lower/mid-range Android devices. */
+#txnSheet .computed-total{
+  transform:translateZ(0);
+  contain:paint;
+}
+
+@media (prefers-reduced-motion:reduce){
+  #overlay,
+  #txnSheet{
+    transition:none !important;
+  }
+}
+</style>
+
+<style id="sheet-no-animation-performance">
+/* ZERO-ANIMATION DATA ENTRY SHEETS
+   The sheet should appear/disappear immediately. No slide, fade, bounce or scale.
+   Keep the browser compositor out of the animation path and avoid layout churn. */
+#overlay{
+  opacity:0 !important;
+  transition:none !important;
+  will-change:auto !important;
+  pointer-events:none;
+}
+#overlay.open{
+  opacity:1 !important;
+  pointer-events:auto;
+}
+#txnSheet{
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  visibility:hidden;
+  pointer-events:none;
+  will-change:auto !important;
+  backface-visibility:visible;
+  -webkit-backface-visibility:visible;
+}
+#txnSheet.open{
+  transform:none !important;
+  visibility:visible;
+  pointer-events:auto;
+}
+#txnSheet form{
+  animation:none !important;
+  transform:none !important;
+  opacity:1 !important;
+}
+#txnSheet.dragging{transition:none !important;}
+</style>
+<script id="sheet-no-animation-js">
+(function(){
+  'use strict';
+  // Remove the previous animated helper entirely: opening/closing is now a
+  // single synchronous class change. This prevents transition/animation work
+  // from competing with form rendering on Android.
+  window.__smoothSheetOpen = null;
+  window.__smoothSheetClose = null;
+})();
+</script>
+
+<style id="super-fast-bottom-nav-touch">
+/* SUPER-FAST TOUCH NAVIGATION
+   No animation: the pressed state is painted immediately on pointerdown. */
+#bottomNav,
+#bottomNav .navbtn{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+#bottomNav .navbtn{
+  transition:none !important;
+  -webkit-transition:none !important;
+}
+
+#bottomNav .navbtn .ico-wrap{
+  transition:none !important;
+  -webkit-transition:none !important;
+  will-change:auto;
+}
+
+#bottomNav .navbtn.touching .ico-wrap{
+  transform:scale(.90) !important;
+  background:rgba(37,99,235,.12) !important;
+  box-shadow:none !important;
+}
+
+#bottomNav .navbtn.touching span[data-i18n]{
+  opacity:1 !important;
+}
+
+@media (hover:hover){
+  #bottomNav .navbtn:hover .ico-wrap{
+    transform:none;
+  }
+}
+</style>
+<script id="super-fast-bottom-nav-touch-js">
+(function(){
+  'use strict';
+  function initFastTouchNav(){
+    const nav=document.getElementById('bottomNav');
+    if(!nav || nav.__fastTouchBound) return;
+    nav.__fastTouchBound=true;
+
+    let touching=null;
+
+    const clear=function(btn){
+      if(btn) btn.classList.remove('touching');
+      if(touching===btn) touching=null;
+    };
+
+    nav.addEventListener('pointerdown',function(e){
+      const btn=e.target.closest('.navbtn[data-page]');
+      if(!btn) return;
+      if(e.pointerType==='mouse' && e.button!==0) return;
+
+      if(touching && touching!==btn) clear(touching);
+      touching=btn;
+
+      /* This is deliberately before any navigation work:
+         the button gets its pressed state on the same pointer event. */
+      btn.classList.add('touching');
+    },{capture:true,passive:true});
+
+    nav.addEventListener('pointerup',function(e){
+      clear(e.target.closest('.navbtn[data-page]'));
+    },{capture:true,passive:true});
+
+    nav.addEventListener('pointercancel',function(e){
+      clear(e.target.closest('.navbtn[data-page]'));
+    },{capture:true,passive:true});
+
+    nav.addEventListener('pointerleave',function(){
+      clear(touching);
+    },{capture:true,passive:true});
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initFastTouchNav,{once:true});
+  }else{
+    initFastTouchNav();
+  }
+})();
+</script>
+
+
+<style id="native-list-entry-motion">
+/* ==========================================================
+   NATIVE-APP LIST ENTRY MOTION
+   Only the newly selected section's data cards/rows animate.
+   Navigation itself stays instant. Uses transform + opacity only.
+   ========================================================== */
+
+@keyframes nativeListItemIn{
+  from{
+    opacity:0;
+    transform:translate3d(0,8px,0);
+  }
+  to{
+    opacity:1;
+    transform:translate3d(0,0,0);
+  }
+}
+
+/* Sales / Purchase / Expense rows */
+#page-sales .ledger-card.native-list-enter .txn-row,
+#page-purchase .ledger-card.native-list-enter .txn-row,
+#page-expense .ledger-card.native-list-enter .txn-row,
+#page-orders .ledger-card.native-list-enter > *,
+#page-inventory .ledger-card.native-list-enter > *,
+#page-stockalerts .ledger-card.native-list-enter > *,
+#page-warranty .ledger-card.native-list-enter > *{
+  opacity:0;
+  transform:translate3d(0,8px,0);
+  animation:nativeListItemIn 220ms cubic-bezier(.22,.75,.2,1) forwards;
+  animation-delay:calc(min(var(--list-index, 0), 9) * 22ms);
+  will-change:transform,opacity;
+}
+
+/* Don't animate the "See More" button like a data record. */
+.ledger-card.native-list-enter > .btn{
+  opacity:1 !important;
+  transform:none !important;
+  animation:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  #page-sales .ledger-card.native-list-enter .txn-row,
+  #page-purchase .ledger-card.native-list-enter .txn-row,
+  #page-expense .ledger-card.native-list-enter .txn-row,
+  #page-orders .ledger-card.native-list-enter > *,
+  #page-inventory .ledger-card.native-list-enter > *,
+  #page-stockalerts .ledger-card.native-list-enter > *,
+  #page-warranty .ledger-card.native-list-enter > *{
+    opacity:1;
+    transform:none;
+    animation:none;
+  }
+}
+</style>
+
+
+<style id="premium-top-menu-blocks">
+/* =========================================================
+   PREMIUM TOP 3-LINE MENU
+   Instant touch + individual colorful menu blocks.
+   ========================================================= */
+
+/* 1) Three-line / hamburger button: respond at pointerdown,
+      with no waiting for click and no heavy animation. */
+#mainMenuBtn{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+  cursor:pointer;
+  transition:none !important;
+  transform:translateZ(0);
+  will-change:background-color,box-shadow;
+}
+
+#mainMenuBtn:active{
+  transform:scale(.94) !important;
+  background:rgba(22,116,245,.10) !important;
+  box-shadow:0 0 0 4px rgba(22,116,245,.08);
+}
+
+#mainMenuBtn svg,
+#mainMenuBtn .hamburger-icon{
+  pointer-events:none;
+}
+
+/* 2) Menu itself: clean premium panel. */
+#mainMenuDrawer{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  contain:paint;
+}
+
+/* 3) Every menu option becomes a real independent block/card. */
+#mainMenuDrawer .main-menu-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 28px;
+  align-items:center;
+  gap:11px;
+  min-height:64px;
+  margin:7px 10px;
+  padding:8px 11px 8px 8px;
+  border:1px solid rgba(15,56,48,.07);
+  border-radius:17px;
+  background:linear-gradient(145deg,#ffffff 0%,#f7faf8 100%);
+  box-shadow:
+    0 3px 10px rgba(15,56,48,.055),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  overflow:hidden;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+  transition:none !important;
+}
+
+/* Colored accent strip per block */
+#mainMenuDrawer .main-menu-item::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:10px;
+  bottom:10px;
+  width:4px;
+  border-radius:0 5px 5px 0;
+  background:var(--mc,#1674f5);
+  transform:none !important;
+}
+
+/* Large colorful icon block */
+#mainMenuDrawer .main-menu-icon{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--mc,#1674f5);
+  background:linear-gradient(145deg,#ffffff,var(--mb,#eef3f0));
+  border:1px solid color-mix(in srgb,var(--mc,#1674f5) 12%,#ffffff);
+  box-shadow:
+    0 5px 12px rgba(15,56,48,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  transform:none !important;
+  transition:none !important;
+}
+
+#mainMenuDrawer .main-menu-icon svg{
+  width:22px;
+  height:22px;
+  transition:none !important;
+}
+
+/* Text hierarchy */
+#mainMenuDrawer .main-menu-text{
+  min-width:0;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.2;
+  color:#17352d;
+  letter-spacing:.01em;
+}
+
+#mainMenuDrawer .main-menu-chevron{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  color:#91a09a;
+  background:#f1f5f2;
+  font-size:21px;
+  line-height:1;
+  transform:none !important;
+  transition:none !important;
+}
+
+/* Instant touch feedback — no animated bounce. */
+#mainMenuDrawer .main-menu-item:active{
+  transform:scale(.975) !important;
+  filter:saturate(1.05);
+  background:linear-gradient(145deg,#f2f8ff,#edf8f2) !important;
+  box-shadow:
+    0 1px 4px rgba(15,56,48,.08),
+    inset 0 0 0 2px rgba(22,116,245,.07);
+}
+
+#mainMenuDrawer .main-menu-item:active .main-menu-icon{
+  transform:scale(.94) !important;
+  box-shadow:0 2px 7px rgba(15,56,48,.10);
+}
+
+/* Active page gets a stronger premium treatment. */
+#mainMenuDrawer .main-menu-item.active{
+  background:linear-gradient(145deg,#f0f8f4,#e5f3ec) !important;
+  border-color:rgba(22,116,245,.12);
+}
+
+#mainMenuDrawer .main-menu-item.active .main-menu-chevron{
+  color:#1674f5;
+  background:#e3efff;
+}
+
+/* Settings block follows the same visual language. */
+#mainMenuDrawer .main-menu-settings-toggle{
+  margin:7px 10px;
+  border-radius:17px;
+}
+
+/* Slightly tighter layout on very small phones. */
+@media (max-width:380px){
+  #mainMenuDrawer .main-menu-item{
+    min-height:59px;
+    grid-template-columns:44px minmax(0,1fr) 26px;
+    margin:6px 8px;
+    padding:7px 9px 7px 7px;
+    border-radius:15px;
+  }
+  #mainMenuDrawer .main-menu-icon{
+    width:44px;
+    height:44px;
+    border-radius:13px;
+  }
+}
+</style>
+
+
+<style id="instant-hamburger-settings-inside">
+/* =========================================================
+   FINAL TOP MENU UX
+   - Hamburger opens on a light tap (no long-press requirement)
+   - Settings children visually emerge from the Settings block
+   ========================================================= */
+
+/* Never let the hamburger wait for click synthesis on touch. */
+#mainMenuBtn{
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent !important;
+  pointer-events:auto !important;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+/* Do not use :active scaling that can make a light tap feel swallowed. */
+#mainMenuBtn:active{
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Settings acts as the parent block. */
+#mainMenuDrawer .main-menu-settings-toggle{
+  position:relative;
+  z-index:3;
+  margin:7px 10px 0;
+  border-radius:17px 17px 12px 12px;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Children look like they physically come out from the parent block. */
+#mainMenuDrawer .main-menu-settings-list{
+  position:relative;
+  z-index:2;
+  margin:0 10px 7px;
+  border-radius:0 0 17px 17px;
+  background:linear-gradient(180deg,#eaf6f1 0%,#f7fbf9 100%);
+  border:1px solid rgba(22,116,245,.08);
+  border-top:0;
+  box-shadow:
+    inset 0 7px 12px rgba(15,56,48,.055),
+    0 5px 13px rgba(15,56,48,.06);
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .24s cubic-bezier(.22,.75,.2,1);
+}
+
+/* The existing inner wrapper is the reveal container. */
+#mainMenuDrawer .main-menu-settings-list .mms-inner{
+  min-height:0;
+  overflow:hidden;
+  padding:0 8px;
+}
+
+#mainMenuDrawer .main-menu-settings-list.open{
+  grid-template-rows:1fr;
+}
+
+#mainMenuDrawer .main-menu-settings-list.open .mms-inner{
+  padding-top:7px;
+  padding-bottom:8px;
+}
+
+/* Each child is a compact inner block, visually connected to Settings. */
+#mainMenuDrawer .main-menu-settings-list .main-menu-settings-item{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:48px;
+  margin:4px 0;
+  padding:7px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(15,56,48,.055);
+  box-shadow:0 2px 7px rgba(15,56,48,.045);
+  transform:translate3d(0,-5px,0);
+  opacity:0;
+  transition:opacity .18s ease,transform .22s cubic-bezier(.22,.75,.2,1);
+}
+
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(1){transition-delay:.01s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(2){transition-delay:.025s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(3){transition-delay:.04s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(4){transition-delay:.055s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(5){transition-delay:.07s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(6){transition-delay:.085s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(7){transition-delay:.10s}
+#mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item:nth-child(8){transition-delay:.115s}
+
+#mainMenuDrawer .main-menu-settings-list .main-menu-settings-item:active{
+  transform:scale(.985);
+  background:#f0f8f4;
+}
+
+@media (prefers-reduced-motion:reduce){
+  #mainMenuDrawer .main-menu-settings-list{
+    transition:none !important;
+  }
+  #mainMenuDrawer .main-menu-settings-list .main-menu-settings-item,
+  #mainMenuDrawer .main-menu-settings-list.open .main-menu-settings-item{
+    transition:none !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+</style>
+
+
+<style id="full-premium-menu-redesign">
+/* ============================================================
+   FULL PREMIUM REDESIGN — THREE-LINE MENU PAGE
+   Visual redesign only. Existing IDs, actions and data logic stay.
+   ============================================================ */
+
+:root{
+  --pm-navy:#102a43;
+  --pm-ink:#17352d;
+  --pm-muted:#6b7d76;
+  --pm-gold:#d8a84e;
+  --pm-blue:#3b82f6;
+  --pm-green:#18a874;
+}
+
+/* Full-screen premium menu atmosphere */
+#mainMenuDrawer{
+  background:
+    radial-gradient(circle at 85% 3%,rgba(216,168,78,.22),transparent 27%),
+    radial-gradient(circle at 5% 22%,rgba(59,130,246,.14),transparent 28%),
+    linear-gradient(180deg,#f8fbff 0%,#eef5f2 47%,#f6f8f5 100%) !important;
+  border-right:1px solid rgba(255,255,255,.8);
+  box-shadow:18px 0 55px rgba(16,42,67,.18) !important;
+  padding-bottom:18px;
+}
+
+/* Premium backdrop */
+#mainMenuOverlay{
+  background:rgba(8,25,40,.40) !important;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
+/* Top brand/header area — works with existing menu header elements */
+#mainMenuDrawer .main-menu-header,
+#mainMenuDrawer .main-menu-top{
+  position:relative;
+  margin:10px 10px 14px;
+  padding:20px 16px 18px;
+  border-radius:24px;
+  color:#fff;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 92% 12%,rgba(255,255,255,.23),transparent 28%),
+    linear-gradient(135deg,#102a43 0%,#164e63 52%,#087f68 100%) !important;
+  box-shadow:0 12px 28px rgba(16,42,67,.20);
+}
+
+#mainMenuDrawer .main-menu-header::after,
+#mainMenuDrawer .main-menu-top::after{
+  content:"";
+  position:absolute;
+  width:130px;height:130px;
+  right:-48px;bottom:-70px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:50%;
+  box-shadow:0 0 0 20px rgba(255,255,255,.035),
+             0 0 0 42px rgba(255,255,255,.025);
+  pointer-events:none;
+}
+
+/* Menu content */
+#mainMenuDrawer .main-menu-item{
+  min-height:70px !important;
+  margin:8px 12px !important;
+  padding:9px 12px 9px 9px !important;
+  grid-template-columns:50px minmax(0,1fr) 30px !important;
+  border-radius:19px !important;
+  background:rgba(255,255,255,.86) !important;
+  border:1px solid rgba(16,42,67,.055) !important;
+  box-shadow:
+    0 5px 16px rgba(16,42,67,.055),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+  overflow:hidden;
+}
+
+/* Elegant left color rail */
+#mainMenuDrawer .main-menu-item::before{
+  width:4px !important;
+  top:13px !important;
+  bottom:13px !important;
+  background:var(--pm-accent,#3b82f6) !important;
+}
+
+/* Individual premium palette */
+#mainMenuDrawer .main-menu-item:nth-of-type(1){--pm-accent:#3b82f6;--pm-soft:#eaf2ff;}
+#mainMenuDrawer .main-menu-item:nth-of-type(2){--pm-accent:#18a874;--pm-soft:#e8f8f1;}
+#mainMenuDrawer .main-menu-item:nth-of-type(3){--pm-accent:#8b5cf6;--pm-soft:#f1ecff;}
+#mainMenuDrawer .main-menu-item:nth-of-type(4){--pm-accent:#ef6c2f;--pm-soft:#fff0e8;}
+#mainMenuDrawer .main-menu-item:nth-of-type(5){--pm-accent:#0f8b8d;--pm-soft:#e7f8f8;}
+#mainMenuDrawer .main-menu-item:nth-of-type(6){--pm-accent:#d49a24;--pm-soft:#fff6df;}
+#mainMenuDrawer .main-menu-item:nth-of-type(7){--pm-accent:#e05252;--pm-soft:#fff0f0;}
+#mainMenuDrawer .main-menu-item:nth-of-type(8){--pm-accent:#1596d1;--pm-soft:#e9f7fd;}
+
+/* Colorful icon tile */
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  width:50px !important;height:50px !important;
+  border-radius:16px !important;
+  color:var(--pm-accent,#3b82f6) !important;
+  background:linear-gradient(145deg,#fff,var(--pm-soft,#eaf2ff)) !important;
+  border:1px solid color-mix(in srgb,var(--pm-accent,#3b82f6) 12%,#fff) !important;
+  box-shadow:
+    0 7px 14px rgba(16,42,67,.08),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Text */
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  font-size:14px !important;
+  font-weight:750 !important;
+  color:var(--pm-ink) !important;
+  letter-spacing:.005em;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  color:#94a39d !important;
+  background:#f3f6f4 !important;
+  border-radius:10px !important;
+}
+
+/* Touch state: crisp, premium, not bouncy */
+#mainMenuDrawer .main-menu-item:active{
+  transform:scale(.985) !important;
+  background:#f5faf8 !important;
+  box-shadow:0 2px 7px rgba(16,42,67,.08) !important;
+}
+
+#mainMenuDrawer .main-menu-item:active .main-menu-icon{
+  transform:scale(.96) !important;
+}
+
+/* Settings parent becomes a premium feature block */
+#mainMenuDrawer .main-menu-settings-toggle{
+  min-height:70px !important;
+  margin:10px 12px 0 !important;
+  padding:9px 12px 9px 9px !important;
+  border-radius:19px 19px 13px 13px !important;
+  background:linear-gradient(145deg,#fff9eb,#fffdf8) !important;
+  border:1px solid rgba(212,154,36,.16) !important;
+  box-shadow:0 6px 17px rgba(16,42,67,.065) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-toggle .main-menu-icon{
+  background:linear-gradient(145deg,#fff8df,#ffedba) !important;
+  color:#c98a16 !important;
+  border:1px solid rgba(201,138,22,.13) !important;
+}
+
+/* Settings children: luxurious inset panel */
+#mainMenuDrawer .main-menu-settings-list{
+  margin:0 12px 10px !important;
+  border-radius:0 0 19px 19px !important;
+  background:
+    linear-gradient(180deg,rgba(255,248,224,.96),rgba(249,252,250,.98)) !important;
+  border:1px solid rgba(212,154,36,.12) !important;
+  border-top:0 !important;
+  box-shadow:
+    inset 0 8px 14px rgba(16,42,67,.045),
+    0 7px 18px rgba(16,42,67,.055) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-list .mms-inner{
+  padding-left:9px !important;
+  padding-right:9px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item{
+  min-height:51px !important;
+  margin:5px 0 !important;
+  padding:8px 10px !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.88) !important;
+  border:1px solid rgba(16,42,67,.05) !important;
+  box-shadow:0 3px 9px rgba(16,42,67,.045) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  width:34px !important;height:34px !important;
+  border-radius:11px !important;
+  background:var(--sb,#eef4f1) !important;
+  color:var(--sc,#1674f5) !important;
+}
+
+/* Bottom breathing room */
+#mainMenuDrawer > :last-child{
+  margin-bottom:20px;
+}
+
+@media (max-width:380px){
+  #mainMenuDrawer .main-menu-item,
+  #mainMenuDrawer .main-menu-settings-toggle{
+    min-height:62px !important;
+    margin-left:9px !important;
+    margin-right:9px !important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-icon,
+  #mainMenuDrawer .main-menu-settings-toggle .main-menu-icon{
+    width:46px !important;height:46px !important;
+  }
+}
+</style>
+
+
+<style id="compact-total-menu-redesign">
+/* =========================================================
+   COMPACT PREMIUM MENU — completely redesigned at small scale
+   ========================================================= */
+
+#mainMenuDrawer{
+  padding:7px 0 10px !important;
+  background:linear-gradient(180deg,#f5f8fb 0%,#eef5f2 100%) !important;
+}
+
+/* Compact header */
+#mainMenuDrawer .main-menu-header,
+#mainMenuDrawer .main-menu-top{
+  margin:5px 7px 7px !important;
+  padding:10px 11px !important;
+  min-height:42px !important;
+  border-radius:13px !important;
+  box-shadow:0 5px 13px rgba(16,42,67,.10) !important;
+}
+
+/* Every main menu block becomes very small */
+#mainMenuDrawer .main-menu-item{
+  min-height:45px !important;
+  margin:4px 7px !important;
+  padding:5px 7px !important;
+  grid-template-columns:34px minmax(0,1fr) 20px !important;
+  gap:7px !important;
+  border-radius:12px !important;
+  box-shadow:0 2px 7px rgba(16,42,67,.045) !important;
+}
+
+#mainMenuDrawer .main-menu-item::before{
+  width:3px !important;
+  top:8px !important;
+  bottom:8px !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  width:34px !important;
+  height:34px !important;
+  border-radius:10px !important;
+  box-shadow:0 3px 7px rgba(16,42,67,.06) !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon svg{
+  width:17px !important;
+  height:17px !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  font-size:12px !important;
+  line-height:1.1 !important;
+  font-weight:700 !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  width:20px !important;
+  height:20px !important;
+  border-radius:7px !important;
+  font-size:15px !important;
+}
+
+/* Settings compact parent */
+#mainMenuDrawer .main-menu-settings-toggle{
+  min-height:45px !important;
+  margin:5px 7px 0 !important;
+  padding:5px 7px !important;
+  grid-template-columns:34px minmax(0,1fr) 20px !important;
+  gap:7px !important;
+  border-radius:12px 12px 8px 8px !important;
+}
+
+/* Compact settings panel */
+#mainMenuDrawer .main-menu-settings-list{
+  margin:0 7px 5px !important;
+  border-radius:0 0 12px 12px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-list .mms-inner{
+  padding:4px 6px 6px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item{
+  min-height:36px !important;
+  margin:3px 0 !important;
+  padding:4px 7px !important;
+  gap:7px !important;
+  border-radius:9px !important;
+  box-shadow:0 2px 5px rgba(16,42,67,.035) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  width:26px !important;
+  height:26px !important;
+  border-radius:8px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon svg{
+  width:13px !important;
+  height:13px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-text{
+  font-size:11px !important;
+  line-height:1.1 !important;
+}
+
+/* Tightest phones */
+@media (max-width:380px){
+  #mainMenuDrawer .main-menu-item,
+  #mainMenuDrawer .main-menu-settings-toggle{
+    min-height:42px !important;
+    margin:3px 6px !important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-icon,
+  #mainMenuDrawer .main-menu-settings-toggle .main-menu-icon{
+    width:31px !important;
+    height:31px !important;
+  }
+  #mainMenuDrawer .main-menu-item{
+    grid-template-columns:31px minmax(0,1fr) 18px !important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-text{
+    font-size:11.5px !important;
+  }
+}
+</style>
+
+
+<style id="half-width-side-premium-menu">
+/* ==========================================================
+   HALF-WIDTH SIDE MENU
+   Same existing palette; compact premium section cards.
+   ========================================================== */
+
+#mainMenuDrawer{
+  width:min(52vw,390px) !important;
+  max-width:52vw !important;
+  min-width:280px !important;
+  left:0 !important;
+  right:auto !important;
+  border-radius:0 22px 22px 0 !important;
+  padding:8px 7px 12px !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain;
+}
+
+/* Keep the existing menu color palette exactly; only refine surfaces. */
+#mainMenuDrawer .main-menu-item{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:34px minmax(0,1fr) 20px !important;
+  align-items:center !important;
+  gap:8px !important;
+  min-height:46px !important;
+  margin:5px 4px !important;
+  padding:6px 8px !important;
+  border-radius:13px !important;
+  background:rgba(255,255,255,.90) !important;
+  border:1px solid rgba(16,42,67,.065) !important;
+  box-shadow:
+    0 3px 9px rgba(16,42,67,.055),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Premium colored edge, keeping each section's existing accent. */
+#mainMenuDrawer .main-menu-item::before{
+  width:3px !important;
+  top:8px !important;
+  bottom:8px !important;
+  border-radius:0 4px 4px 0 !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  width:34px !important;
+  height:34px !important;
+  border-radius:10px !important;
+  box-shadow:
+    0 4px 8px rgba(16,42,67,.065),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon svg{
+  width:17px !important;
+  height:17px !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  font-size:12px !important;
+  font-weight:750 !important;
+  color:var(--pm-ink,#17352d) !important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  width:20px !important;
+  height:20px !important;
+  border-radius:7px !important;
+  font-size:14px !important;
+}
+
+/* Settings is another compact premium section card. */
+#mainMenuDrawer .main-menu-settings-toggle{
+  min-height:46px !important;
+  margin:6px 4px 0 !important;
+  padding:6px 8px !important;
+  border-radius:13px 13px 9px 9px !important;
+}
+
+/* Settings children stay visually attached to their parent. */
+#mainMenuDrawer .main-menu-settings-list{
+  margin:0 4px 6px !important;
+  border-radius:0 0 13px 13px !important;
+  overflow:hidden !important;
+}
+
+#mainMenuDrawer .main-menu-settings-list .mms-inner{
+  padding:5px 6px 6px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item{
+  min-height:36px !important;
+  margin:3px 0 !important;
+  padding:4px 7px !important;
+  border-radius:9px !important;
+  font-size:11px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  width:25px !important;
+  height:25px !important;
+  border-radius:8px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon svg{
+  width:13px !important;
+  height:13px !important;
+}
+
+/* Header becomes compact, while preserving its current colors. */
+#mainMenuDrawer .main-menu-header,
+#mainMenuDrawer .main-menu-top{
+  margin:4px 4px 7px !important;
+  padding:10px 10px !important;
+  border-radius:14px !important;
+}
+
+/* Phone sizing: half-ish screen, never full-width. */
+@media (max-width:600px){
+  #mainMenuDrawer{
+    width:50vw !important;
+    max-width:50vw !important;
+    min-width:0 !important;
+  }
+}
+
+@media (max-width:380px){
+  #mainMenuDrawer{
+    width:52vw !important;
+    max-width:52vw !important;
+  }
+
+  #mainMenuDrawer .main-menu-item{
+    grid-template-columns:30px minmax(0,1fr) 18px !important;
+    min-height:42px !important;
+    padding:5px 6px !important;
+  }
+
+  #mainMenuDrawer .main-menu-item .main-menu-icon{
+    width:30px !important;
+    height:30px !important;
+  }
+
+  #mainMenuDrawer .main-menu-item .main-menu-text{
+    font-size:11px !important;
+  }
+}
+</style>
+
+
+<style id="premium-blocks-smart-drive">
+/* Premium compact blocks + smart Google Drive card */
+#mainMenuDrawer .main-menu-item{
+  background:rgba(255,255,255,.94)!important;
+  border:1px solid rgba(16,42,67,.07)!important;
+  border-radius:14px!important;
+  margin:5px 4px!important;
+  min-height:46px!important;
+  box-shadow:0 3px 10px rgba(16,42,67,.055),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  border-radius:11px!important;
+  box-shadow:0 4px 9px rgba(16,42,67,.065),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  font-size:12px!important;
+  font-weight:750!important;
+}
+
+/* Google Drive: compact WhatsApp-like smart status card */
+#mainMenuDrawer .main-menu-drive{margin:8px 4px 3px!important}
+#mainMenuDrawer .main-menu-drive-card{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr)!important;
+  gap:9px!important;
+  padding:10px!important;
+  border-radius:15px!important;
+  background:linear-gradient(145deg,#fff,#f7fbf9)!important;
+  border:1px solid rgba(16,42,67,.075)!important;
+  box-shadow:0 5px 14px rgba(16,42,67,.065),inset 0 1px 0 rgba(255,255,255,.98)!important;
+  overflow:hidden!important;
+}
+#mainMenuDrawer .main-menu-drive-card::before{
+  content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;
+  border-radius:0 4px 4px 0;background:#94a3b8;
+}
+#mainMenuDrawer .main-menu-drive-card.is-connected::before{background:#18a874}
+#mainMenuDrawer .main-menu-drive-card.is-syncing::before{background:#d8a84e}
+
+#mainMenuDrawer .main-menu-drive .drive-logo{
+  width:38px!important;height:38px!important;border-radius:12px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  background:#fff!important;box-shadow:0 4px 9px rgba(16,42,67,.07)!important;
+  border:1px solid rgba(16,42,67,.055)!important;overflow:hidden;
+}
+#mainMenuDrawer .main-menu-drive .drive-logo svg{width:24px!important;height:24px!important}
+
+#mainMenuDrawer .drive-title-row{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:5px!important;min-width:0;
+}
+#mainMenuDrawer .drive-title-row strong{font-size:12px!important;color:#17352d!important}
+#mainMenuDrawer .drive-badge{
+  display:inline-flex!important;align-items:center!important;gap:4px!important;
+  padding:3px 6px!important;border-radius:999px!important;font-size:8.5px!important;
+  line-height:1!important;font-weight:800!important;white-space:nowrap!important;
+  background:#f1f4f6!important;color:#74818b!important;
+}
+#mainMenuDrawer .drive-badge.st-connected{background:#e8f8f1!important;color:#13865f!important}
+#mainMenuDrawer .drive-badge.st-syncing{background:#fff5df!important;color:#a66d00!important}
+#mainMenuDrawer .drive-badge .b-dot{width:5px!important;height:5px!important;border-radius:50%;background:currentColor}
+
+#mainMenuDrawer .drive-sub{
+  display:block!important;margin-top:3px!important;color:#71817a!important;
+  font-size:9px!important;line-height:1.25!important;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
+}
+
+#mainMenuDrawer .main-menu-drive-actions{
+  grid-column:1/-1!important;display:grid!important;
+  grid-template-columns:1fr 1fr!important;gap:6px!important;margin-top:1px!important;
+}
+#mainMenuDrawer .main-menu-drive-actions button{
+  min-height:30px!important;padding:5px 7px!important;border-radius:9px!important;
+  border:1px solid rgba(16,42,67,.065)!important;background:#f5f8f6!important;
+  color:#36564c!important;font-size:9.5px!important;font-weight:750!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;box-shadow:none!important;
+}
+#mainMenuDrawer .main-menu-drive-actions button.primary{
+  color:#fff!important;background:linear-gradient(135deg,#16865f,#18a874)!important;
+  border-color:transparent!important;box-shadow:0 4px 8px rgba(24,168,116,.18)!important;
+}
+#mainMenuDrawer .main-menu-drive-actions button:disabled{opacity:.62}
+#mainMenuDrawer .main-menu-drive-actions svg{
+  width:13px!important;height:13px!important;stroke:currentColor!important;
+  fill:none!important;stroke-width:1.9!important;
+}
+#mainMenuDrawer .main-menu-drive-card.is-connected{
+  border-color:rgba(24,168,116,.13)!important;
+  background:linear-gradient(145deg,#fff,#f3fbf7)!important;
+}
+#mainMenuDrawer .main-menu-drive-card.is-syncing{
+  border-color:rgba(216,168,78,.18)!important;
+  background:linear-gradient(145deg,#fffef9,#fff9ec)!important;
+}
+</style>
+
+
+<style id="drive-clean-menu-performance">
+/* =========================================================
+   DRIVE CLEAN DESIGN + MENU PERFORMANCE OPTIMIZATION
+   Visual/interaction optimization only.
+   ========================================================= */
+
+/* Drive card: clean status/account card, no download-arrow visual. */
+#mainMenuDrawer .main-menu-drive-card{
+  display:grid!important;
+  grid-template-columns:34px minmax(0,1fr)!important;
+  gap:8px!important;
+  padding:8px!important;
+  border-radius:13px!important;
+  box-shadow:0 3px 9px rgba(16,42,67,.055)!important;
+}
+#mainMenuDrawer .main-menu-drive .drive-logo{
+  width:34px!important;height:34px!important;border-radius:10px!important;
+}
+#mainMenuDrawer .main-menu-drive .drive-logo svg{
+  width:21px!important;height:21px!important;
+}
+
+/* Hide download-arrow symbols only; Connect/Backup actions remain usable. */
+#mainMenuDrawer .main-menu-drive .download-icon,
+#mainMenuDrawer .main-menu-drive .download-arrow,
+#mainMenuDrawer .main-menu-drive [data-icon="download"],
+#mainMenuDrawer .main-menu-drive [aria-label*="download" i],
+#mainMenuDrawer .main-menu-drive .fa-download,
+#mainMenuDrawer .main-menu-drive .icon-download{
+  display:none!important;
+}
+
+/* Menu rendering: reduce paint and layout cost. */
+#mainMenuDrawer{
+  contain:layout paint style;
+  content-visibility:auto;
+  contain-intrinsic-size:600px;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Compact blocks: fewer expensive effects. */
+#mainMenuDrawer .main-menu-item,
+#mainMenuDrawer .main-menu-settings-toggle,
+#mainMenuDrawer .main-menu-settings-item,
+#mainMenuDrawer .main-menu-drive-card{
+  box-shadow:0 2px 7px rgba(16,42,67,.045)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Keep touch response immediate. */
+#mainMenuDrawer .main-menu-item,
+#mainMenuDrawer .main-menu-settings-toggle,
+#mainMenuDrawer .main-menu-settings-item,
+#mainMenuBtn{
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+
+/* Don't animate every menu item while the drawer opens. */
+#mainMenuDrawer .main-menu-item,
+#mainMenuDrawer .main-menu-settings-toggle{
+  animation:none!important;
+}
+
+/* Settings children only animate when explicitly opened. */
+#mainMenuDrawer .main-menu-settings-item{
+  will-change:auto!important;
+}
+
+/* Avoid costly filters during touch. */
+#mainMenuDrawer .main-menu-item:active,
+#mainMenuDrawer .main-menu-settings-item:active{
+  filter:none!important;
+}
+
+/* Small phones: compact even further. */
+@media(max-width:600px){
+  #mainMenuDrawer{
+    width:50vw!important;
+    max-width:50vw!important;
+  }
+  #mainMenuDrawer .main-menu-item{
+    min-height:42px!important;
+    margin:4px 3px!important;
+    padding:5px 6px!important;
+    grid-template-columns:30px minmax(0,1fr) 18px!important;
+    gap:6px!important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-icon{
+    width:30px!important;height:30px!important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-icon svg{
+    width:15px!important;height:15px!important;
+  }
+  #mainMenuDrawer .main-menu-item .main-menu-text{
+    font-size:11px!important;
+  }
+}
+</style>
+
+
+<style id="menu-final-fast-clean">
+/* ============================================================
+   FINAL MENU: FAST + CLEAN + COMPACT PREMIUM
+   - Half-width side drawer
+   - No drawer/overlay animation
+   - Lightweight blocks
+   - No Drive download/arrow icons
+   ============================================================ */
+
+/* Drawer: instant open/close, no GPU-heavy sliding animation. */
+#mainMenuDrawer{
+  width:50vw !important;
+  max-width:50vw !important;
+  min-width:0 !important;
+  transform:translate3d(-100%,0,0) !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:8px 0 20px rgba(16,42,67,.12) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  contain:layout paint !important;
+  will-change:transform;
+}
+#mainMenuDrawer.open{
+  transform:translate3d(0,0,0) !important;
+}
+
+#mainMenuOverlay{
+  transition:none !important;
+  animation:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* Header kept compact. */
+#mainMenuDrawer .main-menu-head{
+  padding:7px 7px 8px !important;
+  gap:7px !important;
+  border-bottom:1px solid rgba(15,56,48,.06) !important;
+}
+#mainMenuDrawer .main-menu-head .mm-mark{
+  width:34px !important;
+  height:34px !important;
+  border-radius:10px !important;
+}
+#mainMenuDrawer .main-menu-head .mm-name strong{
+  font-size:12px !important;
+}
+#mainMenuDrawer .main-menu-head .mm-name span{
+  font-size:9px !important;
+  margin-top:1px !important;
+}
+#mainMenuDrawer .main-menu-close{
+  width:28px !important;
+  height:28px !important;
+  border-radius:9px !important;
+  font-size:16px !important;
+}
+
+/* Scroll container: cheap, contained paint. */
+#mainMenuDrawer .main-menu-list{
+  padding:6px 3px 8px !important;
+  contain:layout paint style !important;
+  overscroll-behavior:contain;
+}
+
+/* Every section is a compact block. */
+#mainMenuDrawer .main-menu-item{
+  min-height:42px !important;
+  margin:4px 2px !important;
+  padding:5px 6px !important;
+  gap:6px !important;
+  grid-template-columns:30px minmax(0,1fr) 18px !important;
+  border-radius:11px !important;
+  background:rgba(255,255,255,.95) !important;
+  border:1px solid rgba(16,42,67,.06) !important;
+  box-shadow:0 2px 5px rgba(16,42,67,.035) !important;
+  transition:none !important;
+  animation:none !important;
+}
+#mainMenuDrawer .main-menu-item::before{
+  width:3px !important;
+  top:7px !important;
+  bottom:7px !important;
+}
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  width:30px !important;
+  height:30px !important;
+  border-radius:9px !important;
+  box-shadow:none !important;
+  transition:none !important;
+}
+#mainMenuDrawer .main-menu-item .main-menu-icon svg{
+  width:15px !important;
+  height:15px !important;
+}
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  font-size:10.8px !important;
+  font-weight:750 !important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  width:18px !important;
+  height:18px !important;
+  border-radius:6px !important;
+  font-size:13px !important;
+  background:#f3f6f4 !important;
+}
+
+/* Settings: compact parent + light inner rows, no open animation. */
+#mainMenuDrawer .main-menu-settings-toggle{
+  min-height:42px !important;
+  margin:5px 2px 0 !important;
+  padding:5px 6px !important;
+  grid-template-columns:30px minmax(0,1fr) 18px !important;
+  border-radius:11px 11px 8px 8px !important;
+  transition:none !important;
+}
+#mainMenuDrawer .main-menu-settings-list{
+  transition:none !important;
+  margin:0 2px 5px !important;
+  box-shadow:none !important;
+  background:#f3f8f5 !important;
+}
+#mainMenuDrawer .main-menu-settings-list .mms-inner{
+  padding:4px !important;
+}
+#mainMenuDrawer .main-menu-settings-item{
+  min-height:32px !important;
+  margin:2px 0 !important;
+  padding:4px 6px !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  transition:none !important;
+  animation:none !important;
+}
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  width:23px !important;
+  height:23px !important;
+  border-radius:7px !important;
+  box-shadow:none !important;
+  transition:none !important;
+}
+#mainMenuDrawer .main-menu-settings-item .msi-icon svg{
+  width:12px !important;
+  height:12px !important;
+}
+#mainMenuDrawer .main-menu-settings-item .msi-text{
+  font-size:10px !important;
+  line-height:1.05 !important;
+}
+
+/* Drive: compact smart card; remove ALL action-arrow/download SVGs. */
+#mainMenuDrawer .main-menu-drive{
+  padding:7px 2px 0 !important;
+}
+#mainMenuDrawer .main-menu-drive-card{
+  display:grid !important;
+  grid-template-columns:30px minmax(0,1fr) !important;
+  gap:7px !important;
+  padding:7px !important;
+  border-radius:11px !important;
+  box-shadow:0 2px 6px rgba(16,42,67,.04) !important;
+  transition:none !important;
+}
+#mainMenuDrawer .main-menu-drive .drive-logo{
+  width:30px !important;
+  height:30px !important;
+  border-radius:9px !important;
+  box-shadow:none !important;
+}
+#mainMenuDrawer .main-menu-drive .drive-logo svg{
+  width:19px !important;
+  height:19px !important;
+}
+#mainMenuDrawer .drive-title-row strong{
+  font-size:10px !important;
+}
+#mainMenuDrawer .drive-badge{
+  font-size:7px !important;
+  padding:2px 5px !important;
+}
+#mainMenuDrawer .drive-sub{
+  font-size:7.8px !important;
+  margin-top:2px !important;
+}
+#mainMenuDrawer .main-menu-drive-actions{
+  gap:4px !important;
+  margin-top:5px !important;
+}
+#mainMenuDrawer .main-menu-drive-actions button{
+  min-height:27px !important;
+  padding:4px 5px !important;
+  border-radius:8px !important;
+  font-size:8.5px !important;
+  box-shadow:none !important;
+  transition:none !important;
+}
+#mainMenuDrawer .main-menu-drive-actions button svg{
+  display:none !important;
+}
+
+/* All touch feedback is immediate, not animated. */
+#mainMenuBtn,
+#mainMenuDrawer button{
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+#mainMenuDrawer .main-menu-item:active,
+#mainMenuDrawer .main-menu-settings-item:active,
+#mainMenuDrawer .main-menu-drive-actions button:active{
+  transform:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+@media (max-width:380px){
+  #mainMenuDrawer{width:50vw !important;max-width:50vw !important;}
+}
+</style>
+
+
+<style id="menu-dark-premium-blocks">
+/* ==========================================================
+   DARKER PREMIUM BLOCKS + SLIGHTLY LARGER ICONS
+   ========================================================== */
+
+#mainMenuDrawer .main-menu-item{
+  min-height:48px !important;
+  grid-template-columns:36px minmax(0,1fr) 20px !important;
+  gap:8px !important;
+  margin:5px 3px !important;
+  padding:6px 7px !important;
+  border-radius:13px !important;
+
+  /* darker premium surface */
+  background:linear-gradient(145deg,#183c35 0%,#12312c 100%) !important;
+  border:1px solid rgba(121,194,166,.18) !important;
+  box-shadow:
+    0 4px 10px rgba(5,20,17,.18),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+#mainMenuDrawer .main-menu-item::before{
+  width:4px !important;
+  top:8px !important;
+  bottom:8px !important;
+  opacity:.95;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  width:36px !important;
+  height:36px !important;
+  border-radius:11px !important;
+  background:linear-gradient(145deg,#244f45,#1a3c35) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:
+    0 4px 9px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-icon svg{
+  width:18px !important;
+  height:18px !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  color:#f4fbf8 !important;
+  font-size:11.5px !important;
+  font-weight:750 !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  color:#b8cdc4 !important;
+  background:rgba(255,255,255,.07) !important;
+}
+
+/* Individual block accents become richer/deeper. */
+#mainMenuDrawer .main-menu-item:nth-of-type(1) .main-menu-icon{
+  color:#7db4ff !important;
+  background:linear-gradient(145deg,#1f4775,#173754) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(2) .main-menu-icon{
+  color:#74e0b5 !important;
+  background:linear-gradient(145deg,#185b47,#164234) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(3) .main-menu-icon{
+  color:#c4a2ff !important;
+  background:linear-gradient(145deg,#45306f,#30234f) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(4) .main-menu-icon{
+  color:#ffad82 !important;
+  background:linear-gradient(145deg,#6b3723,#4d271b) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(5) .main-menu-icon{
+  color:#72e3e4 !important;
+  background:linear-gradient(145deg,#185e60,#174547) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(6) .main-menu-icon{
+  color:#ffd27a !important;
+  background:linear-gradient(145deg,#72531c,#503b18) !important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(7) .main-menu-icon{
+  color:#ff9b9b !important;
+  background:linear-gradient(145deg,#713438,#51272a) !important;
+}
+
+/* Settings parent = dark gold premium card */
+#mainMenuDrawer .main-menu-settings-toggle{
+  min-height:48px !important;
+  grid-template-columns:36px minmax(0,1fr) 20px !important;
+  margin:6px 3px 0 !important;
+  padding:6px 7px !important;
+  border-radius:13px 13px 9px 9px !important;
+  background:linear-gradient(145deg,#4b3a18,#332913) !important;
+  border:1px solid rgba(241,205,116,.22) !important;
+  box-shadow:
+    0 4px 10px rgba(20,12,2,.17),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-toggle .main-menu-icon{
+  width:36px !important;
+  height:36px !important;
+  border-radius:11px !important;
+  background:linear-gradient(145deg,#72591f,#514117) !important;
+  color:#ffd97e !important;
+}
+
+#mainMenuDrawer .main-menu-settings-toggle .main-menu-text{
+  color:#fff7df !important;
+  font-size:11.5px !important;
+  font-weight:800 !important;
+}
+
+/* Settings children = darker inset blocks */
+#mainMenuDrawer .main-menu-settings-list{
+  background:linear-gradient(180deg,#162f2a,#10231f) !important;
+  border:1px solid rgba(121,194,166,.10) !important;
+  box-shadow:inset 0 5px 10px rgba(0,0,0,.12) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item{
+  min-height:36px !important;
+  background:linear-gradient(145deg,#1a3a34,#132d28) !important;
+  border:1px solid rgba(255,255,255,.055) !important;
+  color:#edf8f3 !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-text{
+  color:#eaf5f0 !important;
+  font-size:10px !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  width:26px !important;
+  height:26px !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+}
+
+/* Darker Drive card, while retaining the same Google colors in its logo. */
+#mainMenuDrawer .main-menu-drive-card{
+  padding:8px !important;
+  border-radius:13px !important;
+  background:linear-gradient(145deg,#17332e,#102520) !important;
+  border:1px solid rgba(121,194,166,.13) !important;
+  box-shadow:0 3px 9px rgba(3,15,12,.15) !important;
+}
+
+#mainMenuDrawer .drive-title-row strong{
+  color:#eff8f4 !important;
+}
+
+#mainMenuDrawer .drive-sub{
+  color:#a9bbb4 !important;
+}
+
+#mainMenuDrawer .drive-badge{
+  background:rgba(255,255,255,.07) !important;
+  color:#b7c7c1 !important;
+}
+#mainMenuDrawer .drive-badge.st-connected{
+  background:rgba(24,168,116,.16) !important;
+  color:#78e1b8 !important;
+}
+#mainMenuDrawer .drive-badge.st-syncing{
+  background:rgba(216,168,78,.17) !important;
+  color:#ffd77b !important;
+}
+
+#mainMenuDrawer .main-menu-drive-actions button{
+  min-height:28px !important;
+  background:rgba(255,255,255,.06) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+  color:#d7e7e0 !important;
+}
+#mainMenuDrawer .main-menu-drive-actions button.primary{
+  background:linear-gradient(135deg,#167b59,#18a874) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+
+/* Touch: slight press without bounce. */
+#mainMenuDrawer .main-menu-item:active,
+#mainMenuDrawer .main-menu-settings-item:active{
+  background:linear-gradient(145deg,#214a41,#17352f) !important;
+}
+</style>
+
+
+<style id="light-green-premium-theme">
+/* ==========================================================
+   SOFT LIGHT-GREEN PREMIUM THEME
+   ========================================================== */
+
+#mainMenuDrawer{
+  background:linear-gradient(180deg,#f5fbf7 0%,#eef8f2 100%) !important;
+}
+
+/* Main navigation blocks */
+#mainMenuDrawer .main-menu-item{
+  background:linear-gradient(145deg,#f8fdf9 0%,#edf8f2 100%) !important;
+  border:1px solid rgba(46,125,91,.10) !important;
+  box-shadow:
+    0 3px 9px rgba(46,125,91,.055),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-text{
+  color:#245443 !important;
+}
+
+#mainMenuDrawer .main-menu-item .main-menu-chevron{
+  color:#6f9284 !important;
+  background:#e5f3eb !important;
+}
+
+/* Soft mint icon tiles */
+#mainMenuDrawer .main-menu-item .main-menu-icon{
+  background:linear-gradient(145deg,#eaf8f0,#d8efdf) !important;
+  border:1px solid rgba(46,125,91,.09) !important;
+  box-shadow:
+    0 3px 7px rgba(46,125,91,.06),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+  color:#2e7d5b !important;
+}
+
+/* Slightly varied soft-green accents */
+#mainMenuDrawer .main-menu-item:nth-of-type(1) .main-menu-icon{
+  background:linear-gradient(145deg,#e4f0ff,#d6e7fb)!important;color:#3971b8!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(2) .main-menu-icon{
+  background:linear-gradient(145deg,#dcf5e9,#ccebdc)!important;color:#27835d!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(3) .main-menu-icon{
+  background:linear-gradient(145deg,#eee8ff,#dfd6fb)!important;color:#7355b6!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(4) .main-menu-icon{
+  background:linear-gradient(145deg,#fff0e6,#f9ddd0)!important;color:#c4683a!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(5) .main-menu-icon{
+  background:linear-gradient(145deg,#def6f5,#c9ecea)!important;color:#278d8d!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(6) .main-menu-icon{
+  background:linear-gradient(145deg,#fff7dd,#f5e6bb)!important;color:#a97b19!important;
+}
+#mainMenuDrawer .main-menu-item:nth-of-type(7) .main-menu-icon{
+  background:linear-gradient(145deg,#ffeceb,#f7d3d2)!important;color:#bc5757!important;
+}
+
+/* Settings */
+#mainMenuDrawer .main-menu-settings-toggle{
+  background:linear-gradient(145deg,#edf9f2,#dff2e7) !important;
+  border:1px solid rgba(46,125,91,.11) !important;
+  box-shadow:
+    0 3px 9px rgba(46,125,91,.06),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-toggle .main-menu-icon{
+  background:linear-gradient(145deg,#dff4e7,#ccebd8) !important;
+  color:#31815d !important;
+}
+
+#mainMenuDrawer .main-menu-settings-toggle .main-menu-text{
+  color:#265a47 !important;
+}
+
+#mainMenuDrawer .main-menu-settings-list{
+  background:linear-gradient(180deg,#e8f6ee,#f4faf6) !important;
+  border-color:rgba(46,125,91,.08) !important;
+  box-shadow:inset 0 5px 10px rgba(46,125,91,.035) !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item{
+  background:linear-gradient(145deg,#f9fdfb,#edf7f1) !important;
+  border-color:rgba(46,125,91,.065) !important;
+  color:#2d5b4b !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-text{
+  color:#2d5b4b !important;
+}
+
+#mainMenuDrawer .main-menu-settings-item .msi-icon{
+  background:#e0f2e8 !important;
+  color:#2e7d5b !important;
+}
+
+/* Drive */
+#mainMenuDrawer .main-menu-drive-card{
+  background:linear-gradient(145deg,#f9fdfb,#edf7f1) !important;
+  border-color:rgba(46,125,91,.09) !important;
+  box-shadow:0 3px 9px rgba(46,125,91,.05) !important;
+}
+
+#mainMenuDrawer .drive-title-row strong{
+  color:#285645 !important;
+}
+
+#mainMenuDrawer .drive-sub{
+  color:#759087 !important;
+}
+
+#mainMenuDrawer .drive-badge{
+  background:#e7f1eb !important;
+  color:#748a80 !important;
+}
+
+#mainMenuDrawer .drive-badge.st-connected{
+  background:#dff4e8 !important;
+  color:#27815b !important;
+}
+
+#mainMenuDrawer .drive-badge.st-syncing{
+  background:#fff3d6 !important;
+  color:#a67818 !important;
+}
+
+#mainMenuDrawer .main-menu-drive-actions button{
+  background:#eaf5ef !important;
+  border-color:rgba(46,125,91,.07) !important;
+  color:#3a6857 !important;
+}
+
+#mainMenuDrawer .main-menu-drive-actions button.primary{
+  background:linear-gradient(135deg,#3fa875,#68c797) !important;
+  color:#fff !important;
+}
+
+#mainMenuDrawer .main-menu-item:active,
+#mainMenuDrawer .main-menu-settings-item:active{
+  background:linear-gradient(145deg,#e6f5ec,#d9efe2) !important;
+}
+</style>
+
+
+<style id="bottom-nav-light-premium-blocks">
+/* =========================================================
+   BOTTOM NAV — VISIBLE ICONS + INDIVIDUAL PREMIUM BOXES
+   Same soft-green palette, no heavy effects.
+   ========================================================= */
+
+#bottomNav{
+  background:linear-gradient(180deg,rgba(248,253,250,.98),rgba(232,246,238,.98)) !important;
+  border:1px solid rgba(46,125,91,.10) !important;
+  border-radius:22px !important;
+  padding:6px 6px !important;
+  box-shadow:
+    0 8px 24px rgba(46,125,91,.10),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* Each bottom navigation item is its own box. */
+#bottomNav .navbtn{
+  min-width:0;
+  height:58px !important;
+  padding:3px 3px !important;
+  margin:0 2px !important;
+  border:1px solid transparent !important;
+  border-radius:15px !important;
+  background:transparent !important;
+  color:#5c796d !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:2px !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+
+/* Clearly visible icon box */
+#bottomNav .navbtn .ico-wrap{
+  width:34px !important;
+  height:34px !important;
+  border-radius:10px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:linear-gradient(145deg,#edf8f1,#dcefe4) !important;
+  color:#2e7d5b !important;
+  border:1px solid rgba(46,125,91,.08) !important;
+  box-shadow:
+    0 3px 8px rgba(46,125,91,.07),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+  transform:none !important;
+  transition:none !important;
+}
+
+#bottomNav .navbtn .ico-wrap svg{
+  width:19px !important;
+  height:19px !important;
+  stroke-width:2.35 !important;
+}
+
+/* Small label remains visible. */
+#bottomNav .navbtn span[data-i18n]{
+  font-size:8.5px !important;
+  line-height:1 !important;
+  font-weight:750 !important;
+  color:#5d766c !important;
+  opacity:1 !important;
+}
+
+/* Active = light-green premium box. */
+#bottomNav .navbtn.active{
+  background:linear-gradient(145deg,#dff2e7,#cce8d8) !important;
+  border-color:rgba(46,125,91,.12) !important;
+  color:#246a4d !important;
+  box-shadow:
+    0 3px 9px rgba(46,125,91,.09),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+#bottomNav .navbtn.active .ico-wrap{
+  background:linear-gradient(145deg,#bfe3cd,#a9d5ba) !important;
+  color:#176a48 !important;
+  border-color:rgba(46,125,91,.13) !important;
+  box-shadow:
+    0 4px 9px rgba(46,125,91,.10),
+    inset 0 1px 0 rgba(255,255,255,.9) !important;
+  transform:none !important;
+}
+
+#bottomNav .navbtn.active span[data-i18n]{
+  color:#176a48 !important;
+}
+
+/* Immediate touch response, no animation/jump. */
+#bottomNav .navbtn:active{
+  background:#e3f3ea !important;
+  transform:none !important;
+}
+#bottomNav .navbtn:active .ico-wrap{
+  background:#cdebd9 !important;
+  transform:scale(.96) !important;
+}
+
+/* Responsive: keep boxes visible but compact. */
+@media(max-width:380px){
+  #bottomNav{
+    padding:5px 4px !important;
+    border-radius:19px !important;
+  }
+  #bottomNav .navbtn{
+    height:54px !important;
+    margin:0 1px !important;
+  }
+  #bottomNav .navbtn .ico-wrap{
+    width:31px !important;
+    height:31px !important;
+    border-radius:9px !important;
+  }
+  #bottomNav .navbtn .ico-wrap svg{
+    width:17px !important;
+    height:17px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <!-- ===================== QR VERIFICATION SCREEN (public, no login) =====================
@@ -2421,8 +4715,8 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
      Firebase/loadState ঠিক কোন স্ক্রিন (onboarding/lock/app) দেখাবে সেটা বুঝে ওঠার
      আগ পর্যন্ত পুরো স্ক্রিন ঢেকে রাখে — আইকন বড়/সেটল/ফেড হয়ে "MY SHOP" নাম ও
      ট্যাগলাইন ভেসে ওঠে (দ্র. runSplashSequence, নিচের বড় script-এ)। ব্যাকগ্রাউন্ড
-     ক্রিম কালার (#F5EAD0) — <head>-এর theme-color মেটাও এই কালারে সেট করা, তাই এই
-     পুরো সময় ফোনের স্ট্যাটাস বার/টপবারও একই ক্রিম কালার দেখাবে। ===================== -->
+     হালকা ক্রিম কালার (#FAF3E4) — <head>-এর theme-color মেটাও এই কালারে সেট করা, তাই এই
+     পুরো সময় ফোনের স্ট্যাটাস বার/টপবারও একই হালকা ক্রিম কালার দেখাবে। ===================== -->
 <div id="splashScreen">
 <div class="stage">
 <!-- ANIMATED ICON (small → big → settle → fade) -->
@@ -2625,9 +4919,11 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 </div>
 </div>
 </div>
-<!-- ===================== PULL-TO-REFRESH INDICATOR ===================== -->
+<!-- ===================== PULL-TO-REFRESH INDICATOR (custom digital-orbit design) ===================== -->
 <div id="ptrIndicator">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>
+<div class="ptr-orbit"></div>
+<span class="ptr-dot"></span><span class="ptr-dot"></span><span class="ptr-dot"></span>
+<div class="ptr-core"></div>
 </div>
 <!-- ===================== APP SHELL ===================== -->
 <div id="app">
@@ -2675,8 +4971,9 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 <button class="main-menu-item" data-main-page="stockalerts" onclick="mainMenuGo('stockalerts')"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="main-menu-text">Stock Alerts</span><span class="main-menu-chevron">›</span></button>
 <button class="main-menu-item" data-main-page="warranty" onclick="mainMenuGo('warranty')"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="m9 12 2 2 4-5"/></svg></span><span class="main-menu-text">Warranty</span><span class="main-menu-chevron">›</span></button>
 <button class="main-menu-item" onclick="openMainMenuAI()"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.3 4.7L18 9l-4.7 1.3L12 15l-1.3-4.7L6 9l4.7-1.3L12 3Z"/><path d="m19 15 .7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7L19 15Z"/></svg></span><span class="main-menu-text">AI Business Insights</span><span class="main-menu-chevron">›</span></button>
-<button class="main-menu-item main-menu-settings-toggle" onclick="toggleHomeSettingsMenu()" type="button"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span><span class="main-menu-text">Settings</span><span class="main-menu-chevron" id="homeSettingsChevron">›</span></button>
+<button aria-expanded="false" aria-controls="homeSettingsList" class="main-menu-item main-menu-settings-toggle" id="homeSettingsToggle" onclick="toggleHomeSettingsMenu()" type="button"><span class="main-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span><span class="main-menu-text">Settings</span><span class="main-menu-chevron settings-chevron" id="homeSettingsChevron">›</span></button>
 <div aria-label="Settings options" class="main-menu-settings-list" id="homeSettingsList">
+<div class="mms-inner">
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk1')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M7 9h10M7 13h10M7 17h6"/></svg></span><span class="msi-text">Business Profile</span></button>
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk2')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="1.6"/><circle cx="17.3" cy="19" r="1.6"/></svg></span><span class="msi-text">Landing Page — Contact &amp; Delivery</span></button>
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk3')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.3" r="2"/><path d="M5.5 16c.7-1.7 1.9-2.5 3-2.5s2.3.8 3 2.5"/><path d="M14.5 9.3h4M14.5 12.8h4"/></svg></span><span class="msi-text">Landing Page — Footer Contact</span></button>
@@ -2696,6 +4993,7 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk17')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M12 3 21 8l-9 5-9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></svg></span><span class="msi-text">Inventory Categories</span></button>
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk18')"><span class="msi-icon"><svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M18 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M6 20H4a2 2 0 0 1-2-2v-2"/><rect x="7.3" y="8" width="9.4" height="8" rx="1.3"/></svg></span><span class="msi-text">AI Receipt Scanner</span></button>
 <button class="main-menu-settings-item" onclick="homeSettingsGo('sblk19')"><span class="msi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9.3h18"/><path d="M9.3 9.3V20M15 9.3V20"/></svg></span><span class="msi-text">Google Sheet Sync</span></button>
+</div>
 </div>
 </nav>
 <div class="main-menu-drive">
@@ -3649,13 +5947,15 @@ html,body{background:#F5EAD0;overscroll-behavior:none;-webkit-tap-highlight-colo
 <div class="rf-select" id="receiptFormatSelect">
 <button aria-expanded="false" aria-haspopup="listbox" class="rf-select-trigger" onclick="toggleReceiptFormatMenu(event)" type="button">
 <span class="rf-current" id="receiptFormatCurrent"></span>
-<span class="rf-select-chevron">⌄</span>
+<span class="rf-select-chevron">
+<svg fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" viewbox="0 0 24 24" width="12"><path d="M6 9l6 6 6-6"></path></svg>
+</span>
 </button>
 <div class="rf-select-menu" id="receiptFormatMenu" role="listbox">
-<button class="rf-select-option active" data-value="a4" onclick="selectReceiptFormat('a4',event)" type="button"><span class="rf-opt-icon">🧾</span><span class="rf-opt-info"><span class="rf-opt-name">A4 Sheet (6-up)</span><span class="rf-opt-desc">6 receipts per A4 page, 2 × 3 grid — regular printer</span></span><span class="rf-opt-check">✓</span></button>
-<button class="rf-select-option" data-value="thermal58" onclick="selectReceiptFormat('thermal58',event)" type="button"><span class="rf-opt-icon">🎫</span><span class="rf-opt-info"><span class="rf-opt-name">Thermal 58mm</span><span class="rf-opt-desc">Narrow roll slip — 58mm thermal/POS printer</span></span><span class="rf-opt-check">✓</span></button>
-<button class="rf-select-option" data-value="thermal80" onclick="selectReceiptFormat('thermal80',event)" type="button"><span class="rf-opt-icon">🎫</span><span class="rf-opt-info"><span class="rf-opt-name">Thermal 80mm</span><span class="rf-opt-desc">Wide roll slip — 80mm thermal/POS printer</span></span><span class="rf-opt-check">✓</span></button>
-<button class="rf-select-option" data-value="digital" onclick="selectReceiptFormat('digital',event)" type="button"><span class="rf-opt-icon">📄</span><span class="rf-opt-info"><span class="rf-opt-name">Digital Invoice (A4)</span><span class="rf-opt-desc">Formal full-page invoice — PDF / digital sharing</span></span><span class="rf-opt-check">✓</span></button>
+<button class="rf-select-option active" data-value="a4" onclick="selectReceiptFormat('a4',event)" type="button"><span class="rf-opt-icon">🧾</span><span class="rf-opt-info"><span class="rf-opt-name">A4 Sheet (6-up)</span><span class="rf-opt-desc">6 receipts per A4 page, 2 × 3 grid — regular printer</span></span><span class="rf-opt-check"><svg fill="none" height="11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewbox="0 0 24 24" width="11"><path d="M20 6L9 17l-5-5"></path></svg></span></button>
+<button class="rf-select-option" data-value="thermal58" onclick="selectReceiptFormat('thermal58',event)" type="button"><span class="rf-opt-icon">🎫</span><span class="rf-opt-info"><span class="rf-opt-name">Thermal 58mm</span><span class="rf-opt-desc">Narrow roll slip — 58mm thermal/POS printer</span></span><span class="rf-opt-check"><svg fill="none" height="11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewbox="0 0 24 24" width="11"><path d="M20 6L9 17l-5-5"></path></svg></span></button>
+<button class="rf-select-option" data-value="thermal80" onclick="selectReceiptFormat('thermal80',event)" type="button"><span class="rf-opt-icon">🎫</span><span class="rf-opt-info"><span class="rf-opt-name">Thermal 80mm</span><span class="rf-opt-desc">Wide roll slip — 80mm thermal/POS printer</span></span><span class="rf-opt-check"><svg fill="none" height="11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewbox="0 0 24 24" width="11"><path d="M20 6L9 17l-5-5"></path></svg></span></button>
+<button class="rf-select-option" data-value="digital" onclick="selectReceiptFormat('digital',event)" type="button"><span class="rf-opt-icon">📄</span><span class="rf-opt-info"><span class="rf-opt-name">Digital Invoice (A4)</span><span class="rf-opt-desc">Formal full-page invoice — PDF / digital sharing</span></span><span class="rf-opt-check"><svg fill="none" height="11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewbox="0 0 24 24" width="11"><path d="M20 6L9 17l-5-5"></path></svg></span></button>
 </div>
 <div aria-hidden="true" class="rf-select-native-radios">
 <input checked="" name="receiptFormat" type="radio" value="a4"/>
@@ -6739,7 +9039,7 @@ function runVerifyMode(vid){
   if(splashEl) splashEl.style.display = 'none';
   const screen = document.getElementById('verifyScreen');
   if(screen) screen.style.display = 'block';
-  setThemeColor('#F5EAD0');
+  setThemeColor('#FAF3E4');
   // Firebase compat SDK-গুলো <head>-এ defer করা — DOMContentLoaded/লোড শেষ হওয়ার
   // অপেক্ষা না করে এখানে সরাসরি চেষ্টা করলে firebase এখনো undefined থাকতে পারে,
   // তাই রেডি না হওয়া পর্যন্ত অল্প অল্প করে অপেক্ষা করা হচ্ছে (max ~5s)।
@@ -6899,7 +9199,7 @@ function runProductVerifyMode(pvid){
   if(screen) screen.style.display = 'block';
   const sub = document.getElementById('verifyBrandSub');
   if(sub) sub.textContent = 'Product Authenticity';
-  setThemeColor('#F5EAD0');
+  setThemeColor('#FAF3E4');
   let waited = 0;
   const tryInit = () => {
     if(typeof firebase !== 'undefined' && firebase.apps){
@@ -7357,12 +9657,26 @@ function toggleMainMenu(){
   const d=document.getElementById('mainMenuDrawer');
   if(d && d.classList.contains('open')) closeMainMenu(); else openMainMenu();
 }
+// ফেসবুক-স্টাইল অ্যাকর্ডিয়ন: "Settings" রো-তে ট্যাপ করলে ভেতরের ১৯টা অপশন
+// এখন মসৃণভাবে (height অ্যানিমেশন সহ) খুলবে/বন্ধ হবে, শুধু হুট করে display:none↔block
+// না হয়ে। রো-টাও নিজে হালকা হাইলাইট/উপরে উঠে (elevate) যাবে যাতে বোঝা যায় এটাই
+// এখন "খোলা" আছে, আর খোলার সাথে সাথে রো-টাকে ড্রয়ারের স্ক্রলযোগ্য অংশের উপরের
+// দিকে স্মুথলি স্ক্রল করে আনা হয় — যাতে নিচে যে অনেকগুলো নতুন অপশন প্রকাশ পেল
+// সেটা সাথে সাথে চোখে পড়ে, ব্যবহারকারীকে আলাদা করে নিচে স্ক্রল করে খুঁজতে না হয়।
 function toggleHomeSettingsMenu(){
   const list=document.getElementById('homeSettingsList');
-  const chev=document.getElementById('homeSettingsChevron');
+  const toggleBtn=document.getElementById('homeSettingsToggle');
   if(!list) return;
   const open=list.classList.toggle('open');
-  if(chev) chev.textContent=open?'⌄':'›';
+  if(toggleBtn){
+    toggleBtn.classList.toggle('expanded', open);
+    toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  if(open){
+    requestAnimationFrame(()=>{
+      toggleBtn && toggleBtn.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
 }
 function homeSettingsGo(id){
   closeMainMenu();
@@ -7504,46 +9818,52 @@ function goPage(page){
   document.getElementById('topPageLabel').textContent = labels[page];
   updateFabVisibility(page);
   // ----------------------------------------------------------------------
-  // ট্যাপ করার সাথে সাথেই যেন উইন্ডো/পেজ চোখে instantly বদলে যায় (০% ল্যাগ):
-  // উপরের সব কাজ (active class, লেবেল, bottom-nav হাইলাইট) already সস্তা এবং
-  // সরাসরি হয়ে গেছে। কিন্তু নিচের render*() কলগুলো (বিশেষত renderItems ও
-  // renderOrders — এগুলোর Sales/Purchase/Expense লিস্টের মতো ৫০-আইটেম pagination
-  // নেই, তাই একবারে পুরো লিস্টের HTML বানায়) synchronous, ভারী কাজ। এতদিন এই
-  // কাজটা page দৃশ্যমান করার একই জাভাস্ক্রিপ্ট কলে ঘটত বলে ব্রাউজার নতুন পেজটা
-  // পেইন্টই করতে পারত না যতক্ষণ না পুরো render শেষ হয় — ফলে আইকনে চাপ দেওয়ার পর
-  // চোখে পড়ার মতো একটা বিরতি অনুভূত হতো।
+  // ট্যাপ করার সাথে সাথেই যেন উইন্ডো/পেজ চোখে instantly বদলে যায়, এবং ডাটাও
+  // সাথে সাথেই দেখা যায় (কখনো "পরে এসে পড়ে" এমন মনে না হয়):
   //
-  // সমাধান: দুইটা নেস্টেড requestAnimationFrame ব্যবহার করে ভারী render-টা এক
-  // পেইন্ট ফ্রেম পরে সরিয়ে দেওয়া হলো। প্রথম rAF নিশ্চিত করে ব্রাউজার একবার
-  // পেইন্ট করে ফেলেছে (তাই উপরের active/label/nav পরিবর্তনগুলো স্ক্রিনে ভেসে
-  // ওঠে সাথে সাথেই), তারপরই দ্বিতীয় rAF-এ আসল render*() চলে — ফলে ট্যাপ থেকে
-  // "উইন্ডো খোলা" এই অংশটুকু সবসময় instant থাকে, লিস্ট যত বড়ই হোক না কেন;
-  // কনটেন্ট এক ফ্রেম পরে (অদৃশ্যভাবে দ্রুত) ভরে ওঠে।
-  const runHeavyRender = () => {
-    // If the user navigated again before the deferred render got a CPU slice,
-    // abandon the stale render. This prevents hidden pages from consuming the
-    // main thread after rapid taps on the bottom navigation.
-    if(navRenderToken !== NAV_RENDER_TOKEN || state.currentPage !== page) return;
-    if(page === 'dashboard' && dirtyPages.dashboard){ renderDashboard(); dirtyPages.dashboard = false; }
-    if(page === 'sales' && dirtyPages.sales){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
-    if(page === 'purchase' && dirtyPages.purchase){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
-    if(page === 'expense' && dirtyPages.expense){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
-    if(page === 'orders' && dirtyPages.orders){ listVisibleCounts.orders = ORDERS_PAGE_SIZE; renderOrders(); dirtyPages.orders = false; }
-    if(page === 'settings' && dirtyPages.settings){ renderSettings(); dirtyPages.settings = false; }
-    if(page === 'inventory' && dirtyPages.inventory){ listVisibleCounts.inventory = LIST_PAGE_SIZE; renderItems(); dirtyPages.inventory = false; }
-    if(page === 'stockalerts' && dirtyPages.stockalerts){ renderStockAlerts(); dirtyPages.stockalerts = false; }
-    if(page === 'warranty' && dirtyPages.warranty){ renderWarrantyList(); dirtyPages.warranty = false; }
-  };
+  // *** পরিবর্তনের কারণ ***
+  // আগে এখানে render*() কলগুলো দুইটা নেস্টেড requestAnimationFrame + একটা
+  // requestIdleCallback(timeout 500ms) দিয়ে ইচ্ছাকৃতভাবে দেরি করানো হতো — যুক্তি
+  // ছিল প্রথম rAF-এ পেজ/লেবেল/নেভ পরিবর্তন আগে পেইন্ট হয়ে যাক, তারপর ভারী render
+  // চলুক। বাস্তবে এর ফল হতো উল্টো: ট্যাব ট্যাপ করার পর একটা ফাঁকা/পুরনো পেজ কিছুক্ষণ
+  // (কয়েক ফ্রেম থেকে কয়েকশ মিলিসেকেন্ড, ইনপুট ব্যস্ত থাকলে আরও বেশি) দেখা যেত,
+  // তারপর ডাটা হঠাৎ "আকাশ থেকে পড়ার" মতো ভেসে উঠত।
+  //
+  // render*() ফাংশনগুলো আসলে শুধু innerHTML বসায় — কোনো ভারী layout/reflow বা
+  // নেটওয়ার্ক কল নেই (ডাটা তো state-এ আগে থেকেই লোড করা আছে, শুধু HTML string
+  // বানানো হয়)। তাই দেরি না করে সরাসরি সিঙ্ক্রোনাসলি রেন্ডার করাই বরং দ্রুত ও
+  // স্থির — ব্রাউজার active/label/nav ক্লাস পরিবর্তনসহ পুরো পেজটাকে একবারেই
+  // সম্পূর্ণ অবস্থায় পরের ফ্রেমে পেইন্ট করে, তাই ফাঁকা-পরে-ভরাট এই দুই-ধাপের
+  // দৃশ্য অভিজ্ঞতা সম্পূর্ণ বাদ পড়ে — ডাটা সবসময় স্মুথ ও স্থির থাকে।
   if(dirtyPages[page]){
-    const deferHeavy=()=>{
-    if(document.visibilityState==='hidden') return;
-    if(typeof navigator.scheduling?.isInputPending==='function' && navigator.scheduling.isInputPending({includeContinuous:true})){
-      setTimeout(deferHeavy,120); return;
-    }
-    if('requestIdleCallback' in window) requestIdleCallback(runHeavyRender,{timeout:500});
-    else setTimeout(runHeavyRender,50);
-  };
-  requestAnimationFrame(()=>requestAnimationFrame(deferHeavy));
+    // দ্রুত পরপর কয়েকবার একই/ভিন্ন আইকনে ট্যাপ করলে যেন প্রতিটা ট্যাপেই আলাদা করে
+    // ভারী render*() না চলে (এতে মেইন থ্রেড ব্যস্ত থেকে পরের ট্যাপ/স্ক্রল আটকে
+    // যাচ্ছিল) — renderOnDemand() একটা re-entrancy guard দিয়ে নিশ্চিত করে একই
+    // পেজের জন্য একই মুহূর্তে দ্বিতীয় render শুরু হবে না। সাধারণ ব্যবহারে পেজ
+    // prewarm হয়েই থাকে (dirtyPages[page]===false), তাই এই ব্রাঞ্চ কালেভদ্রেই
+    // চলে — মূলত ডাটা এডিটের ঠিক পরপরই কোনো ট্যাব খোলা হলে।
+    __renderPageOnDemand(page);
+  }
+}
+const __pageRenderInFlight = Object.create(null);
+function __renderPageOnDemand(page){
+  if(__pageRenderInFlight[page]) return; // একই পেজের রেন্ডার ইতিমধ্যে চলছে/সবে হয়েছে
+  __pageRenderInFlight[page] = true;
+  try{
+    if(page === 'dashboard'){ renderDashboard(); dirtyPages.dashboard = false; }
+    else if(page === 'sales'){ listVisibleCounts.sales = LIST_PAGE_SIZE; renderList('sales'); dirtyPages.sales = false; }
+    else if(page === 'purchase'){ listVisibleCounts.purchase = LIST_PAGE_SIZE; renderList('purchase'); dirtyPages.purchase = false; }
+    else if(page === 'expense'){ listVisibleCounts.expense = LIST_PAGE_SIZE; renderList('expense'); dirtyPages.expense = false; }
+    else if(page === 'orders'){ listVisibleCounts.orders = ORDERS_PAGE_SIZE; renderOrders(); dirtyPages.orders = false; }
+    else if(page === 'settings'){ renderSettings(); dirtyPages.settings = false; }
+    else if(page === 'inventory'){ listVisibleCounts.inventory = LIST_PAGE_SIZE; renderItems(); dirtyPages.inventory = false; }
+    else if(page === 'stockalerts'){ renderStockAlerts(); dirtyPages.stockalerts = false; }
+    else if(page === 'warranty'){ renderWarrantyList(); dirtyPages.warranty = false; }
+  } finally {
+    // পরের রেন্ডারিং সাইকেলের (rAF) পরে গার্ড ছেড়ে দেওয়া — যতক্ষণ না পেজ আবার dirty
+    // হয় ততক্ষণ dirtyPages[page]===false থাকায় এই ফাংশন আর কখনো re-enter করবে না,
+    // কিন্তু নতুন করে dirty হলে (ডাটা এডিটের পর) যেন ঠিকভাবে আবার রেন্ডার করতে পারে।
+    requestAnimationFrame(()=>{ __pageRenderInFlight[page] = false; });
   }
 }
 
@@ -7634,6 +9954,7 @@ function openDateRangeSheet(){
   document.getElementById('dateRangeSheet').classList.add('open');
 }
 function closeDateRangeSheet(){
+  blurActiveInput();
   document.getElementById('dateRangeOverlay').classList.remove('open');
   document.getElementById('dateRangeSheet').classList.remove('open');
 }
@@ -8425,14 +10746,12 @@ function openAddSheet(){
   const form = document.getElementById('txnForm');
   if(form) form.reset();
   document.getElementById('fDate').value = todayISO();
-  // CRITICAL MOBILE PERF: open/paint the sheet BEFORE doing any DOM rebuilding.
-  // The old path configured every field + rebuilt datalists in the same tap event.
+  // Prepare the small fixed form first, then reveal it once. No animation and
+  // no second-frame DOM changes means the user never sees fields jump into place.
+  configureSheetForType(type);
+  updateComputedTotal();
   openSheetEl();
-  requestAnimationFrame(() => {
-    configureSheetForType(type);
-    updateComputedTotal();
-    scheduleTxnFormOptions();
-  });
+  scheduleTxnFormOptions();
 }
 function editTxn(type, id){
   const list = getListFor(type);
@@ -8441,9 +10760,8 @@ function editTxn(type, id){
   // Orders থেকে আসা Sales এন্ট্রির আসল (ভাঙা) পণ্য তালিকা থাকলে সেটা এখানে সাথে রাখা হলো,
   // যাতে COGS হিন্ট প্রদর্শনের সময় সামারাইজড name ("HUDI ×4") না দেখে আসল পণ্যভিত্তিক ম্যাচ দেখাতে পারে
   state.editing = { type, id, items: (type === 'sales' && Array.isArray(t.items) && t.items.length) ? t.items : null };
-  // Open immediately; populate/edit fields on the next frame so Android can paint first.
-  openSheetEl();
-  requestAnimationFrame(() => {
+  // Prepare every visible value before revealing the sheet. This avoids a
+  // one-frame "empty -> populated" jump and keeps the form completely still.
   configureSheetForType(type);
   document.getElementById('fDate').value = t.date;
   document.getElementById('fRef').value = t.ref || '';
@@ -8466,8 +10784,8 @@ function editTxn(type, id){
   updateComputedTotal();
   updateFNameCogsHint();
   updateFWarrantyHint();
+  openSheetEl();
   scheduleTxnFormOptions();
-  });
 }
 function deleteTxn(type, id){
   const list = getListFor(type);
@@ -8928,11 +11246,28 @@ function checkTxnFraudFlags(entry, salesList){
   return '';
 }
 
+// ফিক্স: শিট (এন্ট্রি ফর্ম ইত্যাদি) বন্ধ করার সময় সেভ না করেই যদি কোনো ইনপুট
+// ফোকাসড থাকে (যেমন এমাউন্ট ফিল্ডে টাইপ করে সেভ না করে শিট নিচে ঠেলে বন্ধ করা হয়),
+// তাহলে সেই ইনপুট ফোকাসড-ই থেকে যেত — কিবোর্ড খোলা রয়ে যেত, কারণ শিট আসলে DOM
+// থেকে সরে না, শুধু translateY দিয়ে স্ক্রিনের বাইরে সরানো হয়। ফলে পরের বার ফর্ম
+// খুললে ভিউপোর্ট উচ্চতা (100dvh) ভুল হিসাব হয়ে পুরো অ্যাপের লেআউট ভেঙে যেত
+// (নিচের স্ক্রিনশটে যেমন দেখা যায়)। এখন প্রতিটা "close*Sheet" ফাংশনের শুরুতেই
+// সক্রিয় ইনপুট থাকলে সেটাকে blur() করে কিবোর্ড বন্ধ করে দেওয়া হয়।
+function blurActiveInput(){
+  const ae = document.activeElement;
+  if(ae && typeof ae.blur === 'function' &&
+     (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT' || ae.isContentEditable)){
+    ae.blur();
+  }
+}
 function openSheetEl(){
+  if(window.__smoothSheetOpen){ window.__smoothSheetOpen(); return; }
   document.getElementById('overlay').classList.add('open');
   document.getElementById('txnSheet').classList.add('open');
 }
 function closeSheet(){
+  blurActiveInput();
+  if(window.__smoothSheetClose){ window.__smoothSheetClose(); return; }
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('txnSheet').classList.remove('open');
 }
@@ -9027,6 +11362,7 @@ function openItemSheet(id){
   document.getElementById('itemSheet').classList.add('open');
 }
 function closeItemSheet(){
+  blurActiveInput();
   document.getElementById('itemOverlay').classList.remove('open');
   document.getElementById('itemSheet').classList.remove('open');
 }
@@ -9380,7 +11716,7 @@ function openWarrantyClaimSheet(saleId,claimId){
   }else document.getElementById('warrantyClaimTitle').textContent='🛡️ New Warranty Claim';
   o.classList.add('open');s.classList.add('open');
 }
-function closeWarrantyClaimSheet(){document.getElementById('warrantyClaimOverlay')?.classList.remove('open');document.getElementById('warrantyClaimSheet')?.classList.remove('open');}
+function closeWarrantyClaimSheet(){blurActiveInput();document.getElementById('warrantyClaimOverlay')?.classList.remove('open');document.getElementById('warrantyClaimSheet')?.classList.remove('open');}
 function saveWarrantyClaim(e){
   e.preventDefault();const saleId=document.getElementById('wcSaleId').value;const sale=state.sales.find(s=>String(s.id)===String(saleId));
   if(!sale){showToast('Warranty product খুঁজে পাওয়া যায়নি');return false;}
@@ -9430,6 +11766,7 @@ function openReceiptSheet(){
   updateReceiptFormatUI(getSelectedReceiptFormat());
 }
 function closeReceiptSheet(){
+  blurActiveInput();
   document.getElementById('receiptOverlay').classList.remove('open');
   document.getElementById('receiptSheet').classList.remove('open');
 }
@@ -10021,6 +12358,7 @@ function openProductVerifyQr(saleId){
   if(!pushed) showToast('⚠️ ইন্টারনেট সংযোগ নেই — অনলাইন হলে আবার এই বাটনে ট্যাপ করুন, নাহলে QR স্ক্যান করলে "সংযোগ সমস্যা" দেখাবে');
 }
 function closePvQrSheet(){
+  blurActiveInput();
   document.getElementById('pvQrOverlay').classList.remove('open');
   document.getElementById('pvQrSheet').classList.remove('open');
 }
@@ -11925,6 +14263,7 @@ function openAiInsights(){
   else setTimeout(run, 80);
 }
 function closeAiInsights(){
+  blurActiveInput();
   document.getElementById('aiInsightsOverlay').classList.remove('open');
   document.getElementById('aiInsightsSheet').classList.remove('open');
 }
@@ -12471,34 +14810,69 @@ function refreshCurrentPageView(){
   function setIndicator(dist, ready){
     indicator.classList.add('visible');
     indicator.classList.toggle('ready', ready);
-    indicator.style.transform = 'translateY(' + (dist - 60) + 'px) rotate(' + (dist * 2.4) + 'deg)';
+    // ছুঁড়ে ফেলার/টানার সময় পুরো ইন্ডিকেটরটা আঙুলের গতির সাথে সামান্য ঘোরে —
+    // ভেতরের orbit রিং নিজে থেকেই .spinning ক্লাসে আলাদা অ্যানিমেশনে ঘোরে, তাই
+    // এই ম্যানুয়াল rotate() শুধু drag-follow ফিডব্যাকের জন্য (spinning শুরুর আগ পর্যন্ত)।
+    indicator.style.transform = 'translateY(' + (dist - 64) + 'px) rotate(' + (dist * 2.4) + 'deg)';
   }
   function resetIndicator(){
     indicator.classList.add('snap');
     indicator.classList.remove('ready','spinning');
-    indicator.style.transform = 'translateY(-60px)';
+    indicator.style.transform = 'translateY(-64px)';
     indicator.classList.remove('visible');
     setTimeout(()=> indicator.classList.remove('snap'), 260);
   }
   function startSpin(){
     indicator.classList.add('visible','spinning');
     indicator.classList.remove('ready');
-    indicator.style.transform = 'translateY(14px)';
+    indicator.style.transform = 'translateY(16px) rotate(0deg)';
+  }
+
+  // রিফ্রেশ চাকাটা আগে অনির্দিষ্টকাল ঘুরতেই থাকত যদি নেটওয়ার্ক দুর্বল/আটকে থাকা অবস্থায়
+  // loadShopData()-এর Firebase promise কখনো resolve/reject না হতো (কোনো টাইমআউট ছিল না) —
+  // তাই "রিফ্রেশ দিলে অনেক সময় নিতে চায় না" এমন মনে হতো। এখন একটা হার্ড টাইমআউট race
+  // যোগ করা হলো: ৮ সেকেন্ডের মধ্যে ডাটা না এলে চাকাটা নিজে থেকেই থেমে যাবে এবং ইউজারকে
+  // পরিষ্কার বার্তা দেখাবে, কখনো চিরকাল ঘুরতে থাকবে না। ব্যাকগ্রাউন্ডে আসল রিকোয়েস্টটা
+  // এরপরও শেষ হলে ডাটা ঠিকই আপডেট হয়ে যাবে — শুধু ইন্ডিকেটরটা আর আটকে থাকবে না।
+  const REFRESH_TIMEOUT_MS = 8000;
+  function withTimeout(promise, ms){
+    return new Promise((resolve, reject)=>{
+      let settled = false;
+      const timer = setTimeout(()=>{
+        if(settled) return;
+        settled = true;
+        reject(new Error('refresh-timeout'));
+      }, ms);
+      promise.then(
+        (v)=>{ if(settled) return; settled = true; clearTimeout(timer); resolve(v); },
+        (e)=>{ if(settled) return; settled = true; clearTimeout(timer); reject(e); }
+      );
+    });
   }
 
   function doRefresh(){
     if(!currentUid || !fbDb){ resetIndicator(); return; }
+    if(!navigator.onLine){
+      // অফলাইনে থাকলে Firebase-এর জন্য অপেক্ষা না করিয়ে সাথে সাথেই স্পষ্ট বার্তা দেওয়া।
+      resetIndicator();
+      showToast('ইন্টারনেট কানেকশন নেই — রিফ্রেশ করা যায়নি');
+      return;
+    }
     refreshing = true;
     startSpin();
-    loadShopData(currentUid)
+    withTimeout(loadShopData(currentUid), REFRESH_TIMEOUT_MS)
       .then(()=>{
         // renderAll already refreshes Dashboard/Settings when visible. Avoid
         // rendering those pages a second time during pull-to-refresh.
         renderAll();
         if(state.currentPage !== 'dashboard' && state.currentPage !== 'settings') refreshCurrentPageView();
       })
-      .catch(()=>{
-        showToast('রিফ্রেশ করা যায়নি — ইন্টারনেট চেক করুন');
+      .catch((err)=>{
+        if(err && err.message === 'refresh-timeout'){
+          showToast('নেটওয়ার্ক ধীরগতি — রিফ্রেশ শেষ হতে বেশি সময় লাগছে, একটু পর আবার চেষ্টা করুন');
+        } else {
+          showToast('রিফ্রেশ করা যায়নি — ইন্টারনেট চেক করুন');
+        }
       })
       .finally(()=>{
         refreshing = false;
@@ -12531,7 +14905,7 @@ function refreshCurrentPageView(){
     pulling = false;
     if(!dragging){ return; }
     dragging = false;
-    const currentDist = parseFloat((indicator.style.transform.match(/translateY\(([-\d.]+)px\)/) || [0,-60])[1]) + 60;
+    const currentDist = parseFloat((indicator.style.transform.match(/translateY\(([-\d.]+)px\)/) || [0,-64])[1]) + 64;
     if(currentDist >= PULL_THRESHOLD){
       doRefresh();
     } else {
@@ -12910,6 +15284,7 @@ function openReceiptScanSheet(type){
   document.getElementById('receiptScanSheet').classList.add('open');
 }
 function closeReceiptScanSheet(){
+  blurActiveInput();
   document.getElementById('receiptScanOverlay').classList.remove('open');
   document.getElementById('receiptScanSheet').classList.remove('open');
 }
@@ -13113,7 +15488,7 @@ function makeSheetSwipeable(sheetId, overlayId, closeFn){
     }
     e.preventDefault();
     lastDelta = delta;
-    sheet.style.transform = `translateY(${delta}px)`;
+    sheet.style.transform = `translate3d(0, ${delta}px, 0)`;
     if(overlay) overlay.style.opacity = String(Math.max(0, 1 - delta / 280));
   }
   function onEnd(){
@@ -16921,6 +19296,284 @@ function startHighScaleOrderListener_DISABLED() {
 })();
 </script>
 
+<!-- ================= FIRST-TAP SMOOTH-DATA PRE-WARM ENGINE (v2 — synchronous, immediate) =================
+     আগে প্রতিটা নেভিগেশন ট্যাবের প্রথম ভিজিটে (dirtyPages[page]===true) পুরো
+     লিস্ট/ড্যাশবোর্ড rAF+requestIdleCallback দিয়ে DEFER হয়ে রেন্ডার হতো — তাই
+     আইকনে চাপ দেওয়ার পরে চোখে-পড়ার-মতো এক মুহূর্তের ফাঁকা পেজ, তারপর হঠাৎ ডাটা
+     "আকাশ থেকে পড়ার" মতো দেখা যেত।
+     প্রথম ভার্সনে (v1) এই কাজটা requestIdleCallback দিয়ে ধাপে ধাপে, একটা একটা করে,
+     পেজের মধ্যে বিরতি দিয়ে করা হতো — বাস্তবে ফোনে ব্রাউজার ব্যস্ত থাকলে প্রতিটা ধাপ
+     ৮০০ms পর্যন্ত দেরি করতে পারত, তাই ৯টা ট্যাব পুরো প্রস্তুত হতে কয়েক সেকেন্ড লেগে
+     যেত — ইউজার তার আগেই ট্যাপ করলে পুরনো সমস্যাটাই ফিরে আসত।
+     v2: prewarm রেন্ডারগুলো শুধুই innerHTML বসায় display:none থাকা পেজে (কোনো
+     layout/paint খরচ নেই যেহেতু অদৃশ্য) — তাই দেরি করার আসলে কোনো দরকারই নেই।
+     app দৃশ্যমান হওয়ার ঠিক পরের ফ্রেমেই (একটামাত্র requestAnimationFrame, যাতে
+     বর্তমান পেজের প্রথম পেইন্ট আগে হয়ে যায়) বাকি সব ট্যাব একবারে, সিঙ্ক্রোনাসলি
+     প্রস্তুত হয়ে যায় — তাই কয়েক মিলিসেকেন্ডের মধ্যেই dirtyPages সব false, এবং
+     এরপর ইউজার যেই ট্যাবেই ট্যাপ করুন না কেন, ডাটা সবসময় স্মুথ ও স্থির থাকবে। */
+(function initSmoothPrewarmEngine(){
+  'use strict';
+  if(window.__MYSHOP_PREWARM_INIT__) return;
+  window.__MYSHOP_PREWARM_INIT__ = true;
+
+  const PREWARM_ORDER = ['dashboard','sales','purchase','expense','orders','inventory','stockalerts','warranty','settings'];
+
+  function appReady(){
+    const appEl = document.getElementById('app');
+    return appEl && appEl.style.display !== 'none' && typeof state !== 'undefined' && state && state.currentPage;
+  }
+
+  function renderOnePage(page){
+    try{
+      if(!dirtyPages[page]) return;
+      if(page === 'dashboard'){ renderDashboard(); }
+      else if(page === 'sales'){ listVisibleCounts.sales = listVisibleCounts.sales || LIST_PAGE_SIZE; renderList('sales'); }
+      else if(page === 'purchase'){ listVisibleCounts.purchase = listVisibleCounts.purchase || LIST_PAGE_SIZE; renderList('purchase'); }
+      else if(page === 'expense'){ listVisibleCounts.expense = listVisibleCounts.expense || LIST_PAGE_SIZE; renderList('expense'); }
+      else if(page === 'orders'){ listVisibleCounts.orders = listVisibleCounts.orders || ORDERS_PAGE_SIZE; renderOrders(); }
+      else if(page === 'settings'){ renderSettings(); }
+      else if(page === 'inventory'){ listVisibleCounts.inventory = listVisibleCounts.inventory || LIST_PAGE_SIZE; renderItems(); }
+      else if(page === 'stockalerts'){ renderStockAlerts(); }
+      else if(page === 'warranty'){ renderWarrantyList(); }
+      dirtyPages[page] = false;
+    }catch(err){
+      // একটা পেজ prewarm করতে ব্যর্থ হলেও বাকিগুলোর কাজ চলতেই থাকবে — আসল
+      // ভিজিটের সময় goPage()-এর normal render-path ঠিকই ফলব্যাক হিসেবে কাজ করবে।
+      console.warn('[prewarm]', page, err);
+    }
+  }
+
+  function prewarmAllNow(){
+    // বর্তমানে দৃশ্যমান পেজ ইতিমধ্যেই renderAll()/goPage() দিয়ে রেন্ডার হয়ে গেছে —
+    // সেটা বাদ দিয়ে বাকি সবগুলো এক ধাক্কায় (single frame) প্রস্তুত করা হয়, যাতে
+    // ইউজার সাথে সাথে অন্য কোনো ট্যাবে গেলেও ডাটা আগে থেকেই তৈরি থাকে।
+    for(const page of PREWARM_ORDER){
+      if(page !== state.currentPage) renderOnePage(page);
+    }
+  }
+
+  function startPrewarm(){
+    // একটামাত্র requestAnimationFrame: বর্তমান visible পেজ আগে একবার পেইন্ট হয়ে
+    // যাওয়ার সুযোগ পায়, তারপরই (কয়েক মিলিসেকেন্ডের মধ্যেই) বাকি সব পেজ প্রস্তুত হয় —
+    // ইউজার তাড়াতাড়ি ট্যাপ করলেও এখন আর "খালি → পরে ডাটা" অবস্থা পাবেন না।
+    requestAnimationFrame(prewarmAllNow);
+  }
+
+  // নতুন ডাটা এলে (sale/purchase/expense add-edit-delete ইত্যাদি) dirtyPages আবার
+  // true হয়ে যায়। *** গুরুত্বপূর্ণ সংশোধন *** — আগে এখানে goPage()-কেও হুক করে
+  // প্রতিটা ট্যাব-ট্যাপের পরেও বাকি ৮টা পেজ আবার rewarm (full re-render) করানো
+  // হতো। কিন্তু goPage() এখন নিজেই সিঙ্ক্রোনাসলি রেন্ডার করে বলে, প্রতিটা ট্যাপের
+  // ঠিক পরের ফ্রেমেই বাকি সব পেজের ভারী রি-রেন্ডার প্রধান থ্রেডে চাপানো হচ্ছিল —
+  // এতেই দ্রুত পরপর কয়েকবার আইকনে চাপ দিলে রেসপন্স আটকে যেত/মিস হতো, আর প্রতিটা
+  // পেজে স্ক্রল করার সময়ও জ্যাম মনে হতো (স্ক্রল ফ্রেমগুলোর সাথে এই ভারী কাজ
+  // প্রতিযোগিতা করছিল)। এখন rewarm শুধু ডাটা সত্যিই বদলালে (invalidatePerformanceCaches
+  // / markAllPagesDirty — sale/purchase/expense যোগ-এডিট-ডিলিট, cloud sync ইত্যাদির
+  // পরে) ট্রিগার হয়; শুধু ট্যাব পরিবর্তনে নয়। ট্যাব পরিবর্তনে শুধু সেই একটা পেজই
+  // goPage()-এর ভেতরে সরাসরি রেন্ডার হয় — হালকা, দ্রুত, এবং মেইন থ্রেড ফ্রি থাকে
+  // বলে পরপর ট্যাপ ও স্ক্রল দুটোই মসৃণ থাকে।
+  let rewarmScheduled = false;
+  function scheduleRewarm(){
+    if(rewarmScheduled) return;
+    rewarmScheduled = true;
+    requestAnimationFrame(()=>{ rewarmScheduled = false; prewarmAllNow(); });
+  }
+  if(typeof window.invalidatePerformanceCaches === 'function'){
+    const oldInvalidate2 = window.invalidatePerformanceCaches;
+    window.invalidatePerformanceCaches = function(){ const r = oldInvalidate2(); scheduleRewarm(); return r; };
+  }
+  const origMarkAllDirty = window.markAllPagesDirty;
+  if(typeof origMarkAllDirty === 'function'){
+    window.markAllPagesDirty = function(){ const r = origMarkAllDirty(); scheduleRewarm(); return r; };
+  }
+
+  // অ্যাপ ইতিমধ্যে খোলা থাকলে সাথে সাথে শুরু করা, নাহলে ready হওয়া পর্যন্ত অপেক্ষা করা।
+  if(appReady()){
+    startPrewarm();
+  } else {
+    let tries = 0;
+    const waitTimer = setInterval(()=>{
+      tries++;
+      if(appReady()){ clearInterval(waitTimer); startPrewarm(); }
+      else if(tries > 150){ clearInterval(waitTimer); } // ~30s পরে ছেড়ে দেওয়া, normal lazy-render ফলব্যাক থাকবেই
+    }, 200);
+  }
+})();
+</script>
+
+
+
+<script id="native-list-motion-engine">
+(function(){
+  'use strict';
+
+  /*
+   * Called after a bottom-nav page becomes active.
+   * The navigation tap remains instant; only the visible data rows
+   * receive a tiny native-app style settle-in.
+   */
+  window.__animateActivePageLists = function(page){
+    const pageEl = document.getElementById('page-' + page);
+    if(!pageEl) return;
+
+    const containers = pageEl.querySelectorAll('.ledger-card');
+    containers.forEach(function(box){
+      /* Skip hidden/nested analysis cards unless they belong to the active page. */
+      if(box.closest('.sheet,[hidden]')) return;
+
+      box.classList.remove('native-list-enter');
+
+      const children = Array.from(box.children);
+      children.forEach(function(el, i){
+        el.style.setProperty('--list-index', String(i));
+      });
+
+      /* Restart the animation cleanly without forcing layout on the whole page. */
+      requestAnimationFrame(function(){
+        if(document.getElementById('page-' + page) !== pageEl) return;
+        box.classList.add('native-list-enter');
+
+        /* Remove the class after the short motion so later interactions
+           don't carry animation state around. */
+        setTimeout(function(){
+          box.classList.remove('native-list-enter');
+          children.forEach(function(el){
+            el.style.removeProperty('--list-index');
+          });
+        }, 480);
+      });
+    });
+  };
+
+  /* Hook the existing instant navigation without replacing goPage(). */
+  const oldGoPage = window.goPage;
+  if(typeof oldGoPage === 'function'){
+    window.goPage = function(page){
+      const result = oldGoPage.apply(this, arguments);
+      window.__animateActivePageLists(page);
+      return result;
+    };
+  }
+})();
+</script>
+
+
+
+
+
+<script id="instant-hamburger-handler">
+(function(){
+  const btn = document.getElementById('mainMenuBtn');
+  if(!btn) return;
+
+  btn.addEventListener('pointerdown', function(e){
+    if(e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+    if(e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if(typeof toggleMainMenu === 'function'){
+      toggleMainMenu();
+    }
+  }, {capture:true, passive:false});
+})();
+</script>
+
+
+<script id="menu-final-fast-engine">
+(function(){
+  'use strict';
+
+  const d = document.getElementById('mainMenuDrawer');
+  const o = document.getElementById('mainMenuOverlay');
+  const b = document.getElementById('mainMenuBtn');
+  const mark = document.getElementById('mainMenuMark');
+  const nameEl = document.getElementById('mainMenuCompany');
+  const accountEl = document.getElementById('mainMenuAccount');
+
+  /* Cache menu items once instead of querying all items on every open. */
+  const pageItems = Array.prototype.slice.call(
+    document.querySelectorAll('#mainMenuDrawer .main-menu-item[data-main-page]')
+  );
+
+  window.__FAST_MENU_CACHE__ = Object.freeze({d,o,b,mark,nameEl,accountEl,pageItems});
+
+  window.openMainMenu = function(){
+    if(!d || !o) return;
+
+    const name = (window.state && state.company && state.company.name) || 'My Business';
+    if(nameEl) nameEl.textContent = name;
+
+    const account =
+      (window.fbAuth && fbAuth.currentUser && fbAuth.currentUser.email) ||
+      'Business profile';
+    if(accountEl) accountEl.textContent = account;
+
+    const logo = (window.state && state.company && state.company.logoUrl || '').trim();
+    const initial = (String(name).trim().charAt(0) || 'K').toUpperCase();
+
+    if(mark){
+      if(logo){
+        mark.innerHTML =
+          '<img src="' + String(logo).replace(/"/g,'&quot;') +
+          '" alt="Business profile" onerror="this.parentElement.textContent=\'' +
+          initial.replace(/'/g,'') + '\';">';
+      }else{
+        mark.textContent = initial;
+      }
+    }
+
+    const currentPage = window.state && state.currentPage;
+    for(let i=0;i<pageItems.length;i++){
+      pageItems[i].classList.toggle(
+        'active',
+        pageItems[i].dataset.mainPage === currentPage
+      );
+    }
+
+    /* One lightweight status read only. */
+    try{
+      if(typeof updateMainMenuDriveStatus === 'function'){
+        updateMainMenuDriveStatus();
+      }
+    }catch(_e){}
+
+    d.classList.add('open');
+    o.classList.add('open');
+    o.setAttribute('aria-hidden','false');
+    if(b) b.setAttribute('aria-expanded','true');
+  };
+
+  window.closeMainMenu = function(){
+    if(d) d.classList.remove('open');
+    if(o){
+      o.classList.remove('open');
+      o.setAttribute('aria-hidden','true');
+    }
+    if(b) b.setAttribute('aria-expanded','false');
+  };
+
+  window.toggleMainMenu = function(){
+    if(d && d.classList.contains('open')) window.closeMainMenu();
+    else window.openMainMenu();
+  };
+
+  /* Settings opens/closes instantly; no scrollIntoView smooth animation. */
+  window.toggleHomeSettingsMenu = function(){
+    const list = document.getElementById('homeSettingsList');
+    const toggleBtn = document.getElementById('homeSettingsToggle');
+    if(!list) return;
+
+    const open = !list.classList.contains('open');
+    list.classList.toggle('open', open);
+
+    if(toggleBtn){
+      toggleBtn.classList.toggle('expanded', open);
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+  };
+})();
+</script>
 
 </body>
 </html>
