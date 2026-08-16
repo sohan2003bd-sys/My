@@ -2,290 +2,633 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy — MY SHOP</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="MyShop Privacy Policy — premium bilingual English and Bengali privacy policy.">
+<meta name="theme-color" content="#0b2721">
+<title>MyShop — Privacy Policy</title>
+
 <style>
-  :root{
-    --ink:#1B2420;
-    --paper:#F1F3EC;
-    --paper-deep:#E7EADD;
-    --green-900:#0F3830;
-    --green-800:#123832;
-    --green-700:#1F5C4F;
-    --green-600:#2E7D5B;
-    --gold:#B8863E;
-    --gold-light:#D9AF6B;
-    --gold-bright:#E0AC53;
-    --rule:rgba(15,56,48,0.12);
-    --card:#FFFFFF;
-    --muted:#6B7268;
-    --shadow: 0 8px 24px rgba(15,40,34,0.08);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; background:var(--paper); color:var(--ink);
-    font-family:'IBM Plex Sans', sans-serif; line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-  }
-  .hero{
-    background: linear-gradient(150deg, var(--green-900) 0%, var(--green-700) 100%);
-    color:#fff; padding: 56px 24px 44px; text-align:center;
-    position:relative;
-  }
-  .hero::after{
-    content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
-    background:linear-gradient(90deg, transparent, var(--gold-light) 25%, var(--gold) 50%, var(--gold-light) 75%, transparent);
-  }
-  .hero .mark{
-    width:56px;height:56px;border-radius:15px; margin:0 auto 18px;
-    background:linear-gradient(145deg, var(--gold-bright), var(--gold));
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Fraunces',serif; font-weight:700; color:var(--green-900); font-size:22px;
-    box-shadow:0 6px 16px rgba(184,134,62,0.4);
-  }
-  .hero h1{ font-family:'Fraunces',serif; font-weight:600; font-size: clamp(26px,5vw,34px); margin:0 0 8px; letter-spacing:-0.01em; }
-  .hero p.tag{ margin:0; opacity:.82; font-size:14.5px; }
-  .hero .updated{ margin-top:18px; display:inline-block; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; }
+:root{
+  --bg:#f5ead0;
+  --paper:#fffdf8;
+  --paper2:#f8f4ea;
+  --ink:#14231f;
+  --muted:#65736d;
+  --green:#0b2721;
+  --green2:#123832;
+  --gold:#d4af37;
+  --gold2:#f1d77a;
+  --line:#e7dcc4;
+  --danger:#8c3f2f;
+  --shadow:0 18px 55px rgba(11,39,33,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(212,175,55,.18),transparent 27%),
+    radial-gradient(circle at 92% 16%,rgba(18,56,50,.09),transparent 25%),
+    linear-gradient(135deg,#f5ead0,#fffaf0 52%,#f2e5c7);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.72;
+}
+body.bn{font-family:"Noto Sans Bengali","Noto Sans",system-ui,sans-serif}
+a{color:inherit}
+button{font:inherit}
+.wrap{max-width:1080px;margin:auto;padding:14px 14px 60px}
 
-  .toc{ max-width:700px; margin:-24px auto 0; padding:0 22px; position:relative; z-index:2; }
-  .toc-card{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:18px 22px; }
-  .toc-card h3{ margin:0 0 10px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
-  .toc-card ol{ margin:0; padding-left:18px; columns:2; gap:6px 20px; font-size:13.5px; }
-  .toc-card li{ margin-bottom:6px; }
-  .toc-card a{ color:var(--green-800); text-decoration:none; }
+/* topbar */
+.topbar{
+  position:sticky;top:8px;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 10px;
+  margin-bottom:16px;
+  border:1px solid rgba(18,56,50,.12);
+  border-radius:20px;
+  background:rgba(255,253,248,.90);
+  backdrop-filter:blur(18px);
+  box-shadow:0 10px 30px rgba(11,39,33,.08);
+}
+.brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:900}
+.logo{
+  width:39px;height:39px;border-radius:13px;
+  display:grid;place-items:center;
+  background:var(--green);color:var(--gold2);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.brand-name{font-size:16px;letter-spacing:.02em}
+.lang{
+  display:flex;align-items:center;gap:4px;
+  padding:4px;border-radius:13px;background:#eee4cf;
+}
+.lang button{
+  border:0;cursor:pointer;
+  padding:8px 13px;border-radius:10px;
+  background:transparent;color:var(--green);
+  font-weight:850;font-size:13px;
+}
+.lang button.active{background:var(--green);color:#fff}
 
-  .wrap{ max-width:700px; margin:0 auto; padding: 30px 22px 90px; }
-  .card{ background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:28px 26px; margin-bottom:20px; scroll-margin-top:16px; }
+/* hero */
+.hero{
+  position:relative;overflow:hidden;
+  border-radius:32px;
+  padding:44px 30px 34px;
+  margin-bottom:20px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 88% 18%,rgba(241,215,122,.25),transparent 20%),
+    radial-gradient(circle at 72% 90%,rgba(255,255,255,.08),transparent 28%),
+    linear-gradient(135deg,var(--green),var(--green2));
+  box-shadow:var(--shadow);
+}
+.hero:before{
+  content:"";position:absolute;width:260px;height:260px;
+  right:-100px;top:-120px;border-radius:50%;
+  border:1px solid rgba(241,215,122,.25);
+  box-shadow:0 0 0 28px rgba(241,215,122,.035),0 0 0 58px rgba(241,215,122,.025);
+}
+.eyebrow{
+  display:inline-flex;
+  padding:7px 13px;border:1px solid rgba(241,215,122,.42);
+  border-radius:999px;color:var(--gold2);
+  font-size:12px;font-weight:900;letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.hero h1{
+  position:relative;z-index:1;
+  max-width:820px;margin:17px 0 12px;
+  font-size:clamp(35px,7vw,66px);
+  line-height:1.02;letter-spacing:-.035em;
+}
+.hero p{
+  position:relative;z-index:1;
+  max-width:760px;margin:0;
+  color:#dce8e3;font-size:16px;
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{
+  padding:7px 11px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.07);
+  color:#e0eae6;font-size:12px;
+}
+.pill-code{
+  display:inline-block;
+  font-family:monospace;
+  font-size:13px;
+  background:#eee4cf;
+  color:var(--green);
+  padding:3px 10px;
+  border-radius:8px;
+  font-weight:bold;
+}
 
-  .summary{
-    background: linear-gradient(160deg, #EAF6EF 0%, #FFFFFF 60%);
-    border:1px solid var(--rule);
-  }
-  .summary h2{ margin-top:0; }
-  .summary ul{ margin:14px 0 0; padding-left:0; list-style:none; }
-  .summary li{ display:flex; gap:12px; padding:9px 0; border-top:1px solid var(--rule); font-size:15px; }
-  .summary li:first-child{ border-top:none; }
-  .summary .ico{ flex:none; width:22px; height:22px; border-radius:7px; background:var(--green-600); color:#fff; display:flex;align-items:center;justify-content:center; font-size:13px; margin-top:1px; }
+/* cards */
+.card{
+  margin:16px 0;
+  padding:27px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:rgba(255,253,248,.96);
+  box-shadow:0 8px 30px rgba(107,84,32,.055);
+}
+.card h2{margin:0 0 10px;color:var(--green);font-size:25px;line-height:1.2}
+.card h3{margin:20px 0 7px;color:var(--green2);font-size:18px}
+.card p,.card li{font-size:15px}
+.card ul{padding-left:21px;margin:10px 0}
+.card li{margin:7px 0}
+.notice{
+  margin-top:16px;
+  padding:15px 16px;
+  border-left:4px solid var(--gold);
+  border-radius:13px;
+  background:#fff6dc;
+}
+.section-label{
+  display:inline-block;
+  padding:6px 10px;
+  border:1px solid #d9c68c;
+  border-radius:999px;
+  color:#816816;
+  font-size:11px;font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
 
-  h2{ font-family:'Fraunces',serif; font-weight:600; font-size:20px; color:var(--green-900); letter-spacing:-0.01em; margin-top:0; }
-  h3{ font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:15.5px; color:var(--green-800); margin:22px 0 8px; }
-  h3:first-of-type{ margin-top:14px; }
-  p{ font-size:15px; color:var(--ink); }
-  .muted{ color:var(--muted); font-size:13.5px; }
-  ul.plain{ padding-left:20px; font-size:15px; }
-  ul.plain li{ margin-bottom:7px; }
-  .divider{ height:1px; background:var(--rule); margin:22px 0; }
-  .pill{
-    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
-    background:var(--paper-deep); color:var(--green-800); padding:3px 9px; border-radius:6px;
-  }
-  .badge-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-  .badge{
-    font-size:12.5px; font-weight:600; color:var(--green-800); background:var(--paper-deep);
-    padding:7px 12px; border-radius:20px; display:flex; align-items:center; gap:6px;
-  }
-  table.data-table{ width:100%; border-collapse:collapse; margin-top:14px; font-size:14px; }
-  table.data-table th, table.data-table td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--rule); vertical-align:top; }
-  table.data-table th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:600; }
-  .note{ background:var(--paper-deep); border-left:3px solid var(--gold); padding:12px 16px; border-radius:0 10px 10px 0; font-size:14px; margin-top:14px; }
-  a{ color:var(--green-700); font-weight:600; }
-  footer{ text-align:center; padding: 10px 0 40px; color:var(--muted); font-size:13px; }
+/* summary list */
+.summary-list{list-style:none;padding:0;margin:15px 0 0}
+.summary-list li{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-top:1px solid var(--line);
+}
+.summary-list li:first-child{border-top:none}
+.summary-ico{
+  flex:0 0 24px;width:24px;height:24px;border-radius:8px;
+  background:var(--green);color:var(--gold2);
+  display:grid;place-items:center;font-weight:bold;font-size:13px;
+}
+
+/* badge grid */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:15px}
+.badge-item{
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#faf5e9;
+  color:var(--green);
+  font-weight:700;
+  font-size:14px;
+  display:flex;align-items:center;gap:10px;
+}
+
+/* tables */
+.data-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px}
+.data-table th, .data-table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+.data-table th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;background:var(--paper2)}
+
+/* policy links */
+.link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}
+.external{
+  display:block;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#faf5e9;
+  text-decoration:none;
+  color:var(--green);
+  font-weight:850;
+}
+.external small{display:block;margin-top:3px;color:var(--muted);font-weight:600}
+.contact{
+  color:#fff;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  border-color:var(--green);
+}
+.contact h2{color:#fff}
+.contact a{color:var(--gold2);font-weight:850}
+.footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
+.small{font-size:13px!important;color:var(--muted)}
+
+@media(max-width:650px){
+  .wrap{padding:9px 10px 45px}
+  .topbar{top:5px;border-radius:17px}
+  .brand-name{display:none}
+  .hero{padding:34px 21px 28px;border-radius:25px}
+  .hero h1{font-size:39px}
+  .card{padding:21px 17px;border-radius:19px}
+  .data-table th, .data-table td{padding:8px}
+}
+@media(print){
+  .topbar{position:static}
+  .lang{display:none}
+}
 </style>
 </head>
+
 <body>
-
-<div class="hero">
-  <div class="mark">MS</div>
-  <h1>Privacy Policy</h1>
-  <p class="tag">MY SHOP — Business Ledger</p>
-  <span class="updated">Last updated: August 2, 2026</span>
-</div>
-
-<div class="toc">
-  <div class="toc-card">
-    <h3>On this page</h3>
-    <ol>
-      <li><a href="#s1">Who we are</a></li>
-      <li><a href="#s2">Data you enter</a></li>
-      <li><a href="#s3">Signing in</a></li>
-      <li><a href="#s4">Cloud sync (Firebase)</a></li>
-      <li><a href="#s5">Google Drive backup</a></li>
-      <li><a href="#s6">Local device storage</a></li>
-      <li><a href="#s7">What we automatically collect</a></li>
-      <li><a href="#s8">What we do NOT do</a></li>
-      <li><a href="#s9">Google API Data Policy</a></li>
-      <li><a href="#s10">Sharing &amp; third parties</a></li>
-      <li><a href="#s11">Retention &amp; deletion</a></li>
-      <li><a href="#s12">Security</a></li>
-      <li><a href="#s13">Your rights &amp; choices</a></li>
-      <li><a href="#s14">International transfer</a></li>
-      <li><a href="#s15">Children's privacy</a></li>
-      <li><a href="#s16">Changes</a></li>
-      <li><a href="#s17">Contact</a></li>
-    </ol>
-  </div>
-</div>
-
 <div class="wrap">
 
-  <div class="card summary">
-    <h2>In short</h2>
-    <ul>
-      <li><span class="ico">✓</span> Your ledger data is tied to your own account and protected by per-account access rules.</li>
-      <li><span class="ico">✓</span> Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere.</li>
-      <li><span class="ico">✓</span> No other user, app, or person can ever see your data or backup — not even our team, by design.</li>
-      <li><span class="ico">✓</span> We never sell your data, share it with advertisers, or run ads in the App.</li>
-    </ul>
-  </div>
-
-  <div class="card" id="s1">
-    <h2>1. Who we are</h2>
-    <p>MY SHOP ("the App", "we", "us", "our") is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step.</p>
-    <p>This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup.</p>
-  </div>
-
-  <div class="card" id="s2">
-    <h2>2. Data you enter into the App</h2>
-    <p>The core of the App is the business ledger you build yourself. This includes:</p>
-    <table class="data-table">
-      <tr><th>Category</th><th>Examples</th></tr>
-      <tr><td>Sales records</td><td>Item, amount, date, payment method, buyer notes</td></tr>
-      <tr><td>Purchase records</td><td>Supplier, item, cost, date</td></tr>
-      <tr><td>Expense records</td><td>Category, amount, date, description</td></tr>
-      <tr><td>Shop profile</td><td>Business/company name, logo image, currency preference</td></tr>
-      <tr><td>Orders (if Live Orders is used)</td><td>Customer name/phone, ordered items, order status, timestamps</td></tr>
-    </table>
-    <p class="muted">You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction.</p>
-  </div>
-
-  <div class="card" id="s3">
-    <h2>3. Signing in to your account</h2>
-    <p>The App supports three ways to sign in, and you choose which one to use:</p>
-    <h3>Email &amp; password</h3>
-    <p>Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account.</p>
-    <h3>Phone number (SMS OTP)</h3>
-    <p>If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself.</p>
-    <h3>Google Sign-In</h3>
-    <p>If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does <strong>not</strong> by itself grant any access to your Google Drive.</p>
-    <h3>Device passkey / biometric unlock</h3>
-    <p>If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers.</p>
-  </div>
-
-  <div class="card" id="s4">
-    <h2>4. Cloud sync of your ledger (Firebase)</h2>
-    <p>To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App.</p>
-    <h3>How access is restricted</h3>
-    <p>Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly.</p>
-    <h3>Purpose</h3>
-    <p>This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page.</p>
-  </div>
-
-  <div class="card" id="s5">
-    <h2>5. Google Drive backup — how it works</h2>
-    <p>If you tap <strong>"Connect Drive"</strong>, the App requests one specific, narrow Google permission:</p>
-    <p style="text-align:center;"><span class="pill">https://www.googleapis.com/auth/drive.appdata</span></p>
-    <p>This is Google's <strong>Application Data</strong> scope, and it is deliberately limited:</p>
-    <ul class="plain">
-      <li>The App can only create and update <strong>one hidden backup file that it created itself</strong>.</li>
-      <li>This file lives in a special hidden area of your Drive that does <strong>not</strong> appear in your normal Drive file list, Drive search, or Drive mobile/web app — it cannot be browsed or opened directly by you or any other app.</li>
-      <li>The App has <strong>no access whatsoever</strong> to any other file, photo, or document already in your Google Drive, past or future.</li>
-      <li>No other app, including other apps you may have authorized, can read this backup file — it belongs exclusively to MY SHOP's connection with your account.</li>
-      <li>The backup counts against your own Google account's storage quota, and stays entirely within your own Google account — it is never copied to, or accessible from, any server we operate.</li>
-    </ul>
-    <div class="divider"></div>
-    <h3>What gets backed up</h3>
-    <p>A snapshot of the same ledger data described in Section 2 — sales, purchases, expenses, and your shop profile — saved as a single structured data file.</p>
-    <h3>When it happens</h3>
-    <p>Automatically a short while after you make a change (so backups stay current without excessive requests), and any time you tap the manual "Backup Now" option.</p>
-    <h3>Restoring on a new device</h3>
-    <p>When you reconnect Drive on a new device or after reinstalling, the App looks for the backup file it previously created (and only that file) to offer you the option to restore your data.</p>
-  </div>
-
-  <div class="card" id="s6">
-    <h2>6. Local device storage</h2>
-    <p>Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a `.json` file to your device at any time, and import it back in — this local export/import never leaves your device unless you choose to move the file yourself.</p>
-  </div>
-
-  <div class="card" id="s7">
-    <h2>7. What we automatically collect</h2>
-    <p>Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers, and does not use cookies for advertising or cross-site tracking.</p>
-  </div>
-
-  <div class="card" id="s8">
-    <h2>8. What we do NOT do</h2>
-    <div class="badge-row">
-      <span class="badge">🚫 No reading your Drive files beyond our own backup file</span>
-      <span class="badge">🚫 No selling or sharing data with third parties</span>
-      <span class="badge">🚫 No advertising or ad trackers</span>
-      <span class="badge">🚫 No cross-shop or cross-user data access</span>
-      <span class="badge">🚫 No storing your password in plain text</span>
-      <span class="badge">🚫 No accessing your Gmail, Contacts, Calendar, or Photos</span>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div class="brand-name">MyShop</div>
     </div>
-  </div>
+    <div class="lang" aria-label="Language">
+      <button id="enBtn" class="active" type="button">English</button>
+      <button id="bnBtn" type="button">বাংলা</button>
+    </div>
+  </header>
 
-  <div class="card" id="s9">
-    <h2>9. Google API Services User Data Policy</h2>
-    <p>MY SHOP's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. In practice, this means Drive data accessed through the <span class="pill">drive.appdata</span> scope is used solely to provide the backup-and-restore feature described in Section 5, is never used to train any AI/ML model, is never used for advertising, and is never read by human staff except as strictly necessary to respond to a support request you initiate.</p>
-  </div>
+  <section class="hero">
+    <span class="eyebrow" data-en="PRIVACY POLICY" data-bn="গোপনীয়তা নীতি">PRIVACY POLICY</span>
+    <h1 data-en="Your privacy. Protected by design."
+        data-bn="আপনার গোপনীয়তা। শতভাগ সুরক্ষার নিশ্চয়তা।">
+      Your privacy. Protected by design.
+    </h1>
+    <p data-en="MY SHOP — Business Ledger is built to give you total control over your business data with complete privacy, transparent practices, and zero unauthorized access."
+       data-bn="MY SHOP — বিজনেস লেজার আপনার ব্যবসায়িক ডেটার ওপর পূর্ণ নিয়ন্ত্রণ, সর্বোচ্চ স্বচ্ছতা এবং সম্পূর্ণ অননুমোদিত প্রবেশমুক্ত নিরাপত্তা নিশ্চিত করে।">
+      MY SHOP — Business Ledger is built to give you total control over your business data with complete privacy, transparent practices, and zero unauthorized access.
+    </p>
+    <div class="meta">
+      <span class="pill" data-en="Last updated: August 2, 2026" data-bn="সর্বশেষ হালনাগাদ: ২ আগস্ট ২০২৬">Last updated: August 2, 2026</span>
+      <span class="pill" data-en="Version 1.0" data-bn="সংস্করণ ১.০">Version 1.0</span>
+      <span class="pill" data-en="Business Ledger" data-bn="বিজনেস লেজার">Business Ledger</span>
+    </div>
+  </section>
 
-  <div class="card" id="s10">
-    <h2>10. Sharing &amp; third parties</h2>
-    <p>We do not sell your data. We do not share it with advertisers or data brokers. The only outside parties involved in operating the App are the infrastructure providers that host it — Google Cloud / Firebase (authentication, database, and hosting) and, if you enable it, Google Drive (for your own backup). These providers process data on our behalf under their own security and confidentiality commitments; they do not use your data for their own purposes.</p>
-  </div>
-
-  <div class="card" id="s11">
-    <h2>11. Data retention &amp; deletion</h2>
-    <ul class="plain">
-      <li><strong>Local data</strong> is stored on your device until you clear your browser/app data or use the App's own reset option.</li>
-      <li><strong>Cloud-synced ledger data</strong> is retained for as long as your account remains active, and can be deleted by contacting us (Section 17) or through an in-App account-deletion option where available.</li>
-      <li><strong>Drive backups</strong> can be removed at any time from your Google Account's <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Third-party apps &amp; services</a> page — this both revokes the App's access and deletes the associated app data folder.</li>
-      <li>Disconnecting Drive within the App stops future backups but does not, by itself, delete a backup already saved; use the Google Account permissions page above for full removal.</li>
+  <!-- SUMMARY -->
+  <section class="card" id="summary" style="background: linear-gradient(160deg, #f0f7f4 0%, #fffdf8 100%);">
+    <span class="section-label" data-en="IN SHORT" data-bn="সংক্ষেপে">IN SHORT</span>
+    <h2 data-en="Key Highlights" data-bn="প্রধান বিষয়সমূহ">Key Highlights</h2>
+    <ul class="summary-list">
+      <li>
+        <span class="summary-ico">✓</span>
+        <span data-en="Your ledger data is tied to your own account and protected by per-account access rules."
+              data-bn="আপনার লেজার ডেটা আপনার অ্যাকাউন্টের সঙ্গে সংযুক্ত এবং অ্যাকাউন্ট-ভিত্তিক নিরাপত্তা নিয়ম দিয়ে সুরক্ষিত।">
+          Your ledger data is tied to your own account and protected by per-account access rules.
+        </span>
+      </li>
+      <li>
+        <span class="summary-ico">✓</span>
+        <span data-en="Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere."
+              data-bn="ঐচ্ছিক ব্যাকআপ কেবল আপনার ব্যক্তিগত ও লুকানো Google Drive স্পেসে সংরক্ষিত হয় — অন্য কোথাও কপি করা হয় না।">
+          Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere.
+        </span>
+      </li>
+      <li>
+        <span class="summary-ico">✓</span>
+        <span data-en="No other user, app, or person can ever see your data or backup — not even our team, by design."
+              data-bn="অন্য কোনো ব্যবহারকারী, অ্যাপ বা ব্যক্তি আপনার ডেটা বা ব্যাকআপ দেখতে পাবে না — এমনকি আমাদের টিমও নয়।">
+          No other user, app, or person can ever see your data or backup — not even our team, by design.
+        </span>
+      </li>
+      <li>
+        <span class="summary-ico">✓</span>
+        <span data-en="We never sell your data, share it with advertisers, or run ads in the App."
+              data-bn="আমরা কখনোই আপনার ডেটা বিক্রি করি না, বিজ্ঞাপনদাতাদের সঙ্গে শেয়ার করি না বা অ্যাপে বিজ্ঞাপন দেখাই না।">
+          We never sell your data, share it with advertisers, or run ads in the App.
+        </span>
+      </li>
     </ul>
-  </div>
+  </section>
 
-  <div class="card" id="s12">
-    <h2>12. Security</h2>
-    <p>All communication between the App and our servers, and between the App and Google's servers, is encrypted in transit using HTTPS/TLS. Cloud-synced ledger data is protected by per-account Security Rules (Section 4). Google access tokens used for Drive backup are held only in memory during your active session and are never written to any server we operate. Passwords are never stored in plain text.</p>
-    <div class="note">No system is 100% immune to risk, but the App is designed so that even in the event of a broader security issue, no single account's data is directly reachable from another account's session.</div>
-  </div>
+  <!-- SECTION 1 -->
+  <section class="card" id="s1">
+    <span class="section-label" data-en="01 · OVERVIEW" data-bn="০১ · পরিচিতি">01 · OVERVIEW</span>
+    <h2 data-en="1. Who We Are" data-bn="১. আমরা কারা">1. Who We Are</h2>
+    <p data-en="MY SHOP ('the App', 'we', 'us', 'our') is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step."
+       data-bn="MY SHOP ('অ্যাপ', 'আমরা') হলো দোকান মালিকদের জন্য তৈরি একটি ব্যবসায়িক লেজার অ্যাপ, যার মাধ্যমে বিক্রয়, ক্রয়, খরচ এবং গ্রাহকদের সরাসরি অর্ডার ট্র্যাক করা যায়। এই নীতিমালায় বিস্তারিত ব্যাখ্যা করা হয়েছে যে অ্যাপটি কী কী তথ্য ব্যবহার করে, কোথায় সংরক্ষণ করে এবং কীভাবে তা সুরক্ষিত রাখে।">
+      MY SHOP ("the App", "we", "us", "our") is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step.
+    </p>
+    <p data-en="This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup."
+       data-bn="আপনি ইমেইল, ফোন নম্বর বা Google অ্যাকাউন্ট যা দিয়েই সাইন-ইন করুন না কেন, অথবা ক্লাউড সিঙ্ক বা ড্রাইভ ব্যাকআপ চালু করুন বা না করুন — এই নীতিমালা অ্যাপটির সকল ব্যবহারকারীর জন্য প্রযোজ্য।">
+      This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup.
+    </p>
+  </section>
 
-  <div class="card" id="s13">
-    <h2>13. Your rights &amp; choices</h2>
-    <ul class="plain">
-      <li><strong>Access &amp; export:</strong> You can export your full ledger as a `.json` file at any time from Settings → Data Backup.</li>
-      <li><strong>Correction:</strong> You can edit or delete any sales, purchase, or expense entry directly in the App.</li>
-      <li><strong>Deletion:</strong> You can disconnect Drive, sign out, clear local data, or request deletion of your cloud account data by contacting us.</li>
-      <li><strong>Withdraw consent:</strong> You can revoke the App's Google permissions at any time from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account settings</a>, independent of this App.</li>
+  <!-- SECTION 2 -->
+  <section class="card" id="s2">
+    <span class="section-label" data-en="02 · INPUT DATA" data-bn="০২ · প্রদানকৃত তথ্য">02 · INPUT DATA</span>
+    <h2 data-en="2. Data You Enter into the App" data-bn="২. অ্যাপে আপনার প্রদানকৃত তথ্য">2. Data You Enter into the App</h2>
+    <p data-en="The core of the App is the business ledger you build yourself. This includes:"
+       data-bn="অ্যাপটির মূল ভিত্তি হলো আপনার তৈরি করা ব্যবসায়িক লেজার। এর মধ্যে রয়েছে:">
+      The core of the App is the business ledger you build yourself. This includes:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th data-en="Category" data-bn="শ্রেণি">Category</th>
+          <th data-en="Examples" data-bn="উদাহরণ">Examples</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-en="Sales records" data-bn="বিক্রয় রেকর্ড">Sales records</td>
+          <td data-en="Item, amount, date, payment method, buyer notes" data-bn="পণ্য, টাকার পরিমাণ, তারিখ, পেমেন্ট মাধ্যম, ক্রেতার নোট">Item, amount, date, payment method, buyer notes</td>
+        </tr>
+        <tr>
+          <td data-en="Purchase records" data-bn="ক্রয় রেকর্ড">Purchase records</td>
+          <td data-en="Supplier, item, cost, date" data-bn="সরবরাহকারী, পণ্য, খরচ, তারিখ">Supplier, item, cost, date</td>
+        </tr>
+        <tr>
+          <td data-en="Expense records" data-bn="খরচের রেকর্ড">Expense records</td>
+          <td data-en="Category, amount, date, description" data-bn="ক্যাটাগরি, পরিমাণ, তারিখ, বিবরণ">Category, amount, date, description</td>
+        </tr>
+        <tr>
+          <td data-en="Shop profile" data-bn="দোকানের প্রোফাইল">Shop profile</td>
+          <td data-en="Business/company name, logo image, currency preference" data-bn="ব্যবসা/প্রতিষ্ঠানের নাম, লোগো, মুদ্রার ধরন">Business/company name, logo image, currency preference</td>
+        </tr>
+        <tr>
+          <td data-en="Orders (if Live Orders is used)" data-bn="অর্ডার (লাইভ অর্ডার ফিচার ব্যবহৃত হলে)">Orders (if Live Orders is used)</td>
+          <td data-en="Customer name/phone, ordered items, order status, timestamps" data-bn="গ্রাহকের নাম/ফোন, অর্ডারকৃত পণ্য, অর্ডারের অবস্থা, সময়">Customer name/phone, ordered items, order status, timestamps</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p class="small" style="margin-top:12px"
+       data-en="You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction."
+       data-bn="আপনি নিজেই এসব তথ্যের নিয়ন্ত্রণকারী। কোনো লেনদেন রেকর্ডের জন্য যতটুকু প্রয়োজন, তার বাইরে বাড়তি কোনো তথ্য দেওয়া বাধ্যতামূলক নয়।">
+      You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction.
+    </p>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="card" id="s3">
+    <span class="section-label" data-en="03 · AUTHENTICATION" data-bn="০৩ · সাইন-ইন">03 · AUTHENTICATION</span>
+    <h2 data-en="3. Signing in to Your Account" data-bn="৩. আপনার অ্যাকাউন্টে সাইন-ইন">3. Signing in to Your Account</h2>
+    <p data-en="The App supports three ways to sign in, and you choose which one to use:"
+       data-bn="অ্যাপটিতে সাইন-ইন করার তিনটি উপায় রয়েছে, যার যেকোনো একটি আপনি বেছে নিতে পারেন:">
+      The App supports three ways to sign in, and you choose which one to use:
+    </p>
+
+    <h3 data-en="Email & password" data-bn="ইমেইল ও পাসওয়ার্ড">Email & password</h3>
+    <p data-en="Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account."
+       data-bn="আপনার ইমেইল ও হ্যাশ করা পাসওয়ার্ড দিয়ে অ্যাকাউন্ট সুরক্ষিত করা হয়। আমরা কখনোই প্লেইন টেক্সট পাসওয়ার্ড সংরক্ষণ করি না; এটি Google-এর Firebase Authentication দ্বারা পরিচালিত হয়।">
+      Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account.
+    </p>
+
+    <h3 data-en="Phone number (SMS OTP)" data-bn="ফোন নম্বর (SMS OTP)">Phone number (SMS OTP)</h3>
+    <p data-en="If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself."
+       data-bn="ফোন নম্বর দিয়ে সাইন-ইন করলে Firebase Phone Authentication-এর মাধ্যমে ওটিপি কোড পাঠানো হয়। আমরা কেবল নম্বরটি ভেরিফাইড হওয়ার বার্তা পাই, কোনো এসএমএস কন্টেন্ট সংরক্ষণ করি না।">
+      If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself.
+    </p>
+
+    <h3 data-en="Google Sign-In" data-bn="Google সাইন-ইন">Google Sign-In</h3>
+    <p data-en="If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does not by itself grant any access to your Google Drive."
+       data-bn="Google দিয়ে সাইন-ইন করলে আপনার সাধারণ প্রোফাইল তথ্য (নাম, ইমেইল, ছবি) পাওয়া যায়। এটি ড্রাইভ ব্যাকআপের অনুমতি থেকে সম্পূর্ণ আলাদা — গুগল দিয়ে সাইন-ইন করলেই ড্রাইভে প্রবেশাধিকার পাওয়া যায় না।">
+      If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does <strong>not</strong> by itself grant any access to your Google Drive.
+    </p>
+
+    <h3 data-en="Device passkey / biometric unlock" data-bn="ডিভাইস পাসকি / বায়োমেট্রিক আনলক">Device passkey / biometric unlock</h3>
+    <p data-en="If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers."
+       data-bn="ফিঙ্গারপ্রিন্ট, ফেস আইডি বা পিন চালু করলে তা কেবল আপনার নিজের ডিভাইসের অপারেটিং সিস্টেমে যাচাই হয় — এটি কখনোই আমাদের সার্ভারে পাঠানো হয় না।">
+      If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers.
+    </p>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="card" id="s4">
+    <span class="section-label" data-en="04 · CLOUD SYNC" data-bn="০৪ · ক্লাউড সিঙ্ক">04 · CLOUD SYNC</span>
+    <h2 data-en="4. Cloud Sync of Your Ledger (Firebase)" data-bn="৪. আপনার লেজারের ক্লাউড সিঙ্ক (Firebase)">4. Cloud Sync of Your Ledger (Firebase)</h2>
+    <p data-en="To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App."
+       data-bn="একাধিক ডিভাইস থেকে লেজার ব্যবহারের জন্য এবং লাইভ অর্ডার ফিচারের সুবিধার্থে আপনার লেজার ডেটা একটি সুরক্ষিত ক্লাউড ডেটাবেসে (Firebase Realtime Database) সিঙ্ক করা হয়।">
+      To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App.
+    </p>
+
+    <h3 data-en="How access is restricted" data-bn="প্রবেশাধিকার কীভাবে নিয়ন্ত্রিত হয়">How access is restricted</h3>
+    <p data-en="Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly."
+       data-bn="প্রতিটি দোকানের ডেটা একটি নির্দিষ্ট অ্যাকাউন্ট আইডির অধীনে সংরক্ষিত থাকে। সার্ভারের সিকিউরিটি রুলস নিশ্চিত করে যে কেবল ওই অ্যাকাউন্টের মালিকই ডেটা পড়া বা পরিবর্তন করতে পারবেন। অন্য কোনো ব্যবহারকারী আপনার ডেটা দেখতে পাবে না।">
+      Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly.
+    </p>
+
+    <h3 data-en="Purpose" data-bn="উদ্দেশ্য">Purpose</h3>
+    <p data-en="This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page."
+       data-bn="একাধিক ডিভাইসে ডেটা সামঞ্জস্যপূর্ণ রাখা এবং অর্ডারের পেজে রিয়েল-টাইমে গ্রাহকের অর্ডার পাওয়ার জন্যই কেবল এই সিঙ্ক ব্যবহৃত হয়।">
+      This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page.
+    </p>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="card" id="s5">
+    <span class="section-label" data-en="05 · DRIVE BACKUP" data-bn="০৫ · ড্রাইভ ব্যাকআপ">05 · DRIVE BACKUP</span>
+    <h2 data-en="5. Google Drive Backup — How It Works" data-bn="৫. Google Drive ব্যাকআপ — যেভাবে কাজ করে">5. Google Drive Backup — How It Works</h2>
+    <p data-en="If you tap 'Connect Drive', the App requests one specific, narrow Google permission:"
+       data-bn="আপনি 'Connect Drive'-এ ট্যাপ করলে অ্যাপটি গুগল থেকে একটি নির্দিষ্ট ও সীমিত অনুমতি চায়:">
+      If you tap <strong>"Connect Drive"</strong>, the App requests one specific, narrow Google permission:
+    </p>
+    
+    <p style="text-align:center;"><span class="pill-code">https://www.googleapis.com/auth/drive.appdata</span></p>
+    
+    <p data-en="This is Google's Application Data scope, and it is deliberately limited:"
+       data-bn="এটি গুগলের Application Data সুবিধা, যা অত্যন্ত সীমিত কাজের জন্য তৈরি:">
+      This is Google's <strong>Application Data</strong> scope, and it is deliberately limited:
+    </p>
+    
+    <ul>
+      <li data-en="The App can only create and update one hidden backup file that it created itself."
+          data-bn="অ্যাপটি কেবল তার নিজের তৈরি করা একটি লুকানো ব্যাকআপ ফাইল তৈরি বা আপডেট করতে পারে।">
+        The App can only create and update <strong>one hidden backup file that it created itself</strong>.
+      </li>
+      <li data-en="This file lives in a special hidden area of your Drive that does not appear in your normal Drive file list — it cannot be browsed directly by any other app."
+          data-bn="এই ফাইলটি আপনার ড্রাইভের একটি বিশেষ লুকানো অংশে থাকে যা সাধারণ ফাইল তালিকায় দেখায় না। অন্য কোনো অ্যাপ এটি খুলতে পারে না।">
+        This file lives in a special hidden area of your Drive that does <strong>not</strong> appear in your normal Drive file list, Drive search, or Drive mobile/web app — it cannot be browsed or opened directly by you or any other app.
+      </li>
+      <li data-en="The App has no access whatsoever to any other file, photo, or document already in your Google Drive."
+          data-bn="আপনার গুগলে থাকা অন্য কোনো ফাইল, ছবি বা নথিতে অ্যাপটির কোনো প্রবেশাধিকার নেই।">
+        The App has <strong>no access whatsoever</strong> to any other file, photo, or document already in your Google Drive, past or future.
+      </li>
+      <li data-en="No other app can read this backup file — it belongs exclusively to MY SHOP's connection with your account."
+          data-bn="অন্য কোনো অ্যাপ এই ব্যাকআপ ফাইলটি পড়তে পারে না — এটি কেবল MY SHOP-এর জন্য নির্ধারিত।">
+        No other app, including other apps you may have authorized, can read this backup file — it belongs exclusively to MY SHOP's connection with your account.
+      </li>
+      <li data-en="The backup counts against your own Google account storage and stays entirely within your Google account — it is never copied to our servers."
+          data-bn="ব্যাকআপ ফাইলটি আপনার গুগল অ্যাকাউন্টের ভেতরেই থাকে এবং কখনোই আমাদের সার্ভারে স্থানান্তরিত হয় না।">
+        The backup counts against your own Google account's storage quota, and stays entirely within your own Google account — it is never copied to, or accessible from, any server we operate.
+      </li>
     </ul>
-  </div>
 
-  <div class="card" id="s14">
-    <h2>14. International data transfer</h2>
-    <p>Our infrastructure providers (Google Cloud / Firebase) may process and store data in data centers located in different countries as part of their standard global infrastructure. Your Google Drive backup, specifically, always remains within your own Google account and Google's own regional handling of your account — it is not moved to a separate location by us.</p>
-  </div>
+    <div class="notice">
+      <strong data-en="What gets backed up:" data-bn="যা ব্যাকআপ নেওয়া হয়:">What gets backed up:</strong>
+      <span data-en=" A snapshot of your ledger data — sales, purchases, expenses, and shop profile."
+            data-bn=" বিক্রয়, ক্রয়, খরচ এবং শপ প্রোফাইলের সমন্বয়ে তৈরি একটি স্ন্যাপশট ফাইল।">
+         A snapshot of the same ledger data described in Section 2 — sales, purchases, expenses, and your shop profile — saved as a single structured data file.
+      </span>
+    </div>
+  </section>
 
-  <div class="card" id="s15">
-    <h2>15. Children's privacy</h2>
-    <p>MY SHOP is a business tool intended for shop owners and adult users managing a business, and is not directed at children. We do not knowingly collect personal data from children under 13 (or the relevant minimum age in your country).</p>
-  </div>
+  <!-- SECTION 6 -->
+  <section class="card" id="s6">
+    <span class="section-label" data-en="06 · LOCAL STORAGE" data-bn="০৬ · লোকাল স্টোরেজ">06 · LOCAL STORAGE</span>
+    <h2 data-en="6. Local Device Storage" data-bn="৬. স্থানীয় ডিভাইস স্টোরেজ">6. Local Device Storage</h2>
+    <p data-en="Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a .json file to your device at any time."
+       data-bn="ক্লাউড সিঙ্ক ও ড্রাইভ ব্যাকআপের পাশাপাশি অ্যাপটি দ্রুত কাজ করা ও অফলাইনে চলার জন্য আপনার ডিভাইসের লোকাল স্টোরেজে একটি কপি রাখে। আপনি চাইলে যেকোনো সময় .json ফাইল হিসেবে ব্যাকআপ নিজেই ডাউনলোড করতে পারেন।">
+      Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a <span class="pill-code">.json</span> file to your device at any time, and import it back in — this local export/import never leaves your device unless you choose to move the file yourself.
+    </p>
+  </section>
 
-  <div class="card" id="s16">
-    <h2>16. Changes to this policy</h2>
-    <p>If this policy changes in a meaningful way, the "Last updated" date at the top of this page will be revised, and where appropriate we will notify you within the App. Continued use of the App after changes take effect constitutes acceptance of the updated policy.</p>
-  </div>
+  <!-- SECTION 7 -->
+  <section class="card" id="s7">
+    <span class="section-label" data-en="07 · LOGS" data-bn="০৭ · কারিগরি তথ্য">07 · LOGS</span>
+    <h2 data-en="7. What We Automatically Collect" data-bn="৭. স্বয়ংক্রিয়ভাবে সংগৃহীত তথ্য">7. What We Automatically Collect</h2>
+    <p data-en="Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers."
+       data-bn="যেকোনো ওয়েব অ্যাপ ব্যবহারের সময় আইপি অ্যাড্রেস ও ব্রাউজারের ধরনের মতো কিছু কারিগরি তথ্য সার্ভারের নিরাপত্তাজনিত লগে সাময়িকভাবে সংরক্ষিত হতে পারে। অ্যাপটিতে কোনো থার্ড-পার্টি ট্র্যাকার বা বিজ্ঞাপন ব্যবহৃত হয় না।">
+      Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers, and does not use cookies for advertising or cross-site tracking.
+    </p>
+  </section>
 
-  <div class="card" id="s17">
-    <h2>17. Contact</h2>
-    <p>Questions about this policy, or requests regarding your data, can be sent to:<br>
-    <a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></p>
-  </div>
+  <!-- SECTION 8 -->
+  <section class="card" id="s8">
+    <span class="section-label" data-en="08 · RESTRICTIONS" data-bn="০৮ · আমাদের প্রতিশ্রুতি">08 · RESTRICTIONS</span>
+    <h2 data-en="8. What We Do NOT Do" data-bn="৮. আমরা যা কখনোই করি না">8. What We Do NOT Do</h2>
+    <div class="badge-grid">
+      <div class="badge-item" data-en="🚫 No reading your Drive files beyond backup" data-bn="🚫 নির্ধারিত ব্যাকআপ ছাড়া ড্রাইভের অন্য ফাইল দেখা হয় না">🚫 No reading your Drive files beyond backup</div>
+      <div class="badge-item" data-en="🚫 No selling or sharing data with third parties" data-bn="🚫 কারো কাছে ডেটা বিক্রি বা শেয়ার করা হয় না">🚫 No selling or sharing data with third parties</div>
+      <div class="badge-item" data-en="🚫 No advertising or ad trackers" data-bn="🚫 কোনো বিজ্ঞাপন বা অ্যাড-ট্র্যাকার নেই">🚫 No advertising or ad trackers</div>
+      <div class="badge-item" data-en="🚫 No cross-shop or cross-user data access" data-bn="🚫 এক দোকানের তথ্য অন্য ব্যবহারকারী দেখতে পায় না">🚫 No cross-shop or cross-user data access</div>
+      <div class="badge-item" data-en="🚫 No storing your password in plain text" data-bn="🚫 পাসওয়ার্ড কখনোই সাধারণ টেক্সটে রাখা হয় না">🚫 No storing your password in plain text</div>
+      <div class="badge-item" data-en="🚫 No accessing Gmail, Contacts, or Photos" data-bn="🚫 জিমেইল, কন্টাক্ট বা ফটোজে কোনো প্রবেশাধিকার নেই">🚫 No accessing Gmail, Contacts, or Photos</div>
+    </div>
+  </section>
 
+  <!-- SECTION 9 -->
+  <section class="card" id="s9">
+    <span class="section-label" data-en="09 · GOOGLE POLICY" data-bn="০৯ · গুগল নীতিমালা">09 · GOOGLE POLICY</span>
+    <h2 data-en="9. Google API Services User Data Policy" data-bn="৯. Google API সেবার ডেটা নীতি">9. Google API Services User Data Policy</h2>
+    <p data-en="MY SHOP's use and transfer of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. Drive data accessed through drive.appdata scope is used solely for backup-and-restore features, is never used to train AI models, and is never used for advertising."
+       data-bn="Google API থেকে প্রাপ্ত তথ্যের ব্যবহার ও স্থানান্তর গুগলের নির্দিষ্ট নীতি অনুসরণ করে। ড্রাইভের তথ্য কেবল ব্যাকআপ ও রিস্টোরের জন্য ব্যবহৃত হয়; এটি দিয়ে কোনো এআই মডেল ট্রেনিং বা বিজ্ঞাপন দেখানো হয় না।">
+      MY SHOP's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. In practice, this means Drive data accessed through the <span class="pill-code">drive.appdata</span> scope is used solely to provide the backup-and-restore feature, is never used to train any AI/ML model, is never used for advertising, and is never read by human staff except as strictly necessary for explicit support requests.
+    </p>
+  </section>
+
+  <!-- SECTION 10 -->
+  <section class="card" id="s10">
+    <span class="section-label" data-en="10 · THIRD PARTIES" data-bn="১০ · তৃতীয় পক্ষ">10 · THIRD PARTIES</span>
+    <h2 data-en="10. Sharing & Third Parties" data-bn="১০. তথ্য শেয়ার ও তৃতীয় পক্ষ">10. Sharing & Third Parties</h2>
+    <p data-en="We do not sell your data. We do not share it with advertisers. The only outside parties involved are our infrastructure providers — Google Cloud / Firebase (authentication, database, hosting) and Google Drive (for your backup). These providers process data strictly on our behalf under high security commitments."
+       data-bn="আমরা ডেটা বিক্রি বা প্রচার করি না। অ্যাপ পরিচালনায় কেবল Google Cloud / Firebase এবং Google Drive পরোক্ষভাবে যুক্ত, যারা সর্বোচ্চ নিরাপত্তা মানদণ্ড মেনে কাজ করে।">
+      We do not sell your data. We do not share it with advertisers or data brokers. The only outside parties involved in operating the App are the infrastructure providers that host it — Google Cloud / Firebase (authentication, database, and hosting) and, if you enable it, Google Drive (for your own backup). These providers process data on our behalf under their own security and confidentiality commitments; they do not use your data for their own purposes.
+    </p>
+  </section>
+
+  <!-- SECTION 11 -->
+  <section class="card" id="s11">
+    <span class="section-label" data-en="11 · DELETION" data-bn="১১ · মুছে ফেলা">11 · DELETION</span>
+    <h2 data-en="11. Data Retention & Deletion" data-bn="১১. ডেটা সংরক্ষণ ও মুছে ফেলা">11. Data Retention & Deletion</h2>
+    <ul>
+      <li data-en="Local data is stored on your device until you clear app data or reset the App."
+          data-bn="ডিভাইসের লোকাল ডেটা আপনি অ্যাপ ডেটা ক্লিয়ার করা পর্যন্ত সংরক্ষিত থাকে।">
+        <strong>Local data</strong> is stored on your device until you clear your browser/app data or use the App's own reset option.
+      </li>
+      <li data-en="Cloud-synced ledger data is retained while your account is active and can be deleted upon request."
+          data-bn="ক্লাউড সিঙ্ক ডেটা অ্যাকাউন্ট সক্রিয় থাকা পর্যন্ত থাকে এবং অনুরোধ সাপেক্ষে মুছে ফেলা যায়।">
+        <strong>Cloud-synced ledger data</strong> is retained for as long as your account remains active, and can be deleted by contacting us or through in-App settings.
+      </li>
+      <li data-en="Drive backups can be removed anytime from your Google Account permissions page."
+          data-bn="গুগল অ্যাকাউন্ট সেটিংসের Third-party apps পেজ থেকে ড্রাইভ ব্যাকআপ যেকোনো সময় মুছে ফেলা সম্ভব।">
+        <strong>Drive backups</strong> can be removed at any time from your Google Account's <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Third-party apps & services</a> page.
+      </li>
+    </ul>
+  </section>
+
+  <!-- SECTION 12 -->
+  <section class="card" id="s12">
+    <span class="section-label" data-en="12 · SECURITY" data-bn="১২ · নিরাপত্তা">12 · SECURITY</span>
+    <h2 data-en="12. Security Safeguards" data-bn="১২. নিরাপত্তা ব্যবস্থা">12. Security Safeguards</h2>
+    <p data-en="All communication between the App and our servers is encrypted using HTTPS/TLS. Cloud-synced data is protected by per-account rules. Google access tokens are held only in memory during your active session and passwords are never stored in plain text."
+       data-bn="অ্যাপের যাবতীয় তথ্য আদান-প্রদান HTTPS/TLS এনক্রিপশন দ্বারা সুরক্ষিত। পাসওয়ার্ড কখনোই প্লেইন টেক্সটে রাখা হয় না এবং এক অ্যাকাউন্টের ডেটা অন্য অ্যাকাউন্ট থেকে সম্পূর্ণ পৃথক রাখা হয়।">
+      All communication between the App and our servers, and between the App and Google's servers, is encrypted in transit using HTTPS/TLS. Cloud-synced ledger data is protected by per-account Security Rules. Google access tokens used for Drive backup are held only in memory during your active session and are never written to any server we operate. Passwords are never stored in plain text.
+    </p>
+  </section>
+
+  <!-- SECTION 13 -->
+  <section class="card" id="s13">
+    <span class="section-label" data-en="13 · YOUR RIGHTS" data-bn="১৩ · আপনার অধিকার">13 · YOUR RIGHTS</span>
+    <h2 data-en="13. Your Rights & Choices" data-bn="১৩. আপনার অধিকার ও পছন্দসমূহ">13. Your Rights & Choices</h2>
+    <ul>
+      <li data-en="Access & export: Export your full ledger as a .json file anytime from Settings."
+          data-bn="রপ্তানি: সেটিংস থেকে যেকোনো সময় .json ফাইল হিসেবে সব তথ্য ডাউনলোড করতে পারেন।">
+        <strong>Access & export:</strong> You can export your full ledger as a <span class="pill-code">.json</span> file at any time from Settings → Data Backup.
+      </li>
+      <li data-en="Correction: Edit or delete any entry directly inside the App."
+          data-bn="সংশোধন: যেকোনো বিক্রয় বা খরচের এন্ট্রি নিজে থেকেই অ্যাপে সংশোধন বা মুছে ফেলতে পারেন।">
+        <strong>Correction:</strong> You can edit or delete any sales, purchase, or expense entry directly in the App.
+      </li>
+      <li data-en="Withdraw consent: Revoke Google Drive permissions directly from your Google Account settings."
+          data-bn="সম্মতি প্রত্যাহার: গুগল অ্যাকাউন্ট সেটিংস থেকে ড্রাইভের অনুমতি যেকোনো সময় বাতিল করতে পারেন।">
+        <strong>Withdraw consent:</strong> You can revoke the App's Google permissions at any time from your Google Account settings.
+      </li>
+    </ul>
+  </section>
+
+  <!-- SECTION 14-16 -->
+  <section class="card" id="s14-16">
+    <span class="section-label" data-en="14-16 · GENERAL POLICIES" data-bn="১৪-১৬ · সাধারণ নীতিমালা">14-16 · GENERAL POLICIES</span>
+    <h3 data-en="International Data Transfer" data-bn="আন্তর্জাতিক ডেটা স্থানান্তর">International Data Transfer</h3>
+    <p data-en="Our infrastructure providers (Google Cloud / Firebase) may process data in data centers located in different countries as part of standard global infrastructure. Your Google Drive backup always remains within your own Google account."
+       data-bn="গুগল ক্লাউড বৈশ্বিক অবকাঠামোর অংশ হিসেবে ডেটা বিভিন্ন ডেটা সেন্টারে সংরক্ষণ করতে পারে। আপনার গুগলের ব্যাকআপ ফাইল সর্বদাই আপনার গুগল অ্যাকাউন্টের সীমানাতেই থাকে।">
+      Our infrastructure providers (Google Cloud / Firebase) may process and store data in data centers located in different countries as part of their standard global infrastructure. Your Google Drive backup always remains within your own Google account.
+    </p>
+
+    <h3 data-en="Children's Privacy" data-bn="শিশুদের গোপনীয়তা">Children's Privacy</h3>
+    <p data-en="MY SHOP is a business tool intended for shop owners and adult users, and is not directed at children under 13."
+       data-bn="MY SHOP কেবল দোকান মালিক ও প্রাপ্তবয়স্কদের জন্য তৈরি ব্যবসায়িক সরঞ্জাম। এটি ১৩ বছরের কম বয়সী শিশুদের জন্য প্রযোজ্য নয়।">
+      MY SHOP is a business tool intended for shop owners and adult users managing a business, and is not directed at children.
+    </p>
+
+    <h3 data-en="Changes to This Policy" data-bn="নীতিমালার পরিবর্তন">Changes to This Policy</h3>
+    <p data-en="If this policy changes, the 'Last updated' date will be revised. Continued use of the App constitutes acceptance of the updated policy."
+       data-bn="নীতিমালায় কোনো পরিবর্তন আনা হলে নিবন্ধের শুরুতে উল্লেখিত 'সর্বশেষ হালনাগাদ' এর তারিখ পরিবর্তন করা হবে।">
+      If this policy changes in a meaningful way, the 'Last updated' date at the top will be revised. Continued use of the App after changes take effect constitutes acceptance of the updated policy.
+    </p>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="card contact" id="contact">
+    <span class="section-label" data-en="17 · CONTACT" data-bn="১৭ · যোগাযোগ">17 · CONTACT</span>
+    <h2 data-en="Questions about Privacy?" data-bn="গোপনীয়তা নিয়ে কোনো প্রশ্ন আছে?">Questions about Privacy?</h2>
+    <p data-en="Questions about this privacy policy, or requests regarding your data, can be sent to our official email below."
+       data-bn="এই গোপনীয়তা নীতি বা আপনার ডেটা সংক্রান্ত যেকোনো তথ্যের জন্য নিচের ইমেইলে যোগাযোগ করুন।">
+      Questions about this privacy policy, or requests regarding your data, can be sent to our official email below.
+    </p>
+    <p><a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></p>
+  </section>
+
+  <footer class="footer">
+    <div data-en="© 2026 MY SHOP. All rights reserved." data-bn="© ২০২৬ MY SHOP। সর্বস্বত্ব সংরক্ষিত।">© 2026 MY SHOP. All rights reserved.</div>
+    <div style="margin-top:5px" data-en="Privacy Policy · Version 1.0" data-bn="গোপনীয়তা নীতি · সংস্করণ ১.০">Privacy Policy · Version 1.0</div>
+  </footer>
 </div>
 
-<footer>© 2026 MY SHOP. All rights reserved.</footer>
+<script>
+(function(){
+  const body = document.body;
+  const enBtn = document.getElementById('enBtn');
+  const bnBtn = document.getElementById('bnBtn');
 
+  function setLanguage(lang){
+    const isBn = lang === 'bn';
+    document.documentElement.lang = isBn ? 'bn' : 'en';
+    body.classList.toggle('bn', isBn);
+
+    document.querySelectorAll('[data-en][data-bn]').forEach(el => {
+      el.textContent = isBn ? el.getAttribute('data-bn') : el.getAttribute('data-en');
+    });
+
+    enBtn.classList.toggle('active', !isBn);
+    bnBtn.classList.toggle('active', isBn);
+    localStorage.setItem('myshop_privacy_language', lang);
+  }
+
+  enBtn.addEventListener('click', () => setLanguage('en'));
+  bnBtn.addEventListener('click', () => setLanguage('bn'));
+
+  const saved = localStorage.getItem('myshop_privacy_language');
+  setLanguage(saved === 'bn' ? 'bn' : 'en');
+})();
+</script>
 </body>
 </html>

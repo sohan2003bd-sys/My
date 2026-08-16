@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="MyShop Terms of Service — premium bilingual English and Bengali terms.">
+<meta name="theme-color" content="#0b2721">
+<title>MyShop — Terms of Service</title>
+
+<style>
+:root{
+  --bg:#f5ead0;
+  --paper:#fffdf8;
+  --paper2:#f8f4ea;
+  --ink:#14231f;
+  --muted:#65736d;
+  --green:#0b2721;
+  --green2:#123832;
+  --gold:#d4af37;
+  --gold2:#f1d77a;
+  --line:#e7dcc4;
+  --danger:#8c3f2f;
+  --shadow:0 18px 55px rgba(11,39,33,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(212,175,55,.18),transparent 27%),
+    radial-gradient(circle at 92% 16%,rgba(18,56,50,.09),transparent 25%),
+    linear-gradient(135deg,#f5ead0,#fffaf0 52%,#f2e5c7);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.72;
+}
+body.bn{font-family:"Noto Sans Bengali","Noto Sans",system-ui,sans-serif}
+a{color:inherit}
+button{font:inherit}
+.wrap{max-width:1080px;margin:auto;padding:14px 14px 60px}
+
+/* topbar */
+.topbar{
+  position:sticky;top:8px;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 10px;
+  margin-bottom:16px;
+  border:1px solid rgba(18,56,50,.12);
+  border-radius:20px;
+  background:rgba(255,253,248,.90);
+  backdrop-filter:blur(18px);
+  box-shadow:0 10px 30px rgba(11,39,33,.08);
+}
+.brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:900}
+.logo{
+  width:39px;height:39px;border-radius:13px;
+  display:grid;place-items:center;
+  background:var(--green);color:var(--gold2);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.brand-name{font-size:16px;letter-spacing:.02em}
+.lang{
+  display:flex;align-items:center;gap:4px;
+  padding:4px;border-radius:13px;background:#eee4cf;
+}
+.lang button{
+  border:0;cursor:pointer;
+  padding:8px 13px;border-radius:10px;
+  background:transparent;color:var(--green);
+  font-weight:850;font-size:13px;
+}
+.lang button.active{background:var(--green);color:#fff}
+
+/* hero */
+.hero{
+  position:relative;overflow:hidden;
+  border-radius:32px;
+  padding:44px 30px 34px;
+  margin-bottom:20px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 88% 18%,rgba(241,215,122,.25),transparent 20%),
+    radial-gradient(circle at 72% 90%,rgba(255,255,255,.08),transparent 28%),
+    linear-gradient(135deg,var(--green),var(--green2));
+  box-shadow:var(--shadow);
+}
+.hero:before{
+  content:"";position:absolute;width:260px;height:260px;
+  right:-100px;top:-120px;border-radius:50%;
+  border:1px solid rgba(241,215,122,.25);
+  box-shadow:0 0 0 28px rgba(241,215,122,.035),0 0 0 58px rgba(241,215,122,.025);
+}
+.eyebrow{
+  display:inline-flex;
+  padding:7px 13px;border:1px solid rgba(241,215,122,.42);
+  border-radius:999px;color:var(--gold2);
+  font-size:12px;font-weight:900;letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.hero h1{
+  position:relative;z-index:1;
+  max-width:820px;margin:17px 0 12px;
+  font-size:clamp(35px,7vw,66px);
+  line-height:1.02;letter-spacing:-.035em;
+}
+.hero p{
+  position:relative;z-index:1;
+  max-width:760px;margin:0;
+  color:#dce8e3;font-size:16px;
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{
+  padding:7px 11px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.07);
+  color:#e0eae6;font-size:12px;
+}
+
+/* cards */
+.card{
+  margin:16px 0;
+  padding:27px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:rgba(255,253,248,.96);
+  box-shadow:0 8px 30px rgba(107,84,32,.055);
+}
+.card h2{margin:0 0 10px;color:var(--green);font-size:25px;line-height:1.2}
+.card h3{margin:20px 0 7px;color:var(--green2);font-size:18px}
+.card p,.card li{font-size:15px}
+.card ul{padding-left:21px;margin:10px 0}
+.card li{margin:7px 0}
+.notice{
+  margin-top:16px;
+  padding:15px 16px;
+  border-left:4px solid var(--gold);
+  border-radius:13px;
+  background:#fff6dc;
+}
+.section-label{
+  display:inline-block;
+  padding:6px 10px;
+  border:1px solid #d9c68c;
+  border-radius:999px;
+  color:#816816;
+  font-size:11px;font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* 15 features */
+.feature{
+  margin:15px 0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+  background:var(--paper);
+}
+.feature-head{
+  display:flex;align-items:center;gap:13px;
+  padding:18px 20px;
+  background:linear-gradient(90deg,#f8f1df,#fffdf8);
+}
+.num{
+  flex:0 0 38px;width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;
+  background:var(--green);color:var(--gold2);
+  font-weight:950;font-size:13px;
+}
+.feature-head h3{margin:0;color:var(--green);font-size:18px}
+.feature-body{padding:3px 20px 18px}
+.feature-body ol{margin:9px 0 0;padding-left:23px}
+.feature-body li{margin:8px 0;font-size:14.5px}
+
+/* policy links */
+.link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}
+.external{
+  display:block;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#faf5e9;
+  text-decoration:none;
+  color:var(--green);
+  font-weight:850;
+}
+.external small{display:block;margin-top:3px;color:var(--muted);font-weight:600}
+.contact{
+  color:#fff;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  border-color:var(--green);
+}
+.contact h2{color:#fff}
+.contact a{color:var(--gold2);font-weight:850}
+.footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
+.small{font-size:13px!important;color:var(--muted)}
+
+@media(max-width:650px){
+  .wrap{padding:9px 10px 45px}
+  .topbar{top:5px;border-radius:17px}
+  .brand-name{display:none}
+  .hero{padding:34px 21px 28px;border-radius:25px}
+  .hero h1{font-size:39px}
+  .card{padding:21px 17px;border-radius:19px}
+  .feature-head{padding:15px}
+  .feature-body{padding:2px 15px 15px}
+}
+@media(print){
+  .topbar{position:static}
+  .lang{display:none}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div class="brand-name">MyShop</div>
+    </div>
+    <div class="lang" aria-label="Language">
+      <button id="enBtn" class="active" type="button">English</button>
+      <button id="bnBtn" type="button">বাংলা</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow" data-en="TERMS OF SERVICE" data-bn="সেবার শর্তাবলি">TERMS OF SERVICE</span>
+    <h1 data-en="Built for business. Clear rules for every use."
+        data-bn="ব্যবসার জন্য তৈরি। প্রতিটি ব্যবহারের জন্য পরিষ্কার ও স্বচ্ছ নিয়ম।">
+      Built for business. Clear rules for every use.
+    </h1>
+    <p data-en="These Terms explain the rules, responsibilities, limitations and conditions that apply when you access or use MyShop and its related services."
+       data-bn="এই শর্তাবলিতে MyShop ও এর সংশ্লিষ্ট সেবা ব্যবহারের নিয়ম, দায়িত্ব, সীমাবদ্ধতা এবং প্রযোজ্য শর্তসমূহ স্পষ্টভাবে ব্যাখ্যা করা হয়েছে।">
+      These Terms explain the rules, responsibilities, limitations and conditions that apply when you access or use MyShop and its related services.
+    </p>
+    <div class="meta">
+      <span class="pill" data-en="Effective: 16 August 2026" data-bn="কার্যকর: ১৬ আগস্ট ২০২৬">Effective: 16 August 2026</span>
+      <span class="pill" data-en="Version 1.1" data-bn="সংস্করণ ১.১">Version 1.1</span>
+      <span class="pill" data-en="Last reviewed: 16 August 2026" data-bn="সর্বশেষ পর্যালোচনা: ১৬ আগস্ট ২০২৬">Last reviewed: 16 August 2026</span>
+    </div>
+  </section>
+
+  <section class="card" id="acceptance">
+    <span class="section-label" data-en="01 · FOUNDATION" data-bn="০১ · ভিত্তি">01 · FOUNDATION</span>
+    <h2 data-en="Terms & Acceptance" data-bn="শর্তাবলি ও গ্রহণযোগ্যতা">Terms & Acceptance</h2>
+    <p data-en="By accessing, installing, signing in to, or using MyShop, you acknowledge that you have read and understood these Terms and agree to follow them."
+       data-bn="MyShop ব্যবহার, ইনস্টল, অ্যাক্সেস বা অ্যাকাউন্টে প্রবেশ করার মাধ্যমে আপনি স্বীকার করছেন যে আপনি এই শর্তাবলি পড়েছেন, বুঝেছেন এবং তা মেনে চলতে সম্মত হয়েছেন।">
+      By accessing, installing, signing in to, or using MyShop, you acknowledge that you have read and understood these Terms and agree to follow them.
+    </p>
+    <p data-en="If you do not agree with these Terms, do not use the service. If you use MyShop on behalf of a business or organization, you confirm that you have authority to accept these Terms for that entity."
+       data-bn="আপনি যদি এই শর্তাবলিতে সম্মত না হন, তাহলে MyShop ব্যবহার করবেন না। কোনো ব্যবসা বা প্রতিষ্ঠানের পক্ষে MyShop ব্যবহার করলে আপনি নিশ্চিত করছেন যে ওই প্রতিষ্ঠানের পক্ষ থেকে এই শর্তাবলি গ্রহণ করার প্রয়োজনীয় ক্ষমতা আপনার রয়েছে।">
+      If you do not agree with these Terms, do not use the service. If you use MyShop on behalf of a business or organization, you confirm that you have authority to accept these Terms for that entity.
+    </p>
+  </section>
+
+  <section class="card" id="eligibility">
+    <span class="section-label" data-en="02 · ELIGIBILITY" data-bn="০২ · যোগ্যতা">02 · ELIGIBILITY</span>
+    <h2 data-en="Eligibility & Legal Capacity" data-bn="ব্যবহারের যোগ্যতা ও আইনি সক্ষমতা">Eligibility & Legal Capacity</h2>
+    <p data-en="You must be at least 18 years old or the legal age of majority in your jurisdiction to create an account or use MyShop. By using the app, you represent and warrant that you have full legal capacity to enter into a binding contract."
+       data-bn="MyShop-এ অ্যাকাউন্ট তৈরি বা ব্যবহার করার জন্য আপনার বয়স অবশ্যই ন্যূনতম ১৮ বছর বা আপনার আইনগত একতিয়ার অনুযায়ী প্রাপ্তবয়স্ক হতে হবে। অ্যাপটি ব্যবহারের মাধ্যমে আপনি নিশ্চিত করছেন যে একটি আইনগত চুক্তিতে আবদ্ধ হওয়ার পূর্ণ সক্ষমতা আপনার রয়েছে।">
+      You must be at least 18 years old or the legal age of majority in your jurisdiction to create an account or use MyShop. By using the app, you represent and warrant that you have full legal capacity to enter into a binding contract.
+    </p>
+  </section>
+
+  <section class="card" id="account">
+    <span class="section-label" data-en="03 · ACCESS" data-bn="০৩ · প্রবেশাধিকার">03 · ACCESS</span>
+    <h2 data-en="Account & Security" data-bn="অ্যাকাউন্ট ও নিরাপত্তা">Account & Security</h2>
+    <ul>
+      <li data-en="Keep your account information accurate and reasonably up to date." data-bn="আপনার অ্যাকাউন্টের তথ্য সঠিক এবং প্রয়োজন অনুযায়ী হালনাগাদ রাখুন।">Keep your account information accurate and reasonably up to date.</li>
+      <li data-en="Protect your sign-in credentials, device and recovery methods from unauthorized access." data-bn="আপনার লগইন তথ্য, ডিভাইস এবং পুনরুদ্ধার পদ্ধতি অননুমোদিত ব্যবহার থেকে সুরক্ষিত রাখুন।">Protect your sign-in credentials, device and recovery methods from unauthorized access.</li>
+      <li data-en="Do not share authentication information where doing so could compromise your account." data-bn="অ্যাকাউন্টের নিরাপত্তা ঝুঁকিতে পড়তে পারে এমনভাবে প্রমাণীকরণ তথ্য অন্যের সঙ্গে শেয়ার করবেন না।">Do not share authentication information where doing so could compromise your account.</li>
+      <li data-en="Contact MyShop promptly if you reasonably suspect unauthorized access." data-bn="অননুমোদিত প্রবেশের যৌক্তিক সন্দেহ হলে দ্রুত MyShop-এর সঙ্গে যোগাযোগ করুন।">Contact MyShop promptly if you reasonably suspect unauthorized access.</li>
+      <li data-en="You remain responsible for activity performed through your account, except where a demonstrated security failure directly attributable to MyShop applies." data-bn="আপনার অ্যাকাউন্টের মাধ্যমে সংঘটিত কার্যকলাপের দায় আপনার থাকবে; তবে MyShop-এর প্রমাণিত নিরাপত্তা ব্যর্থতার সরাসরি কারণে হলে তা ব্যতিক্রম।">You remain responsible for activity performed through your account, except where a demonstrated security failure directly attributable to MyShop applies.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="data">
+    <span class="section-label" data-en="04 · OWNERSHIP" data-bn="০৪ · মালিকানা">04 · OWNERSHIP</span>
+    <h2 data-en="Business Data & Your Content" data-bn="ব্যবসায়িক ডেটা ও আপনার তথ্য">Business Data & Your Content</h2>
+    <p data-en="You retain your rights in information and content that you submit to MyShop, subject to the limited rights required to provide, secure and maintain the service."
+       data-bn="আপনি MyShop-এ যে তথ্য ও কনটেন্ট প্রদান করেন, তার ওপর আপনার অধিকার বহাল থাকে; তবে সেবা প্রদান, নিরাপত্তা ও রক্ষণাবেক্ষণের জন্য প্রয়োজনীয় সীমিত ব্যবহারের অধিকার প্রযোজ্য হবে।">
+      You retain your rights in information and content that you submit to MyShop, subject to the limited rights required to provide, secure and maintain the service.
+    </p>
+    <p data-en="You are responsible for having the necessary authority and lawful basis to enter, upload, store or process business, customer, supplier, product, invoice, image and other information."
+       data-bn="ব্যবসা, গ্রাহক, সরবরাহকারী, পণ্য, ইনভয়েস, ছবি বা অন্য কোনো তথ্য প্রবেশ করানো, আপলোড, সংরক্ষণ বা প্রক্রিয়াজাত করার প্রয়োজনীয় অনুমতি ও আইনসম্মত ভিত্তি নিশ্চিত করা আপনার দায়িত্ব।">
+      You are responsible for having the necessary authority and lawful basis to enter, upload, store or process business, customer, supplier, product, invoice, image and other information.
+    </p>
+  </section>
+
+  <section class="card" id="intellectual">
+    <span class="section-label" data-en="05 · PROPERTY" data-bn="০৫ · মেধা স্বত্ব">05 · PROPERTY</span>
+    <h2 data-en="Intellectual Property Rights" data-bn="মেধা স্বত্ব ও স্বত্বাধিকার">Intellectual Property Rights</h2>
+    <p data-en="All content, software code, visual design, logos, trademarks, and features associated with MyShop are the exclusive intellectual property of MyShop and its licensors. You may not copy, reverse engineer, modify, or distribute any part of our app without prior written approval."
+       data-bn="MyShop-এর যাবতীয় কনটেন্ট, সফটওয়্যার কোড, ভিজ্যুয়াল ডিজাইন, লোগো, ট্রেডমার্ক এবং এর ফিচারসমূহ MyShop ও এর লাইসেন্সদাতাদের মেধা স্বত্ব। আমাদের পূর্বানু অনুমতি ছাড়া অ্যাপের কোনো অংশ কপি, রিভার্স ইঞ্জিনিয়ার, পরিবর্তন বা পুনরায় বিতরণ করা যাবে না।">
+      All content, software code, visual design, logos, trademarks, and features associated with MyShop are the exclusive intellectual property of MyShop and its licensors. You may not copy, reverse engineer, modify, or distribute any part of our app without prior written approval.
+    </p>
+  </section>
+
+  <section class="card" id="availability">
+    <span class="section-label" data-en="06 · SERVICE" data-bn="০৬ · সেবা">06 · SERVICE</span>
+    <h2 data-en="Service Availability & Limitations" data-bn="সেবা প্রাপ্যতা ও সীমাবদ্ধতা">Service Availability & Limitations</h2>
+    <p data-en="MyShop is designed to provide reliable business-management functionality, but no software service can guarantee uninterrupted availability, permanent data retention or error-free operation in every device, network or environment."
+       data-bn="MyShop নির্ভরযোগ্য ব্যবসা ব্যবস্থাপনার সুবিধা দেওয়ার জন্য তৈরি করা হয়েছে; তবে কোনো সফটওয়্যার সেবাই প্রতিটি ডিভাইস, নেটওয়ার্ক বা পরিবেশে নিরবচ্ছিন্ন প্রাপ্যতা, স্থায়ী ডেটা সংরক্ষণ বা সম্পূর্ণ ত্রুটিমুক্ত কার্যক্রমের নিশ্চয়তা দিতে পারে না।">
+      MyShop is designed to provide reliable business-management functionality, but no software service can guarantee uninterrupted availability, permanent data retention or error-free operation in every device, network or environment.
+    </p>
+    <div class="notice" data-en="Important: Keep appropriate business records and backups for information that is important to your business."
+         data-bn="গুরুত্বপূর্ণ: আপনার ব্যবসার জন্য গুরুত্বপূর্ণ তথ্যের উপযুক্ত রেকর্ড ও ব্যাকআপ সংরক্ষণ করুন।">
+      Important: Keep appropriate business records and backups for information that is important to your business.
+    </div>
+  </section>
+
+  <section class="card" id="responsibility">
+    <span class="section-label" data-en="07 · RESPONSIBILITY" data-bn="০৭ · দায়িত্ব">07 · RESPONSIBILITY</span>
+    <h2 data-en="User Responsibility" data-bn="ব্যবহারকারীর দায়িত্ব">User Responsibility</h2>
+    <ul>
+      <li data-en="Use MyShop only for lawful and legitimate business or organizational activities." data-bn="MyShop কেবল আইনসম্মত ও বৈধ ব্যবসায়িক বা সাংগঠনিক কাজে ব্যবহার করুন।">Use MyShop only for lawful and legitimate business or organizational activities.</li>
+      <li data-en="Verify important transaction, inventory and financial information before relying on it." data-bn="গুরুত্বপূর্ণ লেনদেন, মজুত ও আর্থিক তথ্য ব্যবহারের আগে তা যাচাই করুন।">Verify important transaction, inventory and financial information before relying on it.</li>
+      <li data-en="Maintain appropriate access controls for employees or other people using your account." data-bn="কর্মচারী বা অন্য কেউ অ্যাকাউন্ট ব্যবহার করলে উপযুক্ত প্রবেশাধিকার নিয়ন্ত্রণ বজায় রাখুন।">Maintain appropriate access controls for employees or other people using your account.</li>
+      <li data-en="Do not use the service to infringe another person's rights or to facilitate unlawful activity." data-bn="অন্যের অধিকার লঙ্ঘন বা বেআইনি কার্যক্রম পরিচালনায় সহায়তার জন্য সেবাটি ব্যবহার করবেন না।">Do not use the service to infringe another person's rights or to facilitate unlawful activity.</li>
+    </ul>
+  </section>
+
+  <!-- FEATURES SECTION (1 to 15) -->
+  <section class="card" id="features">
+    <span class="section-label" data-en="08 · CORE FEATURES" data-bn="০৮ · প্রধান ফিচার">08 · CORE FEATURES</span>
+    <h2 data-en="15 MyShop Features & How to Use Them" data-bn="MyShop-এর ১৫টি গুরুত্বপূর্ণ ফিচার ও ব্যবহারের পদ্ধতি">15 MyShop Features & How to Use Them</h2>
+    <p data-en="The following feature descriptions explain the intended business workflow. Actual availability may depend on your app version, account configuration, device, network and connected services."
+       data-bn="নিচের ফিচারগুলোর বর্ণনায় সংশ্লিষ্ট ব্যবসায়িক ব্যবহারের পদ্ধতি ব্যাখ্যা করা হয়েছে। বাস্তবে কোনো ফিচার পাওয়া যাবে কি না তা অ্যাপের সংস্করণ, অ্যাকাউন্ট, ডিভাইস, নেটওয়ার্ক ও সংযুক্ত সেবার ওপর নির্ভর করতে পারে।">
+      The following feature descriptions explain the intended business workflow. Actual availability may depend on your app version, account configuration, device, network and connected services.
+    </p>
+
+    <article class="feature" id="feature-1">
+      <div class="feature-head"><div class="num">01</div><h3 data-en="Sales Management" data-bn="বিক্রয় ব্যবস্থাপনা">Sales Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Open the sales area and select the products or services being sold." data-bn="বিক্রয় অংশ খুলে যে পণ্য বা সেবা বিক্রি হচ্ছে সেগুলো নির্বাচন করুন।">Open the sales area and select the products or services being sold.</li>
+        <li data-en="Confirm quantity, selling price, discount and applicable customer information." data-bn="পরিমাণ, বিক্রয়মূল্য, ছাড় এবং প্রযোজ্য গ্রাহকের তথ্য নিশ্চিত করুন।">Confirm quantity, selling price, discount and applicable customer information.</li>
+        <li data-en="Review the transaction summary before saving the sale." data-bn="বিক্রয় সংরক্ষণ করার আগে লেনদেনের সারসংক্ষেপ যাচাই করুন।">Review the transaction summary before saving the sale.</li>
+        <li data-en="Save the transaction only after confirming the final amount." data-bn="চূড়ান্ত অর্থের পরিমাণ নিশ্চিত হওয়ার পর লেনদেন সংরক্ষণ করুন।">Save the transaction only after confirming the final amount.</li>
+        <li data-en="Use the generated record or receipt as the reference for later review." data-bn="পরবর্তী যাচাইয়ের জন্য তৈরি রেকর্ড বা রসিদকে রেফারেন্স হিসেবে ব্যবহার করুন।">Use the generated record or receipt as the reference for later review.</li>
+        <li data-en="Regularly review sales records so that mistakes can be identified and corrected promptly." data-bn="নিয়মিত বিক্রয় রেকর্ড পর্যালোচনা করুন, যাতে ভুল দ্রুত শনাক্ত ও সংশোধন করা যায়।">Regularly review sales records so that mistakes can be identified and corrected promptly.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-2">
+      <div class="feature-head"><div class="num">02</div><h3 data-en="Purchase Management" data-bn="ক্রয় ব্যবস্থাপনা">Purchase Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create a purchase record when products are acquired from a supplier." data-bn="সরবরাহকারীর কাছ থেকে পণ্য সংগ্রহ করার সময় একটি ক্রয় রেকর্ড তৈরি করুন।">Create a purchase record when products are acquired from a supplier.</li>
+        <li data-en="Enter the supplier, product, quantity, unit cost and purchase date accurately." data-bn="সরবরাহকারী, পণ্য, পরিমাণ, একক ক্রয়মূল্য ও ক্রয়ের তারিখ সঠিকভাবে লিখুন।">Enter the supplier, product, quantity, unit cost and purchase date accurately.</li>
+        <li data-en="Check the purchase total before saving the record." data-bn="রেকর্ড সংরক্ষণের আগে মোট ক্রয়মূল্য যাচাই করুন।">Check the purchase total before saving the record.</li>
+        <li data-en="Keep supplier invoices or supporting documents when appropriate." data-bn="প্রয়োজনে সরবরাহকারীর ইনভয়েস বা সহায়ক নথি সংরক্ষণ করুন।">Keep supplier invoices or supporting documents when appropriate.</li>
+        <li data-en="Use purchase history to compare costs and monitor procurement activity." data-bn="ক্রয়ের ইতিহাস ব্যবহার করে খরচ তুলনা ও ক্রয় কার্যক্রম পর্যবেক্ষণ করুন।">Use purchase history to compare costs and monitor procurement activity.</li>
+        <li data-en="Correct inaccurate purchase information as soon as the mistake is discovered." data-bn="ক্রয়ের তথ্যে ভুল ধরা পড়লে যত দ্রুত সম্ভব তা সংশোধন করুন।">Correct inaccurate purchase information as soon as the mistake is discovered.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-3">
+      <div class="feature-head"><div class="num">03</div><h3 data-en="Inventory Management" data-bn="মজুত ব্যবস্থাপনা">Inventory Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create or update product records with the information needed for stock tracking." data-bn="মজুত পর্যবেক্ষণের জন্য প্রয়োজনীয় তথ্য দিয়ে পণ্যের রেকর্ড তৈরি বা হালনাগাদ করুন।">Create or update product records with the information needed for stock tracking.</li>
+        <li data-en="Record stock entering and leaving the business through supported transactions." data-bn="সমর্থিত লেনদেনের মাধ্যমে ব্যবসায় প্রবেশ ও বের হওয়া মজুতের তথ্য রেকর্ড করুন।">Record stock entering and leaving the business through supported transactions.</li>
+        <li data-en="Review available quantity before confirming a sale or purchase." data-bn="বিক্রয় বা ক্রয় নিশ্চিত করার আগে বিদ্যমান মজুতের পরিমাণ যাচাই করুন।">Review available quantity before confirming a sale or purchase.</li>
+        <li data-en="Use low-stock information to plan replenishment when the feature is available." data-bn="ফিচারটি চালু থাকলে কম মজুতের তথ্য ব্যবহার করে পুনরায় পণ্য সংগ্রহের পরিকল্পনা করুন।">Use low-stock information to plan replenishment when the feature is available.</li>
+        <li data-en="Perform periodic physical stock checks against digital records." data-bn="নিয়মিত বাস্তব মজুত গণনা করে ডিজিটাল রেকর্ডের সঙ্গে মিলিয়ে দেখুন।">Perform periodic physical stock checks against digital records.</li>
+        <li data-en="Do not treat automatically calculated stock as a substitute for reasonable physical verification." data-bn="স্বয়ংক্রিয়ভাবে গণনা করা মজুতকে বাস্তব মজুত যাচাইয়ের বিকল্প হিসেবে বিবেচনা করবেন না।">Do not treat automatically calculated stock as a substitute for reasonable physical verification.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-4">
+      <div class="feature-head"><div class="num">04</div><h3 data-en="Customer Management" data-bn="গ্রাহক ব্যবস্থাপনা">Customer Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create a customer record only when the information is genuinely needed for your business workflow." data-bn="ব্যবসার কার্যপ্রবাহে সত্যিই প্রয়োজন হলে তবেই গ্রাহকের রেকর্ড তৈরি করুন।">Create a customer record only when the information is genuinely needed for your business workflow.</li>
+        <li data-en="Enter customer information carefully and avoid unnecessary personal details." data-bn="গ্রাহকের তথ্য সতর্কতার সঙ্গে লিখুন এবং অপ্রয়োজনীয় ব্যক্তিগত তথ্য সংরক্ষণ এড়িয়ে চলুন।">Enter customer information carefully and avoid unnecessary personal details.</li>
+        <li data-en="Use customer history to review relevant sales or service records." data-bn="প্রাসঙ্গিক বিক্রয় বা সেবা রেকর্ড পর্যালোচনার জন্য গ্রাহকের ইতিহাস ব্যবহার করুন।">Use customer history to review relevant sales or service records.</li>
+        <li data-en="Keep customer information accurate and remove or correct information when appropriate." data-bn="গ্রাহকের তথ্য সঠিক রাখুন এবং প্রয়োজন হলে তথ্য সংশোধন বা অপসারণ করুন।">Keep customer information accurate and remove or correct information when appropriate.</li>
+        <li data-en="Restrict access to customer information to people who need it for legitimate work." data-bn="বৈধ কাজের প্রয়োজন রয়েছে এমন ব্যক্তিদের মধ্যেই গ্রাহকের তথ্যের প্রবেশাধিকার সীমিত রাখুন।">Restrict access to customer information to people who need it for legitimate work.</li>
+        <li data-en="Follow applicable privacy and data-protection requirements when handling customer information." data-bn="গ্রাহকের তথ্য ব্যবহারের সময় প্রযোজ্য গোপনীয়তা ও ডেটা সুরক্ষা সংক্রান্ত নিয়ম মেনে চলুন।">Follow applicable privacy and data-protection requirements when handling customer information.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-5">
+      <div class="feature-head"><div class="num">05</div><h3 data-en="Supplier Management" data-bn="সরবরাহকারী ব্যবস্থাপনা">Supplier Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create supplier records for vendors used in your procurement process." data-bn="আপনার ক্রয় কার্যক্রমে ব্যবহৃত সরবরাহকারীদের জন্য রেকর্ড তৈরি করুন।">Create supplier records for vendors used in your procurement process.</li>
+        <li data-en="Store only the supplier information needed for business operations." data-bn="ব্যবসা পরিচালনার জন্য প্রয়োজনীয় সরবরাহকারী তথ্যই সংরক্ষণ করুন।">Store only the supplier information needed for business operations.</li>
+        <li data-en="Link purchase records to the appropriate supplier whenever possible." data-bn="সম্ভব হলে প্রতিটি ক্রয় রেকর্ড সংশ্লিষ্ট সরবরাহকারীর সঙ্গে যুক্ত করুন।">Link purchase records to the appropriate supplier whenever possible.</li>
+        <li data-en="Review supplier history to understand purchasing patterns and costs." data-bn="ক্রয়ের ধরণ ও খরচ বোঝার জন্য সরবরাহকারীর ইতিহাস পর্যালোচনা করুন।">Review supplier history to understand purchasing patterns and costs.</li>
+        <li data-en="Update supplier details when contact or business information changes." data-bn="যোগাযোগ বা ব্যবসায়িক তথ্য পরিবর্তন হলে সরবরাহকারীর তথ্য হালনাগাদ করুন।">Update supplier details when contact or business information changes.</li>
+        <li data-en="Protect supplier information and limit access to legitimate business users." data-bn="সরবরাহকারীর তথ্য সুরক্ষিত রাখুন এবং বৈধ ব্যবসায়িক ব্যবহারকারীদের মধ্যে প্রবেশাধিকার সীমিত রাখুন।">Protect supplier information and limit access to legitimate business users.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-6">
+      <div class="feature-head"><div class="num">06</div><h3 data-en="Expense Management" data-bn="খরচ ব্যবস্থাপনা">Expense Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Record a business expense with the correct date, category and amount." data-bn="সঠিক তারিখ, শ্রেণি ও অর্থের পরিমাণ দিয়ে ব্যবসায়িক খরচ রেকর্ড করুন।">Record a business expense with the correct date, category and amount.</li>
+        <li data-en="Add a useful description so the reason for the expense can be understood later." data-bn="পরে খরচের কারণ বোঝা যায় এমন একটি উপযুক্ত বিবরণ যোগ করুন।">Add a useful description so the reason for the expense can be understood later.</li>
+        <li data-en="Keep supporting receipts or documents where they are needed for your records." data-bn="আপনার রেকর্ডের জন্য প্রয়োজন হলে সংশ্লিষ্ট রসিদ বা নথি সংরক্ষণ করুন।">Keep supporting receipts or documents where they are needed for your records.</li>
+        <li data-en="Review expenses regularly to identify incorrect entries or unusual amounts." data-bn="ভুল তথ্য বা অস্বাভাবিক অর্থের পরিমাণ শনাক্ত করতে নিয়মিত খরচ পর্যালোচনা করুন।">Review expenses regularly to identify incorrect entries or unusual amounts.</li>
+        <li data-en="Use expense information in reports only after checking the underlying records." data-bn="রিপোর্টে খরচের তথ্য ব্যবহার করার আগে মূল রেকর্ড যাচাই করুন।">Use expense information in reports only after checking the underlying records.</li>
+        <li data-en="Do not intentionally record false expenses or manipulate financial information." data-bn="ইচ্ছাকৃতভাবে মিথ্যা খরচ রেকর্ড বা আর্থিক তথ্য বিকৃত করবেন না।">Do not intentionally record false expenses or manipulate financial information.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-7">
+      <div class="feature-head"><div class="num">07</div><h3 data-en="Reports & Business Summary" data-bn="রিপোর্ট ও ব্যবসায়িক সারসংক্ষেপ">Reports & Business Summary</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Open the reporting area to review available business summaries." data-bn="উপলভ্য ব্যবসায়িক সারসংক্ষেপ দেখতে রিপোর্ট অংশ খুলুন।">Open the reporting area to review available business summaries.</li>
+        <li data-en="Select the relevant period or reporting scope when filters are available." data-bn="ফিল্টার সুবিধা থাকলে প্রয়োজনীয় সময়সীমা বা রিপোর্টের পরিধি নির্বাচন করুন।">Select the relevant period or reporting scope when filters are available.</li>
+        <li data-en="Compare sales, purchases, expenses, stock and other supported indicators." data-bn="বিক্রয়, ক্রয়, খরচ, মজুত এবং অন্যান্য সমর্থিত সূচক তুলনা করুন।">Compare sales, purchases, expenses, stock and other supported indicators.</li>
+        <li data-en="Verify unusual results against the underlying transaction records." data-bn="অস্বাভাবিক ফলাফল দেখা গেলে মূল লেনদেনের রেকর্ডের সঙ্গে মিলিয়ে যাচাই করুন।">Verify unusual results against the underlying transaction records.</li>
+        <li data-en="Use reports as decision-support information rather than as an independent accounting authority." data-bn="রিপোর্টকে সিদ্ধান্ত গ্রহণে সহায়ক তথ্য হিসেবে ব্যবহার করুন, স্বতন্ত্র হিসাবরক্ষণ কর্তৃপক্ষ হিসেবে নয়।">Use reports as decision-support information rather than as an independent accounting authority.</li>
+        <li data-en="Keep separate professional accounting records where your business or law requires them." data-bn="আপনার ব্যবসা বা আইন অনুযায়ী প্রয়োজন হলে আলাদা পেশাদার হিসাবরক্ষণ রেকর্ড সংরক্ষণ করুন।">Keep separate professional accounting records where your business or law requires them.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-8">
+      <div class="feature-head"><div class="num">08</div><h3 data-en="Invoices & Receipts" data-bn="ইনভয়েস ও রসিদ">Invoices & Receipts</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create an invoice or receipt from the relevant transaction workflow." data-bn="সংশ্লিষ্ট লেনদেনের কার্যপ্রবাহ থেকে ইনভয়েস বা রসিদ তৈরি করুন।">Create an invoice or receipt from the relevant transaction workflow.</li>
+        <li data-en="Check customer, product, quantity, price, total and payment information before issuing it." data-bn="প্রদানের আগে গ্রাহক, পণ্য, পরিমাণ, মূল্য, মোট অর্থ এবং পেমেন্টের তথ্য যাচাই করুন।">Check customer, product, quantity, price, total and payment information before issuing it.</li>
+        <li data-en="Use consistent business details so documents remain clear and professional." data-bn="ব্যবসার তথ্য সঠিক ও সামঞ্জস্যপূর্ণ রাখুন, যাতে নথি পরিষ্কার ও পেশাদার থাকে।">Use consistent business details so documents remain clear and professional.</li>
+        <li data-en="Keep a copy of important transaction documents according to your record-keeping needs." data-bn="গুরুত্বপূর্ণ লেনদেনের নথি আপনার রেকর্ড সংরক্ষণের প্রয়োজন অনুযায়ী রেখে দিন।">Keep a copy of important transaction documents according to your record-keeping needs.</li>
+        <li data-en="Correct mistakes through the supported correction process rather than silently altering records." data-bn="রেকর্ড গোপনে পরিবর্তন না করে সমর্থিত সংশোধন পদ্ধতির মাধ্যমে ভুল ঠিক করুন।">Correct mistakes through the supported correction process rather than silently altering records.</li>
+        <li data-en="A generated document does not by itself determine whether a transaction complies with applicable law." data-bn="শুধু একটি তৈরি করা নথি কোনো লেনদেন প্রযোজ্য আইনের সঙ্গে সামঞ্জস্যপূর্ণ কি না তা নিজে থেকে নির্ধারণ করে না।">A generated document does not by itself determine whether a transaction complies with applicable law.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-9">
+      <div class="feature-head"><div class="num">09</div><h3 data-en="QR Product Verification" data-bn="কিউআর কোডের মাধ্যমে পণ্য যাচাই">QR Product Verification</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Open the verification feature or scan the supported product QR code." data-bn="যাচাই ফিচার খুলুন অথবা সমর্থিত পণ্যের কিউআর কোড স্ক্যান করুন।">Open the verification feature or scan the supported product QR code.</li>
+        <li data-en="Review the product information returned by the verification system." data-bn="যাচাই ব্যবস্থায় প্রদর্শিত পণ্যের তথ্য পর্যালোচনা করুন।">Review the product information returned by the verification system.</li>
+        <li data-en="Check the product identifier, verification status and relevant dates when shown." data-bn="প্রদর্শিত হলে পণ্যের শনাক্তকারী, যাচাইয়ের অবস্থা এবং সংশ্লিষ্ট তারিখ পরীক্ষা করুন।">Check the product identifier, verification status and relevant dates when shown.</li>
+        <li data-en="Do not assume a QR code alone proves physical authenticity unless the verification data supports that conclusion." data-bn="শুধু কিউআর কোড দেখেই পণ্যের বাস্তব সত্যতা নিশ্চিত ধরে নেবেন না; যাচাই তথ্যও বিবেচনা করুন।">Do not assume a QR code alone proves physical authenticity unless the verification data supports that conclusion.</li>
+        <li data-en="Report suspicious, duplicated or inconsistent verification information through the available support channel." data-bn="সন্দেহজনক, নকল বা অসামঞ্জস্যপূর্ণ যাচাই তথ্য পাওয়া গেলে উপলভ্য সহায়তা মাধ্যমে জানান।">Report suspicious, duplicated or inconsistent verification information through the available support channel.</li>
+        <li data-en="Verification results may depend on network access and the availability of the connected verification service." data-bn="যাচাইয়ের ফলাফল নেটওয়ার্ক সংযোগ ও সংযুক্ত যাচাই সেবার প্রাপ্যতার ওপর নির্ভর করতে পারে।">Verification results may depend on network access and the availability of the connected verification service.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-10">
+      <div class="feature-head"><div class="num">10</div><h3 data-en="Warranty Management" data-bn="ওয়ারেন্টি ব্যবস্থাপনা">Warranty Management</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Create a warranty record with the product, purchase and warranty information available to you." data-bn="উপলভ্য পণ্য, ক্রয় ও ওয়ারেন্টির তথ্য দিয়ে একটি ওয়ারেন্টি রেকর্ড তৈরি করুন।">Create a warranty record with the product, purchase and warranty information available to you.</li>
+        <li data-en="Enter the warranty start and end dates carefully." data-bn="ওয়ারেন্টি শুরুর ও শেষ হওয়ার তারিখ সতর্কতার সঙ্গে লিখুন।">Enter the warranty start and end dates carefully.</li>
+        <li data-en="Attach or reference supporting documents when the feature permits it." data-bn="ফিচারটি অনুমতি দিলে সহায়ক নথি সংযুক্ত বা রেফারেন্স হিসেবে রাখুন।">Attach or reference supporting documents when the feature permits it.</li>
+        <li data-en="Review warranty status before contacting a service provider or making a claim." data-bn="সেবা প্রদানকারীর সঙ্গে যোগাযোগ বা দাবি করার আগে ওয়ারেন্টির অবস্থা যাচাই করুন।">Review warranty status before contacting a service provider or making a claim.</li>
+        <li data-en="Use reminders as a convenience and do not rely on them as the only protection against expiry." data-bn="রিমাইন্ডারকে সহায়ক সুবিধা হিসেবে ব্যবহার করুন; মেয়াদ শেষ হওয়ার বিরুদ্ধে একমাত্র সুরক্ষা হিসেবে নির্ভর করবেন না।">Use reminders as a convenience and do not rely on them as the only protection against expiry.</li>
+        <li data-en="Warranty coverage itself is determined by the applicable seller, manufacturer or warranty provider." data-bn="ওয়ারেন্টির প্রকৃত সুবিধা ও শর্ত সংশ্লিষ্ট বিক্রেতা, প্রস্তুতকারক বা ওয়ারেন্টি প্রদানকারী নির্ধারণ করে।">Warranty coverage itself is determined by the applicable seller, manufacturer or warranty provider.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-11">
+      <div class="feature-head"><div class="num">11</div><h3 data-en="AI-Assisted Receipt Scanning" data-bn="কৃত্রিম বুদ্ধিমত্তা দিয়ে রসিদ স্ক্যান">AI-Assisted Receipt Scanning</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Capture or select a clear receipt image when the feature is available." data-bn="ফিচারটি চালু থাকলে পরিষ্কার রসিদের ছবি তুলুন বা নির্বাচন করুন।">Capture or select a clear receipt image when the feature is available.</li>
+        <li data-en="Allow the supported processing system to analyze the image and extract available information." data-bn="সমর্থিত প্রক্রিয়াকরণ ব্যবস্থা ছবিটি বিশ্লেষণ করে উপলভ্য তথ্য শনাক্ত করার সুযোগ দিন।">Allow the supported processing system to analyze the image and extract available information.</li>
+        <li data-en="Review every extracted field before saving it as a business record." data-bn="ব্যবসায়িক রেকর্ড হিসেবে সংরক্ষণের আগে শনাক্ত করা প্রতিটি তথ্য যাচাই করুন।">Review every extracted field before saving it as a business record.</li>
+        <li data-en="Correct recognition errors manually when text, numbers or dates are misread." data-bn="লেখা, সংখ্যা বা তারিখ ভুল শনাক্ত হলে নিজে হাতে সংশোধন করুন।">Correct recognition errors manually when text, numbers or dates are misread.</li>
+        <li data-en="Avoid uploading sensitive images unless you understand and accept the applicable processing and privacy conditions." data-bn="প্রযোজ্য প্রক্রিয়াকরণ ও গোপনীয়তার শর্ত বুঝে গ্রহণ না করা পর্যন্ত সংবেদনশীল ছবি আপলোড করা এড়িয়ে চলুন।">Avoid uploading sensitive images unless you understand and accept the applicable processing and privacy conditions.</li>
+        <li data-en="AI-generated extraction is an assistive result and should not be treated as guaranteed accuracy." data-bn="কৃত্রিম বুদ্ধিমত্তা থেকে পাওয়া তথ্য সহায়ক ফলাফল; এটিকে শতভাগ নির্ভুল বলে ধরে নেওয়া যাবে না।">AI-generated extraction is an assistive result and should not be treated as guaranteed accuracy.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-12">
+      <div class="feature-head"><div class="num">12</div><h3 data-en="Cloud Synchronization" data-bn="ক্লাউড সিঙ্ক্রোনাইজেশন">Cloud Synchronization</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Sign in to the supported account when cloud synchronization is enabled." data-bn="ক্লাউড সিঙ্ক্রোনাইজেশন চালু থাকলে সমর্থিত অ্যাকাউন্টে প্রবেশ করুন।">Sign in to the supported account when cloud synchronization is enabled.</li>
+        <li data-en="Allow the application to synchronize supported business records with the configured cloud service." data-bn="কনফিগার করা ক্লাউড সেবার সঙ্গে সমর্থিত ব্যবসায়িক রেকর্ড সিঙ্ক্রোনাইজ করার অনুমতি দিন।">Allow the application to synchronize supported business records with the configured cloud service.</li>
+        <li data-en="Keep a stable network connection when a large amount of data is being synchronized." data-bn="বড় পরিমাণ ডেটা সিঙ্ক্রোনাইজ করার সময় স্থিতিশীল নেটওয়ার্ক সংযোগ রাখুন।">Keep a stable network connection when a large amount of data is being synchronized.</li>
+        <li data-en="Check the latest synchronization status before assuming that every recent change has reached the cloud." data-bn="সাম্প্রতিক সব পরিবর্তন ক্লাউডে পৌঁছেছে ধরে নেওয়ার আগে সর্বশেষ সিঙ্কের অবস্থা যাচাই করুন।">Check the latest synchronization status before assuming that every recent change has reached the cloud.</li>
+        <li data-en="Do not repeatedly edit the same record from multiple locations during an unresolved synchronization conflict." data-bn="সিঙ্ক্রোনাইজেশন সমস্যা সমাধান না হওয়া পর্যন্ত একই রেকর্ড একাধিক জায়গা থেকে বারবার পরিবর্তন করবেন না।">Do not repeatedly edit the same record from multiple locations during an unresolved synchronization conflict.</li>
+        <li data-en="Cloud availability depends on the configured provider, network connectivity and service status." data-bn="ক্লাউড সেবার প্রাপ্যতা সংশ্লিষ্ট প্রদানকারী, নেটওয়ার্ক সংযোগ ও সেবার অবস্থার ওপর নির্ভর করে।">Cloud availability depends on the configured provider, network connectivity and service status.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-13">
+      <div class="feature-head"><div class="num">13</div><h3 data-en="Google Drive Backup" data-bn="Google Drive ব্যাকআপ">Google Drive Backup</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Connect the supported Google account only through the official authorization flow." data-bn="শুধু অফিসিয়াল অনুমোদন পদ্ধতির মাধ্যমে সমর্থিত Google অ্যাকাউন্ট সংযুক্ত করুন।">Connect the supported Google account only through the official authorization flow.</li>
+        <li data-en="Choose the backup operation when the feature is available in your app version." data-bn="আপনার অ্যাপের সংস্করণে সুবিধাটি থাকলে ব্যাকআপ কার্যক্রম নির্বাচন করুন।">Choose the backup operation when the feature is available in your app version.</li>
+        <li data-en="Confirm that the backup completes successfully before treating it as a reliable copy." data-bn="ব্যাকআপ সফলভাবে সম্পন্ন হয়েছে নিশ্চিত হওয়ার পরই সেটিকে নির্ভরযোগ্য কপি হিসেবে বিবেচনা করুন।">Confirm that the backup completes successfully before treating it as a reliable copy.</li>
+        <li data-en="Check the destination account and backup file or record when verification is available." data-bn="যাচাই সুবিধা থাকলে গন্তব্য অ্যাকাউন্ট এবং তৈরি হওয়া ব্যাকআপ ফাইল বা রেকর্ড পরীক্ষা করুন।">Check the destination account and backup file or record when verification is available.</li>
+        <li data-en="Protect the connected Google account because access to it may affect your backup availability." data-bn="সংযুক্ত Google অ্যাকাউন্ট সুরক্ষিত রাখুন, কারণ সেটির প্রবেশাধিকার ব্যাকআপ ব্যবহারে প্রভাব ফেলতে পারে।">Protect the connected Google account because access to it may affect your backup availability.</li>
+        <li data-en="Google Drive storage, availability and provider policies are controlled by Google and may change independently." data-bn="Google Drive-এর স্টোরেজ, প্রাপ্যতা ও সংশ্লিষ্ট নীতিমালা Google নিয়ন্ত্রণ করে এবং তা স্বাধীনভাবে পরিবর্তিত হতে পারে।">Google Drive storage, availability and provider policies are controlled by Google and may change independently.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-14">
+      <div class="feature-head"><div class="num">14</div><h3 data-en="Offline & Local Data" data-bn="অফলাইন ও স্থানীয় ডেটা">Offline & Local Data</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Use supported local functionality when network connectivity is unavailable." data-bn="নেটওয়ার্ক সংযোগ না থাকলে সমর্থিত স্থানীয় সুবিধা ব্যবহার করুন।">Use supported local functionality when network connectivity is unavailable.</li>
+        <li data-en="Understand that offline changes may remain on the device until synchronization becomes available." data-bn="বুঝে রাখুন যে অফলাইনে করা পরিবর্তন সিঙ্ক্রোনাইজেশন চালু না হওয়া পর্যন্ত ডিভাইসেই থাকতে পারে।">Understand that offline changes may remain on the device until synchronization becomes available.</li>
+        <li data-en="Avoid clearing application data or uninstalling the app before confirming that important information has been backed up." data-bn="গুরুত্বপূর্ণ তথ্য ব্যাকআপ হয়েছে নিশ্চিত না হয়ে অ্যাপের ডেটা মুছে ফেলা বা অ্যাপ আনইনস্টল করা এড়িয়ে চলুন।">Avoid clearing application data or uninstalling the app before confirming that important information has been backed up.</li>
+        <li data-en="Review synchronization status after reconnecting to the network." data-bn="নেটওয়ার্কে পুনরায় সংযুক্ত হওয়ার পর সিঙ্ক্রোনাইজেশনের অবস্থা যাচাই করুন।">Review synchronization status after reconnecting to the network.</li>
+        <li data-en="Local storage behavior can vary by operating-system settings, device storage and application updates." data-bn="স্থানীয় সংরক্ষণ ব্যবস্থা অপারেটিং সিস্টেমের সেটিংস, ডিভাইসের স্টোরেজ ও অ্যাপের আপডেট অনুযায়ী পরিবর্তিত হতে পারে।">Local storage behavior can vary by operating-system settings, device storage and application updates.</li>
+        <li data-en="Offline operation does not mean that every cloud-dependent feature will remain available without a network." data-bn="অফলাইনে অ্যাপ চলা মানে এই নয় যে নেটওয়ার্ক-নির্ভর সব ক্লাউড ফিচারও ইন্টারনেট ছাড়া চলবে।">Offline operation does not mean that every cloud-dependent feature will remain available without a network.</li>
+      </ol></div>
+    </article>
+
+    <article class="feature" id="feature-15">
+      <div class="feature-head"><div class="num">15</div><h3 data-en="Account & Data Controls" data-bn="অ্যাকাউন্ট ও ডেটা নিয়ন্ত্রণ">Account & Data Controls</h3></div>
+      <div class="feature-body"><ol>
+        <li data-en="Review your account settings and connected services periodically." data-bn="নিয়মিত আপনার অ্যাকাউন্টের সেটিংস ও সংযুক্ত সেবাগুলো পর্যালোচনা করুন।">Review your account settings and connected services periodically.</li>
+        <li data-en="Remove access or disconnect a service when you no longer need that connection, where supported." data-bn="সংযোগ আর প্রয়োজন না হলে, সুবিধাটি সমর্থিত থাকলে সংশ্লিষ্ট সেবার প্রবেশাধিকার সরিয়ে বা সংযোগ বিচ্ছিন্ন করুন।">Remove access or disconnect a service when you no longer need that connection, where supported.</li>
+        <li data-en="Keep only the business information necessary for your legitimate workflow." data-bn="আপনার বৈধ ব্যবসায়িক কার্যপ্রবাহের জন্য প্রয়োজনীয় তথ্যই সংরক্ষণ করুন।">Keep only the business information necessary for your legitimate workflow.</li>
+        <li data-en="Use available deletion, correction or account-management controls when appropriate." data-bn="প্রয়োজনে উপলভ্য তথ্য মুছে ফেলা, সংশোধন বা অ্যাকাউন্ট ব্যবস্থাপনার সুবিধা ব্যবহার করুন।">Use available deletion, correction or account-management controls when appropriate.</li>
+        <li data-en="Before deleting important data, confirm that you have any backup or export you still need." data-bn="গুরুত্বপূর্ণ তথ্য মুছে ফেলার আগে আপনার প্রয়োজনীয় ব্যাকআপ বা রপ্তানিকৃত কপি রয়েছে কি না নিশ্চিত করুন।">Before deleting important data, confirm that you have any backup or export you still need.</li>
+        <li data-en="For personal-information handling, also review the MyShop Privacy Policy and applicable provider policies." data-bn="ব্যক্তিগত তথ্য ব্যবস্থাপনার জন্য MyShop-এর গোপনীয়তা নীতি এবং প্রযোজ্য প্রদানকারীর নীতিমালাও পর্যালোচনা করুন।">For personal-information handling, also review the MyShop Privacy Policy and applicable provider policies.</li>
+      </ol></div>
+    </article>
+  </section>
+
+  <section class="card" id="acceptable">
+    <span class="section-label" data-en="09 · USE RULES" data-bn="০৯ · ব্যবহারের নিয়ম">09 · USE RULES</span>
+    <h2 data-en="Acceptable Use" data-bn="গ্রহণযোগ্য ব্যবহার">Acceptable Use</h2>
+    <p data-en="You agree to use MyShop lawfully, safely and responsibly. You must not attempt unauthorized access, intentionally disrupt the service, introduce malicious code, abuse authentication mechanisms, manipulate records for unlawful purposes, or use the service to violate applicable law or another person's rights."
+       data-bn="আপনি MyShop আইনসম্মত, নিরাপদ ও দায়িত্বশীলভাবে ব্যবহার করতে সম্মত হচ্ছেন। অননুমোদিত প্রবেশের চেষ্টা, ইচ্ছাকৃতভাবে সেবা ব্যাহত করা, ক্ষতিকর কোড প্রবেশ করানো, প্রমাণীকরণ ব্যবস্থা অপব্যবহার করা, বেআইনি উদ্দেশ্যে রেকর্ড পরিবর্তন করা বা প্রযোজ্য আইন ও অন্যের অধিকার লঙ্ঘনের জন্য সেবাটি ব্যবহার করা যাবে না।">
+      You agree to use MyShop lawfully, safely and responsibly. You must not attempt unauthorized access, intentionally disrupt the service, introduce malicious code, abuse authentication mechanisms, manipulate records for unlawful purposes, or use the service to violate applicable law or another person's rights.
+    </p>
+  </section>
+
+  <section class="card" id="thirdparty">
+    <span class="section-label" data-en="10 · INTEGRATIONS" data-bn="১০ · সংযুক্ত সেবা">10 · INTEGRATIONS</span>
+    <h2 data-en="Third-Party Services & External Policies" data-bn="তৃতীয় পক্ষের সেবা ও বাহ্যিক নীতিমালা">Third-Party Services & External Policies</h2>
+    <p data-en="MyShop may use third-party infrastructure or integrations for authentication, cloud database, hosting, storage, synchronization, AI-assisted processing and related functionality. The third party's own terms and privacy practices may also apply."
+       data-bn="MyShop প্রমাণীকরণ, ক্লাউড ডেটাবেস, হোস্টিং, স্টোরেজ, সিঙ্ক্রোনাইজেশন, কৃত্রিম বুদ্ধিমত্তা-সহায়তাপ্রাপ্ত প্রক্রিয়াকরণ এবং সংশ্লিষ্ট সুবিধার জন্য তৃতীয় পক্ষের অবকাঠামো বা সংযুক্ত সেবা ব্যবহার করতে পারে। সংশ্লিষ্ট তৃতীয় পক্ষের নিজস্ব শর্তাবলি ও গোপনীয়তা নীতিও প্রযোজ্য হতে পারে।">
+      MyShop may use third-party infrastructure or integrations for authentication, cloud database, hosting, storage, synchronization, AI-assisted processing and related functionality. The third party's own terms and privacy practices may also apply.
+    </p>
+
+    <div class="link-grid">
+      <a class="external" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+        <span data-en="Google Privacy Policy" data-bn="Google গোপনীয়তা নীতি">Google Privacy Policy</span>
+        <small data-en="Official provider policy" data-bn="অফিসিয়াল সেবা প্রদানকারীর নীতি">Official provider policy</small>
+      </a>
+      <a class="external" href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">
+        <span data-en="Google Terms of Service" data-bn="Google সেবার শর্তাবলি">Google Terms of Service</span>
+        <small data-en="Official provider terms" data-bn="অফিসিয়াল সেবা প্রদানকারীর শর্ত">Official provider terms</small>
+      </a>
+      <a class="external" href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">
+        <span data-en="Firebase Privacy & Security" data-bn="Firebase গোপনীয়তা ও নিরাপত্তা">Firebase Privacy & Security</span>
+        <small data-en="Official Firebase information" data-bn="অফিসিয়াল Firebase তথ্য">Official Firebase information</small>
+      </a>
+      <a class="external" href="https://firebase.google.com/terms/" target="_blank" rel="noopener noreferrer">
+        <span data-en="Firebase Terms" data-bn="Firebase সেবার শর্তাবলি">Firebase Terms</span>
+        <small data-en="Official Firebase terms" data-bn="অফিসিয়াল Firebase শর্ত">Official Firebase terms</small>
+      </a>
+      <a class="external" href="https://www.googleapis.com/drive/v3/about" target="_blank" rel="noopener noreferrer">
+        <span data-en="Google Drive API Information" data-bn="Google Drive API তথ্য">Google Drive API Information</span>
+        <small data-en="Official Google Drive API information" data-bn="অফিসিয়াল Google Drive API তথ্য">Official Google Drive API information</small>
+      </a>
+    </div>
+  </section>
+
+  <section class="card" id="termination">
+    <span class="section-label" data-en="11 · TERMINATION" data-bn="১১ · অ্যাকাউন্ট বাতিলকরণ">11 · TERMINATION</span>
+    <h2 data-en="Account Suspension & Termination" data-bn="অ্যাকাউন্ট স্থগিত ও বাতিলকরণ">Account Suspension & Termination</h2>
+    <p data-en="We reserve the right to temporarily suspend or permanently terminate your access to MyShop at our discretion, without prior notice, if you breach these Terms, engage in fraudulent activities, or misuse our services."
+       data-bn="আপনি এই শর্তাবলি ভঙ্গ করলে, প্রতারণামূলক কর্মকাণ্ডে লিপ্ত হলে বা সেবার অপব্যবহার করলে, কোনো পূর্ব নোটিশ ছাড়াই MyShop-এ আপনার প্রবেশাধিকার সাময়িকভাবে স্থগিত বা স্থায়ীভাবে বাতিল করার পূর্ণ অধিকার আমরা সংরক্ষণ করি।">
+      We reserve the right to temporarily suspend or permanently terminate your access to MyShop at our discretion, without prior notice, if you breach these Terms, engage in fraudulent activities, or misuse our services.
+    </p>
+  </section>
+
+  <section class="card" id="limitation">
+    <span class="section-label" data-en="12 · DISCLAIMER" data-bn="১২ · দায়মুক্তি">12 · DISCLAIMER</span>
+    <h2 data-en="Limitation of Liability & Disclaimer" data-bn="দায়মুক্তি ও ওয়ারেন্টি দাবিত্যাগ">Limitation of Liability & Disclaimer</h2>
+    <p data-en="MyShop is provided on an 'AS IS' and 'AS AVAILABLE' basis. To the maximum extent permitted by applicable law, MyShop disclaims all warranties, express or implied. We shall not be liable for any direct, indirect, incidental, or consequential damages resulting from data loss, app downtime, or business interruption."
+       data-bn="MyShop সেবাটি 'যেমন আছে' এবং 'যেভাবে পাওয়া যায়' তার ভিত্তিতে প্রদান করা হয়। প্রযোজ্য আইনের সর্বোচ্চ সীমা পর্যন্ত, MyShop সকল প্রকার প্রত্যক্ষ বা পরোক্ষ ওয়ারেন্টি অস্বীকার করে। ডেটা হ্রাস, অ্যাপ ডাউনটাইম বা ব্যবসায়িক ক্ষতির মতো কোনো পরোক্ষ বা অনাকাঙ্ক্ষিত ক্ষতির জন্য MyShop কর্তৃপক্ষ দায়ী থাকবে না।">
+      MyShop is provided on an 'AS IS' and 'AS AVAILABLE' basis. To the maximum extent permitted by applicable law, MyShop disclaims all warranties, express or implied. We shall not be liable for any direct, indirect, incidental, or consequential damages resulting from data loss, app downtime, or business interruption.
+    </p>
+  </section>
+
+  <section class="card" id="security">
+    <span class="section-label" data-en="13 · PROTECTION" data-bn="১৩ · সুরক্ষা">13 · PROTECTION</span>
+    <h2 data-en="Security" data-bn="নিরাপত্তা">Security</h2>
+    <p data-en="MyShop is intended to use reasonable technical and organizational safeguards appropriate to its architecture. However, no internet-connected service, device or storage system can be guaranteed to be completely secure."
+       data-bn="MyShop-এর স্থাপত্য অনুযায়ী যুক্তিসঙ্গত প্রযুক্তিগত ও সাংগঠনিক নিরাপত্তা ব্যবস্থা ব্যবহারের উদ্দেশ্যে তৈরি করা হয়েছে। তবে কোনো ইন্টারনেট-সংযুক্ত সেবা, ডিভাইস বা সংরক্ষণ ব্যবস্থা সম্পূর্ণ নিরাপদ থাকার নিশ্চয়তা দিতে পারে না।">
+      MyShop is intended to use reasonable technical and organizational safeguards appropriate to its architecture. However, no internet-connected service, device or storage system can be guaranteed to be completely secure.
+    </p>
+    <p data-en="You should keep your device, operating system, browser or application environment updated and protect your authentication methods."
+       data-bn="আপনার ডিভাইস, অপারেটিং সিস্টেম, ব্রাউজার বা অ্যাপ পরিবেশ হালনাগাদ রাখুন এবং প্রমাণীকরণ পদ্ধতি সুরক্ষিত রাখুন।">
+      You should keep your device, operating system, browser or application environment updated and protect your authentication methods.
+    </p>
+  </section>
+
+  <section class="card" id="privacy">
+    <span class="section-label" data-en="14 · PRIVACY" data-bn="১৪ · গোপনীয়তা">14 · PRIVACY</span>
+    <h2 data-en="Privacy Policy" data-bn="গোপনীয়তা নীতি">Privacy Policy</h2>
+    <p data-en="The MyShop Privacy Policy explains how applicable personal information may be collected, used, stored, protected and managed. Read it together with these Terms."
+       data-bn="MyShop-এর গোপনীয়তা নীতিতে প্রযোজ্য ব্যক্তিগত তথ্য কীভাবে সংগ্রহ, ব্যবহার, সংরক্ষণ, সুরক্ষা ও ব্যবস্থাপনা করা হতে পারে তা ব্যাখ্যা করা হয়েছে। এই শর্তাবলির সঙ্গে গোপনীয়তা নীতিটিও পড়ুন।">
+      The MyShop Privacy Policy explains how applicable personal information may be collected, used, stored, protected and managed. Read it together with these Terms.
+    </p>
+    <a class="external" href="https://sohanshopbd.web.app/privacy" target="_blank" rel="noopener noreferrer">
+      <span data-en="Open MyShop Privacy Policy" data-bn="MyShop-এর গোপনীয়তা নীতি খুলুন">Open MyShop Privacy Policy</span>
+      <small data-en="https://sohanshopbd.web.app/privacy" data-bn="https://sohanshopbd.web.app/privacy">https://sohanshopbd.web.app/privacy</small>
+    </a>
+  </section>
+
+  <section class="card" id="changes">
+    <span class="section-label" data-en="15 · UPDATES" data-bn="১৫ · হালনাগাদ">15 · UPDATES</span>
+    <h2 data-en="Changes to These Terms" data-bn="এই শর্তাবলির পরিবর্তন">Changes to These Terms</h2>
+    <p data-en="MyShop may update these Terms when the service, features, legal requirements or operating practices change. The updated version will indicate a new effective or review date when appropriate."
+       data-bn="সেবা, ফিচার, আইনগত প্রয়োজনীয়তা বা পরিচালন পদ্ধতিতে পরিবর্তন হলে MyShop এই শর্তাবলি হালনাগাদ করতে পারে। প্রয়োজন অনুযায়ী হালনাগাদ সংস্করণে নতুন কার্যকর বা পর্যালোচনার তারিখ উল্লেখ করা হবে।">
+      MyShop may update these Terms when the service, features, legal requirements or operating practices change. The updated version will indicate a new effective or review date when appropriate.
+    </p>
+  </section>
+
+  <section class="card" id="governing">
+    <span class="section-label" data-en="16 · JURISDICTION" data-bn="১৬ · আইনি একতিয়ার">16 · JURISDICTION</span>
+    <h2 data-en="Governing Law & Jurisdiction" data-bn="পরিচালনা সংক্রান্ত আইন ও বিরোধ নিষ্পত্তি">Governing Law & Jurisdiction</h2>
+    <p data-en="These Terms shall be governed by and construed in accordance with the laws of Bangladesh. Any dispute arising out of or relating to these Terms or the use of MyShop shall be subject to the exclusive jurisdiction of the competent courts located in Bangladesh."
+       data-bn="এই শর্তাবলি বাংলাদেশের প্রচলিত আইন অনুযায়ী পরিচালিত ও ব্যাখ্যা করা হবে। MyShop বা এই শর্তাবলি থেকে উদ্ভূত যেকোনো আইনি বিরোধ নিষ্পত্তি কেবল বাংলাদেশের উপযুক্ত আদালতের একতিয়ারাধীন থাকবে।">
+      These Terms shall be governed by and construed in accordance with the laws of Bangladesh. Any dispute arising out of or relating to these Terms or the use of MyShop shall be subject to the exclusive jurisdiction of the competent courts located in Bangladesh.
+    </p>
+  </section>
+
+  <section class="card contact" id="contact">
+    <span class="section-label" data-en="17 · CONTACT" data-bn="১৭ · যোগাযোগ">17 · CONTACT</span>
+    <h2 data-en="Questions about MyShop?" data-bn="MyShop সম্পর্কে কোনো প্রশ্ন আছে?">Questions about MyShop?</h2>
+    <p data-en="For questions, privacy requests, security concerns or terms-related matters, contact the MyShop team using the official email below."
+       data-bn="প্রশ্ন, গোপনীয়তা-সংক্রান্ত অনুরোধ, নিরাপত্তা সমস্যা বা শর্তাবলি-সংক্রান্ত বিষয়ে নিচের অফিসিয়াল ইমেইলে MyShop টিমের সঙ্গে যোগাযোগ করুন।">
+      For questions, privacy requests, security concerns or terms-related matters, contact the MyShop team using the official email below.
+    </p>
+    <p><a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></p>
+    <p class="small" style="color:#cbdad5" data-en="Please do not send passwords, authentication codes or other highly sensitive credentials by email."
+       data-bn="ইমেইলের মাধ্যমে পাসওয়ার্ড, প্রমাণীকরণ কোড বা অত্যন্ত সংবেদনশীল গোপন তথ্য পাঠাবেন না।">
+      Please do not send passwords, authentication codes or other highly sensitive credentials by email.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <div data-en="© 2026 MyShop. All rights reserved." data-bn="© ২০২৬ MyShop। সর্বস্বত্ব সংরক্ষিত।">© 2026 MyShop. All rights reserved.</div>
+    <div style="margin-top:5px" data-en="Terms of Service · Version 1.1" data-bn="সেবার শর্তাবলি · সংস্করণ ১.১">Terms of Service · Version 1.1</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const body = document.body;
+  const enBtn = document.getElementById('enBtn');
+  const bnBtn = document.getElementById('bnBtn');
+
+  function setLanguage(lang){
+    const isBn = lang === 'bn';
+    document.documentElement.lang = isBn ? 'bn' : 'en';
+    body.classList.toggle('bn', isBn);
+
+    document.querySelectorAll('[data-en][data-bn]').forEach(el => {
+      el.textContent = isBn ? el.getAttribute('data-bn') : el.getAttribute('data-en');
+    });
+
+    enBtn.classList.toggle('active', !isBn);
+    bnBtn.classList.toggle('active', isBn);
+    localStorage.setItem('myshop_terms_language', lang);
+  }
+
+  enBtn.addEventListener('click', () => setLanguage('en'));
+  bnBtn.addEventListener('click', () => setLanguage('bn'));
+
+  const saved = localStorage.getItem('myshop_terms_language');
+  setLanguage(saved === 'bn' ? 'bn' : 'en');
+})();
+</script>
+</body>
+</html>
+
