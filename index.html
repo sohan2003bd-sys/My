@@ -9772,6 +9772,21 @@ async function loadShopData(uid){
   if(typeof SCALABLE_MODE !== 'undefined' && SCALABLE_MODE && window.MYSHOP_SCALABLE_LOAD_V22){
     try{
       if(window.MYSHOP_SCALABLE_BOOT_V26 && typeof window.MYSHOP_SCALABLE_BOOT_V26.boot==='function') await window.MYSHOP_SCALABLE_BOOT_V26.boot();
+      // BUGFIX: repairLedgerKeyStructure() used to run AFTER the bounded/paginated
+      // load below. That load's page() primitive walks each module's Firebase
+      // children with orderByKey() cursor pagination, which assumes keys sort in
+      // a stable, insertion-consistent order. Accounts whose sales/purchases/
+      // expenses were originally written with legacy array-index keys (0,1,2…,
+      // from before buildLegacySafeDatasetUpdate() existed) break that assumption —
+      // Firebase sorts those keys lexicographically ("0","1","10","11","2"…), so
+      // the cursor can skip or truncate records long before reaching the end of a
+      // large collection. On a brand-new device (empty local state, nothing to
+      // fall back on) this silently produced a partial — sometimes near-empty —
+      // Sales/Purchase/Expense list after signing in with an existing account,
+      // while Orders (already id-keyed) loaded completely. Running the repair
+      // first, before any paginated read depends on key order, ensures every
+      // affected module is normalized to id-keyed children beforehand.
+      try{ await repairLedgerKeyStructure(uid); }catch(_e){}
       // Keep a snapshot of the local cache before the cloud loader replaces state.
       const localRecovery={sales:state.sales,purchases:state.purchases,expenses:state.expenses,warrantyClaims:state.warrantyClaims,invItems:state.invItems,orders:state.orders};
       const result=await window.MYSHOP_SCALABLE_LOAD_V22.load(uid);
@@ -9786,7 +9801,6 @@ async function loadShopData(uid){
       ensureIdCounterAheadOfState();
       backfillInventoryLinks();
       cacheStateLocally(false); // cache only; never rewrite the whole Firebase tree on startup
-      try{ await repairLedgerKeyStructure(uid); }catch(_e){}
       try{ localStorage.setItem('myshop_scalable_ready_v26','1'); }catch(e){}
       return result;
     }catch(scalableErr){
@@ -9800,6 +9814,10 @@ async function loadShopData(uid){
   }
 
   if(window.MYSHOP_SCALABLE_LOAD_V22 && typeof window.MYSHOP_SCALABLE_LOAD_V22.page==='function'){
+    // Same key-structure hazard as the primary scalable-load branch above (see its
+    // comment) — this fallback path also cursor-paginates sales/purchases/expenses
+    // by Firebase key, so it needs the same repair-before-read ordering.
+    try{ await repairLedgerKeyStructure(uid); }catch(_e){}
     const pageFn=window.MYSHOP_SCALABLE_LOAD_V22.page;
     const size=100;
     const modules=['sales','purchases','expenses','warrantyClaims','invItems'];
@@ -11748,7 +11766,19 @@ function fmtMoney(n){
   const v = isFinite(n) ? n : 0;
   return state.company.currency + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
-function sortKey(t){ return t.date + '_' + String(t.id).padStart(8,'0'); }
+// আগে শুধু t.date (দিন-ভিত্তিক তারিখ) দিয়ে সর্ট হতো, তাই একই দিনের একাধিক এন্ট্রি বা
+// এডিট করা পুরনো এন্ট্রি "সর্বশেষ" হিসেবে লিস্টের উপরে আসত না — শুধু id (insertion
+// order) দিয়ে টাই-ব্রেক হতো, যেটা এডিটের সময় বদলায় না। এখন t.enteredAt (প্রতিটা
+// সেভ/এডিটে রিফ্রেশ হয়, দ্র. saveTxn) দিয়ে দিন-এর ভেতরের প্রকৃত ক্রম ঠিক হয় — সেভ করা
+// সবচেয়ে সাম্প্রতিক এন্ট্রিই দিনের ভেতরে সবার উপরে থাকবে। enteredAt না থাকা পুরনো
+// রেকর্ডে id-ভিত্তিক আগের আচরণেই fallback করে, যাতে বিদ্যমান ডেটার ক্রম না ভাঙে।
+function sortKey(t){
+  const dayPart = t.date || '';
+  const timePart = Number.isFinite(t.enteredAt)
+    ? String(t.enteredAt).padStart(14,'0')
+    : ('00000000000000_' + String(t.id).padStart(8,'0'));
+  return dayPart + '_' + timePart;
+}
 function fmtDate(iso){
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
@@ -12806,7 +12836,12 @@ function saveTxn(e){
     warrantyTerms: type === 'sales' ? document.getElementById('fWarrantyTerms').value.trim() : undefined,
     payment: document.getElementById('fPayment').value,
     notes: document.getElementById('fNotes').value.trim(),
-    total
+    total,
+    // sortKey()-এর জন্য — নতুন এন্ট্রি বা এডিট, দুই ক্ষেত্রেই "এখন" সেভ হওয়ার সময়টা রেকর্ড
+    // হয়। শুধু তারিখ (date, দিন-ভিত্তিক) দিয়ে সর্ট করলে একই দিনের একাধিক এন্ট্রি বা এডিট করা
+    // পুরনো এন্ট্রি লিস্টের উপরে আসত না — এই ফিল্ড দিয়ে "সর্বশেষ যা ছোঁয়া হয়েছে" সেটাই
+    // সবার উপরে থাকবে।
+    enteredAt: Date.now()
   });
   const list = getListFor(type);
   // Capture the pending-patch state before this save. The durable transaction
@@ -15698,14 +15733,14 @@ function renderCourierSummaryStrip(){
 // to re-render the summary strip every time.
 function renderCourierOrdersList(){
   const tab = currentCourierTab;
-  const list = state.orders.filter(o => {
+  const list = sortForDisplay(state.orders.filter(o => {
     if((o.status || 'pending') !== 'confirmed') return false;
     const cstatus = (o.courier && o.courier.status) || 'not_booked';
     if(tab === 'pending') return cstatus === 'not_booked' || cstatus === 'booking';
     if(tab === 'booked') return cstatus === 'booked' || cstatus === 'in_transit' || cstatus === 'delivered';
     if(tab === 'rejected') return cstatus === 'rejected';
     return true; // all
-  });
+  }));
   const hintEl = document.getElementById('courierPageTabHint');
   if(hintEl) hintEl.textContent = COURIER_TAB_HINTS[tab] || '';
   const bulkBar = document.getElementById('courierBulkBar');
@@ -17113,6 +17148,25 @@ function renderAiFraudTab(){
 // অর্ডারটা সরাসরি পাঠানো যাবে (COD), নাকি আগে পেমেন্ট (bKash/Nagad/Rocket/Bank) যাচাই করতে হবে।
 function isCODOrder(o){ return (o.paymentMethod || '').trim() === 'Cash on Delivery'; }
 
+// state.orders নিজে createdAt দিয়েই সাজানো থাকে (Firebase-এর orderByChild('createdAt')
+// কার্সার/পেজিনেশনের সাথে সরাসরি জড়িত — দ্র. sortRows() এবং setCursorFromRows(), ওগুলো
+// বদলানো যাবে না, নাহলে পুরোনো অর্ডার লোড করা ভেঙে যাবে)। কিন্তু ব্যবহারকারীর প্রত্যাশা
+// হলো "সবচেয়ে সাম্প্রতিক যা ছোঁয়া হয়েছে" সবার উপরে — একটা অর্ডার Confirm করলে সেটা
+// createdAt-এ অপরিবর্তিতই থাকে (তৈরির সময়), তাই পুরনো জায়গাতেই থেকে যেত, উপরে আসত না।
+// এই ফাংশনটা শুধু রেন্ডারের ঠিক আগে, একটা কপি-অ্যারেতে প্রয়োগ হয় — state.orders বা
+// পেজিনেশন কার্সারের সাথে সম্পর্কিত কিছুই এটা স্পর্শ করে না।
+function orderDisplayKey(o){
+  return Math.max(
+    Number(o.createdAt) || 0,
+    Number(o.confirmedAt) || 0,
+    Number(o.cancelledAt) || 0,
+    Number(o.courier && o.courier.bookedAt) || 0
+  );
+}
+function sortForDisplay(list){
+  return list.slice().sort((a,b) => orderDisplayKey(b) - orderDisplayKey(a));
+}
+
 const ORDER_TAB_HINTS = {
   cod: 'এই অর্ডারগুলোর পেমেন্ট এখনো নেওয়া হয়নি — ডেলিভারির সময় ক্যাশ সংগ্রহ করুন।',
   verify: 'কাস্টমার ইতিমধ্যে bKash/Nagad/Rocket/Bank-এ টাকা পাঠিয়েছে বলে জানিয়েছে — TrxID ও Reference মিলিয়ে নিশ্চিত করার পর Confirm করুন।',
@@ -17123,13 +17177,13 @@ const ORDER_TAB_HINTS = {
 
 function renderOrders(){
   const tab = state.currentOrderTab;
-  const list = state.orders.filter(o => {
+  const list = sortForDisplay(state.orders.filter(o => {
     const status = o.status || 'pending';
     if(tab === 'all') return true;
     if(tab === 'cod') return status === 'pending' && isCODOrder(o);
     if(tab === 'verify') return status === 'pending' && !isCODOrder(o);
     return status === tab;
-  });
+  }));
   const hintEl = document.getElementById('orderTabHint');
   if(hintEl) hintEl.textContent = ORDER_TAB_HINTS[tab] || '';
   const box = document.getElementById('ordersList');
