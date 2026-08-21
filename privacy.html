@@ -1,634 +1,1178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="MyShop Privacy Policy — premium bilingual English and Bengali privacy policy.">
-<meta name="theme-color" content="#0b2721">
-<title>MyShop — Privacy Policy</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>গোপনীয়তা নীতি — MY SHOP</title>
+<meta name="description" content="MY SHOP বিজনেস লেজার অ্যাপের সম্পূর্ণ গোপনীয়তা নীতি">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f5ead0;
-  --paper:#fffdf8;
-  --paper2:#f8f4ea;
-  --ink:#14231f;
-  --muted:#65736d;
-  --green:#0b2721;
-  --green2:#123832;
-  --gold:#d4af37;
-  --gold2:#f1d77a;
-  --line:#e7dcc4;
-  --danger:#8c3f2f;
-  --shadow:0 18px 55px rgba(11,39,33,.12);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  color:var(--ink);
-  background:
-    radial-gradient(circle at 8% 0%,rgba(212,175,55,.18),transparent 27%),
-    radial-gradient(circle at 92% 16%,rgba(18,56,50,.09),transparent 25%),
-    linear-gradient(135deg,#f5ead0,#fffaf0 52%,#f2e5c7);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  line-height:1.72;
-}
-body.bn{font-family:"Noto Sans Bengali","Noto Sans",system-ui,sans-serif}
-a{color:inherit}
-button{font:inherit}
-.wrap{max-width:1080px;margin:auto;padding:14px 14px 60px}
+  :root{
+    --maroon:#6E1423;
+    --maroon-deep:#4A0E19;
+    --ink:#232323;
+    --ink-soft:#4b4440;
+    --paper:#F7F1E1;
+    --paper-card:#FFFDF7;
+    --gold:#A9812F;
+    --gold-bright:#C79A3E;
+    --rule:#e4d9bd;
+    --shadow: 0 10px 30px -12px rgba(74,14,25,0.25);
+    --radius: 8px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Hind Siliguri','Inter',sans-serif;font-size:15.8px;line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Anek Bangla','Inter',sans-serif;}
+  a{color:var(--maroon);}
+  ::selection{background:var(--gold-bright);color:#2a1b06;}
 
-/* topbar */
-.topbar{
-  position:sticky;top:8px;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:9px 10px;
-  margin-bottom:16px;
-  border:1px solid rgba(18,56,50,.12);
-  border-radius:20px;
-  background:rgba(255,253,248,.90);
-  backdrop-filter:blur(18px);
-  box-shadow:0 10px 30px rgba(11,39,33,.08);
-}
-.brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:900}
-.logo{
-  width:39px;height:39px;border-radius:13px;
-  display:grid;place-items:center;
-  background:var(--green);color:var(--gold2);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-}
-.brand-name{font-size:16px;letter-spacing:.02em}
-.lang{
-  display:flex;align-items:center;gap:4px;
-  padding:4px;border-radius:13px;background:#eee4cf;
-}
-.lang button{
-  border:0;cursor:pointer;
-  padding:8px 13px;border-radius:10px;
-  background:transparent;color:var(--green);
-  font-weight:850;font-size:13px;
-}
-.lang button.active{background:var(--green);color:#fff}
+  body:not(.lang-en) .lang-en{display:none;}
+  body.lang-en .lang-bn{display:none;}
 
-/* hero */
-.hero{
-  position:relative;overflow:hidden;
-  border-radius:32px;
-  padding:44px 30px 34px;
-  margin-bottom:20px;
-  color:#fff;
-  background:
-    radial-gradient(circle at 88% 18%,rgba(241,215,122,.25),transparent 20%),
-    radial-gradient(circle at 72% 90%,rgba(255,255,255,.08),transparent 28%),
-    linear-gradient(135deg,var(--green),var(--green2));
-  box-shadow:var(--shadow);
-}
-.hero:before{
-  content:"";position:absolute;width:260px;height:260px;
-  right:-100px;top:-120px;border-radius:50%;
-  border:1px solid rgba(241,215,122,.25);
-  box-shadow:0 0 0 28px rgba(241,215,122,.035),0 0 0 58px rgba(241,215,122,.025);
-}
-.eyebrow{
-  display:inline-flex;
-  padding:7px 13px;border:1px solid rgba(241,215,122,.42);
-  border-radius:999px;color:var(--gold2);
-  font-size:12px;font-weight:900;letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.hero h1{
-  position:relative;z-index:1;
-  max-width:820px;margin:17px 0 12px;
-  font-size:clamp(35px,7vw,66px);
-  line-height:1.02;letter-spacing:-.035em;
-}
-.hero p{
-  position:relative;z-index:1;
-  max-width:760px;margin:0;
-  color:#dce8e3;font-size:16px;
-}
-.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.pill{
-  padding:7px 11px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.15);
-  background:rgba(255,255,255,.07);
-  color:#e0eae6;font-size:12px;
-}
-.pill-code{
-  display:inline-block;
-  font-family:monospace;
-  font-size:13px;
-  background:#eee4cf;
-  color:var(--green);
-  padding:3px 10px;
-  border-radius:8px;
-  font-weight:bold;
-}
+  .lang-toggle{
+    position:fixed;top:14px;right:14px;z-index:80;display:flex;gap:2px;
+    background:rgba(255,253,247,0.96);border:1px solid var(--rule);border-radius:999px;
+    padding:3px;box-shadow:var(--shadow);backdrop-filter:blur(6px);
+  }
+  .lang-toggle button{
+    border:none;background:transparent;padding:7px 15px;font-family:'IBM Plex Mono',monospace;
+    font-size:12.3px;font-weight:600;letter-spacing:.03em;border-radius:999px;cursor:pointer;
+    color:var(--ink-soft);transition:all .18s ease;
+  }
+  .lang-toggle button.active{background:var(--maroon);color:#F6E4C0;}
 
-/* cards */
-.card{
-  margin:16px 0;
-  padding:27px;
-  border:1px solid var(--line);
-  border-radius:24px;
-  background:rgba(255,253,248,.96);
-  box-shadow:0 8px 30px rgba(107,84,32,.055);
-}
-.card h2{margin:0 0 10px;color:var(--green);font-size:25px;line-height:1.2}
-.card h3{margin:20px 0 7px;color:var(--green2);font-size:18px}
-.card p,.card li{font-size:15px}
-.card ul{padding-left:21px;margin:10px 0}
-.card li{margin:7px 0}
-.notice{
-  margin-top:16px;
-  padding:15px 16px;
-  border-left:4px solid var(--gold);
-  border-radius:13px;
-  background:#fff6dc;
-}
-.section-label{
-  display:inline-block;
-  padding:6px 10px;
-  border:1px solid #d9c68c;
-  border-radius:999px;
-  color:#816816;
-  font-size:11px;font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-/* summary list */
-.summary-list{list-style:none;padding:0;margin:15px 0 0}
-.summary-list li{
-  display:flex;align-items:flex-start;gap:12px;
-  padding:12px 0;border-top:1px solid var(--line);
-}
-.summary-list li:first-child{border-top:none}
-.summary-ico{
-  flex:0 0 24px;width:24px;height:24px;border-radius:8px;
-  background:var(--green);color:var(--gold2);
-  display:grid;place-items:center;font-weight:bold;font-size:13px;
-}
-
-/* badge grid */
-.badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:15px}
-.badge-item{
-  padding:12px 16px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#faf5e9;
-  color:var(--green);
-  font-weight:700;
-  font-size:14px;
-  display:flex;align-items:center;gap:10px;
-}
-
-/* tables */
-.data-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px}
-.data-table th, .data-table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
-.data-table th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;background:var(--paper2)}
-
-/* policy links */
-.link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}
-.external{
-  display:block;
-  padding:14px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:#faf5e9;
-  text-decoration:none;
-  color:var(--green);
-  font-weight:850;
-}
-.external small{display:block;margin-top:3px;color:var(--muted);font-weight:600}
-.contact{
-  color:#fff;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  border-color:var(--green);
-}
-.contact h2{color:#fff}
-.contact a{color:var(--gold2);font-weight:850}
-.footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
-.small{font-size:13px!important;color:var(--muted)}
-
-@media(max-width:650px){
-  .wrap{padding:9px 10px 45px}
-  .topbar{top:5px;border-radius:17px}
-  .brand-name{display:none}
-  .hero{padding:34px 21px 28px;border-radius:25px}
-  .hero h1{font-size:39px}
-  .card{padding:21px 17px;border-radius:19px}
-  .data-table th, .data-table td{padding:8px}
-}
-@media(print){
-  .topbar{position:static}
-  .lang{display:none}
-}
-</style>
-</head>
-
-<body>
-<div class="wrap">
-
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">M</div>
-      <div class="brand-name">MyShop</div>
-    </div>
-    <div class="lang" aria-label="Language">
-      <button id="enBtn" class="active" type="button">English</button>
-      <button id="bnBtn" type="button">বাংলা</button>
-    </div>
-  </header>
-
-  <section class="hero">
-    <span class="eyebrow" data-en="PRIVACY POLICY" data-bn="গোপনীয়তা নীতি">PRIVACY POLICY</span>
-    <h1 data-en="Your privacy. Protected by design."
-        data-bn="আপনার গোপনীয়তা। শতভাগ সুরক্ষার নিশ্চয়তা।">
-      Your privacy. Protected by design.
-    </h1>
-    <p data-en="MY SHOP — Business Ledger is built to give you total control over your business data with complete privacy, transparent practices, and zero unauthorized access."
-       data-bn="MY SHOP — বিজনেস লেজার আপনার ব্যবসায়িক ডেটার ওপর পূর্ণ নিয়ন্ত্রণ, সর্বোচ্চ স্বচ্ছতা এবং সম্পূর্ণ অননুমোদিত প্রবেশমুক্ত নিরাপত্তা নিশ্চিত করে।">
-      MY SHOP — Business Ledger is built to give you total control over your business data with complete privacy, transparent practices, and zero unauthorized access.
-    </p>
-    <div class="meta">
-      <span class="pill" data-en="Last updated: August 2, 2026" data-bn="সর্বশেষ হালনাগাদ: ২ আগস্ট ২০২৬">Last updated: August 2, 2026</span>
-      <span class="pill" data-en="Version 1.0" data-bn="সংস্করণ ১.০">Version 1.0</span>
-      <span class="pill" data-en="Business Ledger" data-bn="বিজনেস লেজার">Business Ledger</span>
-    </div>
-  </section>
-
-  <!-- SUMMARY -->
-  <section class="card" id="summary" style="background: linear-gradient(160deg, #f0f7f4 0%, #fffdf8 100%);">
-    <span class="section-label" data-en="IN SHORT" data-bn="সংক্ষেপে">IN SHORT</span>
-    <h2 data-en="Key Highlights" data-bn="প্রধান বিষয়সমূহ">Key Highlights</h2>
-    <ul class="summary-list">
-      <li>
-        <span class="summary-ico">✓</span>
-        <span data-en="Your ledger data is tied to your own account and protected by per-account access rules."
-              data-bn="আপনার লেজার ডেটা আপনার অ্যাকাউন্টের সঙ্গে সংযুক্ত এবং অ্যাকাউন্ট-ভিত্তিক নিরাপত্তা নিয়ম দিয়ে সুরক্ষিত।">
-          Your ledger data is tied to your own account and protected by per-account access rules.
-        </span>
-      </li>
-      <li>
-        <span class="summary-ico">✓</span>
-        <span data-en="Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere."
-              data-bn="ঐচ্ছিক ব্যাকআপ কেবল আপনার ব্যক্তিগত ও লুকানো Google Drive স্পেসে সংরক্ষিত হয় — অন্য কোথাও কপি করা হয় না।">
-          Optional backup goes only to your own private, hidden Google Drive space — never copied elsewhere.
-        </span>
-      </li>
-      <li>
-        <span class="summary-ico">✓</span>
-        <span data-en="No other user, app, or person can ever see your data or backup — not even our team, by design."
-              data-bn="অন্য কোনো ব্যবহারকারী, অ্যাপ বা ব্যক্তি আপনার ডেটা বা ব্যাকআপ দেখতে পাবে না — এমনকি আমাদের টিমও নয়।">
-          No other user, app, or person can ever see your data or backup — not even our team, by design.
-        </span>
-      </li>
-      <li>
-        <span class="summary-ico">✓</span>
-        <span data-en="We never sell your data, share it with advertisers, or run ads in the App."
-              data-bn="আমরা কখনোই আপনার ডেটা বিক্রি করি না, বিজ্ঞাপনদাতাদের সঙ্গে শেয়ার করি না বা অ্যাপে বিজ্ঞাপন দেখাই না।">
-          We never sell your data, share it with advertisers, or run ads in the App.
-        </span>
-      </li>
-    </ul>
-  </section>
-
-  <!-- SECTION 1 -->
-  <section class="card" id="s1">
-    <span class="section-label" data-en="01 · OVERVIEW" data-bn="০১ · পরিচিতি">01 · OVERVIEW</span>
-    <h2 data-en="1. Who We Are" data-bn="১. আমরা কারা">1. Who We Are</h2>
-    <p data-en="MY SHOP ('the App', 'we', 'us', 'our') is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step."
-       data-bn="MY SHOP ('অ্যাপ', 'আমরা') হলো দোকান মালিকদের জন্য তৈরি একটি ব্যবসায়িক লেজার অ্যাপ, যার মাধ্যমে বিক্রয়, ক্রয়, খরচ এবং গ্রাহকদের সরাসরি অর্ডার ট্র্যাক করা যায়। এই নীতিমালায় বিস্তারিত ব্যাখ্যা করা হয়েছে যে অ্যাপটি কী কী তথ্য ব্যবহার করে, কোথায় সংরক্ষণ করে এবং কীভাবে তা সুরক্ষিত রাখে।">
-      MY SHOP ("the App", "we", "us", "our") is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step.
-    </p>
-    <p data-en="This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup."
-       data-bn="আপনি ইমেইল, ফোন নম্বর বা Google অ্যাকাউন্ট যা দিয়েই সাইন-ইন করুন না কেন, অথবা ক্লাউড সিঙ্ক বা ড্রাইভ ব্যাকআপ চালু করুন বা না করুন — এই নীতিমালা অ্যাপটির সকল ব্যবহারকারীর জন্য প্রযোজ্য।">
-      This policy applies to everyone who uses the App, regardless of whether you sign in with email, phone number, or a Google Account, and regardless of whether you choose to enable cloud sync or Drive backup.
-    </p>
-  </section>
-
-  <!-- SECTION 2 -->
-  <section class="card" id="s2">
-    <span class="section-label" data-en="02 · INPUT DATA" data-bn="০২ · প্রদানকৃত তথ্য">02 · INPUT DATA</span>
-    <h2 data-en="2. Data You Enter into the App" data-bn="২. অ্যাপে আপনার প্রদানকৃত তথ্য">2. Data You Enter into the App</h2>
-    <p data-en="The core of the App is the business ledger you build yourself. This includes:"
-       data-bn="অ্যাপটির মূল ভিত্তি হলো আপনার তৈরি করা ব্যবসায়িক লেজার। এর মধ্যে রয়েছে:">
-      The core of the App is the business ledger you build yourself. This includes:
-    </p>
-    
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th data-en="Category" data-bn="শ্রেণি">Category</th>
-          <th data-en="Examples" data-bn="উদাহরণ">Examples</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td data-en="Sales records" data-bn="বিক্রয় রেকর্ড">Sales records</td>
-          <td data-en="Item, amount, date, payment method, buyer notes" data-bn="পণ্য, টাকার পরিমাণ, তারিখ, পেমেন্ট মাধ্যম, ক্রেতার নোট">Item, amount, date, payment method, buyer notes</td>
-        </tr>
-        <tr>
-          <td data-en="Purchase records" data-bn="ক্রয় রেকর্ড">Purchase records</td>
-          <td data-en="Supplier, item, cost, date" data-bn="সরবরাহকারী, পণ্য, খরচ, তারিখ">Supplier, item, cost, date</td>
-        </tr>
-        <tr>
-          <td data-en="Expense records" data-bn="খরচের রেকর্ড">Expense records</td>
-          <td data-en="Category, amount, date, description" data-bn="ক্যাটাগরি, পরিমাণ, তারিখ, বিবরণ">Category, amount, date, description</td>
-        </tr>
-        <tr>
-          <td data-en="Shop profile" data-bn="দোকানের প্রোফাইল">Shop profile</td>
-          <td data-en="Business/company name, logo image, currency preference" data-bn="ব্যবসা/প্রতিষ্ঠানের নাম, লোগো, মুদ্রার ধরন">Business/company name, logo image, currency preference</td>
-        </tr>
-        <tr>
-          <td data-en="Orders (if Live Orders is used)" data-bn="অর্ডার (লাইভ অর্ডার ফিচার ব্যবহৃত হলে)">Orders (if Live Orders is used)</td>
-          <td data-en="Customer name/phone, ordered items, order status, timestamps" data-bn="গ্রাহকের নাম/ফোন, অর্ডারকৃত পণ্য, অর্ডারের অবস্থা, সময়">Customer name/phone, ordered items, order status, timestamps</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <p class="small" style="margin-top:12px"
-       data-en="You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction."
-       data-bn="আপনি নিজেই এসব তথ্যের নিয়ন্ত্রণকারী। কোনো লেনদেন রেকর্ডের জন্য যতটুকু প্রয়োজন, তার বাইরে বাড়তি কোনো তথ্য দেওয়া বাধ্যতামূলক নয়।">
-      You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction.
-    </p>
-  </section>
-
-  <!-- SECTION 3 -->
-  <section class="card" id="s3">
-    <span class="section-label" data-en="03 · AUTHENTICATION" data-bn="০৩ · সাইন-ইন">03 · AUTHENTICATION</span>
-    <h2 data-en="3. Signing in to Your Account" data-bn="৩. আপনার অ্যাকাউন্টে সাইন-ইন">3. Signing in to Your Account</h2>
-    <p data-en="The App supports three ways to sign in, and you choose which one to use:"
-       data-bn="অ্যাপটিতে সাইন-ইন করার তিনটি উপায় রয়েছে, যার যেকোনো একটি আপনি বেছে নিতে পারেন:">
-      The App supports three ways to sign in, and you choose which one to use:
-    </p>
-
-    <h3 data-en="Email & password" data-bn="ইমেইল ও পাসওয়ার্ড">Email & password</h3>
-    <p data-en="Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account."
-       data-bn="আপনার ইমেইল ও হ্যাশ করা পাসওয়ার্ড দিয়ে অ্যাকাউন্ট সুরক্ষিত করা হয়। আমরা কখনোই প্লেইন টেক্সট পাসওয়ার্ড সংরক্ষণ করি না; এটি Google-এর Firebase Authentication দ্বারা পরিচালিত হয়।">
-      Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to create and secure your account.
-    </p>
-
-    <h3 data-en="Phone number (SMS OTP)" data-bn="ফোন নম্বর (SMS OTP)">Phone number (SMS OTP)</h3>
-    <p data-en="If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself."
-       data-bn="ফোন নম্বর দিয়ে সাইন-ইন করলে Firebase Phone Authentication-এর মাধ্যমে ওটিপি কোড পাঠানো হয়। আমরা কেবল নম্বরটি ভেরিফাইড হওয়ার বার্তা পাই, কোনো এসএমএস কন্টেন্ট সংরক্ষণ করি না।">
-      If you sign in with your phone number, a one-time verification code is sent via SMS through Firebase Phone Authentication. We only receive confirmation that your number was verified — we do not store the SMS content itself.
-    </p>
-
-    <h3 data-en="Google Sign-In" data-bn="Google সাইন-ইন">Google Sign-In</h3>
-    <p data-en="If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does not by itself grant any access to your Google Drive."
-       data-bn="Google দিয়ে সাইন-ইন করলে আপনার সাধারণ প্রোফাইল তথ্য (নাম, ইমেইল, ছবি) পাওয়া যায়। এটি ড্রাইভ ব্যাকআপের অনুমতি থেকে সম্পূর্ণ আলাদা — গুগল দিয়ে সাইন-ইন করলেই ড্রাইভে প্রবেশাধিকার পাওয়া যায় না।">
-      If you sign in with Google, we receive your basic profile information (name, email address, profile photo) from Google to identify your account in the App. This is a separate, one-time permission from the Drive backup permission described in Section 5 — signing in with Google does <strong>not</strong> by itself grant any access to your Google Drive.
-    </p>
-
-    <h3 data-en="Device passkey / biometric unlock" data-bn="ডিভাইস পাসকি / বায়োমেট্রিক আনলক">Device passkey / biometric unlock</h3>
-    <p data-en="If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers."
-       data-bn="ফিঙ্গারপ্রিন্ট, ফেস আইডি বা পিন চালু করলে তা কেবল আপনার নিজের ডিভাইসের অপারেটিং সিস্টেমে যাচাই হয় — এটি কখনোই আমাদের সার্ভারে পাঠানো হয় না।">
-      If you enable fingerprint, Face ID, or a device PIN as a quick-unlock option, that credential is registered and verified entirely on your own device through your device's operating system — it is never transmitted to us or stored on our servers.
-    </p>
-  </section>
-
-  <!-- SECTION 4 -->
-  <section class="card" id="s4">
-    <span class="section-label" data-en="04 · CLOUD SYNC" data-bn="০৪ · ক্লাউড সিঙ্ক">04 · CLOUD SYNC</span>
-    <h2 data-en="4. Cloud Sync of Your Ledger (Firebase)" data-bn="৪. আপনার লেজারের ক্লাউড সিঙ্ক (Firebase)">4. Cloud Sync of Your Ledger (Firebase)</h2>
-    <p data-en="To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App."
-       data-bn="একাধিক ডিভাইস থেকে লেজার ব্যবহারের জন্য এবং লাইভ অর্ডার ফিচারের সুবিধার্থে আপনার লেজার ডেটা একটি সুরক্ষিত ক্লাউড ডেটাবেসে (Firebase Realtime Database) সিঙ্ক করা হয়।">
-      To let you access your ledger from more than one device, and to support the optional Live Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database) that we operate as part of running the App.
-    </p>
-
-    <h3 data-en="How access is restricted" data-bn="প্রবেশাধিকার কীভাবে নিয়ন্ত্রিত হয়">How access is restricted</h3>
-    <p data-en="Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly."
-       data-bn="প্রতিটি দোকানের ডেটা একটি নির্দিষ্ট অ্যাকাউন্ট আইডির অধীনে সংরক্ষিত থাকে। সার্ভারের সিকিউরিটি রুলস নিশ্চিত করে যে কেবল ওই অ্যাকাউন্টের মালিকই ডেটা পড়া বা পরিবর্তন করতে পারবেন। অন্য কোনো ব্যবহারকারী আপনার ডেটা দেখতে পাবে না।">
-      Each shop's data is stored under a record keyed to your unique account ID, and is protected by server-side Security Rules that only allow the signed-in owner of that account (matched by authentication ID) to read or write it. No other user of the App — including other shop owners — can query, browse, or access your shop's data through the App or the database directly.
-    </p>
-
-    <h3 data-en="Purpose" data-bn="উদ্দেশ্য">Purpose</h3>
-    <p data-en="This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page."
-       data-bn="একাধিক ডিভাইসে ডেটা সামঞ্জস্যপূর্ণ রাখা এবং অর্ডারের পেজে রিয়েল-টাইমে গ্রাহকের অর্ডার পাওয়ার জন্যই কেবল এই সিঙ্ক ব্যবহৃত হয়।">
-      This sync exists purely so your ledger stays consistent if you use the App on more than one device, and so incoming customer orders can appear in real time on the Orders page.
-    </p>
-  </section>
-
-  <!-- SECTION 5 -->
-  <section class="card" id="s5">
-    <span class="section-label" data-en="05 · DRIVE BACKUP" data-bn="০৫ · ড্রাইভ ব্যাকআপ">05 · DRIVE BACKUP</span>
-    <h2 data-en="5. Google Drive Backup — How It Works" data-bn="৫. Google Drive ব্যাকআপ — যেভাবে কাজ করে">5. Google Drive Backup — How It Works</h2>
-    <p data-en="If you tap 'Connect Drive', the App requests one specific, narrow Google permission:"
-       data-bn="আপনি 'Connect Drive'-এ ট্যাপ করলে অ্যাপটি গুগল থেকে একটি নির্দিষ্ট ও সীমিত অনুমতি চায়:">
-      If you tap <strong>"Connect Drive"</strong>, the App requests one specific, narrow Google permission:
-    </p>
-    
-    <p style="text-align:center;"><span class="pill-code">https://www.googleapis.com/auth/drive.appdata</span></p>
-    
-    <p data-en="This is Google's Application Data scope, and it is deliberately limited:"
-       data-bn="এটি গুগলের Application Data সুবিধা, যা অত্যন্ত সীমিত কাজের জন্য তৈরি:">
-      This is Google's <strong>Application Data</strong> scope, and it is deliberately limited:
-    </p>
-    
-    <ul>
-      <li data-en="The App can only create and update one hidden backup file that it created itself."
-          data-bn="অ্যাপটি কেবল তার নিজের তৈরি করা একটি লুকানো ব্যাকআপ ফাইল তৈরি বা আপডেট করতে পারে।">
-        The App can only create and update <strong>one hidden backup file that it created itself</strong>.
-      </li>
-      <li data-en="This file lives in a special hidden area of your Drive that does not appear in your normal Drive file list — it cannot be browsed directly by any other app."
-          data-bn="এই ফাইলটি আপনার ড্রাইভের একটি বিশেষ লুকানো অংশে থাকে যা সাধারণ ফাইল তালিকায় দেখায় না। অন্য কোনো অ্যাপ এটি খুলতে পারে না।">
-        This file lives in a special hidden area of your Drive that does <strong>not</strong> appear in your normal Drive file list, Drive search, or Drive mobile/web app — it cannot be browsed or opened directly by you or any other app.
-      </li>
-      <li data-en="The App has no access whatsoever to any other file, photo, or document already in your Google Drive."
-          data-bn="আপনার গুগলে থাকা অন্য কোনো ফাইল, ছবি বা নথিতে অ্যাপটির কোনো প্রবেশাধিকার নেই।">
-        The App has <strong>no access whatsoever</strong> to any other file, photo, or document already in your Google Drive, past or future.
-      </li>
-      <li data-en="No other app can read this backup file — it belongs exclusively to MY SHOP's connection with your account."
-          data-bn="অন্য কোনো অ্যাপ এই ব্যাকআপ ফাইলটি পড়তে পারে না — এটি কেবল MY SHOP-এর জন্য নির্ধারিত।">
-        No other app, including other apps you may have authorized, can read this backup file — it belongs exclusively to MY SHOP's connection with your account.
-      </li>
-      <li data-en="The backup counts against your own Google account storage and stays entirely within your Google account — it is never copied to our servers."
-          data-bn="ব্যাকআপ ফাইলটি আপনার গুগল অ্যাকাউন্টের ভেতরেই থাকে এবং কখনোই আমাদের সার্ভারে স্থানান্তরিত হয় না।">
-        The backup counts against your own Google account's storage quota, and stays entirely within your own Google account — it is never copied to, or accessible from, any server we operate.
-      </li>
-    </ul>
-
-    <div class="notice">
-      <strong data-en="What gets backed up:" data-bn="যা ব্যাকআপ নেওয়া হয়:">What gets backed up:</strong>
-      <span data-en=" A snapshot of your ledger data — sales, purchases, expenses, and shop profile."
-            data-bn=" বিক্রয়, ক্রয়, খরচ এবং শপ প্রোফাইলের সমন্বয়ে তৈরি একটি স্ন্যাপশট ফাইল।">
-         A snapshot of the same ledger data described in Section 2 — sales, purchases, expenses, and your shop profile — saved as a single structured data file.
-      </span>
-    </div>
-  </section>
-
-  <!-- SECTION 6 -->
-  <section class="card" id="s6">
-    <span class="section-label" data-en="06 · LOCAL STORAGE" data-bn="০৬ · লোকাল স্টোরেজ">06 · LOCAL STORAGE</span>
-    <h2 data-en="6. Local Device Storage" data-bn="৬. স্থানীয় ডিভাইস স্টোরেজ">6. Local Device Storage</h2>
-    <p data-en="Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a .json file to your device at any time."
-       data-bn="ক্লাউড সিঙ্ক ও ড্রাইভ ব্যাকআপের পাশাপাশি অ্যাপটি দ্রুত কাজ করা ও অফলাইনে চলার জন্য আপনার ডিভাইসের লোকাল স্টোরেজে একটি কপি রাখে। আপনি চাইলে যেকোনো সময় .json ফাইল হিসেবে ব্যাকআপ নিজেই ডাউনলোড করতে পারেন।">
-      Independent of cloud sync and Drive backup, the App also keeps a working copy of your data in your browser's local storage on the device you're using, so the App works instantly and can function offline. You can also manually export a full backup as a <span class="pill-code">.json</span> file to your device at any time, and import it back in — this local export/import never leaves your device unless you choose to move the file yourself.
-    </p>
-  </section>
-
-  <!-- SECTION 7 -->
-  <section class="card" id="s7">
-    <span class="section-label" data-en="07 · LOGS" data-bn="০৭ · কারিগরি তথ্য">07 · LOGS</span>
-    <h2 data-en="7. What We Automatically Collect" data-bn="৭. স্বয়ংক্রিয়ভাবে সংগৃহীত তথ্য">7. What We Automatically Collect</h2>
-    <p data-en="Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers."
-       data-bn="যেকোনো ওয়েব অ্যাপ ব্যবহারের সময় আইপি অ্যাড্রেস ও ব্রাউজারের ধরনের মতো কিছু কারিগরি তথ্য সার্ভারের নিরাপত্তাজনিত লগে সাময়িকভাবে সংরক্ষিত হতে পারে। অ্যাপটিতে কোনো থার্ড-পার্টি ট্র্যাকার বা বিজ্ঞাপন ব্যবহৃত হয় না।">
-      Standard technical information is generated any time you use a web application, such as your IP address and browser type, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability purposes. The App itself does not run third-party analytics or advertising trackers, and does not use cookies for advertising or cross-site tracking.
-    </p>
-  </section>
-
-  <!-- SECTION 8 -->
-  <section class="card" id="s8">
-    <span class="section-label" data-en="08 · RESTRICTIONS" data-bn="০৮ · আমাদের প্রতিশ্রুতি">08 · RESTRICTIONS</span>
-    <h2 data-en="8. What We Do NOT Do" data-bn="৮. আমরা যা কখনোই করি না">8. What We Do NOT Do</h2>
-    <div class="badge-grid">
-      <div class="badge-item" data-en="🚫 No reading your Drive files beyond backup" data-bn="🚫 নির্ধারিত ব্যাকআপ ছাড়া ড্রাইভের অন্য ফাইল দেখা হয় না">🚫 No reading your Drive files beyond backup</div>
-      <div class="badge-item" data-en="🚫 No selling or sharing data with third parties" data-bn="🚫 কারো কাছে ডেটা বিক্রি বা শেয়ার করা হয় না">🚫 No selling or sharing data with third parties</div>
-      <div class="badge-item" data-en="🚫 No advertising or ad trackers" data-bn="🚫 কোনো বিজ্ঞাপন বা অ্যাড-ট্র্যাকার নেই">🚫 No advertising or ad trackers</div>
-      <div class="badge-item" data-en="🚫 No cross-shop or cross-user data access" data-bn="🚫 এক দোকানের তথ্য অন্য ব্যবহারকারী দেখতে পায় না">🚫 No cross-shop or cross-user data access</div>
-      <div class="badge-item" data-en="🚫 No storing your password in plain text" data-bn="🚫 পাসওয়ার্ড কখনোই সাধারণ টেক্সটে রাখা হয় না">🚫 No storing your password in plain text</div>
-      <div class="badge-item" data-en="🚫 No accessing Gmail, Contacts, or Photos" data-bn="🚫 জিমেইল, কন্টাক্ট বা ফটোজে কোনো প্রবেশাধিকার নেই">🚫 No accessing Gmail, Contacts, or Photos</div>
-    </div>
-  </section>
-
-  <!-- SECTION 9 -->
-  <section class="card" id="s9">
-    <span class="section-label" data-en="09 · GOOGLE POLICY" data-bn="০৯ · গুগল নীতিমালা">09 · GOOGLE POLICY</span>
-    <h2 data-en="9. Google API Services User Data Policy" data-bn="৯. Google API সেবার ডেটা নীতি">9. Google API Services User Data Policy</h2>
-    <p data-en="MY SHOP's use and transfer of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. Drive data accessed through drive.appdata scope is used solely for backup-and-restore features, is never used to train AI models, and is never used for advertising."
-       data-bn="Google API থেকে প্রাপ্ত তথ্যের ব্যবহার ও স্থানান্তর গুগলের নির্দিষ্ট নীতি অনুসরণ করে। ড্রাইভের তথ্য কেবল ব্যাকআপ ও রিস্টোরের জন্য ব্যবহৃত হয়; এটি দিয়ে কোনো এআই মডেল ট্রেনিং বা বিজ্ঞাপন দেখানো হয় না।">
-      MY SHOP's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. In practice, this means Drive data accessed through the <span class="pill-code">drive.appdata</span> scope is used solely to provide the backup-and-restore feature, is never used to train any AI/ML model, is never used for advertising, and is never read by human staff except as strictly necessary for explicit support requests.
-    </p>
-  </section>
-
-  <!-- SECTION 10 -->
-  <section class="card" id="s10">
-    <span class="section-label" data-en="10 · THIRD PARTIES" data-bn="১০ · তৃতীয় পক্ষ">10 · THIRD PARTIES</span>
-    <h2 data-en="10. Sharing & Third Parties" data-bn="১০. তথ্য শেয়ার ও তৃতীয় পক্ষ">10. Sharing & Third Parties</h2>
-    <p data-en="We do not sell your data. We do not share it with advertisers. The only outside parties involved are our infrastructure providers — Google Cloud / Firebase (authentication, database, hosting) and Google Drive (for your backup). These providers process data strictly on our behalf under high security commitments."
-       data-bn="আমরা ডেটা বিক্রি বা প্রচার করি না। অ্যাপ পরিচালনায় কেবল Google Cloud / Firebase এবং Google Drive পরোক্ষভাবে যুক্ত, যারা সর্বোচ্চ নিরাপত্তা মানদণ্ড মেনে কাজ করে।">
-      We do not sell your data. We do not share it with advertisers or data brokers. The only outside parties involved in operating the App are the infrastructure providers that host it — Google Cloud / Firebase (authentication, database, and hosting) and, if you enable it, Google Drive (for your own backup). These providers process data on our behalf under their own security and confidentiality commitments; they do not use your data for their own purposes.
-    </p>
-  </section>
-
-  <!-- SECTION 11 -->
-  <section class="card" id="s11">
-    <span class="section-label" data-en="11 · DELETION" data-bn="১১ · মুছে ফেলা">11 · DELETION</span>
-    <h2 data-en="11. Data Retention & Deletion" data-bn="১১. ডেটা সংরক্ষণ ও মুছে ফেলা">11. Data Retention & Deletion</h2>
-    <ul>
-      <li data-en="Local data is stored on your device until you clear app data or reset the App."
-          data-bn="ডিভাইসের লোকাল ডেটা আপনি অ্যাপ ডেটা ক্লিয়ার করা পর্যন্ত সংরক্ষিত থাকে।">
-        <strong>Local data</strong> is stored on your device until you clear your browser/app data or use the App's own reset option.
-      </li>
-      <li data-en="Cloud-synced ledger data is retained while your account is active and can be deleted upon request."
-          data-bn="ক্লাউড সিঙ্ক ডেটা অ্যাকাউন্ট সক্রিয় থাকা পর্যন্ত থাকে এবং অনুরোধ সাপেক্ষে মুছে ফেলা যায়।">
-        <strong>Cloud-synced ledger data</strong> is retained for as long as your account remains active, and can be deleted by contacting us or through in-App settings.
-      </li>
-      <li data-en="Drive backups can be removed anytime from your Google Account permissions page."
-          data-bn="গুগল অ্যাকাউন্ট সেটিংসের Third-party apps পেজ থেকে ড্রাইভ ব্যাকআপ যেকোনো সময় মুছে ফেলা সম্ভব।">
-        <strong>Drive backups</strong> can be removed at any time from your Google Account's <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Third-party apps & services</a> page.
-      </li>
-    </ul>
-  </section>
-
-  <!-- SECTION 12 -->
-  <section class="card" id="s12">
-    <span class="section-label" data-en="12 · SECURITY" data-bn="১২ · নিরাপত্তা">12 · SECURITY</span>
-    <h2 data-en="12. Security Safeguards" data-bn="১২. নিরাপত্তা ব্যবস্থা">12. Security Safeguards</h2>
-    <p data-en="All communication between the App and our servers is encrypted using HTTPS/TLS. Cloud-synced data is protected by per-account rules. Google access tokens are held only in memory during your active session and passwords are never stored in plain text."
-       data-bn="অ্যাপের যাবতীয় তথ্য আদান-প্রদান HTTPS/TLS এনক্রিপশন দ্বারা সুরক্ষিত। পাসওয়ার্ড কখনোই প্লেইন টেক্সটে রাখা হয় না এবং এক অ্যাকাউন্টের ডেটা অন্য অ্যাকাউন্ট থেকে সম্পূর্ণ পৃথক রাখা হয়।">
-      All communication between the App and our servers, and between the App and Google's servers, is encrypted in transit using HTTPS/TLS. Cloud-synced ledger data is protected by per-account Security Rules. Google access tokens used for Drive backup are held only in memory during your active session and are never written to any server we operate. Passwords are never stored in plain text.
-    </p>
-  </section>
-
-  <!-- SECTION 13 -->
-  <section class="card" id="s13">
-    <span class="section-label" data-en="13 · YOUR RIGHTS" data-bn="১৩ · আপনার অধিকার">13 · YOUR RIGHTS</span>
-    <h2 data-en="13. Your Rights & Choices" data-bn="১৩. আপনার অধিকার ও পছন্দসমূহ">13. Your Rights & Choices</h2>
-    <ul>
-      <li data-en="Access & export: Export your full ledger as a .json file anytime from Settings."
-          data-bn="রপ্তানি: সেটিংস থেকে যেকোনো সময় .json ফাইল হিসেবে সব তথ্য ডাউনলোড করতে পারেন।">
-        <strong>Access & export:</strong> You can export your full ledger as a <span class="pill-code">.json</span> file at any time from Settings → Data Backup.
-      </li>
-      <li data-en="Correction: Edit or delete any entry directly inside the App."
-          data-bn="সংশোধন: যেকোনো বিক্রয় বা খরচের এন্ট্রি নিজে থেকেই অ্যাপে সংশোধন বা মুছে ফেলতে পারেন।">
-        <strong>Correction:</strong> You can edit or delete any sales, purchase, or expense entry directly in the App.
-      </li>
-      <li data-en="Withdraw consent: Revoke Google Drive permissions directly from your Google Account settings."
-          data-bn="সম্মতি প্রত্যাহার: গুগল অ্যাকাউন্ট সেটিংস থেকে ড্রাইভের অনুমতি যেকোনো সময় বাতিল করতে পারেন।">
-        <strong>Withdraw consent:</strong> You can revoke the App's Google permissions at any time from your Google Account settings.
-      </li>
-    </ul>
-  </section>
-
-  <!-- SECTION 14-16 -->
-  <section class="card" id="s14-16">
-    <span class="section-label" data-en="14-16 · GENERAL POLICIES" data-bn="১৪-১৬ · সাধারণ নীতিমালা">14-16 · GENERAL POLICIES</span>
-    <h3 data-en="International Data Transfer" data-bn="আন্তর্জাতিক ডেটা স্থানান্তর">International Data Transfer</h3>
-    <p data-en="Our infrastructure providers (Google Cloud / Firebase) may process data in data centers located in different countries as part of standard global infrastructure. Your Google Drive backup always remains within your own Google account."
-       data-bn="গুগল ক্লাউড বৈশ্বিক অবকাঠামোর অংশ হিসেবে ডেটা বিভিন্ন ডেটা সেন্টারে সংরক্ষণ করতে পারে। আপনার গুগলের ব্যাকআপ ফাইল সর্বদাই আপনার গুগল অ্যাকাউন্টের সীমানাতেই থাকে।">
-      Our infrastructure providers (Google Cloud / Firebase) may process and store data in data centers located in different countries as part of their standard global infrastructure. Your Google Drive backup always remains within your own Google account.
-    </p>
-
-    <h3 data-en="Children's Privacy" data-bn="শিশুদের গোপনীয়তা">Children's Privacy</h3>
-    <p data-en="MY SHOP is a business tool intended for shop owners and adult users, and is not directed at children under 13."
-       data-bn="MY SHOP কেবল দোকান মালিক ও প্রাপ্তবয়স্কদের জন্য তৈরি ব্যবসায়িক সরঞ্জাম। এটি ১৩ বছরের কম বয়সী শিশুদের জন্য প্রযোজ্য নয়।">
-      MY SHOP is a business tool intended for shop owners and adult users managing a business, and is not directed at children.
-    </p>
-
-    <h3 data-en="Changes to This Policy" data-bn="নীতিমালার পরিবর্তন">Changes to This Policy</h3>
-    <p data-en="If this policy changes, the 'Last updated' date will be revised. Continued use of the App constitutes acceptance of the updated policy."
-       data-bn="নীতিমালায় কোনো পরিবর্তন আনা হলে নিবন্ধের শুরুতে উল্লেখিত 'সর্বশেষ হালনাগাদ' এর তারিখ পরিবর্তন করা হবে।">
-      If this policy changes in a meaningful way, the 'Last updated' date at the top will be revised. Continued use of the App after changes take effect constitutes acceptance of the updated policy.
-    </p>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="card contact" id="contact">
-    <span class="section-label" data-en="17 · CONTACT" data-bn="১৭ · যোগাযোগ">17 · CONTACT</span>
-    <h2 data-en="Questions about Privacy?" data-bn="গোপনীয়তা নিয়ে কোনো প্রশ্ন আছে?">Questions about Privacy?</h2>
-    <p data-en="Questions about this privacy policy, or requests regarding your data, can be sent to our official email below."
-       data-bn="এই গোপনীয়তা নীতি বা আপনার ডেটা সংক্রান্ত যেকোনো তথ্যের জন্য নিচের ইমেইলে যোগাযোগ করুন।">
-      Questions about this privacy policy, or requests regarding your data, can be sent to our official email below.
-    </p>
-    <p><a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></p>
-  </section>
-
-  <footer class="footer">
-    <div data-en="© 2026 MY SHOP. All rights reserved." data-bn="© ২০২৬ MY SHOP। সর্বস্বত্ব সংরক্ষিত।">© 2026 MY SHOP. All rights reserved.</div>
-    <div style="margin-top:5px" data-en="Privacy Policy · Version 1.0" data-bn="গোপনীয়তা নীতি · সংস্করণ ১.০">Privacy Policy · Version 1.0</div>
-  </footer>
-</div>
-
-<script>
-(function(){
-  const body = document.body;
-  const enBtn = document.getElementById('enBtn');
-  const bnBtn = document.getElementById('bnBtn');
-
-  function setLanguage(lang){
-    const isBn = lang === 'bn';
-    document.documentElement.lang = isBn ? 'bn' : 'en';
-    body.classList.toggle('bn', isBn);
-
-    document.querySelectorAll('[data-en][data-bn]').forEach(el => {
-      el.textContent = isBn ? el.getAttribute('data-bn') : el.getAttribute('data-en');
-    });
-
-    enBtn.classList.toggle('active', !isBn);
-    bnBtn.classList.toggle('active', isBn);
-    localStorage.setItem('myshop_privacy_language', lang);
+  header.cover{
+    position:relative;
+    background:
+      radial-gradient(1200px 400px at 15% -10%, rgba(199,154,62,0.18), transparent 60%),
+      linear-gradient(160deg, var(--maroon) 0%, var(--maroon-deep) 100%);
+    color:#F6E9CE;padding:64px 20px 46px;overflow:hidden;
+  }
+  header.cover::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
+    background-image: repeating-linear-gradient(90deg, var(--gold-bright) 0 14px, transparent 14px 28px);
+    opacity:0.55;
+  }
+  .cover-inner{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+  .cover-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:12.3px;letter-spacing:0.14em;
+    color:#E4C77E;text-transform:uppercase;margin-bottom:14px;
+  }
+  .cover-eyebrow::before{content:"";width:22px;height:1px;background:#E4C77E;display:inline-block;}
+  h1.brand-title{font-size:clamp(2.1rem, 5vw, 3.3rem);margin:0 0 10px;font-weight:600;color:#FBF3DE;letter-spacing:0.01em;}
+  h1.brand-title em{font-style:normal;color:var(--gold-bright);}
+  .cover-sub{max-width:600px;font-size:15.4px;color:#E7D5B0;margin:0;}
+  .brand-logo{
+    width:64px;height:64px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--gold-bright);box-shadow:0 4px 14px rgba(0,0,0,0.35), 0 0 0 4px rgba(230,200,130,0.15);
+    margin-bottom:16px;display:block;background:#fff;
+  }
+  .toc-logo{
+    width:40px;height:40px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--gold);box-shadow:0 2px 8px rgba(0,0,0,0.15);
+    display:block;margin:0 auto 10px;
   }
 
-  enBtn.addEventListener('click', () => setLanguage('en'));
-  bnBtn.addEventListener('click', () => setLanguage('bn'));
+  .stamp{
+    flex:0 0 auto;width:206px;min-height:120px;border-radius:10px;
+    border:2px solid rgba(230,200,130,0.6);padding:16px 18px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    transform:rotate(-3deg);position:relative;background:rgba(255,255,255,0.03);
+  }
+  .stamp::before{content:"";position:absolute;inset:7px;border-radius:6px;border:1px dashed rgba(230,200,130,0.45);}
+  .stamp-text{font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.6;color:#F1DFB2;letter-spacing:0.04em;}
+  .stamp-text b{display:block;font-size:11.9px;color:var(--gold-bright);margin-bottom:4px;letter-spacing:0.1em;}
+  .stamp-brand{margin-top:8px;font-family:'Anek Bangla','Inter',sans-serif;font-weight:700;font-size:13.9px;color:#FBF3DE;letter-spacing:0.04em;}
 
-  const saved = localStorage.getItem('myshop_privacy_language');
-  setLanguage(saved === 'bn' ? 'bn' : 'en');
-})();
+  .shell{max-width:1180px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:264px 1fr;gap:44px;align-items:start;}
+
+  nav.toc{position:sticky;top:22px;align-self:start;margin-top:38px;}
+  .toc-card{
+    background:var(--paper-card);border:1px solid var(--rule);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px 14px 12px;max-height:calc(100vh - 44px);overflow-y:auto;
+  }
+  .toc-progress-track{height:3px;background:var(--rule);border-radius:3px;overflow:hidden;margin:2px 2px 16px;}
+  .toc-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--maroon));transition:width .08s linear;}
+  .toc-head{display:flex;align-items:center;gap:8px;margin:0 2px 12px;}
+  .toc-head svg{width:15px;height:15px;color:var(--maroon);flex:0 0 auto;}
+  .toc-head span{font-family:'IBM Plex Mono',monospace;font-size:10.9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--maroon-deep);font-weight:600;}
+  .toc-card ol{list-style:none;margin:0;padding:0;}
+  .toc-group{
+    font-family:'IBM Plex Mono',monospace;font-size:9.9px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--gold);padding:14px 8px 6px;border-top:1px dashed var(--rule);margin-top:6px;
+  }
+  .toc-group:first-child{border-top:none;margin-top:0;padding-top:0;}
+  .toc-card li{margin-bottom:2px;}
+  .toc-card li a{
+    display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:7px;font-size:13.2px;
+    color:var(--ink-soft);text-decoration:none;transition:background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .toc-card li a .b{
+    flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--paper);border:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--maroon);
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .toc-card li a:hover{background:rgba(169,129,47,0.1);color:var(--maroon-deep);transform:translateX(2px);}
+  .toc-card li a.active{background:rgba(110,20,35,0.08);color:var(--maroon-deep);font-weight:600;}
+  .toc-card li a.active .b{background:var(--maroon);border-color:var(--maroon);color:#F6E4C0;}
+
+  .toc-toggle{
+    display:none;position:sticky;top:0;z-index:40;width:100%;background:var(--paper-card);
+    border-bottom:1px solid var(--rule);padding:12px 20px;align-items:center;justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;font-size:12.3px;letter-spacing:0.06em;color:var(--maroon-deep);cursor:pointer;
+  }
+  .toc-toggle svg{width:16px;height:16px;transition:transform .2s ease;}
+  .toc-toggle.open svg{transform:rotate(180deg);}
+  #mobileTocPanel{display:none;background:var(--paper-card);border-bottom:1px solid var(--rule);padding:6px 8px 14px;}
+  #mobileTocPanel.show{display:block;}
+  #mobileTocPanel a{
+    display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13.9px;color:var(--ink-soft);
+    text-decoration:none;border-bottom:1px dashed var(--rule);
+  }
+  #mobileTocPanel a .b{
+    flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--paper);border:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8.9px;color:var(--maroon);
+  }
+  .mtoc-group{font-family:'IBM Plex Mono',monospace;font-size:9.9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);padding:12px 12px 4px;}
+
+  main{padding:38px 0 20px;min-width:0;}
+
+  .intro-card{
+    background:var(--paper-card);border:1px solid var(--rule);border-left:4px solid var(--maroon);
+    border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow);margin-bottom:24px;font-size:14.9px;color:var(--ink-soft);
+  }
+  .intro-card b{color:var(--maroon-deep);}
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--rule);
+    font-family:'IBM Plex Mono',monospace;font-size:11.9px;color:var(--ink-soft);
+  }
+  .meta-row b{color:var(--maroon);}
+  .meta-row a{color:var(--maroon);font-weight:600;}
+
+  .highlights{
+    background:linear-gradient(155deg, rgba(110,20,35,0.06), rgba(169,129,47,0.06));
+    border:1px solid var(--rule);border-radius:var(--radius);padding:22px 24px;margin-bottom:34px;box-shadow:var(--shadow);
+  }
+  .highlights h3{margin:0 0 14px;font-size:1.04rem;color:var(--maroon-deep);display:flex;align-items:center;gap:8px;}
+  .checklist{list-style:none;margin:0;padding:0;}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--rule);font-size:14.2px;color:var(--ink);}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li .chk{
+    flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:2px solid var(--maroon);
+    display:flex;align-items:center;justify-content:center;color:var(--maroon);font-size:10.9px;margin-top:2px;
+  }
+
+  section.clause{margin-bottom:46px;scroll-margin-top:22px;}
+  .clause-head{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+  .clause-num{
+    flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--maroon);color:#F6E4C0;
+    display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11.9px;
+    font-weight:600;box-shadow:0 3px 0 var(--gold);
+  }
+  h2.clause-title{margin:0;font-size:1.31rem;font-weight:600;color:var(--maroon-deep);}
+  .clause-body{padding:0 0 0 54px;font-size:15.2px;color:var(--ink);}
+  .clause-body>p:first-of-type{margin-top:0;}
+  .clause-body p{margin:0 0 14px;}
+  .clause-body h4{margin:20px 0 6px;font-size:14.9px;color:var(--maroon);}
+
+  .note{background:rgba(169,129,47,0.08);border:1px dashed var(--gold);border-radius:var(--radius);padding:12px 16px;font-size:13.6px;color:var(--maroon-deep);margin:14px 0;}
+  .warn{background:rgba(110,20,35,0.06);border-left:3px solid var(--maroon);border-radius:var(--radius);padding:12px 16px;font-size:13.6px;color:var(--maroon-deep);margin:14px 0;}
+
+  .explain{list-style:none;margin:12px 0;padding:0;}
+  .explain li{position:relative;padding:0 0 12px 22px;font-size:14.4px;color:var(--ink);}
+  .explain li::before{content:"—";position:absolute;left:0;top:0;color:var(--gold);}
+  .explain li b{color:var(--maroon-deep);}
+  .steps{margin:12px 0;padding:0 0 0 22px;counter-reset:step;}
+  .steps li{position:relative;padding:0 0 12px 6px;font-size:14.4px;color:var(--ink);list-style:none;}
+  .steps li::before{counter-increment:step;content:counter(step);position:absolute;left:-22px;top:0;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#fff;font-size:10.9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .steps li b{color:var(--maroon-deep);}
+
+  .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:14px 0;}
+  .settings-card{background:var(--paper-card);border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 14px -8px rgba(74,14,25,0.18);}
+  .settings-card p{margin:0;font-size:13.4px;color:var(--maroon-deep);font-weight:600;line-height:1.6;}
+
+  .field-table-wrap{overflow-x:auto;margin:14px 0;border:1px solid var(--rule);border-radius:var(--radius);}
+  table.field-table{width:100%;border-collapse:collapse;font-size:12.9px;background:var(--paper-card);}
+  table.field-table th{
+    background:rgba(110,20,35,0.08);color:var(--maroon-deep);text-align:left;padding:9px 12px;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;
+    border-bottom:1px solid var(--rule);white-space:nowrap;
+  }
+  table.field-table td{padding:9px 12px;border-bottom:1px solid var(--rule);color:var(--ink);vertical-align:top;font-size:12.9px;}
+  table.field-table tr:last-child td{border-bottom:none;}
+
+  .pill-code{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12.3px;
+    background:rgba(169,129,47,0.12);color:var(--maroon-deep);padding:3px 10px;border-radius:6px;font-weight:600;
+  }
+
+  hr.stitch{border:none;border-top:1px dashed var(--rule);margin:44px 0;}
+
+  footer{
+    background:linear-gradient(160deg, var(--maroon-deep), var(--maroon));color:#EAD9B4;
+    margin-top:20px;padding:46px 20px 34px;position:relative;
+  }
+  footer::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:8px;
+    background-image: repeating-linear-gradient(90deg, var(--gold-bright) 0 14px, transparent 14px 28px);opacity:0.5;
+  }
+  .footer-inner{max-width:1180px;margin:0 auto;}
+  .footer-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;padding-bottom:26px;border-bottom:1px dashed rgba(230,200,130,0.35);}
+  footer h3{font-family:'Anek Bangla','Inter',sans-serif;font-weight:700;font-size:1.29rem;color:#FBF3DE;margin:0 0 10px;}
+  footer p{font-size:13.6px;color:#DDC79A;margin:0 0 10px;}
+  .contact-card{background:rgba(255,255,255,0.05);border:1px solid rgba(230,200,130,0.25);border-radius:var(--radius);padding:18px 20px;}
+  .contact-line{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13.4px;color:#F1DFB2;margin-bottom:8px;}
+  .contact-line a{color:#F1DFB2;text-decoration:none;border-bottom:1px dotted rgba(241,223,178,0.5);}
+  .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:20px;font-size:11.9px;color:#C6AD7C;font-family:'IBM Plex Mono',monospace;}
+  .foot-bottom a{color:#E4C77E;}
+
+  #backTop{
+    position:fixed;right:18px;bottom:18px;width:44px;height:44px;border-radius:50%;background:var(--maroon);
+    color:#F6E4C0;display:none;align-items:center;justify-content:center;box-shadow:0 8px 20px -6px rgba(74,14,25,0.5);
+    cursor:pointer;text-decoration:none;z-index:50;border:2px solid var(--gold-bright);
+  }
+  #backTop.show{display:flex;}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease, transform .5s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (max-width: 900px){
+    .shell{grid-template-columns:1fr;padding:0 16px;}
+    nav.toc{display:none;}
+    .toc-toggle{display:flex;}
+    header.cover{padding:52px 16px 34px;}
+    .cover-inner{align-items:flex-start;}
+    .stamp{width:168px;min-height:100px;padding:12px 14px;}
+    .clause-body{padding-left:0;margin-top:12px;}
+    .footer-grid{grid-template-columns:1fr;}
+    .lang-toggle{top:8px;right:8px;padding:2px;}
+    .lang-toggle button{padding:5px 11px;font-size:10.9px;}
+  }
+  @media (max-width: 640px){
+    header.cover{
+      min-height:calc(100vw * 0.85);height:auto;
+      padding:24px 16px;display:flex;align-items:center;
+    }
+    .cover-inner{width:100%;align-items:center;text-align:center;gap:8px;}
+    .brand-logo{width:48px;height:48px;margin:0 auto 6px;}
+    .cover-eyebrow{font-size:11px;justify-content:center;margin-bottom:6px;}
+    h1.brand-title{font-size:1.93rem;margin:0 0 8px;}
+    .cover-sub{font-size:15.4px;margin:0 auto;}
+    .stamp{width:auto;min-height:0;margin-top:10px;padding:10px 18px;display:inline-flex;flex-direction:column;align-items:center;transform:none;}
+    .stamp-text{font-size:12.1px;}
+    .stamp-text b{font-size:13.2px;}
+    .stamp-brand{font-size:15.4px;}
+    footer{
+      min-height:calc(100vw * 0.75);height:auto;
+      padding:24px 16px;display:flex;align-items:center;margin-top:14px;
+    }
+    .footer-inner{width:100%;}
+    .footer-grid{grid-template-columns:1fr;gap:14px;padding-bottom:14px;text-align:center;}
+    footer h3{font-size:1.32rem;margin-bottom:6px;}
+    footer p{font-size:14.9px;}
+    .contact-card{padding:14px 18px;}
+    .contact-line{justify-content:center;font-size:14.3px;}
+    .foot-bottom{justify-content:center;padding-top:10px;font-size:12.1px;text-align:center;}
+  }
+  @media print{
+    header.cover, footer, .toc-toggle, nav.toc, #backTop, .lang-toggle{display:none !important;}
+    body{background:#fff;}
+    .shell{display:block;padding:0;}
+    .clause-body{padding-left:0;}
+  }
+</style>
+</head>
+<body id="top">
+
+<div class="lang-toggle" role="group" aria-label="Language / ভাষা">
+  <button type="button" id="btnLangBn" class="active" onclick="setLang('bn')">বাং</button>
+  <button type="button" id="btnLangEn" onclick="setLang('en')">EN</button>
+</div>
+
+<header class="cover">
+  <div class="cover-inner">
+    <div>
+      <img src="icon-192.png" alt="MY SHOP" class="brand-logo" onerror="this.style.display='none'">
+      <div class="cover-eyebrow">
+        <span class="lang-bn">লিগ্যাল ডকুমেন্ট · খাতা নং ০৩</span>
+        <span class="lang-en">LEGAL DOCUMENT · LEDGER NO. 03</span>
+      </div>
+      <h1 class="brand-title">
+        <span class="lang-bn">গোপনীয়তা <em>নীতি</em></span>
+        <span class="lang-en">Privacy <em>Policy</em></span>
+      </h1>
+      <p class="cover-sub">
+        <span class="lang-bn">MY SHOP আপনার ব্যবসায়িক তথ্যের ওপর পূর্ণ নিয়ন্ত্রণ, স্বচ্ছতা ও সর্বোচ্চ সুরক্ষা নিশ্চিত করে তৈরি — এই নীতিমালায় প্রতিটি ফিচার কী তথ্য ব্যবহার করে ও কীভাবে সুরক্ষিত রাখে তা বিস্তারিত ব্যাখ্যা করা আছে।</span>
+        <span class="lang-en">MY SHOP is built to give you full control over your business data, with transparency and strong security — this policy explains, feature by feature, exactly what information is used and how it's protected.</span>
+      </p>
+    </div>
+    <div class="stamp">
+      <div class="stamp-text">
+        <b class="lang-bn">কার্যকর তারিখ</b><b class="lang-en">EFFECTIVE DATE</b>
+        <span class="lang-bn">২১ আগস্ট, ২০২৬</span><span class="lang-en">AUG 21, 2026</span>
+      </div>
+      <div class="stamp-brand">MY SHOP</div>
+    </div>
+  </div>
+</header>
+
+<div class="toc-toggle" id="tocToggle">
+  <span><span class="lang-bn">📑 সূচিপত্র দেখুন</span><span class="lang-en">📑 View Contents</span></span>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+<div id="mobileTocPanel"></div>
+
+<div class="shell">
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-card">
+      <div class="toc-progress-track"><div class="toc-progress-fill" id="tocProgress"></div></div>
+      <img src="icon-192.png" alt="MY SHOP" class="toc-logo" onerror="this.style.display='none'">
+      <div class="toc-head">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span class="lang-bn">সূচিপত্র</span><span class="lang-en">CONTENTS</span>
+      </div>
+      <ol id="tocList"></ol>
+    </div>
+  </nav>
+
+  <main>
+
+    <div class="intro-card reveal">
+      <p>
+        <span class="lang-bn"><b>MY SHOP</b> ("অ্যাপ", "আমরা", "আমাদের") দোকান মালিকদের জন্য তৈরি একটি ব্যবসায়িক লেজার অ্যাপ, যার মাধ্যমে বিক্রয়, ক্রয়, খরচ, ইনভেন্টরি ট্র্যাক করা যায় এবং ঐচ্ছিকভাবে অনলাইন অর্ডার, AI ফিচার, কুরিয়ার বুকিং ও নোটিফিকেশন ব্যবহার করা যায়। এই নীতিমালায় বিস্তারিতভাবে ব্যাখ্যা করা হয়েছে অ্যাপটি কী তথ্য সংগ্রহ করে, কোথায় রাখে, কীভাবে ব্যবহার করে এবং কীভাবে আপনি প্রতিটি ধাপে নিয়ন্ত্রণে থাকেন।</span>
+        <span class="lang-en"><b>MY SHOP</b> ("the App," "we," "us," "our") is a business ledger application built for shop owners to track sales, purchases, expenses, and inventory, and to optionally use online orders, AI features, courier booking, and notifications. This policy explains in detail what information the App collects, where it's stored, how it's used, and how you stay in control at every step.</span>
+      </p>
+      <div class="meta-row">
+        <div><b class="lang-bn">অ্যাপের নাম:</b><b class="lang-en">App Name:</b> MY SHOP — Business Ledger</div>
+        <div><b class="lang-bn">যোগাযোগ:</b><b class="lang-en">Contact:</b> sohanunlimited1@gmail.com</div>
+        <div><b class="lang-bn">সর্বশেষ হালনাগাদ:</b><b class="lang-en">Last Updated:</b> <span class="lang-bn">২১ আগস্ট, ২০২৬</span><span class="lang-en">August 21, 2026</span></div>
+        <div><a href="https://sohanshopbd.web.app/terms_of_service" target="_blank" rel="noopener"><span class="lang-bn">শর্তাবলী →</span><span class="lang-en">Terms of Service →</span></a></div>
+      </div>
+    </div>
+
+    <div class="highlights reveal">
+      <h3><span class="lang-bn">✅ সংক্ষেপে প্রধান বিষয়সমূহ</span><span class="lang-en">✅ Key Highlights, In Short</span></h3>
+      <ul class="checklist">
+        <li><span class="chk">✓</span><span><span class="lang-bn">আপনার লেজার ডেটা আপনার একাউন্টের সাথে যুক্ত এবং একাউন্ট-ভিত্তিক নিরাপত্তা নিয়ম দিয়ে সুরক্ষিত — অন্য কোনো দোকান মালিক তা দেখতে পান না।</span><span class="lang-en">Your ledger data is tied to your own account and protected by per-account security rules — no other shop owner can see it.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">ঐচ্ছিক ব্যাকআপ কেবল আপনার নিজের গোপন Google Drive স্পেসে যায় — অন্য কোথাও কপি হয় না।</span><span class="lang-en">Optional backup goes only to your own hidden Google Drive space — never copied elsewhere.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">AI রিসিট স্ক্যান, কুরিয়ার বুকিং, Telegram নোটিফিকেশন ও Google Sheet সিঙ্ক — এই সবগুলোই ঐচ্ছিক এবং আপনি চালু করলেই কেবল সক্রিয় হয়।</span><span class="lang-en">AI receipt scanning, courier booking, Telegram notifications, and Google Sheet sync are all optional and only activate if you turn them on.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">আমরা কখনোই আপনার ডেটা বিক্রি করি না, বিজ্ঞাপনদাতাদের সাথে শেয়ার করি না, বা অ্যাপে বিজ্ঞাপন দেখাই না।</span><span class="lang-en">We never sell your data, share it with advertisers, or run ads in the App.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">কুরিয়ার বা Telegram-এর মতো তৃতীয় পক্ষ ফিচারে শুধু ডেলিভারি/নোটিফিকেশনের জন্য প্রয়োজনীয় সর্বনিম্ন তথ্যই পাঠানো হয় — পুরো লেজার নয়।</span><span class="lang-en">Third-party features like courier or Telegram only receive the minimum information needed for delivery/notification — never your whole ledger.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">আপনার অবস্থান অনুযায়ী GDPR, CCPA বা অনুরূপ আইনের অধীনে বাড়তি অধিকার প্রযোজ্য হতে পারে — বিস্তারিত সেকশন ২৫-এ।</span><span class="lang-en">Depending on where you live, GDPR, CCPA, or similar laws may give you additional rights — see Section 25 for details.</span></span></li>
+        <li><span class="chk">✓</span><span><span class="lang-bn">আমাদের সোর্স কোড, ডিজাইন ও ডেটাবেস কাঠামো কপিরাইট-সুরক্ষিত; অননুমোদিত কপি, ক্লোনিং বা স্ক্র্যাপিং কঠোরভাবে নিষিদ্ধ — বিস্তারিত সেকশন ২৮-এ।</span><span class="lang-en">Our source code, design, and database structure are copyright-protected; unauthorized copying, cloning, or scraping is strictly prohibited — see Section 28 for details.</span></span></li>
+      </ul>
+    </div>
+
+    <!-- 1 -->
+    <section class="clause reveal" id="s1" data-group="intro">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১</span><span class="lang-en">01</span></div>
+        <h2 class="clause-title"><span class="lang-bn">👤 আমরা কারা</span><span class="lang-en">👤 Who We Are</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">MY SHOP ("অ্যাপ", "আমরা") হলো দোকান মালিকদের জন্য তৈরি একটি ব্যবসায়িক লেজার অ্যাপ, যার মাধ্যমে বিক্রয়, ক্রয়, খরচ ট্র্যাক করা এবং ঐচ্ছিকভাবে সরাসরি গ্রাহকের অর্ডার গ্রহণ করা যায়। এই নীতিমালায় বিস্তারিতভাবে ব্যাখ্যা করা হয়েছে অ্যাপটি কী তথ্য ব্যবহার করে, কোথায় সংরক্ষণ করে, কীভাবে ব্যবহার করে, কে তা দেখতে পারে এবং প্রতিটি ধাপে আপনি কীভাবে নিয়ন্ত্রণে থাকেন।</p>
+        <p class="lang-en">MY SHOP ("the App," "we," "us," "our") is a business ledger application built for shop owners to record and track sales, purchases, and expenses, and to optionally receive live customer orders. This policy explains, in detail, what information the App accesses, where it is stored, how it is used, who can see it, and how you stay in control of it at every step.</p>
+        <p class="lang-bn">আপনি ইমেইল বা Google একাউন্ট যেভাবেই সাইন-ইন করুন না কেন, অথবা ক্লাউড সিঙ্ক, ড্রাইভ ব্যাকআপ, AI ফিচার, কুরিয়ার বুকিং বা Telegram নোটিফিকেশন চালু করুন বা না করুন — এই নীতিমালা অ্যাপের সকল ব্যবহারকারীর জন্য প্রযোজ্য।</p>
+        <p class="lang-en">This policy applies to everyone who uses the App, regardless of whether you sign in with email or a Google Account, and regardless of whether you enable cloud sync, Drive backup, AI features, courier booking, or Telegram notifications.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="clause reveal" id="s2" data-group="intro">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২</span><span class="lang-en">02</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📝 আপনার প্রদানকৃত তথ্য</span><span class="lang-en">📝 Data You Enter into the App</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপের মূল ভিত্তি হলো আপনার নিজের তৈরি করা ব্যবসায়িক লেজার। এর মধ্যে রয়েছে —</p>
+        <p class="lang-en">The core of the App is the business ledger you build yourself. This includes —</p>
+        <div class="field-table-wrap">
+          <table class="field-table">
+            <thead><tr>
+              <th><span class="lang-bn">শ্রেণি</span><span class="lang-en">Category</span></th>
+              <th><span class="lang-bn">উদাহরণ</span><span class="lang-en">Examples</span></th>
+            </tr></thead>
+            <tbody>
+              <tr><td><span class="lang-bn">বিক্রয় রেকর্ড</span><span class="lang-en">Sales records</span></td><td><span class="lang-bn">পণ্য, পরিমাণ, তারিখ, পেমেন্ট মাধ্যম, নোট</span><span class="lang-en">Item, amount, date, payment method, notes</span></td></tr>
+              <tr><td><span class="lang-bn">ক্রয় রেকর্ড</span><span class="lang-en">Purchase records</span></td><td><span class="lang-bn">সরবরাহকারী, পণ্য, খরচ, তারিখ</span><span class="lang-en">Supplier, item, cost, date</span></td></tr>
+              <tr><td><span class="lang-bn">খরচের রেকর্ড</span><span class="lang-en">Expense records</span></td><td><span class="lang-bn">ক্যাটাগরি, পরিমাণ, তারিখ, বিবরণ</span><span class="lang-en">Category, amount, date, description</span></td></tr>
+              <tr><td><span class="lang-bn">ইনভেন্টরি ও ওয়ারেন্টি</span><span class="lang-en">Inventory & warranty</span></td><td><span class="lang-bn">পণ্যের নাম, SKU, স্টক, Serial/IMEI, ওয়ারেন্টি মেয়াদ</span><span class="lang-en">Product name, SKU, stock, Serial/IMEI, warranty period</span></td></tr>
+              <tr><td><span class="lang-bn">দোকানের প্রোফাইল</span><span class="lang-en">Shop profile</span></td><td><span class="lang-bn">দোকানের নাম, লোগো, ঠিকানা, পেমেন্ট নম্বর</span><span class="lang-en">Shop name, logo, address, payment numbers</span></td></tr>
+              <tr><td><span class="lang-bn">অর্ডার (অনলাইন অর্ডার ব্যবহৃত হলে)</span><span class="lang-en">Orders (if Online Orders used)</span></td><td><span class="lang-bn">গ্রাহকের নাম/ফোন/ঠিকানা, পণ্য, অর্ডার স্ট্যাটাস</span><span class="lang-en">Customer name/phone/address, items, order status</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <span class="lang-bn">💡 আপনি নিজেই এসব তথ্যের নিয়ন্ত্রণকারী। কোনো লেনদেন রেকর্ড করার জন্য যতটুকু প্রয়োজন, তার বাইরে বাড়তি কোনো তথ্য দেওয়া বাধ্যতামূলক নয়।</span>
+          <span class="lang-en">💡 You control what you type into these fields. The App does not require you to enter anything beyond what's needed to record a transaction.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="clause reveal" id="s3" data-group="intro">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৩</span><span class="lang-en">03</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🧾 ডেটা রোল — কন্ট্রোলার বনাম প্রসেসর</span><span class="lang-en">🧾 Data Roles — Controller vs. Processor</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">এই ধারণাটি স্পষ্ট করা জরুরি, বিশেষত GDPR-এর মতো আইনের অধীনে —</p>
+        <p class="lang-en">This distinction matters, especially under laws like GDPR —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>আপনার নিজের একাউন্ট ডেটার জন্য</b> — আপনার নাম, ইমেইল, দোকানের প্রোফাইলের মতো তথ্যের ক্ষেত্রে <b>MY SHOP নিজেই "কন্ট্রোলার"</b> — অর্থাৎ আমরা ঠিক করি কেন ও কীভাবে এই তথ্য প্রক্রিয়া হয়।</li>
+          <li class="lang-en"><b>For your own account data</b> — for information like your name, email, and shop profile, <b>MY SHOP is the "controller"</b> — we decide why and how this data is processed.</li>
+          <li class="lang-bn"><b>আপনার গ্রাহকের ডেটার জন্য</b> — অনলাইন অর্ডার ফিচারে আপনি যখন আপনার নিজের গ্রাহকের নাম, ফোন বা ঠিকানা এন্ট্রি করেন, তখন সেই গ্রাহকের তথ্যের ক্ষেত্রে <b>আপনিই "কন্ট্রোলার"</b> এবং <b>MY SHOP কেবল "প্রসেসর"</b> — আমরা কেবল আপনার নির্দেশ অনুযায়ী সেই ডেটা সংরক্ষণ ও সিঙ্ক করি, নিজের উদ্দেশ্যে ব্যবহার করি না।</li>
+          <li class="lang-en"><b>For your customers' data</b> — when you enter your own customer's name, phone, or address (e.g. for the Online Orders feature), <b>you are the "controller"</b> of that customer's data, and <b>MY SHOP acts only as a "processor"</b> — we store and sync it on your instructions and do not use it for our own purposes.</li>
+          <li class="lang-bn"><b>আপনার দায়িত্ব</b> — নিজের গ্রাহকদের কাছ থেকে তথ্য সংগ্রহের জন্য প্রয়োজনীয় সম্মতি বা আইনি ভিত্তি নিশ্চিত করা আপনার নিজের দায়িত্ব, যেহেতু আপনি সেই তথ্যের কন্ট্রোলার।</li>
+          <li class="lang-en"><b>Your responsibility</b> — as the controller of your customers' data, ensuring you have the appropriate consent or legal basis to collect it from them is your own responsibility.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="clause reveal" id="s4" data-group="intro">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৪</span><span class="lang-en">04</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🔑 আপনার অ্যাকাউন্টে সাইন-ইন</span><span class="lang-en">🔑 Signing in to Your Account</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপে সাইন-ইন করার একাধিক উপায় আছে, যার যেকোনো একটি আপনি বেছে নিতে পারেন —</p>
+        <p class="lang-en">The App supports multiple ways to sign in, and you choose which one to use —</p>
+        <h4><span class="lang-bn">ইমেইল ও পাসওয়ার্ড</span><span class="lang-en">Email & Password</span></h4>
+        <p class="lang-bn">আপনার ইমেইল ও নিরাপদে হ্যাশ করা পাসওয়ার্ড দিয়ে একাউন্ট সুরক্ষিত করা হয় (আমরা কখনোই প্লেইন টেক্সট পাসওয়ার্ড সংরক্ষণ করি না — এটি Google-এর Firebase Authentication দিয়ে পরিচালিত)। নতুন একাউন্টে ইমেইল OTP দিয়ে যাচাই করা হয়।</p>
+        <p class="lang-en">Your email address and a securely hashed password (we never store your password in plain text — this is handled by Google's Firebase Authentication infrastructure) are used to secure your account. New accounts are verified with an email OTP.</p>
+        <h4><span class="lang-bn">Google সাইন-ইন</span><span class="lang-en">Google Sign-In</span></h4>
+        <p class="lang-bn">Google দিয়ে সাইন-ইন করলে আপনার সাধারণ প্রোফাইল তথ্য (নাম, ইমেইল, ছবি) পাওয়া যায়। এটি Google Drive ব্যাকআপের অনুমতি থেকে সম্পূর্ণ আলাদা — শুধু Google দিয়ে সাইন-ইন করলেই ড্রাইভে কোনো প্রবেশাধিকার তৈরি হয় না।</p>
+        <p class="lang-en">If you sign in with Google, we receive your basic profile information (name, email, photo). This is separate from the Google Drive backup permission (Section 6) — signing in with Google does <strong>not</strong> by itself grant any access to your Google Drive.</p>
+        <h4><span class="lang-bn">ডিভাইস PIN / বায়োমেট্রিক আনলক</span><span class="lang-en">Device PIN / Biometric Unlock</span></h4>
+        <p class="lang-bn">ফিঙ্গারপ্রিন্ট বা PIN দিয়ে অ্যাপ লক চালু করলে তা সম্পূর্ণভাবে আপনার নিজের ডিভাইসের অপারেটিং সিস্টেমে যাচাই হয় — এটি কখনোই আমাদের সার্ভারে পাঠানো বা সংরক্ষণ করা হয় না।</p>
+        <p class="lang-en">If you enable fingerprint or a PIN as App Lock, that credential is registered and verified entirely on your own device — it is never transmitted to or stored on our servers.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="clause reveal" id="s5" data-group="storage">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৫</span><span class="lang-en">05</span></div>
+        <h2 class="clause-title"><span class="lang-bn">☁️ ক্লাউড সিঙ্ক (Firebase)</span><span class="lang-en">☁️ Cloud Sync of Your Ledger (Firebase)</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">একাধিক ডিভাইস থেকে লেজার ব্যবহারের সুবিধার্থে এবং অনলাইন অর্ডার ফিচার সমর্থনের জন্য আপনার দোকানের লেজার ডেটা একটি ক্লাউড ডেটাবেসে (Firebase Realtime Database) সিঙ্ক করা হয়।</p>
+        <p class="lang-en">To let you access your ledger from more than one device, and to support the optional Online Orders feature, your shop's ledger data is synced to a cloud database (Firebase Realtime Database).</p>
+        <h4><span class="lang-bn">প্রবেশাধিকার কীভাবে নিয়ন্ত্রিত হয়</span><span class="lang-en">How Access Is Restricted</span></h4>
+        <p class="lang-bn">প্রতিটি দোকানের ডেটা একটি নির্দিষ্ট অ্যাকাউন্ট আইডির অধীনে সংরক্ষিত এবং সার্ভার-সাইড সিকিউরিটি রুলস দিয়ে সুরক্ষিত — কেবল সেই অ্যাকাউন্টের লগইনকৃত মালিকই তা পড়তে বা পরিবর্তন করতে পারেন। অন্য কোনো ব্যবহারকারী — এমনকি অন্য দোকান মালিকও — সরাসরি আপনার দোকানের ডেটা দেখতে পারেন না।</p>
+        <p class="lang-en">Each shop's data is stored under a record keyed to your unique account ID, protected by server-side Security Rules that only allow the signed-in owner to read or write it. No other user — including other shop owners — can access your shop's data directly.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="clause reveal" id="s6" data-group="storage">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৬</span><span class="lang-en">06</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🗄️ Google Drive ব্যাকআপ</span><span class="lang-en">🗄️ Google Drive Backup — How It Works</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">"Connect Drive" চাপলে অ্যাপটি Google-এর একটি নির্দিষ্ট ও সীমিত অনুমতি চায়: <span class="pill-code">drive.appdata</span> — এটি ইচ্ছাকৃতভাবে সীমিত রাখা একটি সুবিধা।</p>
+        <p class="lang-en">If you tap "Connect Drive," the App requests one specific, narrow Google permission: <span class="pill-code">drive.appdata</span> — this scope is deliberately limited.</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>শুধু একটি লুকানো ফাইল</b> — অ্যাপটি কেবল নিজের তৈরি করা একটি লুকানো ব্যাকআপ ফাইল তৈরি/আপডেট করতে পারে, যা আপনার সাধারণ ড্রাইভ তালিকায় দেখা যায় না।</li>
+          <li class="lang-en"><b>Only one hidden file</b> — the App can only create/update one hidden backup file it created itself; it doesn't appear in your normal Drive file list.</li>
+          <li class="lang-bn"><b>অন্য কোনো ফাইলে প্রবেশাধিকার নেই</b> — আপনার ড্রাইভে থাকা অন্য কোনো ফাইল, ছবি বা নথিতে অ্যাপের কোনো প্রবেশাধিকার নেই।</li>
+          <li class="lang-en"><b>No access to other files</b> — the App has no access whatsoever to any other file, photo, or document already in your Drive.</li>
+          <li class="lang-bn"><b>শুধু আপনার একাউন্টেই থাকে</b> — ব্যাকআপ আপনার নিজের গুগল অ্যাকাউন্টের স্টোরেজেই থাকে, কখনোই আমাদের সার্ভারে কপি হয় না।</li>
+          <li class="lang-en"><b>Stays in your account only</b> — the backup stays entirely within your Google account; it's never copied to our servers.</li>
+        </ul>
+        <div class="note">
+          <span class="lang-bn">💡 যা ব্যাকআপ নেওয়া হয়: বিক্রয়, ক্রয়, খরচ ও দোকানের প্রোফাইল সম্বলিত একটি সংগঠিত স্ন্যাপশট ফাইল।</span>
+          <span class="lang-en">💡 What gets backed up: a structured snapshot file of your sales, purchases, expenses, and shop profile.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="clause reveal" id="s7" data-group="storage">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৭</span><span class="lang-en">07</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📱 স্থানীয় স্টোরেজ ও কুকিজ</span><span class="lang-en">📱 Local Device Storage & Cookies</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">ক্লাউড সিঙ্ক ও ড্রাইভ ব্যাকআপের পাশাপাশি অ্যাপটি দ্রুত কাজ করার ও অফলাইনে চলার জন্য আপনার ডিভাইসের লোকাল স্টোরেজে একটি কার্যকরী কপি রাখে। আপনি চাইলে যেকোনো সময় সম্পূর্ণ ব্যাকআপ <span class="pill-code">.json</span> ফাইল হিসেবে ডাউনলোড করতে পারেন — এই লোকাল এক্সপোর্ট আপনি নিজে না সরালে কখনো ডিভাইসের বাইরে যায় না।</p>
+        <p class="lang-en">Independent of cloud sync and Drive backup, the App keeps a working copy of your data in your browser's local storage, so it works instantly and offline. You can also export a full backup as a <span class="pill-code">.json</span> file at any time — this local export never leaves your device unless you move it yourself.</p>
+        <h4><span class="lang-bn">কুকিজ ও অনুরূপ প্রযুক্তি</span><span class="lang-en">Cookies & Similar Technologies</span></h4>
+        <p class="lang-bn">অ্যাপটি বিজ্ঞাপন বা ট্র্যাকিং কুকিজ ব্যবহার করে না। আমরা শুধুমাত্র <b>প্রয়োজনীয় (essential)</b> স্টোরেজ ব্যবহার করি — যেমন আপনাকে সাইন-ইন অবস্থায় রাখা এবং আপনার ভাষা/সেটিংস মনে রাখা — যা অ্যাপ সঠিকভাবে কাজ করার জন্য অত্যাবশ্যক। কোনো তৃতীয় পক্ষের বিজ্ঞাপন কুকি, অ্যানালিটিক্স ট্র্যাকার বা ক্রস-সাইট ট্র্যাকিং প্রযুক্তি ব্যবহৃত হয় না।</p>
+        <p class="lang-en">The App does not use advertising or cross-site tracking cookies. We only use <b>strictly necessary</b> local storage — for example, to keep you signed in and remember your language/settings — which is essential for the App to function. No third-party advertising cookies, analytics trackers, or cross-site tracking technologies are used.</p>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="clause reveal" id="s8" data-group="storage">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৮</span><span class="lang-en">08</span></div>
+        <h2 class="clause-title"><span class="lang-bn">💳 পেমেন্ট ও সাবস্ক্রিপশন তথ্য</span><span class="lang-en">💳 Payment & Subscription Data</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">MY SHOP বর্তমানে একটি ফ্রি অ্যাপ। ভবিষ্যতে যদি কোনো পেইড প্ল্যান বা প্রিমিয়াম ফিচার চালু করা হয়, তাহলে সেই সময় থেকে এই সেকশন প্রযোজ্য হবে —</p>
+        <p class="lang-en">MY SHOP is currently a free app. If a paid plan or premium feature is introduced in the future, this section will apply from that point onward —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>আমরা কার্ড নম্বর সংরক্ষণ করি না</b> — কোনো পেমেন্ট চালু হলে তা Google Play Billing / Apple App Store, অথবা স্বীকৃত পেমেন্ট গেটওয়ে (যেমন bKash, Nagad, বা কার্ড প্রসেসর) দ্বারা সরাসরি পরিচালিত হবে; আপনার সম্পূর্ণ কার্ড/একাউন্ট নম্বর আমাদের সার্ভারে কখনো সংরক্ষিত হয় না।</li>
+          <li class="lang-en"><b>We never store full card details</b> — any payment will be processed directly by Google Play Billing / Apple App Store, or a recognized payment gateway (e.g. bKash, Nagad, or a card processor); your full card or account number is never stored on our servers.</li>
+          <li class="lang-bn"><b>যা আমরা রাখি</b> — শুধুমাত্র লেনদেনের স্ট্যাটাস, প্ল্যানের ধরন ও মেয়াদ — যা সাবস্ক্রিপশন পরিচালনার জন্য প্রয়োজনীয়।</li>
+          <li class="lang-en"><b>What we may retain</b> — only transaction status, plan type, and subscription period, as needed to manage your subscription.</li>
+          <li class="lang-bn"><b>তৃতীয় পক্ষের নীতি প্রযোজ্য</b> — পেমেন্ট প্রসেসিং সংশ্লিষ্ট প্রোভাইডারের নিজস্ব গোপনীয়তা নীতি ও নিরাপত্তা মান (যেমন PCI-DSS) দ্বারা নিয়ন্ত্রিত হয়।</li>
+          <li class="lang-en"><b>Governed by the provider's own policy</b> — payment processing is governed by that provider's own privacy policy and security standards (such as PCI-DSS).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="clause reveal" id="s9" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৯</span><span class="lang-en">09</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📡 স্বয়ংক্রিয়ভাবে সংগৃহীত তথ্য</span><span class="lang-en">📡 What We Automatically Collect</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">যেকোনো ওয়েব অ্যাপ ব্যবহারের সময় আইপি অ্যাড্রেস ও ব্রাউজারের ধরনের মতো কিছু কারিগরি তথ্য স্বয়ংক্রিয়ভাবে তৈরি হয়, যা নিরাপত্তা ও নির্ভরযোগ্যতার উদ্দেশ্যে আমাদের হোস্টিং প্রোভাইডারের (Firebase Hosting/Google Cloud) লগে সাময়িকভাবে দেখা যেতে পারে। অ্যাপে কোনো থার্ড-পার্টি বিজ্ঞাপন ট্র্যাকার ব্যবহৃত হয় না।</p>
+        <p class="lang-en">Standard technical information such as your IP address and browser type is generated automatically, which may appear in infrastructure-level logs from our hosting provider (Firebase Hosting/Google Cloud) for security and reliability. The App does not run third-party advertising trackers.</p>
+        <p class="lang-bn">পুশ নোটিফিকেশন চালু করলে (সেটিংস → অর্ডার নোটিফিকেশন) আপনার ডিভাইসের একটি নোটিফিকেশন টোকেন (FCM Token) সংরক্ষণ করা হয়, যা কেবল আপনাকে নোটিফিকেশন পাঠাতে ব্যবহৃত হয় — এটি কোনো ট্র্যাকিং বা বিজ্ঞাপনের উদ্দেশ্যে ব্যবহৃত হয় না।</p>
+        <p class="lang-en">If you enable push notifications (Settings → Order Notifications), a notification token (FCM Token) for your device is stored, used only to deliver notifications to you — never for tracking or advertising.</p>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="clause reveal" id="s10" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১০</span><span class="lang-en">10</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🤖 AI ফিচার — রিসিট স্ক্যানার ও ইনসাইটস</span><span class="lang-en">🤖 AI Features — Receipt Scanner & Insights</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপে দুটি ঐচ্ছিক AI ফিচার আছে, যা Google-এর Gemini AI দ্বারা পরিচালিত —</p>
+        <p class="lang-en">The App offers two optional AI features, powered by Google's Gemini AI —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>AI রিসিট স্ক্যানার</b> — রিসিটের ছবি তুললে তা বিশ্লেষণের জন্য Google-এর Gemini API-তে পাঠানো হয়; তথ্য বের করার প্রয়োজনীয় সময়ের বাইরে আমরা সেই ছবি সংরক্ষণ করি না।</li>
+          <li class="lang-en"><b>AI Receipt Scanner</b> — when you photograph a receipt, that image is sent to Google's Gemini API for analysis; we do not retain the image beyond the time needed to extract the data.</li>
+          <li class="lang-bn"><b>AI ইনসাইটস</b> — আপনার নিজের বিক্রয়/ইনভেন্টরি/খরচের সারসংক্ষেপ তথ্য ট্রেন্ড বিশ্লেষণ, লো-স্টক পূর্বাভাস ও অস্বাভাবিক এন্ট্রি শনাক্ত করার জন্য Gemini-তে পাঠানো হতে পারে — ফলাফল শুধুমাত্র আপনার নিজের ড্যাশবোর্ডে দেখানো হয়।</li>
+          <li class="lang-en"><b>AI Insights</b> — a summary of your own sales/inventory/expense data may be sent to Gemini to generate trend analysis, low-stock predictions, and anomaly flags — shown only on your own dashboard.</li>
+        </ul>
+        <div class="note">
+          <span class="lang-bn">💡 আপনার ছবি বা ব্যবসায়িক তথ্য কোনো AI/ML মডেল প্রশিক্ষণে ব্যবহৃত হয় না, এবং অন্য কোনো ব্যবহারকারীর সাথে শেয়ার করা হয় না। এই ফিচারগুলো সম্পূর্ণ ঐচ্ছিক — ব্যবহার না করলে কোনো তথ্য পাঠানো হয় না।</span>
+          <span class="lang-en">💡 Your images or business data are not used to train any AI/ML model, and are never shared with other users. These features are entirely optional — if you don't use them, no data is sent.</span>
+        </div>
+        <div class="warn">
+          <span class="lang-bn">⚠️ এই ফিচারগুলোর জন্য সচল ইন্টারনেট সংযোগ প্রয়োজন এবং Google-এর নিজস্ব Gemini API শর্তাবলী দ্বারাও নিয়ন্ত্রিত।</span>
+          <span class="lang-en">⚠️ These features require an active internet connection and are also governed by Google's own Gemini API terms.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="clause reveal" id="s11" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১১</span><span class="lang-en">11</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🧭 স্বয়ংক্রিয় সিদ্ধান্ত ও মানব পর্যালোচনা</span><span class="lang-en">🧭 Automated Decision-Making & Human Review</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">AI ইনসাইটস ও রিসিট স্ক্যানার কেবল <b>তথ্যমূলক সহায়ক টুল</b> — এগুলো ট্রেন্ড দেখায়, তথ্য বের করে বা প্রস্তাব দেয়, কিন্তু আপনার হয়ে কোনো চূড়ান্ত সিদ্ধান্ত নেয় না। কোনো এন্ট্রি সংরক্ষণ, সংশোধন বা মুছে ফেলার সিদ্ধান্ত সবসময় আপনার — অ্যাপ নিজে থেকে কোনো লেনদেন তৈরি বা পরিবর্তন করে না।</p>
+        <p class="lang-en">AI Insights and the Receipt Scanner are purely <b>informational aids</b> — they surface trends, extract data, or make suggestions, but they do not make any final decision on your behalf. The decision to save, edit, or delete any entry is always yours — the App never creates or alters a transaction on its own.</p>
+        <p class="lang-bn">আপনার ওপর আইনি বা উল্লেখযোগ্য প্রভাব ফেলে এমন কোনো সিদ্ধান্ত (যেমন একাউন্ট স্থগিত করা) সম্পূর্ণভাবে স্বয়ংক্রিয় প্রোফাইলিং-এর ওপর ভিত্তি করে নেওয়া হয় না; এমন যেকোনো ক্ষেত্রে আপনি ব্যাখ্যা চাইতে বা মানব পর্যালোচনার অনুরোধ করতে পারেন — যোগাযোগ সেকশনে দেওয়া ইমেইলে।</p>
+        <p class="lang-en">Any decision with a legal or otherwise significant effect on you (such as suspending an account) is never based solely on automated profiling; in any such case you may request an explanation or human review using the email in the Contact section.</p>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="clause reveal" id="s12" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১২</span><span class="lang-en">12</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🚚 কুরিয়ার বুকিং ও ডেলিভারি পার্টনার</span><span class="lang-en">🚚 Courier Booking & Delivery Partners</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">সেটিংস → কুরিয়ার বুকিং থেকে আপনি চাইলে একটি কুরিয়ার প্রোভাইডার (বর্তমানে Steadfast Courier, RedX বা Pathao Courier) সংযুক্ত করতে পারেন।</p>
+        <p class="lang-en">From Settings → Courier Booking, you can optionally connect a courier provider (currently Steadfast Courier, RedX, or Pathao Courier).</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>API Key সংরক্ষণ</b> — আপনার দেওয়া API Key ও Secret Key শুধুমাত্র আপনার একাউন্টের সাথে যুক্ত করে নিরাপদে (সার্ভার-সাইড) সংরক্ষণ করা হয় — অন্য কোনো দোকান তা দেখতে বা ব্যবহার করতে পারে না।</li>
+          <li class="lang-en"><b>API key storage</b> — your API Key and Secret Key are stored securely (server-side), scoped to your account only — no other shop can see or use them.</li>
+          <li class="lang-bn"><b>বুকিংয়ের সময় যা পাঠানো হয়</b> — কোনো অর্ডার বুক করলে, শুধু ডেলিভারির জন্য প্রয়োজনীয় সর্বনিম্ন তথ্য (গ্রাহকের নাম, ফোন, বিভাগ/জেলা/থানা ও বিস্তারিত ঠিকানা, এবং আপনার পিকআপ ঠিকানা) সেই কুরিয়ারের নিজস্ব সিস্টেমে পাঠানো হয় — আপনার পুরো লেজার নয়।</li>
+          <li class="lang-en"><b>What's sent when booking</b> — only the minimum delivery information (customer name, phone, Division/District/Thana and detailed address, plus your pickup address) is sent to that courier's own systems — never your whole ledger.</li>
+          <li class="lang-bn"><b>তৃতীয় পক্ষের নীতি প্রযোজ্য</b> — একবার কুরিয়ারের কাছে পৌঁছালে, সেই তথ্যের ব্যবহার সংশ্লিষ্ট কুরিয়ার প্রোভাইডারের নিজস্ব গোপনীয়তা নীতি দ্বারা নিয়ন্ত্রিত হয়; আমরা তাদের সংরক্ষণ পদ্ধতি নিয়ন্ত্রণ করি না।</li>
+          <li class="lang-en"><b>Third-party policy applies</b> — once received, the courier's use of that data is governed by their own privacy policy; we don't control their retention practices.</li>
+        </ul>
+        <div class="note">
+          <span class="lang-bn">💡 যেকোনো সময় সেটিংস থেকে কুরিয়ার প্রোভাইডার বিচ্ছিন্ন করে সংরক্ষিত API Key/Secret Key মুছে ফেলা যায়।</span>
+          <span class="lang-en">💡 You can disconnect a courier provider and remove its stored API Key/Secret Key at any time from the same Settings page.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="clause reveal" id="s13" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৩</span><span class="lang-en">13</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📨 Telegram অর্ডার নোটিফিকেশন</span><span class="lang-en">📨 Telegram Order Notifications</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">সেটিংস → Telegram নোটিফিকেশন থেকে চালু করলে, আপনি নিজেই তৈরি করা একটি Bot Token ও Chat ID প্রদান করেন (Telegram-এর নিজস্ব BotFather টুল দিয়ে তৈরি)।</p>
+        <p class="lang-en">If you set this up from Settings → Telegram Notifications, you provide your own Bot Token and Chat ID, both created through Telegram's own BotFather tool.</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>কী পাঠানো হয়</b> — নতুন অনলাইন অর্ডার এলে অর্ডারের বিবরণ (গ্রাহকের নাম, পণ্য, মোট মূল্য) Telegram-এর নিজস্ব Bot API-এর মাধ্যমে আপনার বটে পাঠানো হয়।</li>
+          <li class="lang-en"><b>What's sent</b> — when a new online order arrives, order details (customer name, items, total) are sent to your bot via Telegram's own Bot API.</li>
+          <li class="lang-bn"><b>Telegram-এর অবকাঠামো ব্যবহৃত হয়</b> — এই বার্তা Telegram-এর নিজস্ব অবকাঠামো দিয়ে যায় এবং তাদের নিজস্ব গোপনীয়তা নীতি দ্বারা নিয়ন্ত্রিত; আমরা পাঠানোর পর এই বার্তার বিষয়বস্তু সংরক্ষণ করি না।</li>
+          <li class="lang-en"><b>Travels through Telegram's infrastructure</b> — governed by Telegram's own privacy policy; we don't retain the content of these messages ourselves after sending.</li>
+        </ul>
+        <div class="note">
+          <span class="lang-bn">💡 আপনার Bot Token নিরাপদে সংরক্ষিত হয় এবং শুধুমাত্র আপনার একাউন্টের সাথে যুক্ত থাকে।</span>
+          <span class="lang-en">💡 Your Bot Token is stored securely and scoped to your account only.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="clause reveal" id="s14" data-group="smart">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৪</span><span class="lang-en">14</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📄 Google Sheet সিঙ্ক</span><span class="lang-en">📄 Google Sheet Sync</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">সেটিংস থেকে Google Sheet সিঙ্ক চালু করলে, আপনি নিজে তৈরি ও ডিপ্লয় করা একটি Google Apps Script Web App URL প্রদান করেন, যা আপনার নিজের Google Sheet-এর সাথে যুক্ত।</p>
+        <p class="lang-en">If you set up Google Sheet Sync from Settings, you provide a Web App URL from a Google Apps Script project you create and deploy yourself, connected to a Google Sheet you own.</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>ডেটা কোথায় যায়</b> — চালু থাকলে আপনার বিক্রয়/ক্রয়/খরচ এন্ট্রি সরাসরি সেই URL-এ পাঠানো হয়, যা সম্পূর্ণভাবে আপনার নিজের Google একাউন্টের মধ্যেই থাকে — এই ফিচারের অংশ হিসেবে এই ডেটা আমাদের সার্ভারে সংরক্ষিত হয় না।</li>
+          <li class="lang-en"><b>Where the data goes</b> — when enabled, your entries are sent directly to that URL, entirely within your own Google account — this data is not stored on our servers as part of this feature.</li>
+          <li class="lang-bn"><b>আপনার নিয়ন্ত্রণে</b> — যেহেতু Apps Script ও Sheet আপনার নিজের, তাই সেই শিটের এক্সেস আপনি অন্য কারও সাথে শেয়ার করলে তার দায়ও আপনার — Web App URL কারো সাথে শেয়ার না করার পরামর্শ দেওয়া হচ্ছে।</li>
+          <li class="lang-en"><b>Under your control</b> — since the Apps Script and Sheet belong to you, you're responsible for who else you share that Sheet with — we recommend not sharing the Web App URL with anyone.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="clause reveal" id="s15" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৫</span><span class="lang-en">15</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🚫 আমরা যা কখনোই করি না</span><span class="lang-en">🚫 What We Do NOT Do</span></h2>
+      </div>
+      <div class="clause-body">
+        <div class="settings-grid">
+          <div class="settings-card"><p><span class="lang-bn">🚫 নির্ধারিত ব্যাকআপ ছাড়া আপনার Drive-এর অন্য ফাইল পড়া হয় না</span><span class="lang-en">🚫 No reading your Drive files beyond backup</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 কারো কাছে ডেটা বিক্রি বা শেয়ার করা হয় না</span><span class="lang-en">🚫 No selling or sharing data with third parties</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 কোনো বিজ্ঞাপন বা অ্যাড-ট্র্যাকার নেই</span><span class="lang-en">🚫 No advertising or ad trackers</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 এক দোকানের তথ্য অন্য ব্যবহারকারী দেখতে পায় না</span><span class="lang-en">🚫 No cross-shop or cross-user data access</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 পাসওয়ার্ড কখনোই প্লেইন টেক্সটে রাখা হয় না</span><span class="lang-en">🚫 No storing your password in plain text</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 জিমেইল, কন্টাক্ট বা ফটোতে কোনো প্রবেশাধিকার নেই</span><span class="lang-en">🚫 No accessing Gmail, Contacts, or Photos</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 AI স্ক্যান করা ছবি মডেল প্রশিক্ষণে ব্যবহৃত হয় না</span><span class="lang-en">🚫 AI-scanned images are never used to train models</span></p></div>
+          <div class="settings-card"><p><span class="lang-bn">🚫 কুরিয়ার/Telegram ক্রেডেনশিয়াল অন্য কোনো দোকানের সাথে শেয়ার হয় না</span><span class="lang-en">🚫 Courier/Telegram credentials are never shared with other shops</span></p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 -->
+    <section class="clause reveal" id="s16" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৬</span><span class="lang-en">16</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🔗 Google API সেবার ডেটা নীতি</span><span class="lang-en">🔗 Google API Services User Data Policy</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">Google API থেকে প্রাপ্ত তথ্যের ব্যবহার ও স্থানান্তর <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a> মেনে চলে, Limited Use শর্তসহ। ড্রাইভের তথ্য কেবল ব্যাকআপ-রিস্টোর ফিচারের জন্য ব্যবহৃত হয়; এটি দিয়ে কোনো AI মডেল প্রশিক্ষণ বা বিজ্ঞাপন দেখানো হয় না।</p>
+        <p class="lang-en">MY SHOP's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. Drive data accessed through the <span class="pill-code">drive.appdata</span> scope is used solely for backup-and-restore, never used to train AI models, and never used for advertising.</p>
+      </div>
+    </section>
+
+    <!-- 17 -->
+    <section class="clause reveal" id="s17" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৭</span><span class="lang-en">17</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📜 তথ্য প্রক্রিয়াকরণের আইনি ভিত্তি</span><span class="lang-en">📜 Legal Basis for Processing (GDPR)</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">যেসব ব্যবহারকারী European Economic Area (EEA), UK বা অনুরূপ আইনি এখতিয়ারের অধীনে GDPR-সম শর্তের সুরক্ষা পান, তাদের জন্য আমরা নিম্নলিখিত আইনি ভিত্তিতে তথ্য প্রক্রিয়া করি —</p>
+        <p class="lang-en">For users protected by GDPR or similar frameworks (e.g. in the EEA, UK, or comparable jurisdictions), we process personal data on the following legal bases —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>চুক্তির প্রয়োজনে (Contract)</b> — একাউন্ট তৈরি, লেজার ফিচার সরবরাহ ও ক্লাউড সিঙ্ক পরিচালনার জন্য।</li>
+          <li class="lang-en"><b>Performance of a contract</b> — to create your account, provide core ledger functionality, and operate cloud sync.</li>
+          <li class="lang-bn"><b>সম্মতি (Consent)</b> — Google Drive ব্যাকআপ, AI ফিচার, কুরিয়ার বুকিং, Telegram নোটিফিকেশন ও Google Sheet সিঙ্কের মতো ঐচ্ছিক ফিচারের জন্য — যা আপনি নিজে চালু করলেই কার্যকর হয় এবং যেকোনো সময় প্রত্যাহারযোগ্য।</li>
+          <li class="lang-en"><b>Consent</b> — for optional features such as Google Drive backup, AI features, courier booking, Telegram notifications, and Google Sheet sync, which activate only when you enable them and can be withdrawn at any time.</li>
+          <li class="lang-bn"><b>বৈধ স্বার্থ (Legitimate Interest)</b> — অ্যাপের নিরাপত্তা বজায় রাখা, জালিয়াতি প্রতিরোধ ও ইনফ্রাস্ট্রাকচার লগ পর্যবেক্ষণের জন্য, যা আপনার গোপনীয়তার অধিকারের ওপর প্রাধান্য পায় না।</li>
+          <li class="lang-en"><b>Legitimate interest</b> — to maintain App security, prevent fraud, and monitor infrastructure logs, in ways that do not override your privacy rights.</li>
+          <li class="lang-bn"><b>আইনি বাধ্যবাধকতা (Legal Obligation)</b> — যেখানে প্রযোজ্য আইন মেনে চলার জন্য প্রয়োজন হয়।</li>
+          <li class="lang-en"><b>Legal obligation</b> — where necessary to comply with applicable law.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 18 -->
+    <section class="clause reveal" id="s18" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৮</span><span class="lang-en">18</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🤝 তথ্য শেয়ার ও তৃতীয় পক্ষ</span><span class="lang-en">🤝 Sharing & Third Parties</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">আমরা আপনার ডেটা বিক্রি করি না বা বিজ্ঞাপনদাতাদের সাথে শেয়ার করি না। অ্যাপ পরিচালনায় যেসব বাহ্যিক প্ল্যাটফর্ম জড়িত —</p>
+        <p class="lang-en">We do not sell your data or share it with advertisers. The outside platforms involved in operating the App are —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>Google Cloud / Firebase</b> — অথেন্টিকেশন, ডেটাবেস ও হোস্টিং (সবসময় প্রয়োজনীয়)।</li>
+          <li class="lang-en"><b>Google Cloud / Firebase</b> — authentication, database, and hosting (always required).</li>
+          <li class="lang-bn"><b>Google Drive</b> — ব্যাকআপ (ঐচ্ছিক, আপনি চালু করলেই)।</li>
+          <li class="lang-en"><b>Google Drive</b> — backup (optional, only if you enable it).</li>
+          <li class="lang-bn"><b>Google Gemini AI</b> — রিসিট স্ক্যান ও AI ইনসাইটস (ঐচ্ছিক)।</li>
+          <li class="lang-en"><b>Google Gemini AI</b> — receipt scanning and AI insights (optional).</li>
+          <li class="lang-bn"><b>Telegram Bot API</b> — অর্ডার নোটিফিকেশন, আপনার নিজের বট দিয়ে (ঐচ্ছিক)।</li>
+          <li class="lang-en"><b>Telegram Bot API</b> — order notifications via your own bot (optional).</li>
+          <li class="lang-bn"><b>কুরিয়ার প্রোভাইডার</b> — Steadfast/RedX/Pathao, শুধু আপনি বুকিং করলেই ডেলিভারির তথ্য পায় (ঐচ্ছিক)।</li>
+          <li class="lang-en"><b>Courier providers</b> — Steadfast/RedX/Pathao receive delivery info only when you book (optional).</li>
+        </ul>
+        <div class="note">
+          <span class="lang-bn">💡 Firebase ও Drive ছাড়া উপরের প্রতিটি ইন্টিগ্রেশন সম্পূর্ণ ঐচ্ছিক এবং আপনার নিজের কনফিগার করা — এগুলো প্রক্রিয়া করে আপনার নিজের অনুমতি অনুযায়ী, তাদের নিজস্ব নিরাপত্তা মান মেনে; নিজের উদ্দেশ্যে আপনার ডেটা ব্যবহার করে না।</span>
+          <span class="lang-en">💡 Other than Firebase and Drive, every integration above is entirely optional and configured by you — these providers process data on our behalf under their own security commitments; they don't use your data for their own purposes.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 -->
+    <section class="clause reveal" id="s19" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">১৯</span><span class="lang-en">19</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📷 আমরা যেসব ডিভাইস পারমিশন চাই</span><span class="lang-en">📷 Device Permissions We Request</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপটি শুধুমাত্র নির্দিষ্ট ফিচারের জন্য প্রয়োজনীয় ডিভাইস পারমিশন চায়, এবং কোনোটাই বাধ্যতামূলক নয় (সংশ্লিষ্ট ফিচার ব্যবহার না করলে পারমিশনও লাগে না) —</p>
+        <p class="lang-en">The App only requests device permissions needed for specific features, and none are mandatory (if you don't use the related feature, the permission isn't needed either) —</p>
+        <div class="field-table-wrap">
+          <table class="field-table">
+            <thead><tr>
+              <th><span class="lang-bn">পারমিশন</span><span class="lang-en">Permission</span></th>
+              <th><span class="lang-bn">কেন প্রয়োজন</span><span class="lang-en">Why It's Needed</span></th>
+            </tr></thead>
+            <tbody>
+              <tr><td><span class="lang-bn">ক্যামেরা</span><span class="lang-en">Camera</span></td><td><span class="lang-bn">AI রিসিট স্ক্যানারে রিসিটের ছবি তোলার জন্য (ঐচ্ছিক)</span><span class="lang-en">To photograph receipts for the AI Receipt Scanner (optional)</span></td></tr>
+              <tr><td><span class="lang-bn">স্টোরেজ / ফাইল</span><span class="lang-en">Storage / Files</span></td><td><span class="lang-bn">.json ব্যাকআপ সংরক্ষণ বা লোগো/ছবি আপলোডের জন্য</span><span class="lang-en">To save .json backups or upload a logo/photo</span></td></tr>
+              <tr><td><span class="lang-bn">নোটিফিকেশন</span><span class="lang-en">Notifications</span></td><td><span class="lang-bn">নতুন অনলাইন অর্ডার এলে সতর্ক করার জন্য (ঐচ্ছিক)</span><span class="lang-en">To alert you when a new online order arrives (optional)</span></td></tr>
+              <tr><td><span class="lang-bn">ইন্টারনেট</span><span class="lang-en">Internet</span></td><td><span class="lang-bn">ক্লাউড সিঙ্ক, ব্যাকআপ ও AI ফিচার কাজ করার জন্য প্রয়োজনীয়</span><span class="lang-en">Required for cloud sync, backup, and AI features to function</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 -->
+    <section class="clause reveal" id="s20" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২০</span><span class="lang-en">20</span></div>
+        <h2 class="clause-title"><span class="lang-bn">👥 অভ্যন্তরীণ অ্যাক্সেস নিয়ন্ত্রণ</span><span class="lang-en">👥 Internal Access Controls & Staff Confidentiality</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">আমাদের টিমের সদস্যদের আপনার ডেটার প্রবেশাধিকার কঠোরভাবে সীমিত — শুধুমাত্র যেসব কর্মী গ্রাহক সহায়তা, নিরাপত্তা বা প্রযুক্তিগত রক্ষণাবেক্ষণের জন্য সরাসরি প্রয়োজন, তারাই এবং শুধু যতটুকু প্রয়োজন ততটুকুই দেখতে পারেন ("প্রয়োজন-ভিত্তিক অ্যাক্সেস")। এই অ্যাক্সেস লগ করা হয় এবং প্রতিটি টিম সদস্য গোপনীয়তা বজায় রাখার শর্তে আবদ্ধ। কোনো কর্মী কৌতূহলবশত বা ব্যক্তিগত কারণে কোনো ব্যবহারকারীর ডেটা দেখার অনুমতি পান না।</p>
+        <p class="lang-en">Access to your data by our team is strictly limited — only staff who directly need it for customer support, security, or technical maintenance can view it, and only to the extent necessary ("need-to-know access"). This access is logged, and every team member is bound by confidentiality obligations. No employee is permitted to view a user's data out of curiosity or for personal reasons.</p>
+      </div>
+    </section>
+
+    <!-- 21 -->
+    <section class="clause reveal" id="s21" data-group="commitments">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২১</span><span class="lang-en">21</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📊 অ্যানোনিমাইজড ও সমষ্টিগত ডেটা</span><span class="lang-en">📊 Anonymized & Aggregate Data</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপ উন্নত করার জন্য আমরা মাঝে মাঝে সমষ্টিগত, অ্যানোনিমাইজড পরিসংখ্যান বিশ্লেষণ করতে পারি (যেমন — কতজন ব্যবহারকারী একটি নির্দিষ্ট ফিচার ব্যবহার করছেন)। এই পরিসংখ্যান থেকে কোনোভাবেই আপনাকে বা আপনার নির্দিষ্ট ব্যবসায়িক তথ্য শনাক্ত করা যায় না, এবং তা তৃতীয় পক্ষের সাথে বিজ্ঞাপন বা বিক্রয়ের উদ্দেশ্যে শেয়ার করা হয় না।</p>
+        <p class="lang-en">To improve the App, we may occasionally analyze aggregate, anonymized statistics (for example, how many users use a particular feature). This data can never be used to identify you or your specific business information, and it is never shared with third parties for advertising or sale.</p>
+      </div>
+    </section>
+
+    <!-- 22 -->
+    <section class="clause reveal" id="s22" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২২</span><span class="lang-en">22</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🗑️ ডেটা সংরক্ষণ ও মুছে ফেলা</span><span class="lang-en">🗑️ Data Retention & Deletion</span></h2>
+      </div>
+      <div class="clause-body">
+        <ul class="explain">
+          <li class="lang-bn"><b>লোকাল ডেটা</b> — আপনি অ্যাপ ডেটা ক্লিয়ার না করা পর্যন্ত ডিভাইসে থাকে।</li>
+          <li class="lang-en"><b>Local data</b> is stored on your device until you clear app data or reset the App.</li>
+          <li class="lang-bn"><b>ক্লাউড-সিঙ্ক লেজার</b> — একাউন্ট সক্রিয় থাকা পর্যন্ত থাকে, অনুরোধে মুছে ফেলা যায়।</li>
+          <li class="lang-en"><b>Cloud-synced ledger data</b> is retained while your account is active and can be deleted upon request.</li>
+          <li class="lang-bn"><b>Drive ব্যাকআপ</b> — গুগল অ্যাকাউন্টের Third-party apps পেজ থেকে যেকোনো সময় মুছে ফেলা যায়।</li>
+          <li class="lang-en"><b>Drive backups</b> can be removed anytime from your Google Account's <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Third-party apps & services</a> page.</li>
+          <li class="lang-bn"><b>কুরিয়ার/Telegram ক্রেডেনশিয়াল</b> — সেটিংস থেকে বিচ্ছিন্ন করা মাত্র সাথে সাথে মুছে যায়।</li>
+          <li class="lang-en"><b>Courier/Telegram credentials</b> are deleted immediately when you disconnect them from Settings.</li>
+          <li class="lang-bn"><b>AI স্ক্যান করা রিসিট ছবি</b> — তথ্য বের করার পর সংরক্ষণ করা হয় না।</li>
+          <li class="lang-en"><b>AI-scanned receipt images</b> are not retained after the data is extracted.</li>
+          <li class="lang-bn"><b>নিষ্ক্রিয় একাউন্ট</b> — কোনো একাউন্ট একটানা ২৪ মাস (২ বছর) নিষ্ক্রিয় থাকলে, মুছে ফেলার আগে রেজিস্টার করা ইমেইলে অগ্রিম নোটিশ পাঠানো হবে, যাতে আপনি চাইলে লগ-ইন করে তা সক্রিয় রাখতে পারেন।</li>
+          <li class="lang-en"><b>Inactive accounts</b> — if an account is inactive for a continuous 24 months (2 years), we will send advance notice to your registered email before deletion, so you can log in to keep it active if you wish.</li>
+        </ul>
+        <h4><span class="lang-bn">একাউন্ট স্থায়ীভাবে মুছে ফেলার প্রক্রিয়া</span><span class="lang-en">How to Permanently Delete Your Account</span></h4>
+        <p class="lang-bn">আপনার একাউন্ট ও সংশ্লিষ্ট সকল ক্লাউড ডেটা (লেজার, প্রোফাইল, সিঙ্ক করা তথ্য) স্থায়ীভাবে মুছে ফেলতে —</p>
+        <p class="lang-en">To permanently delete your account and all associated cloud data (ledger, profile, synced information) —</p>
+        <ol class="steps">
+          <li class="lang-bn"><b>অ্যাপ থেকে:</b> Settings → Account → Delete Account-এ গিয়ে নিশ্চিত করুন।</li>
+          <li class="lang-en"><b>In-app:</b> go to Settings → Account → Delete Account and confirm.</li>
+          <li class="lang-bn"><b>ইমেইলের মাধ্যমে (বিকল্প পথ):</b> লগইন করতে না পারলে, আপনার একাউন্টের ইমেইল থেকে যোগাযোগ সেকশনের ঠিকানায় "Delete My Account" লিখে অনুরোধ পাঠান — আমরা পরিচয় যাচাই করে ৭ কর্মদিবসের মধ্যে ডেটা মুছে ফেলব।</li>
+          <li class="lang-en"><b>By email (fallback):</b> if you can't log in, send a request titled "Delete My Account" from your account's email to the address in the Contact section — we will verify your identity and delete the data within 7 business days.</li>
+        </ol>
+        <div class="warn">
+          <span class="lang-bn">⚠️ একাউন্ট মুছে ফেলা স্থায়ী ও অপরিবর্তনীয় — এটি পুনরুদ্ধার করা যায় না। মুছে ফেলার আগে সেকশন ৭-এ বর্ণিত <span class="pill-code">.json</span> এক্সপোর্ট দিয়ে নিজের ডেটার একটি কপি রাখার পরামর্শ দেওয়া হচ্ছে। এককভাবে সংরক্ষিত Google Drive ব্যাকআপ (থাকলে) আলাদাভাবে মুছতে হবে।</span>
+          <span class="lang-en">⚠️ Account deletion is permanent and irreversible — it cannot be undone. We recommend keeping a copy of your data via the <span class="pill-code">.json</span> export described in Section 7 before deleting. Any separately stored Google Drive backup must be removed on its own.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23 -->
+    <section class="clause reveal" id="s23" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৩</span><span class="lang-en">23</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🔐 নিরাপত্তা ব্যবস্থা</span><span class="lang-en">🔐 Security Safeguards</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপ ও আমাদের সার্ভারের মধ্যে, এবং Google-এর সার্ভারের মধ্যে সকল যোগাযোগ HTTPS/TLS দিয়ে এনক্রিপ্টেড। ক্লাউড-সিঙ্ক ডেটা প্রতি-একাউন্ট সিকিউরিটি রুলস দিয়ে সুরক্ষিত। কুরিয়ার/Telegram API Key ও Secret Key সার্ভার-সাইডে এনক্রিপ্টেড রাখা হয় এবং শুধুমাত্র আপনার একাউন্টের অনুরোধেই ব্যবহৃত হয়। পাসওয়ার্ড কখনোই প্লেইন টেক্সটে রাখা হয় না।</p>
+        <p class="lang-en">All communication between the App and our servers, and with Google's servers, is encrypted using HTTPS/TLS. Cloud-synced data is protected by per-account Security Rules. Courier/Telegram API Keys and Secret Keys are stored encrypted server-side and used only for requests from your own account. Passwords are never stored in plain text.</p>
+      </div>
+    </section>
+
+    <!-- 24 -->
+    <section class="clause reveal" id="s24" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৪</span><span class="lang-en">24</span></div>
+        <h2 class="clause-title"><span class="lang-bn">⚖️ আপনার অধিকার ও পছন্দ</span><span class="lang-en">⚖️ Your Rights & Choices</span></h2>
+      </div>
+      <div class="clause-body">
+        <ul class="explain">
+          <li class="lang-bn"><b>প্রবেশ ও রপ্তানি</b> — সেটিংস → ডেটা ব্যাকআপ থেকে যেকোনো সময় সম্পূর্ণ লেজার <span class="pill-code">.json</span> ফাইল হিসেবে ডাউনলোড করতে পারেন।</li>
+          <li class="lang-en"><b>Access & export</b> — export your full ledger as a <span class="pill-code">.json</span> file anytime from Settings → Data Backup.</li>
+          <li class="lang-bn"><b>সংশোধন</b> — যেকোনো এন্ট্রি অ্যাপের ভেতরেই সরাসরি এডিট বা ডিলিট করতে পারেন।</li>
+          <li class="lang-en"><b>Correction</b> — edit or delete any entry directly inside the App.</li>
+          <li class="lang-bn"><b>সম্মতি প্রত্যাহার</b> — গুগল অ্যাকাউন্ট সেটিংস থেকে Drive-এর অনুমতি বাতিল করতে পারেন।</li>
+          <li class="lang-en"><b>Withdraw consent</b> — revoke Google Drive permissions from your Google Account settings.</li>
+          <li class="lang-bn"><b>ইন্টিগ্রেশন বিচ্ছিন্ন করুন</b> — কুরিয়ার, Telegram বা Google Sheet সিঙ্ক যেকোনো সময় সেটিংস থেকে বন্ধ করলে সংশ্লিষ্ট তথ্য আদান-প্রদান সাথে সাথে বন্ধ হয়ে যায়।</li>
+          <li class="lang-en"><b>Disconnect integrations</b> — turning off courier, Telegram, or Google Sheet sync from Settings stops the related data sharing immediately.</li>
+          <li class="lang-bn"><b>সম্পূর্ণ একাউন্ট মুছে ফেলা</b> — সেকশন ২২-এ বর্ণিত ধাপ অনুসরণ করে একাউন্ট ও সকল ডেটা স্থায়ীভাবে মুছে ফেলতে পারেন।</li>
+          <li class="lang-en"><b>Full account deletion</b> — permanently delete your account and all data by following the steps in Section 22.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 25 -->
+    <section class="clause reveal" id="s25" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৫</span><span class="lang-en">25</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🌍 আঞ্চলিক গোপনীয়তা অধিকার — GDPR / CCPA / অন্যান্য</span><span class="lang-en">🌍 Regional Privacy Rights — GDPR / CCPA / Other</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">আপনার অবস্থান অনুযায়ী স্থানীয় আইনে বাড়তি অধিকার থাকতে পারে। উপরোক্ত সেকশন ২৪-এর ব্যবহারিক নিয়ন্ত্রণের পাশাপাশি —</p>
+        <p class="lang-en">Depending on where you live, local law may grant you additional rights beyond the practical controls in Section 24 —</p>
+        <h4><span class="lang-bn">EEA / UK ব্যবহারকারী (GDPR)</span><span class="lang-en">EEA / UK Users (GDPR)</span></h4>
+        <p class="lang-bn">আপনার রয়েছে প্রবেশাধিকার, সংশোধন, মুছে ফেলা, প্রক্রিয়াকরণ সীমাবদ্ধ করা, ডেটা পোর্টেবিলিটি এবং আপত্তি জানানোর অধিকার, সেইসাথে সম্মতি-ভিত্তিক প্রক্রিয়াকরণের জন্য যেকোনো সময় সম্মতি প্রত্যাহারের অধিকার। আপনার নিজের দেশের তথ্য সুরক্ষা কর্তৃপক্ষের কাছেও অভিযোগ করার অধিকার আপনার রয়েছে।</p>
+        <p class="lang-en">You have the right to access, rectify, erase, restrict processing of, port, and object to the use of your data, as well as to withdraw consent at any time for consent-based processing. You also have the right to lodge a complaint with your local data protection authority.</p>
+        <h4><span class="lang-bn">ক্যালিফোর্নিয়া ব্যবহারকারী (CCPA/CPRA)</span><span class="lang-en">California Users (CCPA/CPRA)</span></h4>
+        <p class="lang-bn">আমরা কখনোই আপনার ব্যক্তিগত তথ্য বিক্রি বা "শেয়ার" (বিজ্ঞাপনের উদ্দেশ্যে বলে বিবেচিত অর্থে) করি না। আপনার রয়েছে জানার, মুছে ফেলার, সংশোধনের এবং বৈষম্যহীন আচরণ পাওয়ার অধিকার। অনুরোধ পাঠাতে যোগাযোগ সেকশনের ইমেইল ব্যবহার করুন।</p>
+        <p class="lang-en">We do not sell or "share" (in the CCPA advertising sense) your personal information. You have the right to know, delete, correct, and not be discriminated against for exercising these rights. Send requests using the email in the Contact section.</p>
+        <h4><span class="lang-bn">অন্যান্য এখতিয়ার</span><span class="lang-en">Other Jurisdictions</span></h4>
+        <p class="lang-bn">বাংলাদেশ বা অন্য কোনো দেশে প্রযোজ্য স্থানীয় ডেটা সুরক্ষা আইন থাকলে তা মেনে চলার চেষ্টা করা হয়; যেকোনো এখতিয়ারের ব্যবহারকারী একই যোগাযোগ ইমেইলে প্রশ্ন পাঠাতে পারেন।</p>
+        <p class="lang-en">Where local data-protection law applies in Bangladesh or elsewhere, we aim to honor it; users in any jurisdiction can direct questions to the same contact email.</p>
+        <div class="note">
+          <span class="lang-bn">💡 অনুরোধের যাচাই ও উত্তরের জন্য সাধারণত যুক্তিসঙ্গত সময়ের মধ্যে (সাধারণত ৩০ দিনের মধ্যে, প্রযোজ্য আইন অনুযায়ী) সাড়া দেওয়ার চেষ্টা করা হয়।</span>
+          <span class="lang-en">💡 We aim to verify and respond to rights requests within a reasonable time (typically within 30 days, subject to applicable law).</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 26 -->
+    <section class="clause reveal" id="s26" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৬</span><span class="lang-en">26</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🚨 ডেটা লঙ্ঘন বিজ্ঞপ্তি</span><span class="lang-en">🚨 Data Breach Notification</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">যদি কখনো এমন কোনো নিরাপত্তা লঙ্ঘন ঘটে যা আপনার ব্যক্তিগত তথ্যের ঝুঁকি সৃষ্টি করতে পারে, আমরা প্রযোজ্য আইন অনুযায়ী যুক্তিসঙ্গত সময়ের মধ্যে প্রভাবিত ব্যবহারকারীদের অ্যাপের মধ্যে বা রেজিস্টার করা ইমেইলে জানানোর চেষ্টা করব, সাথে ঘটনার প্রকৃতি ও সুপারিশকৃত পদক্ষেপ সম্পর্কে তথ্য দেব।</p>
+        <p class="lang-en">If a security incident occurs that is likely to risk your personal data, we will endeavor to notify affected users within a reasonable timeframe as required by applicable law, through in-app notice or your registered email, along with information about the nature of the incident and recommended steps.</p>
+      </div>
+    </section>
+
+    <!-- 27 -->
+    <section class="clause reveal" id="s27" data-group="control">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৭</span><span class="lang-en">27</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🚦 Do Not Track সিগন্যাল</span><span class="lang-en">🚦 Do Not Track Signals</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">যেহেতু অ্যাপ ইতিমধ্যেই কোনো বিজ্ঞাপন বা ক্রস-সাইট ট্র্যাকিং কুকি ব্যবহার করে না (সেকশন ৭ দেখুন), তাই ব্রাউজারের "Do Not Track" সিগন্যাল অনুযায়ী আচরণ ভিন্ন করার প্রয়োজন হয় না — উপস্থিতি বা অনুপস্থিতি নির্বিশেষে একই ন্যূনতম-ট্র্যাকিং নীতি সব ব্যবহারকারীর জন্য প্রযোজ্য।</p>
+        <p class="lang-en">Because the App already does not use advertising or cross-site tracking cookies (see Section 7), there is no different behavior to apply based on a browser's "Do Not Track" signal — the same minimal-tracking approach applies to all users regardless of whether the signal is present.</p>
+      </div>
+    </section>
+
+    <!-- 28 -->
+    <section class="clause reveal" id="s28" data-group="legal">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৮</span><span class="lang-en">28</span></div>
+        <h2 class="clause-title"><span class="lang-bn">©️ মেধাসম্পত্তি ও কপি/ক্লোনিং-এর বিরুদ্ধে অবস্থান</span><span class="lang-en">©️ Intellectual Property & Our Position on Copying / Cloning</span></h2>
+      </div>
+      <div class="clause-body">
+        <h4><span class="lang-bn">আমাদের মালিকানা কী</span><span class="lang-en">What We Own</span></h4>
+        <p class="lang-bn">MY SHOP-এর সোর্স কোড, সফটওয়্যার আর্কিটেকচার, ডেটাবেস স্কিমা/স্ট্রাকচার, UI/UX ডিজাইন, গ্রাফিক্স, লোগো, "MY SHOP" নাম ও ব্র্যান্ডিং, এবং অ্যাপে ব্যবহৃত সমস্ত মূল কনটেন্ট ও ডকুমেন্টেশন (এই গোপনীয়তা নীতিসহ) কপিরাইট, ট্রেডমার্ক ও প্রযোজ্য মেধাসম্পত্তি আইন দ্বারা সুরক্ষিত এবং আমাদের একচ্ছত্র সম্পত্তি। এই নীতিমালার অন্য কোনো অংশে যা বলা হয়েছে তা এই মালিকানার ওপর কোনো লাইসেন্স, স্থানান্তর বা অনুমতি প্রদান করে না।</p>
+        <p class="lang-en">The source code, software architecture, database schema/structure, UI/UX design, graphics, logo, the "MY SHOP" name and branding, and all original content and documentation used in the App (including this Privacy Policy) are protected by copyright, trademark, and applicable intellectual property law, and remain our exclusive property. Nothing else in this policy grants any license, transfer, or permission over this ownership.</p>
+        <h4><span class="lang-bn">আপনার ব্যবসায়িক ডেটার মালিকানা</span><span class="lang-en">Ownership of Your Business Data</span></h4>
+        <p class="lang-bn">স্পষ্টীকরণের জন্য — এটি আপনার নিজের লেজারে প্রবেশ করানো ব্যবসায়িক তথ্যের (বিক্রয়, ক্রয়, ইনভেন্টরি ইত্যাদি) মালিকানার ক্ষেত্রে প্রযোজ্য নয়; সে ডেটার মালিক আপনিই থাকেন, যেমনটি সেকশন ২ ও ২৪-এ ব্যাখ্যা করা হয়েছে। এই সেকশনটি শুধুমাত্র প্ল্যাটফর্ম, কোড ও ডিজাইনের মালিকানা সম্পর্কে।</p>
+        <p class="lang-en">To be clear — this does not apply to the business data you enter into your own ledger (sales, purchases, inventory, etc.); you remain the owner of that data, as explained in Sections 2 and 24. This section is only about ownership of the platform, code, and design.</p>
+        <h4><span class="lang-bn">যা করার অনুমতি নেই</span><span class="lang-en">What Is Not Permitted</span></h4>
+        <p class="lang-bn">আমাদের স্পষ্ট লিখিত অনুমতি ছাড়া নিম্নলিখিত কোনো কাজ করা যাবে না —</p>
+        <p class="lang-en">Without our explicit written permission, you may not —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>সোর্স কোড কপি বা ক্লোন করা</b> — অ্যাপের সোর্স কোড, ডিজাইন, ইন্টারফেস বা কার্যকারিতা সম্পূর্ণ বা আংশিকভাবে কপি, ক্লোন, রিপ্রোডিউস বা রিপ্যাকেজ করে নিজের বা তৃতীয় পক্ষের প্রোডাক্ট হিসেবে প্রকাশ করা।</li>
+          <li class="lang-en"><b>Copying or cloning the source code</b> — copying, cloning, reproducing, or repackaging the App's source code, design, interface, or functionality, in whole or in part, as your own or a third party's product.</li>
+          <li class="lang-bn"><b>রিভার্স ইঞ্জিনিয়ারিং</b> — অ্যাপ ডিকম্পাইল, ডিসঅ্যাসেম্বল বা রিভার্স-ইঞ্জিনিয়ার করার চেষ্টা করা, আইন দ্বারা স্পষ্টভাবে অনুমোদিত না হলে।</li>
+          <li class="lang-en"><b>Reverse engineering</b> — attempting to decompile, disassemble, or reverse-engineer the App, except where expressly permitted by law.</li>
+          <li class="lang-bn"><b>অননুমোদিত স্ক্র্যাপিং বা বাল্ক এক্সট্র্যাকশন</b> — স্বয়ংক্রিয় টুল, বট বা স্ক্রিপ্ট দিয়ে আমাদের ডেটাবেস, সার্ভার বা অন্য ব্যবহারকারীদের ডেটা স্ক্র্যাপ, ক্রল বা বাল্ক-এক্সট্র্যাক্ট করার চেষ্টা করা।</li>
+          <li class="lang-en"><b>Unauthorized scraping or bulk extraction</b> — using automated tools, bots, or scripts to scrape, crawl, or bulk-extract our databases, servers, or other users' data.</li>
+          <li class="lang-bn"><b>প্রতিযোগী ক্লোন অ্যাপ তৈরি</b> — MY SHOP-এর সোর্স কোড, ডেটাবেস স্ট্রাকচার বা মূল ডিজাইন ব্যবহার করে একই রকম বা প্রতিযোগী "ক্লোন" পণ্য তৈরি বা বিতরণ করা।</li>
+          <li class="lang-en"><b>Building a competing clone</b> — creating or distributing a similar or competing "clone" product using MY SHOP's source code, database structure, or core design.</li>
+          <li class="lang-bn"><b>ব্র্যান্ডের অপব্যবহার</b> — আমাদের নাম, লোগো বা ব্র্যান্ডিং অনুমতি ছাড়া ব্যবহার করে ব্যবহারকারীদের বিভ্রান্ত করা।</li>
+          <li class="lang-en"><b>Trademark misuse</b> — using our name, logo, or branding without permission in a way that could confuse users.</li>
+        </ul>
+        <div class="warn">
+          <span class="lang-bn">⚠️ উপরের যেকোনো লঙ্ঘনের ক্ষেত্রে আমরা সংশ্লিষ্ট একাউন্ট বন্ধ, হোস্টিং/অ্যাপ স্টোর প্ল্যাটফর্মে রিপোর্ট, ক্ষতিপূরণের দাবিসহ আইনি ব্যবস্থা এবং প্রযোজ্য ক্ষেত্রে DMCA বা সমতুল্য টেকডাউন নোটিশ পাঠানোর অধিকার সংরক্ষণ করি। এই অধিকার প্রয়োগের সিদ্ধান্ত আমাদের একচ্ছত্র বিবেচনার অধীনে।</span>
+          <span class="lang-en">⚠️ In the event of any such violation, we reserve the right to terminate the associated account, report the violation to relevant hosting/app-store platforms, pursue legal action including claims for damages, and issue a DMCA or equivalent takedown notice where applicable. The decision to exercise these rights is at our sole discretion.</span>
+        </div>
+        <h4><span class="lang-bn">কপিরাইট লঙ্ঘনের রিপোর্ট</span><span class="lang-en">Reporting Infringement</span></h4>
+        <p class="lang-bn">আপনি যদি মনে করেন কেউ MY SHOP-এর সোর্স কোড, ডিজাইন বা কনটেন্ট অনুমতি ছাড়া কপি বা ক্লোন করেছে, অথবা আপনার নিজের কপিরাইটেড কাজ আমাদের অ্যাপে অনুমতি ছাড়া ব্যবহৃত হয়েছে বলে মনে করেন, অনুগ্রহ করে বিস্তারিত প্রমাণসহ যোগাযোগ সেকশনের ইমেইলে জানান।</p>
+        <p class="lang-en">If you believe someone has copied or cloned MY SHOP's source code, design, or content without permission, or that your own copyrighted work has been used in our App without authorization, please contact us with supporting details using the email in the Contact section.</p>
+      </div>
+    </section>
+
+    <!-- 29 -->
+    <section class="clause reveal" id="s29" data-group="legal">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">২৯</span><span class="lang-en">29</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🔗 তৃতীয় পক্ষের লিঙ্ক</span><span class="lang-en">🔗 Third-Party Links</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">অ্যাপে মাঝে মাঝে তৃতীয় পক্ষের ওয়েবসাইট বা সেবার লিঙ্ক থাকতে পারে (যেমন কুরিয়ার প্রোভাইডারের ট্র্যাকিং পেজ)। এসব বাহ্যিক সাইটের নিজস্ব গোপনীয়তা নীতি ও শর্তাবলী থাকে, যা আমাদের নিয়ন্ত্রণের বাইরে — সেগুলো পরিদর্শনের আগে সংশ্লিষ্ট নীতিমালা পড়ে নেওয়ার পরামর্শ দেওয়া হচ্ছে।</p>
+        <p class="lang-en">The App may occasionally link to third-party websites or services (such as a courier provider's tracking page). These external sites have their own privacy policies and terms, outside our control — we recommend reviewing their policies before use.</p>
+      </div>
+    </section>
+
+    <!-- 30 -->
+    <section class="clause reveal" id="s30" data-group="legal">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৩০</span><span class="lang-en">30</span></div>
+        <h2 class="clause-title"><span class="lang-bn">⚖️ প্রযোজ্য আইন ও বিরোধ নিষ্পত্তি</span><span class="lang-en">⚖️ Governing Law & Dispute Resolution</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">এই নীতিমালা বাংলাদেশের আইন অনুযায়ী পরিচালিত ও ব্যাখ্যা করা হয়, স্থানীয় আইনের বিরোধের নীতিমালা বিবেচনায় না নিয়ে। যেখানে আপনার নিজের দেশের বাধ্যতামূলক ভোক্তা-সুরক্ষা আইন এর চেয়ে বেশি অধিকার দেয়, সেসব ক্ষেত্রে সেই আইন প্রযোজ্য থাকবে। এই নীতিমালা সংক্রান্ত যেকোনো বিরোধ প্রথমে যোগাযোগ সেকশনের ইমেইলে সরাসরি সমাধানের চেষ্টা করা হবে; তা সম্ভব না হলে বাংলাদেশের এখতিয়ারভুক্ত আদালতে তা নিষ্পত্তি হবে।</p>
+        <p class="lang-en">This policy is governed by and construed in accordance with the laws of Bangladesh, without regard to conflict-of-law principles. Where your own country's mandatory consumer-protection law grants you greater rights, that law will apply to that extent. Any dispute relating to this policy will first be attempted to be resolved directly via the email in the Contact section; failing that, it will be subject to the exclusive jurisdiction of the courts of Bangladesh.</p>
+      </div>
+    </section>
+
+    <!-- 31 -->
+    <section class="clause reveal" id="s31" data-group="legal">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৩১</span><span class="lang-en">31</span></div>
+        <h2 class="clause-title"><span class="lang-bn">🇧🇩 বাংলাদেশ-নির্দিষ্ট আইনি সম্মতি</span><span class="lang-en">🇧🇩 Bangladesh-Specific Legal Compliance</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">যেহেতু আমাদের অনেক ব্যবহারকারী বাংলাদেশ থেকে, তাই আমরা প্রযোজ্য স্থানীয় আইন মেনে চলার চেষ্টা করি, যার মধ্যে রয়েছে —</p>
+        <p class="lang-en">Since many of our users are based in Bangladesh, we aim to comply with applicable local law, including —</p>
+        <ul class="explain">
+          <li class="lang-bn"><b>তথ্য ও যোগাযোগ প্রযুক্তি (ICT) আইন, ২০০৬</b> — ইলেকট্রনিক লেনদেন ও ডিজিটাল রেকর্ডের স্বীকৃতি সংক্রান্ত বিধান মেনে অ্যাপটি পরিচালিত হয়।</li>
+          <li class="lang-en"><b>Information & Communication Technology (ICT) Act, 2006</b> — the App operates in line with provisions recognizing electronic transactions and digital records.</li>
+          <li class="lang-bn"><b>সাইবার নিরাপত্তা আইন, ২০২৩ ও প্রাসঙ্গিক ডিজিটাল নিরাপত্তা বিধান</b> — অপব্যবহার প্রতিরোধ ও ব্যবহারকারীর তথ্যের নিরাপত্তা নিশ্চিতে প্রযোজ্য বিধিবিধান অনুসরণ করা হয়।</li>
+          <li class="lang-en"><b>Cyber Security Act, 2023 and related digital-security provisions</b> — we follow applicable rules aimed at preventing misuse and securing user information.</li>
+          <li class="lang-bn"><b>উদীয়মান ব্যক্তিগত তথ্য সুরক্ষা আইন</b> — বাংলাদেশে একটি খসড়া ব্যক্তিগত তথ্য সুরক্ষা আইন (Personal Data Protection Act) প্রক্রিয়াধীন রয়েছে। তা কার্যকর হলে এই নীতিমালা প্রয়োজন অনুযায়ী হালনাগাদ করা হবে।</li>
+          <li class="lang-en"><b>Forthcoming Personal Data Protection legislation</b> — Bangladesh has a draft Personal Data Protection Act under development. This policy will be updated as needed once it comes into force.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 32 -->
+    <section class="clause reveal" id="s32" data-group="general">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৩২</span><span class="lang-en">32</span></div>
+        <h2 class="clause-title"><span class="lang-bn">📋 সাধারণ নীতিমালা</span><span class="lang-en">📋 General Policies</span></h2>
+      </div>
+      <div class="clause-body">
+        <h4><span class="lang-bn">আন্তর্জাতিক ডেটা স্থানান্তর</span><span class="lang-en">International Data Transfer</span></h4>
+        <p class="lang-bn">আমাদের অবকাঠামো প্রোভাইডার (Google Cloud / Firebase) বৈশ্বিক অবকাঠামোর অংশ হিসেবে বিভিন্ন দেশের ডেটা সেন্টারে তথ্য প্রক্রিয়া করতে পারে — এর মধ্যে আপনার নিজের দেশের বাইরের ডেটা সেন্টারও থাকতে পারে। যেখানেই প্রযোজ্য, এই ধরনের স্থানান্তর স্ট্যান্ডার্ড কন্ট্রাক্চুয়াল ক্লজ (SCCs) বা Google-এর নিজস্ব সমতুল্য সুরক্ষা ব্যবস্থার অধীনে হয়। আপনার Google Drive ব্যাকআপ সবসময় আপনার নিজের গুগল অ্যাকাউন্টের সীমানার মধ্যেই থাকে।</p>
+        <p class="lang-en">Our infrastructure providers (Google Cloud / Firebase) may process data in data centers in different countries as part of standard global infrastructure — this may include countries outside your own. Where applicable, such transfers rely on Standard Contractual Clauses (SCCs) or Google's own equivalent safeguards. Your Google Drive backup always stays within your own Google account.</p>
+        <h4><span class="lang-bn">বয়সসীমা ও শিশুদের গোপনীয়তা</span><span class="lang-en">Age Requirement & Children's Privacy</span></h4>
+        <p class="lang-bn">MY SHOP দোকান মালিক ও প্রাপ্তবয়স্ক ব্যবহারকারীদের জন্য তৈরি একটি ব্যবসায়িক টুল এবং শিশুদের জন্য নয়। অ্যাপটি ব্যবহার করতে হলে আপনার বয়স কমপক্ষে ১৮ বছর হতে হবে, অথবা আপনার দেশে ডিজিটাল সম্মতির জন্য নির্ধারিত ন্যূনতম বয়স যেটি বেশি সেটি হতে হবে। আমরা জেনেশুনে ১৮ বছরের কম বয়সী কারও কাছ থেকে তথ্য সংগ্রহ করি না; এমন কিছু জানা গেলে আমরা তা মুছে ফেলার ব্যবস্থা নেব। কোনো অভিভাবক মনে করলে তাদের সন্তান এই তথ্য দিয়েছে, অনুগ্রহ করে যোগাযোগ সেকশনে দেওয়া ইমেইলে যোগাযোগ করুন।</p>
+        <p class="lang-en">MY SHOP is a business tool intended for shop owners and adult users, and is not directed at children. You must be at least 18 years old, or the minimum age of digital consent in your country if higher, to use the App. We do not knowingly collect information from anyone under 18; if we learn that we have, we will take steps to delete it. If a parent or guardian believes their child has provided us with information, please contact us using the email in the Contact section.</p>
+        <h4><span class="lang-bn">নীতিমালার পরিবর্তন</span><span class="lang-en">Changes to This Policy</span></h4>
+        <p class="lang-bn">এই নীতিমালায় উল্লেখযোগ্য পরিবর্তন হলে উপরের "কার্যকর তারিখ" হালনাগাদ করা হবে এবং যেখানে সম্ভব উল্লেখযোগ্য পরিবর্তনের বিষয়ে অ্যাপের মধ্যে বা ইমেইলে জানানো হবে। পরিবর্তনের পর অ্যাপ ব্যবহার চালিয়ে যাওয়া মানেই নতুন নীতিতে সম্মতি।</p>
+        <p class="lang-en">If this policy changes materially, the "Effective Date" above will be revised, and where feasible we will notify you of significant changes inside the App or by email. Continued use of the App after changes take effect constitutes acceptance of the updated policy.</p>
+      </div>
+    </section>
+
+    <!-- 33 -->
+    <section class="clause reveal" id="s33" data-group="general">
+      <div class="clause-head">
+        <div class="clause-num"><span class="lang-bn">৩৩</span><span class="lang-en">33</span></div>
+        <h2 class="clause-title"><span class="lang-bn">✉️ যোগাযোগ</span><span class="lang-en">✉️ Contact</span></h2>
+      </div>
+      <div class="clause-body">
+        <p class="lang-bn">এই গোপনীয়তা নীতি বা আপনার ডেটা সংক্রান্ত যেকোনো প্রশ্নের জন্য আমাদের সাথে যোগাযোগ করুন —</p>
+        <p class="lang-en">Questions about this privacy policy, or requests regarding your data, can be sent to us —</p>
+        <ul class="explain">
+          <li><b class="lang-bn">ইমেইল:</b><b class="lang-en">Email:</b> <a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></li>
+          <li><b class="lang-bn">শর্তাবলী:</b><b class="lang-en">Terms of Service:</b> <a href="https://sohanshopbd.web.app/terms_of_service" target="_blank" rel="noopener"><span class="lang-bn">এখানে পড়ুন →</span><span class="lang-en">Read here →</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <h3>MY SHOP</h3>
+        <p class="lang-bn">একটি বাংলা ভাষাভিত্তিক ব্যবসায়িক হিসাব-নিকাশ ও দোকান ব্যবস্থাপনা অ্যাপ। আপনার তথ্যের ওপর পূর্ণ নিয়ন্ত্রণ ও সর্বোচ্চ গোপনীয়তা নিশ্চিত করাই আমাদের অগ্রাধিকার।</p>
+        <p class="lang-en">A Bengali-language business ledger and shop-management app. Giving you full control over your data and strong privacy is our priority.</p>
+        <p><span class="lang-bn">© ২০২৬ MY SHOP। সর্বস্বত্ব সংরক্ষিত।</span><span class="lang-en">© 2026 MY SHOP. All rights reserved.</span></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-line">✉️ <a href="mailto:sohanunlimited1@gmail.com">sohanunlimited1@gmail.com</a></div>
+        <div class="contact-line">📜 <a href="https://sohanshopbd.web.app/terms_of_service" target="_blank" rel="noopener"><span class="lang-bn">শর্তাবলী</span><span class="lang-en">Terms of Service</span></a></div>
+        <div class="contact-line"><span class="lang-bn">📅 কার্যকর তারিখ: ২১ আগস্ট, ২০২৬</span><span class="lang-en">📅 Effective Date: August 21, 2026</span></div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span><span class="lang-bn">খাতা নং ০৩ · গোপনীয়তা নীতি</span><span class="lang-en">LEDGER NO. 03 · PRIVACY POLICY</span></span>
+      <a href="#top"><span class="lang-bn">উপরে ফিরে যান ↑</span><span class="lang-en">Back to top ↑</span></a>
+    </div>
+  </div>
+</footer>
+
+<a href="#top" id="backTop" aria-label="উপরে যান / Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</a>
+
+<script>
+  const GROUP_LABELS = {
+    intro:       {bn:'ভূমিকা', en:'OVERVIEW'},
+    storage:     {bn:'সংরক্ষণ ও সিঙ্ক', en:'STORAGE & SYNC'},
+    smart:       {bn:'স্মার্ট ও অটোমেশন ফিচার', en:'SMART & AUTOMATION FEATURES'},
+    commitments: {bn:'প্রতিশ্রুতি ও তৃতীয় পক্ষ', en:'COMMITMENTS & THIRD PARTIES'},
+    control:     {bn:'আপনার নিয়ন্ত্রণ ও অধিকার', en:'YOUR CONTROL & RIGHTS'},
+    legal:       {bn:'আইনি সুরক্ষা ও মালিকানা', en:'LEGAL PROTECTIONS & OWNERSHIP'},
+    general:     {bn:'সাধারণ নীতি ও যোগাযোগ', en:'GENERAL & CONTACT'}
+  };
+
+  const sections = Array.from(document.querySelectorAll('section.clause'));
+  const tocList = document.getElementById('tocList');
+  const mobilePanel = document.getElementById('mobileTocPanel');
+
+  let lastGroup = null;
+  sections.forEach(sec=>{
+    const group = sec.dataset.group;
+    const numBn = sec.querySelector('.clause-num .lang-bn').textContent;
+    const numEn = sec.querySelector('.clause-num .lang-en').textContent;
+    const titleBn = sec.querySelector('.clause-title .lang-bn').textContent;
+    const titleEn = sec.querySelector('.clause-title .lang-en').textContent;
+    const id = sec.id;
+
+    if(group !== lastGroup){
+      const g = GROUP_LABELS[group] || {bn:'',en:''};
+      const gLi = document.createElement('li');
+      gLi.className = 'toc-group';
+      gLi.innerHTML = '<span class="lang-bn">'+g.bn+'</span><span class="lang-en">'+g.en+'</span>';
+      tocList.appendChild(gLi);
+
+      const mg = document.createElement('div');
+      mg.className = 'mtoc-group';
+      mg.innerHTML = '<span class="lang-bn">'+g.bn+'</span><span class="lang-en">'+g.en+'</span>';
+      mobilePanel.appendChild(mg);
+
+      lastGroup = group;
+    }
+
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#'+id;
+    a.innerHTML = '<span class="b"><span class="lang-bn">'+numBn+'</span><span class="lang-en">'+numEn+'</span></span>'
+                + '<span><span class="lang-bn">'+titleBn+'</span><span class="lang-en">'+titleEn+'</span></span>';
+    li.appendChild(a);
+    tocList.appendChild(li);
+
+    const ma = document.createElement('a');
+    ma.href = '#'+id;
+    ma.innerHTML = '<span class="b"><span class="lang-bn">'+numBn+'</span><span class="lang-en">'+numEn+'</span></span>'
+                 + '<span><span class="lang-bn">'+titleBn+'</span><span class="lang-en">'+titleEn+'</span></span>';
+    mobilePanel.appendChild(ma);
+  });
+
+  const tocToggle = document.getElementById('tocToggle');
+  tocToggle.addEventListener('click', ()=>{
+    mobilePanel.classList.toggle('show');
+    tocToggle.classList.toggle('open');
+  });
+  mobilePanel.addEventListener('click', (e)=>{
+    const link = e.target.closest('a');
+    if(link){
+      mobilePanel.classList.remove('show');
+      tocToggle.classList.remove('open');
+    }
+  });
+
+  const tocLinks = Array.from(tocList.querySelectorAll('a'));
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const id = entry.target.id;
+      const link = tocLinks.find(a=>a.getAttribute('href') === '#'+id);
+      if(!link) return;
+      if(entry.isIntersecting){
+        tocLinks.forEach(a=>a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-15% 0px -70% 0px', threshold:0});
+  sections.forEach(sec=>io.observe(sec));
+
+  if(!prefersReduced){
+    const revealIO = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          revealIO.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.06});
+    document.querySelectorAll('.reveal').forEach(el=>revealIO.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+  }
+
+  const backTop = document.getElementById('backTop');
+  const tocProgress = document.getElementById('tocProgress');
+  window.addEventListener('scroll', ()=>{
+    backTop.classList.toggle('show', window.scrollY > 500);
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+    if(tocProgress) tocProgress.style.width = Math.min(100, Math.max(0,pct)) + '%';
+  });
+
+  function setLang(lang){
+    const body = document.body;
+    const btnBn = document.getElementById('btnLangBn');
+    const btnEn = document.getElementById('btnLangEn');
+    if(lang === 'en'){
+      body.classList.add('lang-en');
+      document.documentElement.lang = 'en';
+      btnEn.classList.add('active');
+      btnBn.classList.remove('active');
+      document.title = 'Privacy Policy — MY SHOP';
+    } else {
+      body.classList.remove('lang-en');
+      document.documentElement.lang = 'bn';
+      btnBn.classList.add('active');
+      btnEn.classList.remove('active');
+      document.title = 'গোপনীয়তা নীতি — MY SHOP';
+    }
+  }
 </script>
+
 </body>
 </html>
