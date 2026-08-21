@@ -159,13 +159,17 @@
     font-size:14.5px; font-weight:600; color:#1E8A4C; text-transform:none; letter-spacing:0; margin-bottom:7px;
   }
   .field input, .field select, .field textarea{
-    width:100%; border:1.5px solid var(--paper-deep); background:var(--paper); border-radius:11px;
-    padding:11px 12px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
+    width:100%; border:1.5px solid rgba(21,53,122,0.16); background:#fff; border-radius:12px;
+    padding:12px 14px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); -webkit-appearance:none;
     transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
+  .field input::placeholder, .field textarea::placeholder{ color:#9CA6BC; opacity:1; }
+  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(21,53,122,0.3); }
   .field input:focus, .field select:focus, .field textarea:focus{
-    border-color:var(--gold); background:#fff; box-shadow:0 0 0 3px rgba(242,129,43,0.18);
+    border-color:var(--gold); background:#fff; box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05);
   }
+  .field textarea{ resize:vertical; line-height:1.5; }
   .field select{ appearance:none; -webkit-appearance:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M1 1l6 6 6-6' stroke='%238A7C6C' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat:no-repeat; background-position:right 12px center; padding-right:34px;
@@ -330,15 +334,19 @@
   .field-label-sub{ text-transform:none; letter-spacing:0; font-size:10.5px; font-weight:400; color:var(--muted); }
   .thana-search-row{ display:flex; gap:8px; }
   .thana-search-row input{
-    flex:1; min-width:0; padding:11px 12px; border-radius:12px; border:1.5px solid var(--rule);
-    background:var(--paper); font-size:13.5px; font-family:inherit; color:var(--ink);
+    flex:1; min-width:0; padding:12px 14px; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
+    background:#fff; font-size:13.5px; font-family:inherit; color:var(--ink);
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .thana-search-row input:focus{ outline:none; border-color:var(--plum-600); }
+  .thana-search-row input::placeholder{ color:#9CA6BC; opacity:1; }
+  .thana-search-row input:hover{ border-color:rgba(21,53,122,0.3); }
+  .thana-search-row input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05); }
   .gps-btn{
-    flex:0 0 auto; width:44px; height:auto; border-radius:12px; border:1.5px solid var(--rule);
-    background:var(--paper); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex:0 0 auto; width:46px; height:auto; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
+    background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, background .15s ease;
   }
-  .gps-btn:active{ background:var(--paper-deep); }
+  .gps-btn:active{ background:var(--paper-deep); border-color:var(--gold); }
   .thana-suggest-list{
     position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:20; max-height:220px; overflow-y:auto;
     background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow);
@@ -350,6 +358,7 @@
   .thana-suggest-item:active{ background:var(--paper-deep); }
   .thana-suggest-item b{ font-size:13px; color:var(--ink); font-weight:600; }
   .thana-suggest-item span{ font-size:11px; color:var(--muted); }
+  .thana-suggest-item.thana-suggest-live{ background:rgba(53,102,194,0.05); }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
@@ -2024,6 +2033,13 @@ function runAddressLocationDetect(){
 function pickAddrCandidate(division, district, thana){
   explicitLocationLock = true;
   renderAddrHintOk({ division, district, thana }, true);
+  // GPS থেকে থানা মিলে গেলেও একাধিক জেলায় একই থানার নাম থাকায় আগে জেলা
+  // ঠিকানা বক্সে বসেনি — এখন ইউজার সঠিক জেলা বেছে নেওয়ার সাথে সাথেই সেটা
+  // বিস্তারিত ঠিকানায় যোগ করে দেওয়া হচ্ছে
+  const addrBox = document.getElementById('custAddress');
+  if(addrBox && district && addrBox.value.trim() && addrBox.value.indexOf(district) === -1){
+    addrBox.value = addrBox.value.trim().replace(/,\s*$/, '') + ', ' + district;
+  }
 }
 
 // ---- থানা সার্চ-বক্স (Autocomplete) — এই তালিকাগুলো উপরের BD_GEO থেকেই তৈরি ----
@@ -2083,15 +2099,23 @@ function handleThanaSearchInput(){
   const input = document.getElementById('thanaSearchInput');
   const list = document.getElementById('thanaSuggestList');
   const q = input.value.trim();
+  clearTimeout(thanaLiveSearchTimer);
   if(q.length < 1){ list.style.display = 'none'; list.innerHTML = ''; return; }
   const results = searchThana(q);
-  if(!results.length){ list.style.display = 'none'; list.innerHTML = ''; return; }
-  list.innerHTML = results.map(function(r){
-    return '<div class="thana-suggest-item" onclick="pickThanaSuggestion(\'' +
-      r.division.replace(/'/g, "\\'") + '\',\'' + r.district.replace(/'/g, "\\'") + '\',\'' + r.thana.replace(/'/g, "\\'") + '\')">' +
-      '<b>' + escapeHTML(r.thana) + '</b><span>' + escapeHTML(r.district) + ', ' + escapeHTML(r.division) + '</span></div>';
-  }).join('');
-  list.style.display = 'block';
+  if(!results.length){
+    list.style.display = 'none'; list.innerHTML = '';
+  } else {
+    list.innerHTML = results.map(function(r){
+      return '<div class="thana-suggest-item" onclick="pickThanaSuggestion(\'' +
+        r.division.replace(/'/g, "\\'") + '\',\'' + r.district.replace(/'/g, "\\'") + '\',\'' + r.thana.replace(/'/g, "\\'") + '\')">' +
+        '<b>' + escapeHTML(r.thana) + '</b><span>' + escapeHTML(r.district) + ', ' + escapeHTML(r.division) + '</span></div>';
+    }).join('');
+    list.style.display = 'block';
+  }
+  // লোকাল তালিকায় (~৫০০ থানা) যতগুলোই মিল থাকুক না কেন, ইউনিয়ন/গ্রাম/মৌজা
+  // পর্যায়ের নাম সেখানে নেই — তাই ৩ অক্ষরের বেশি টাইপ করলে একটু দেরি করে
+  // (debounce) OpenStreetMap-এ লাইভ সার্চ করে সেগুলোও নিচে যোগ করে দেওয়া হয়
+  scheduleThanaLiveSearch(q);
 }
 
 function pickThanaSuggestion(division, district, thana){
@@ -2101,6 +2125,86 @@ function pickThanaSuggestion(division, district, thana){
   const list = document.getElementById('thanaSuggestList');
   if(list) list.style.display = 'none';
   renderAddrHintOk({ division, district, thana }, true);
+}
+
+// ---- 🔎 ইউনিয়ন/গ্রাম/মৌজা পর্যায়ের সার্চ — OpenStreetMap Nominatim দিয়ে ----
+// বাংলাদেশে প্রায় ৪৫০০+ ইউনিয়ন আর ৮০,০০০+ গ্রাম আছে — এত বিশাল তালিকা এই
+// পেজের ভেতর হার্ডকোড করলে ফাইলের সাইজ কয়েক মেগাবাইট বেড়ে যেত (স্লো নেট/লো
+// ব্যাটারিতে পেজ লোড হতে কষ্ট হতো), আর হাতে টাইপ করলে ভুল তথ্য ঢোকার ঝুঁকিও
+// থাকে। তাই বদলে সেই একই ফ্রি OSM ডেটাবেজে (যেটা GPS রিভার্স-জিওকোডিংয়েও
+// ব্যবহার হচ্ছে) সরাসরি সার্চ করে বাস্তব/হালনাগাদ এলাকার নাম খোঁজা হয়।
+let thanaLiveSearchTimer = null;
+
+function scheduleThanaLiveSearch(query){
+  if(String(query).trim().length < 3) return; // খুব ছোট কোয়েরিতে API স্প্যাম না করার জন্য
+  thanaLiveSearchTimer = setTimeout(function(){ runThanaLiveSearch(query); }, 500);
+}
+
+function runThanaLiveSearch(query){
+  const q = String(query).trim();
+  if(!q) return;
+  const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=bn,en&countrycodes=bd&limit=6&q=' + encodeURIComponent(q);
+  fetch(url).then(function(res){
+    if(!res.ok) throw new Error('search failed');
+    return res.json();
+  }).then(function(items){
+    const input = document.getElementById('thanaSearchInput');
+    // ইতিমধ্যে ইউজার আরও টাইপ করে ফেললে বা বক্স বদলে গেলে এই পুরনো ফলাফল বাতিল
+    if(!input || input.value.trim() !== q) return;
+    renderThanaLiveResults(items || []);
+  }).catch(function(){ /* নেট সমস্যা হলে চুপচাপ বাদ — লোকাল ৫০০+ থানার তালিকা তো আগে থেকেই কাজ করছে */ });
+}
+
+window.__thanaLiveResults = {};
+function renderThanaLiveResults(items){
+  const list = document.getElementById('thanaSuggestList');
+  if(!list) return;
+  const seenLabel = {};
+  const rows = [];
+  items.forEach(function(item){
+    const addr = item.address || {};
+    const bits = [addr.village, addr.suburb, addr.neighbourhood, addr.hamlet, addr.city_district,
+      addr.town, addr.city, addr.county, addr.state_district, addr.state].filter(Boolean).join(', ');
+    const result = detectLocationFromText(bits);
+    if(!(result.division || result.district || (result.candidates && result.candidates.length))) return;
+    const label = addr.village || addr.suburb || addr.neighbourhood || addr.hamlet || addr.town ||
+      String(item.display_name || '').split(',')[0];
+    if(!label || seenLabel[label]) return;
+    seenLabel[label] = true;
+    const sub = [result.thana, result.district].filter(Boolean).join(', ') ||
+      (result.candidates && result.candidates.length ? 'একাধিক জেলায় এই নাম আছে — বেছে নিন' : '');
+    const key = 'live_' + rows.length + '_' + Date.now();
+    window.__thanaLiveResults[key] = { label, addr, result };
+    rows.push({ key, label, sub });
+  });
+  if(!rows.length) return; // কিছু না মিললে যা লোকাল লিস্টে ছিল সেটাই থাকবে
+  const liveHTML = rows.map(function(r){
+    return '<div class="thana-suggest-item thana-suggest-live" onclick="pickThanaLiveSuggestion(\'' + r.key + '\')">' +
+      '<b>📍 ' + escapeHTML(r.label) + '</b><span>' + escapeHTML(r.sub || 'এলাকা (OSM)') + '</span></div>';
+  }).join('');
+  list.innerHTML = (list.style.display === 'block' ? list.innerHTML : '') + liveHTML;
+  list.style.display = 'block';
+}
+
+function pickThanaLiveSuggestion(key){
+  const r = window.__thanaLiveResults && window.__thanaLiveResults[key];
+  if(!r) return;
+  explicitLocationLock = true;
+  const input = document.getElementById('thanaSearchInput');
+  const list = document.getElementById('thanaSuggestList');
+  if(list) list.style.display = 'none';
+  if(r.result.candidates && r.result.candidates.length){
+    if(input) input.value = r.label;
+    applyDetectionResult(r.result, true);
+  } else {
+    if(input) input.value = [r.result.thana, r.result.district].filter(Boolean).join(', ') || r.label;
+    renderAddrHintOk(r.result, true);
+  }
+  // ঠিকানা বক্স খালি থাকলে গ্রাম/ইউনিয়নের নামসহ যতটুকু সম্ভব ভরে দেওয়া হয়
+  const addrBox = document.getElementById('custAddress');
+  if(addrBox && !addrBox.value.trim()){
+    addrBox.value = [r.label, r.result.thana, r.result.district].filter(Boolean).join(', ');
+  }
 }
 
 // সার্চ বক্সের বাইরে ট্যাপ করলে সাজেশন লিস্ট বন্ধ হয়ে যায়
@@ -2137,15 +2241,29 @@ function useGpsLocation(){
   }, function(err){
     done();
     if(err && err.code === err.PERMISSION_DENIED){
-      showToast('লোকেশন অনুমতি দেওয়া হয়নি — ব্রাউজার সেটিংস থেকে অনুমতি দিন');
+      // Chrome কখনো কখনো অন্য অ্যাপের ফ্লোটিং বাবল/ওভারলে (Messenger chat head,
+      // স্ক্রিন রেকর্ডার ইত্যাদি) থাকলে পারমিশন পপআপই দেখাতে পারে না — তখনও এই
+      // একই PERMISSION_DENIED এরর আসে, তাই মেসেজে দুটো কারণই বলে দেওয়া হলো
+      showToast('লোকেশন অনুমতি পাওয়া যায়নি — ব্রাউজার সেটিংস থেকে অনুমতি চেক করুন, অথবা অন্য অ্যাপের ফ্লোটিং বাবল/ওভারলে (যেমন Messenger chat head) বন্ধ করে আবার চেষ্টা করুন');
     } else {
       showToast('বর্তমান অবস্থান পাওয়া যায়নি, আবার চেষ্টা করুন');
     }
   }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
 }
 
+// GPS/Nominatim থেকে পাওয়া address অবজেক্ট থেকে বাসা নম্বর, রোড, এলাকা,
+// শহর — যতটুকু ডিটেইল পাওয়া যায় সবটুকু জুড়ে একটা "রাস্তা লেভেল" ঠিকানা
+// লাইন বানায়। থানা/জেলা এখানে নেই — সেটা detectLocationFromText() দিয়ে
+// আলাদাভাবে মেলানো হয় এবং পরে এই লাইনের সাথে জোড়া লাগে।
+function buildGpsStreetAddress(addr){
+  const houseRoad = [addr.house_number, addr.road].filter(Boolean).join(' ');
+  const area = addr.neighbourhood || addr.suburb || addr.village || addr.hamlet || addr.residential || '';
+  const town = addr.town || addr.city || addr.municipality || '';
+  return [houseRoad, area, town].filter(Boolean).join(', ');
+}
+
 function reverseGeocodeAndFill(lat, lon){
-  const url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&addressdetails=1&accept-language=bn,en&zoom=16';
+  const url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&addressdetails=1&accept-language=bn,en&zoom=18';
   return fetch(url).then(function(res){
     if(!res.ok) throw new Error('reverse geocode failed');
     return res.json();
@@ -2156,20 +2274,33 @@ function reverseGeocodeAndFill(lat, lon){
     const bits = [addr.suburb, addr.neighbourhood, addr.city_district, addr.town, addr.city,
       addr.county, addr.state_district, addr.state, data.display_name].filter(Boolean).join(', ');
     const result = detectLocationFromText(bits);
+    const streetAddress = buildGpsStreetAddress(addr);
+    const addrBox = document.getElementById('custAddress');
     if(result.candidates && result.candidates.length){
       applyDetectionResult(result, false);
+      // জেলা এখনো নিশ্চিত না (একই থানা নাম একাধিক জেলায় থাকতে পারে), তাই
+      // আপাতত যতটুকু নিশ্চিত (রাস্তা/এলাকা/শহর + থানা) সেটুকু বসিয়ে দেওয়া
+      // হচ্ছে — জেলা বাছাই করার সাথে সাথে pickAddrCandidate() বাকিটা যোগ করবে
+      if(addrBox && !addrBox.value.trim()){
+        addrBox.value = [streetAddress, result.thana].filter(Boolean).join(', ');
+      }
     } else if(result.division || result.district || result.thana){
       explicitLocationLock = true;
       renderAddrHintOk(result, true);
       const searchInput = document.getElementById('thanaSearchInput');
       if(searchInput) searchInput.value = [result.thana, result.district].filter(Boolean).join(', ');
-      // ঠিকানা বক্স খালি থাকলে GPS-এর সংক্ষিপ্ত ঠিকানাটা বসিয়ে দেওয়া হয়,
-      // কাস্টমার শুধু বাসা/রোড নম্বরটা যোগ করে দিলেই যথেষ্ট হবে
-      const addrBox = document.getElementById('custAddress');
+      // ঠিকানা বক্স খালি থাকলে GPS থেকে পাওয়া সম্পূর্ণ বিস্তারিত ঠিকানা
+      // (বাসা/রোড, এলাকা, শহর, থানা, জেলা) বসিয়ে দেওয়া হয় — কাস্টমারের আর
+      // প্রায় কিছুই টাইপ করতে হয় না
       if(addrBox && !addrBox.value.trim()){
-        addrBox.value = [addr.road, addr.suburb || addr.neighbourhood, result.thana, result.district].filter(Boolean).join(', ');
+        addrBox.value = [streetAddress, result.thana, result.district].filter(Boolean).join(', ');
       }
     } else {
+      // থানা/জেলা মেলেনি, কিন্তু GPS থেকে রাস্তা/এলাকার তথ্য পাওয়া থাকলে
+      // সেটুকু অন্তত বসিয়ে দেওয়া হচ্ছে, যাতে কাস্টমারকে শূন্য থেকে লিখতে না হয়
+      if(addrBox && !addrBox.value.trim() && streetAddress){
+        addrBox.value = streetAddress;
+      }
       showToast('অবস্থান পাওয়া গেছে কিন্তু থানা/জেলা মেলানো যায়নি — ম্যানুয়ালি লিখুন');
     }
   }).catch(function(){
