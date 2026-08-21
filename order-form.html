@@ -321,6 +321,35 @@
     background:#fff; color:var(--gold-deep); font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;
   }
   .addr-chip:active{ background:var(--gold-light); color:var(--plum-900); }
+  .addr-hint-clear{
+    border:none; background:none; color:inherit; text-decoration:underline; font-size:11px; font-weight:700;
+    cursor:pointer; font-family:inherit; padding:0; margin-left:4px;
+  }
+
+  /* ---------- থানা সার্চ-বক্স ও 📍 GPS বাটন ---------- */
+  .field-label-sub{ text-transform:none; letter-spacing:0; font-size:10.5px; font-weight:400; color:var(--muted); }
+  .thana-search-row{ display:flex; gap:8px; }
+  .thana-search-row input{
+    flex:1; min-width:0; padding:11px 12px; border-radius:12px; border:1.5px solid var(--rule);
+    background:var(--paper); font-size:13.5px; font-family:inherit; color:var(--ink);
+  }
+  .thana-search-row input:focus{ outline:none; border-color:var(--plum-600); }
+  .gps-btn{
+    flex:0 0 auto; width:44px; height:auto; border-radius:12px; border:1.5px solid var(--rule);
+    background:var(--paper); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .gps-btn:active{ background:var(--paper-deep); }
+  .thana-suggest-list{
+    position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:20; max-height:220px; overflow-y:auto;
+    background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow);
+  }
+  .thana-suggest-item{
+    padding:9px 12px; display:flex; align-items:baseline; gap:7px; cursor:pointer; border-bottom:1px dashed var(--rule);
+  }
+  .thana-suggest-item:last-child{ border-bottom:none; }
+  .thana-suggest-item:active{ background:var(--paper-deep); }
+  .thana-suggest-item b{ font-size:13px; color:var(--ink); font-weight:600; }
+  .thana-suggest-item span{ font-size:11px; color:var(--muted); }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
@@ -641,6 +670,14 @@
         <div class="field">
           <label class="field-label-lg">মোবাইল নাম্বার *</label>
           <input type="tel" id="custPhone" required placeholder="01XXXXXXXXX" inputmode="numeric" maxlength="11" autocomplete="tel" oninput="this.value=normalizePhoneDigits(this.value);">
+        </div>
+        <div class="field" style="position:relative;">
+          <label class="field-label-lg">থানা/এলাকা খুঁজুন <span class="field-label-sub">(ঐচ্ছিক — বাংলা বা ইংরেজিতে লিখুন)</span></label>
+          <div class="thana-search-row">
+            <input type="text" id="thanaSearchInput" placeholder="যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর" autocomplete="off" oninput="handleThanaSearchInput()" onfocus="handleThanaSearchInput()">
+            <button type="button" id="gpsLocateBtn" class="gps-btn" onclick="useGpsLocation()" title="বর্তমান অবস্থান ব্যবহার করুন">📍</button>
+          </div>
+          <div id="thanaSuggestList" class="thana-suggest-list" style="display:none;"></div>
         </div>
         <div class="field" style="margin-bottom:0;">
           <label class="field-label-lg">সম্পূর্ন ঠিকানা *</label>
@@ -1928,13 +1965,17 @@ function detectLocationFromText(rawText){
 // ---- অ্যাড্রেস বক্সে টাইপ করার সাথে সাথে সনাক্তকরণ চালানো ও UI দেখানো ----
 let detectedLocation = { division:'', district:'', thana:'' };
 let addrDetectTimer = null;
+// থানা সার্চ-বক্স থেকে বাছাই বা 📍 GPS ব্যবহার করলে এই লক অন হয়ে যায় —
+// এরপর ঠিকানার প্যারাগ্রাফে টাইপ করলেও সেই সরাসরি বাছাই করা তথ্য পাল্টাবে না,
+// যতক্ষণ না কাস্টমার হিন্টের "✕ পরিবর্তন" চেপে লক খুলে দেয়।
+let explicitLocationLock = false;
 
 function handleAddressLocationDetect(){
   clearTimeout(addrDetectTimer);
   addrDetectTimer = setTimeout(runAddressLocationDetect, 350);
 }
 
-function renderAddrHintOk(loc){
+function renderAddrHintOk(loc, locked){
   detectedLocation = { division: loc.division || '', district: loc.district || '', thana: loc.thana || '' };
   const hint = document.getElementById('addrLocationHint');
   const parts = [];
@@ -1943,18 +1984,14 @@ function renderAddrHintOk(loc){
   if(loc.thana) parts.push('থানা: ' + loc.thana);
   hint.className = 'addr-hint addr-hint-ok';
   hint.style.display = 'block';
-  hint.innerHTML = '✓ সনাক্ত হয়েছে — ' + parts.map(escapeHTML).join(' · ');
+  hint.innerHTML = '✓ সনাক্ত হয়েছে — ' + parts.map(escapeHTML).join(' · ') +
+    (locked ? ' <button type="button" class="addr-hint-clear" onclick="clearLocationLock()">✕ পরিবর্তন</button>' : '');
 }
 
-function runAddressLocationDetect(){
-  const text = document.getElementById('custAddress').value;
+// detectLocationFromText()-এর ফলাফল (candidates / নিশ্চিত মিল / কোনো মিল না) UI-তে
+// দেখায়। প্যারাগ্রাফ থেকে অটো-ডিটেক্ট আর GPS — দুই জায়গা থেকেই এটা ব্যবহার হয়।
+function applyDetectionResult(result, locked){
   const hint = document.getElementById('addrLocationHint');
-  if(!text.trim()){
-    hint.style.display = 'none';
-    detectedLocation = { division:'', district:'', thana:'' };
-    return;
-  }
-  const result = detectLocationFromText(text);
   if(result.candidates && result.candidates.length){
     detectedLocation = { division:'', district:'', thana: result.thana || '' };
     hint.className = 'addr-hint addr-hint-pick';
@@ -1966,15 +2003,185 @@ function runAddressLocationDetect(){
         String(result.thana || '').replace(/'/g,"\\'") + '\')">' + escapeHTML(label) + '</button>';
     }).join('');
   } else if(result.division || result.district || result.thana){
-    renderAddrHintOk(result);
-  } else {
+    renderAddrHintOk(result, locked);
+  } else if(!locked){
     detectedLocation = { division:'', district:'', thana:'' };
     hint.style.display = 'none';
   }
 }
 
+function runAddressLocationDetect(){
+  if(explicitLocationLock) return; // সরাসরি বাছাই (সার্চ/GPS) করা থাকলে টাইপিং দিয়ে ওভাররাইট হবে না
+  const text = document.getElementById('custAddress').value;
+  if(!text.trim()){
+    document.getElementById('addrLocationHint').style.display = 'none';
+    detectedLocation = { division:'', district:'', thana:'' };
+    return;
+  }
+  applyDetectionResult(detectLocationFromText(text), false);
+}
+
 function pickAddrCandidate(division, district, thana){
-  renderAddrHintOk({ division, district, thana });
+  explicitLocationLock = true;
+  renderAddrHintOk({ division, district, thana }, true);
+}
+
+// ---- থানা সার্চ-বক্স (Autocomplete) — এই তালিকাগুলো উপরের BD_GEO থেকেই তৈরি ----
+const THANA_EN_LOOKUP = {};
+const DISTRICT_EN_LOOKUP = {};
+(function(){
+  for(const key in ENGLISH_THANA_ALIASES){
+    const bn = ENGLISH_THANA_ALIASES[key];
+    (THANA_EN_LOOKUP[bn] = THANA_EN_LOOKUP[bn] || []).push(key);
+  }
+  for(const key in DISTRICT_EN_ALIASES){
+    const bn = DISTRICT_EN_ALIASES[key];
+    (DISTRICT_EN_LOOKUP[bn] = DISTRICT_EN_LOOKUP[bn] || []).push(key);
+  }
+})();
+const THANA_ENTRIES = [];
+(function(){
+  for(const division in BD_GEO){
+    for(const district in BD_GEO[division]){
+      BD_GEO[division][district].forEach(function(thana){
+        THANA_ENTRIES.push({ division, district, thana });
+      });
+    }
+  }
+})();
+
+// ২-৩ অক্ষর টাইপ করলেই মিলে যাওয়া থানা খুঁজে বের করে — বাংলা নাম, ইংরেজি বানান
+// (ধানমন্ডি/Dhanmondi), অথবা জেলার নাম (বাংলা/ইংরেজি) দিয়েও খোঁজা যায়।
+function searchThana(query){
+  const q = String(query || '').trim();
+  if(!q) return [];
+  const qNorm = normLatin(q);
+  const results = [];
+  for(let i = 0; i < THANA_ENTRIES.length; i++){
+    const entry = THANA_ENTRIES[i];
+    const enKeys = THANA_EN_LOOKUP[entry.thana] || [];
+    const distEnKeys = DISTRICT_EN_LOOKUP[entry.district] || [];
+    const bnHit = entry.thana.indexOf(q) !== -1;
+    const enHit = qNorm && enKeys.some(function(k){ return k.indexOf(qNorm) !== -1; });
+    const distHit = q.length >= 2 && entry.district.indexOf(q) !== -1;
+    const distEnHit = qNorm && distEnKeys.some(function(k){ return k.indexOf(qNorm) !== -1; });
+    if(bnHit || enHit || distHit || distEnHit){
+      const isSadar = entry.thana === entry.district + ' সদর';
+      const prefix = entry.thana.indexOf(q) === 0 || enKeys.some(function(k){ return k.indexOf(qNorm) === 0; }) ||
+        ((distHit || distEnHit) && isSadar);
+      results.push({ entry, prefix });
+    }
+  }
+  results.sort(function(a, b){
+    if(a.prefix !== b.prefix) return a.prefix ? -1 : 1;
+    return a.entry.thana.length - b.entry.thana.length;
+  });
+  return results.slice(0, 8).map(function(r){ return r.entry; });
+}
+
+function handleThanaSearchInput(){
+  const input = document.getElementById('thanaSearchInput');
+  const list = document.getElementById('thanaSuggestList');
+  const q = input.value.trim();
+  if(q.length < 1){ list.style.display = 'none'; list.innerHTML = ''; return; }
+  const results = searchThana(q);
+  if(!results.length){ list.style.display = 'none'; list.innerHTML = ''; return; }
+  list.innerHTML = results.map(function(r){
+    return '<div class="thana-suggest-item" onclick="pickThanaSuggestion(\'' +
+      r.division.replace(/'/g, "\\'") + '\',\'' + r.district.replace(/'/g, "\\'") + '\',\'' + r.thana.replace(/'/g, "\\'") + '\')">' +
+      '<b>' + escapeHTML(r.thana) + '</b><span>' + escapeHTML(r.district) + ', ' + escapeHTML(r.division) + '</span></div>';
+  }).join('');
+  list.style.display = 'block';
+}
+
+function pickThanaSuggestion(division, district, thana){
+  explicitLocationLock = true;
+  const input = document.getElementById('thanaSearchInput');
+  if(input) input.value = thana + ', ' + district;
+  const list = document.getElementById('thanaSuggestList');
+  if(list) list.style.display = 'none';
+  renderAddrHintOk({ division, district, thana }, true);
+}
+
+// সার্চ বক্সের বাইরে ট্যাপ করলে সাজেশন লিস্ট বন্ধ হয়ে যায়
+document.addEventListener('click', function(e){
+  const input = document.getElementById('thanaSearchInput');
+  const list = document.getElementById('thanaSuggestList');
+  if(input && list && !input.contains(e.target) && !list.contains(e.target)){
+    list.style.display = 'none';
+  }
+});
+
+// ---- 📍 বর্তমান অবস্থান (GPS) দিয়ে থানা/জেলা/বিভাগ বসানো ----
+// OpenStreetMap-এর ফ্রি Nominatim রিভার্স-জিওকোডিং ব্যবহার করা হয়েছে (কোনো API
+// key/billing লাগে না) — GPS থেকে পাওয়া lat/lng থেকে এলাকার নাম বের করে সেটাকে
+// আবার detectLocationFromText() দিয়েই BD_GEO-র সাথে মেলানো হয়, তাই একই ডেটাসেট
+// আর একই disambiguation যুক্তি (candidates/Sadar রুল) সব জায়গায় এক থাকে।
+let gpsLookupInFlight = false;
+function useGpsLocation(){
+  if(gpsLookupInFlight) return;
+  if(!navigator.geolocation){
+    showToast('আপনার ব্রাউজারে লোকেশন সুবিধা নেই');
+    return;
+  }
+  const btn = document.getElementById('gpsLocateBtn');
+  gpsLookupInFlight = true;
+  const origHTML = btn ? btn.innerHTML : '';
+  if(btn){ btn.innerHTML = '…'; btn.disabled = true; }
+  const done = function(){
+    gpsLookupInFlight = false;
+    if(btn){ btn.innerHTML = origHTML; btn.disabled = false; }
+  };
+  navigator.geolocation.getCurrentPosition(function(pos){
+    reverseGeocodeAndFill(pos.coords.latitude, pos.coords.longitude).then(done).catch(done);
+  }, function(err){
+    done();
+    if(err && err.code === err.PERMISSION_DENIED){
+      showToast('লোকেশন অনুমতি দেওয়া হয়নি — ব্রাউজার সেটিংস থেকে অনুমতি দিন');
+    } else {
+      showToast('বর্তমান অবস্থান পাওয়া যায়নি, আবার চেষ্টা করুন');
+    }
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+}
+
+function reverseGeocodeAndFill(lat, lon){
+  const url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&addressdetails=1&accept-language=bn,en&zoom=16';
+  return fetch(url).then(function(res){
+    if(!res.ok) throw new Error('reverse geocode failed');
+    return res.json();
+  }).then(function(data){
+    const addr = data.address || {};
+    // GPS থেকে ফেরত আসা এলাকা/শহর/জেলা/বিভাগ — সবগুলো নাম একসাথে জুড়ে দিয়ে
+    // একই matching ফাংশনে চালানো হচ্ছে, প্যারাগ্রাফ ঠিকানার মতোই
+    const bits = [addr.suburb, addr.neighbourhood, addr.city_district, addr.town, addr.city,
+      addr.county, addr.state_district, addr.state, data.display_name].filter(Boolean).join(', ');
+    const result = detectLocationFromText(bits);
+    if(result.candidates && result.candidates.length){
+      applyDetectionResult(result, false);
+    } else if(result.division || result.district || result.thana){
+      explicitLocationLock = true;
+      renderAddrHintOk(result, true);
+      const searchInput = document.getElementById('thanaSearchInput');
+      if(searchInput) searchInput.value = [result.thana, result.district].filter(Boolean).join(', ');
+      // ঠিকানা বক্স খালি থাকলে GPS-এর সংক্ষিপ্ত ঠিকানাটা বসিয়ে দেওয়া হয়,
+      // কাস্টমার শুধু বাসা/রোড নম্বরটা যোগ করে দিলেই যথেষ্ট হবে
+      const addrBox = document.getElementById('custAddress');
+      if(addrBox && !addrBox.value.trim()){
+        addrBox.value = [addr.road, addr.suburb || addr.neighbourhood, result.thana, result.district].filter(Boolean).join(', ');
+      }
+    } else {
+      showToast('অবস্থান পাওয়া গেছে কিন্তু থানা/জেলা মেলানো যায়নি — ম্যানুয়ালি লিখুন');
+    }
+  }).catch(function(){
+    showToast('অবস্থান শনাক্ত করতে সমস্যা হয়েছে, ইন্টারনেট চেক করুন');
+  });
+}
+
+function clearLocationLock(){
+  explicitLocationLock = false;
+  const searchInput = document.getElementById('thanaSearchInput');
+  if(searchInput) searchInput.value = '';
+  runAddressLocationDetect();
 }
 
 
