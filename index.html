@@ -15686,7 +15686,7 @@ function syncToSheetViaForm(url, bodyStr, type){
 // UI (address picking, bulk selection, receipt tracking-ID printing) all
 // works fully before this is set; only the actual courier API call waits on it.
 //   Example once deployed: 'https://asia-southeast1-sohanshopbd.cloudfunctions.net'
-const COURIER_FUNCTION_BASE_URL = '';
+const COURIER_FUNCTION_BASE_URL = 'https://us-central1-sohanshopbd.cloudfunctions.net';
 
 const COURIER_PROVIDERS = [
   { id:'steadfast', name:'Steadfast Courier', short:'SF', color:'#7b2ff7', logo:'https://play-lh.googleusercontent.com/OQgYiwAh2d4VqZgjf0GxZM83ylNIzxOQ-Wctx_MXmrxuaSA67UeYYwVhQ2PEMBxd0hs0nxnsRvnsviPRDgWgoGU=s256' },
@@ -15942,19 +15942,28 @@ function testCourierConnection(){
     if(statusEl) statusEl.textContent = 'এই মুহূর্তে শুধু Steadfast verify করা যায়।';
     return;
   }
+  if(!fbAuth || !fbAuth.currentUser){
+    if(statusEl) statusEl.textContent = 'sign-in প্রয়োজন।';
+    return;
+  }
   if(statusEl) statusEl.textContent = 'যাচাই করা হচ্ছে...';
-  fetch(COURIER_FUNCTION_BASE_URL + '/courierVerify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ shopUid: currentUid, provider: providerId })
-  })
+  // shopUid ক্লায়েন্ট থেকে পাঠানো হয় না — যে কেউ ইচ্ছেমতো অন্য কারো uid বসিয়ে তাদের
+  // কুরিয়ার credential দিয়ে চেষ্টা করতে পারত। বদলে Firebase ID token পাঠানো হয়, Cloud
+  // Function নিজে verifyIdToken() দিয়ে uid বের করে (দ্র. courier-functions/index.js)।
+  fbAuth.currentUser.getIdToken().then(idToken =>
+    fetch(COURIER_FUNCTION_BASE_URL + '/courierVerify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ provider: providerId })
+    })
+  )
     .then(r => r.json())
     .then(res => {
       if(res.ok){
         const c = ensureCourierSettings();
         if(c.providers[providerId]) c.providers[providerId].verifiedAt = Date.now();
         saveState();
-        if(statusEl) statusEl.textContent = '✓ সংযোগ সফল — ব্যালেন্স: ' + fmtMoney(res.current_balance || 0);
+        if(statusEl) statusEl.textContent = '✓ সংযোগ সফল — ব্যালেন্স: ' + fmtMoney(res.balance || 0);
         showToast('✓ Steadfast সংযোগ সফলভাবে যাচাই হয়েছে');
         renderCourierProviderList();
       } else {
@@ -16177,25 +16186,30 @@ function bookCourierForOrder(orderId){
     showToast('⏳ Cloud Function এখনো ডিপ্লয়/সেট করা হয়নি — COURIER_FUNCTION_BASE_URL বসান (দ্র. DEPLOY.md)');
     return;
   }
+  if(!fbAuth || !fbAuth.currentUser){ showToast('sign-in প্রয়োজন'); return; }
   order.courier.status = 'booking';
   order.courier.provider = activeProvider.id;
   queueLegacyRecordPatch('orders', order.id, order);
   refreshOrderRelatedViews();
-  fetch(COURIER_FUNCTION_BASE_URL + '/courierBook', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      shopUid: currentUid,
-      provider: activeProvider.id,
-      orderId: order.id,
-      recipient: {
-        name: order.customerName, phone: order.phone,
-        division: cs.division, district: cs.district, thana: cs.thana, address: cs.addressDetail
-      },
-      codAmount: isCODOrder(order) ? (order.total || 0) : 0,
-      itemDescription: (order.items || []).map(i => i.name).join(', ')
+  // shopUid ক্লায়েন্ট থেকে পাঠানো হয় না (দ্র. testCourierConnection-এর একই মন্তব্য) —
+  // Cloud Function ভেরিফাইড ID token থেকেই uid বের করে।
+  fbAuth.currentUser.getIdToken().then(idToken =>
+    fetch(COURIER_FUNCTION_BASE_URL + '/courierBook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({
+        provider: activeProvider.id,
+        orderId: order.id,
+        recipient: {
+          name: order.customerName, phone: order.phone,
+          division: cs.division, district: cs.district, thana: cs.thana, address: cs.addressDetail
+        },
+        codAmount: isCODOrder(order) ? (order.total || 0) : 0,
+        itemDescription: (order.items || []).map(i => i.name).join(', '),
+        itemQuantity: (order.items || []).reduce((s, i) => s + (i.qty || 1), 0) || 1
+      })
     })
-  })
+  )
     .then(r => r.json())
     .then(res => {
       if(res.ok){
