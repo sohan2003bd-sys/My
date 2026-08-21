@@ -310,6 +310,18 @@
   }
   .cart-breakdown .br-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); padding:3px 0; }
 
+  /* ---------- ঠিকানা থেকে থানা/জেলা অটো-সনাক্তকরণ হিন্ট ---------- */
+  .addr-hint{
+    margin-top:7px; padding:8px 10px; border-radius:10px; font-size:11.5px; line-height:1.6;
+  }
+  .addr-hint-ok{ background:rgba(53,102,194,0.08); color:var(--plum-800); border:1px solid rgba(53,102,194,0.18); }
+  .addr-hint-pick{ background:rgba(242,129,43,0.10); color:var(--gold-deep); border:1px solid rgba(242,129,43,0.22); }
+  .addr-chip{
+    display:inline-block; margin:4px 6px 0 0; padding:5px 10px; border-radius:999px; border:1.5px solid var(--gold);
+    background:#fff; color:var(--gold-deep); font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .addr-chip:active{ background:var(--gold-light); color:var(--plum-900); }
+
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
   .cart-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dashed var(--rule); }
@@ -632,7 +644,8 @@
         </div>
         <div class="field" style="margin-bottom:0;">
           <label class="field-label-lg">সম্পূর্ন ঠিকানা *</label>
-          <textarea id="custAddress" rows="2" required placeholder="বাসা/রোড, এলাকা, থানা, জেলা"></textarea>
+          <textarea id="custAddress" rows="2" required placeholder="বাসা/রোড, এলাকা, থানা, জেলা" oninput="handleAddressLocationDetect()"></textarea>
+          <div id="addrLocationHint" class="addr-hint" style="display:none;"></div>
         </div>
       </div>
 
@@ -1659,6 +1672,312 @@ function updateTotal(){
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+// ============================================================
+// থানা/জেলা অটো-সনাক্তকরণ (বাংলা ও ইংরেজি) — কাস্টমার ঠিকানায়
+// থানা বা জেলার নাম লিখলে বিভাগ ও জেলা স্বয়ংক্রিয়ভাবে বসে যায়।
+// এই BD_GEO ডেটা অ্যাডমিন অ্যাপের (index.html) BD_GEO-এর সাথে হুবহু
+// মিলিয়ে রাখা — ওখানে এলাকা/থানা যোগ-বিয়োগ হলে এখানেও করতে হবে।
+// ============================================================
+const BD_GEO = {
+  "ঢাকা": {
+    "ঢাকা": ["ধানমন্ডি","গুলশান","বনানী","মিরপুর","উত্তরা","মোহাম্মদপুর","তেজগাঁও","রমনা","পল্টন","যাত্রাবাড়ী","খিলগাঁও","বাড্ডা","শাহবাগ","ওয়ারী","সবুজবাগ","ডেমরা","কদমতলী","কামরাঙ্গীরচর","লালবাগ","হাজারীবাগ","আদাবর","শ্যামপুর","কোতোয়ালী","সূত্রাপুর","চকবাজার","বংশাল","নিউমার্কেট","পল্লবী","কাফরুল","ভাটারা","ক্যান্টনমেন্ট","শাহআলী","তুরাগ","দক্ষিণখান","উত্তরখান"],
+    "গাজীপুর": ["গাজীপুর সদর","কালীগঞ্জ","কাপাসিয়া","শ্রীপুর","কালিয়াকৈর","টঙ্গী"],
+    "নারায়ণগঞ্জ": ["নারায়ণগঞ্জ সদর","আড়াইহাজার","বন্দর","রূপগঞ্জ","সোনারগাঁও","ফতুল্লা","সিদ্ধিরগঞ্জ"],
+    "নরসিংদী": ["নরসিংদী সদর","বেলাবো","মনোহরদী","পলাশ","রায়পুরা","শিবপুর"],
+    "মানিকগঞ্জ": ["মানিকগঞ্জ সদর","দৌলতপুর","ঘিওর","হরিরামপুর","সাটুরিয়া","সিংগাইর","শিবালয়"],
+    "মুন্সিগঞ্জ": ["মুন্সিগঞ্জ সদর","গজারিয়া","লৌহজং","শ্রীনগর","সিরাজদিখান","টঙ্গিবাড়ী"],
+    "টাঙ্গাইল": ["টাঙ্গাইল সদর","বাসাইল","ভুয়াপুর","দেলদুয়ার","ঘাটাইল","গোপালপুর","কালিহাতী","মধুপুর","মির্জাপুর","নাগরপুর","সখীপুর","ধনবাড়ী"],
+    "কিশোরগঞ্জ": ["কিশোরগঞ্জ সদর","বাজিতপুর","ভৈরব","হোসেনপুর","ইটনা","করিমগঞ্জ","কটিয়াদী","মিঠামইন","নিকলী","পাকুন্দিয়া","তাড়াইল","অষ্টগ্রাম"],
+    "ফরিদপুর": ["ফরিদপুর সদর","আলফাডাঙ্গা","বোয়ালমারী","ভাঙ্গা","চরভদ্রাসন","মধুখালী","নগরকান্দা","সদরপুর","সালথা"],
+    "গোপালগঞ্জ": ["গোপালগঞ্জ সদর","কাশিয়ানী","কোটালীপাড়া","মুকসুদপুর","টুঙ্গিপাড়া"],
+    "মাদারীপুর": ["মাদারীপুর সদর","কালকিনি","রাজৈর","শিবচর"],
+    "রাজবাড়ী": ["রাজবাড়ী সদর","বালিয়াকান্দি","গোয়ালন্দ","পাংশা","কালুখালী"],
+    "শরীয়তপুর": ["শরীয়তপুর সদর","ভেদরগঞ্জ","ডামুড্যা","গোসাইরহাট","নড়িয়া","জাজিরা"]
+  },
+  "চট্টগ্রাম": {
+    "চট্টগ্রাম": ["পাঁচলাইশ","কোতোয়ালী","পাহাড়তলী","ডবলমুরিং","বন্দর","হালিশহর","চান্দগাঁও","বায়েজিদ","আকবরশাহ","খুলশী","পতেঙ্গা","বাকলিয়া","সীতাকুণ্ড","মিরসরাই","সন্দ্বীপ","ফটিকছড়ি","হাটহাজারী","রাউজান","রাঙ্গুনিয়া","বোয়ালখালী","আনোয়ারা","পটিয়া","চন্দনাইশ","সাতকানিয়া","লোহাগাড়া","বাঁশখালী","কর্ণফুলী"],
+    "কক্সবাজার": ["কক্সবাজার সদর","চকরিয়া","কুতুবদিয়া","মহেশখালী","পেকুয়া","রামু","টেকনাফ","উখিয়া"],
+    "কুমিল্লা": ["কুমিল্লা সদর","বরুড়া","ব্রাহ্মণপাড়া","চান্দিনা","চৌদ্দগ্রাম","দাউদকান্দি","দেবীদ্বার","হোমনা","লাকসাম","মুরাদনগর","নাঙ্গলকোট","সদর দক্ষিণ","তিতাস","বুড়িচং","মেঘনা","মনোহরগঞ্জ"],
+    "ব্রাহ্মণবাড়িয়া": ["ব্রাহ্মণবাড়িয়া সদর","আশুগঞ্জ","বাঞ্ছারামপুর","বিজয়নগর","কসবা","নাসিরনগর","নবীনগর","সরাইল","আখাউড়া"],
+    "চাঁদপুর": ["চাঁদপুর সদর","ফরিদগঞ্জ","হাইমচর","হাজীগঞ্জ","কচুয়া","মতলব দক্ষিণ","মতলব উত্তর","শাহরাস্তি"],
+    "লক্ষ্মীপুর": ["লক্ষ্মীপুর সদর","কমলনগর","রায়পুর","রামগঞ্জ","রামগতি"],
+    "নোয়াখালী": ["নোয়াখালী সদর","বেগমগঞ্জ","চাটখিল","কোম্পানীগঞ্জ","হাতিয়া","কবিরহাট","সেনবাগ","সোনাইমুড়ী","সুবর্ণচর"],
+    "ফেনী": ["ফেনী সদর","ছাগলনাইয়া","দাগনভূঞা","ফুলগাজী","পরশুরাম","সোনাগাজী"],
+    "খাগড়াছড়ি": ["খাগড়াছড়ি সদর","দীঘিনালা","মহালছড়ি","মানিকছড়ি","মাটিরাঙ্গা","পানছড়ি","রামগড়","লক্ষ্মীছড়ি"],
+    "রাঙ্গামাটি": ["রাঙ্গামাটি সদর","বাঘাইছড়ি","বরকল","বিলাইছড়ি","জুরাছড়ি","কাউখালী","কাপ্তাই","লংগদু","নানিয়ারচর","রাজস্থলী"],
+    "বান্দরবান": ["বান্দরবান সদর","আলীকদম","লামা","নাইক্ষ্যংছড়ি","রুমা","রোয়াংছড়ি","থানচি"]
+  },
+  "রাজশাহী": {
+    "রাজশাহী": ["বোয়ালিয়া","মতিহার","শাহমখদুম","রাজপাড়া","পবা","তানোর","গোদাগাড়ী","চারঘাট","বাঘা","দুর্গাপুর","পুঠিয়া","মোহনপুর","বাগমারা"],
+    "বগুড়া": ["বগুড়া সদর","আদমদীঘি","কাহালু","শাজাহানপুর","শিবগঞ্জ","শেরপুর","ধুনট","নন্দীগ্রাম","গাবতলী","সারিয়াকান্দি","সোনাতলা","দুপচাঁচিয়া","ধুপচাঁচিয়া"],
+    "পাবনা": ["পাবনা সদর","আটঘরিয়া","বেড়া","ভাঙ্গুড়া","চাটমোহর","ফরিদপুর","ঈশ্বরদী","সাঁথিয়া","সুজানগর"],
+    "সিরাজগঞ্জ": ["সিরাজগঞ্জ সদর","বেলকুচি","চৌহালী","কামারখন্দ","কাজীপুর","রায়গঞ্জ","শাহজাদপুর","তাড়াশ","উল্লাপাড়া"],
+    "নাটোর": ["নাটোর সদর","বাগাতিপাড়া","বড়াইগ্রাম","গুরুদাসপুর","লালপুর","সিংড়া","নলডাঙ্গা"],
+    "জয়পুরহাট": ["জয়পুরহাট সদর","আক্কেলপুর","কালাই","ক্ষেতলাল","পাঁচবিবি"],
+    "চাঁপাইনবাবগঞ্জ": ["চাঁপাইনবাবগঞ্জ সদর","গোমস্তাপুর","নাচোল","শিবগঞ্জ","ভোলাহাট"],
+    "নওগাঁ": ["নওগাঁ সদর","আত্রাই","বদলগাছী","ধামইরহাট","মহাদেবপুর","মান্দা","নিয়ামতপুর","পত্নীতলা","পোরশা","রানীনগর","সাপাহার"]
+  },
+  "খুলনা": {
+    "খুলনা": ["খুলনা সদর","দৌলতপুর","সোনাডাঙ্গা","খালিশপুর","খানজাহান আলী","দিঘলিয়া","ডুমুরিয়া","বটিয়াঘাটা","ফুলতলা","কয়রা","পাইকগাছা","রূপসা","তেরখাদা","দাকোপ"],
+    "যশোর": ["যশোর সদর","অভয়নগর","বাঘারপাড়া","চৌগাছা","ঝিকরগাছা","কেশবপুর","মণিরামপুর","শার্শা"],
+    "সাতক্ষীরা": ["সাতক্ষীরা সদর","আশাশুনি","দেবহাটা","কালীগঞ্জ","কলারোয়া","শ্যামনগর","তালা"],
+    "বাগেরহাট": ["বাগেরহাট সদর","চিতলমারী","ফকিরহাট","কচুয়া","মংলা","মোরেলগঞ্জ","রামপাল","শরণখোলা"],
+    "কুষ্টিয়া": ["কুষ্টিয়া সদর","ভেড়ামারা","দৌলতপুর","খোকসা","কুমারখালী","মিরপুর"],
+    "মেহেরপুর": ["মেহেরপুর সদর","গাংনী","মুজিবনগর"],
+    "চুয়াডাঙ্গা": ["চুয়াডাঙ্গা সদর","আলমডাঙ্গা","দামুড়হুদা","জীবননগর"],
+    "নড়াইল": ["নড়াইল সদর","কালিয়া","লোহাগড়া"],
+    "মাগুরা": ["মাগুরা সদর","মহম্মদপুর","শালিখা","শ্রীপুর"],
+    "ঝিনাইদহ": ["ঝিনাইদহ সদর","হরিণাকুণ্ডু","কালীগঞ্জ","কোটচাঁদপুর","মহেশপুর","শৈলকুপা"]
+  },
+  "বরিশাল": {
+    "বরিশাল": ["বরিশাল সদর","আগৈলঝাড়া","বাবুগঞ্জ","বাকেরগঞ্জ","বানারীপাড়া","গৌরনদী","হিজলা","মেহেন্দিগঞ্জ","মুলাদী","উজিরপুর"],
+    "ভোলা": ["ভোলা সদর","বোরহানউদ্দিন","চরফ্যাশন","দৌলতখান","লালমোহন","মনপুরা","তজুমদ্দিন"],
+    "পটুয়াখালী": ["পটুয়াখালী সদর","বাউফল","দশমিনা","দুমকী","গলাচিপা","কলাপাড়া","মির্জাগঞ্জ","রাঙ্গাবালী"],
+    "পিরোজপুর": ["পিরোজপুর সদর","ভান্ডারিয়া","কাউখালী","মঠবাড়িয়া","নাজিরপুর","নেসারাবাদ","জিয়ানগর"],
+    "বরগুনা": ["বরগুনা সদর","আমতলী","বামনা","বেতাগী","পাথরঘাটা","তালতলী"],
+    "ঝালকাঠি": ["ঝালকাঠি সদর","কাঠালিয়া","নলছিটি","রাজাপুর"]
+  },
+  "সিলেট": {
+    "সিলেট": ["সিলেট সদর","বিয়ানীবাজার","বিশ্বনাথ","কোম্পানীগঞ্জ","ফেঞ্চুগঞ্জ","গোলাপগঞ্জ","গোয়াইনঘাট","জৈন্তাপুর","কানাইঘাট","জকিগঞ্জ","দক্ষিণ সুরমা","ওসমানীনগর","বালাগঞ্জ"],
+    "মৌলভীবাজার": ["মৌলভীবাজার সদর","বড়লেখা","কমলগঞ্জ","কুলাউড়া","জুড়ী","রাজনগর","শ্রীমঙ্গল"],
+    "হবিগঞ্জ": ["হবিগঞ্জ সদর","আজমিরীগঞ্জ","বাহুবল","বানিয়াচং","চুনারুঘাট","লাখাই","মাধবপুর","নবীগঞ্জ","শায়েস্তাগঞ্জ"],
+    "সুনামগঞ্জ": ["সুনামগঞ্জ সদর","বিশ্বম্ভরপুর","ছাতক","দক্ষিণ সুনামগঞ্জ","দিরাই","দোয়ারাবাজার","জগন্নাথপুর","জামালগঞ্জ","শাল্লা","তাহিরপুর","ধর্মপাশা"]
+  },
+  "রংপুর": {
+    "রংপুর": ["রংপুর সদর","বদরগঞ্জ","গঙ্গাচড়া","কাউনিয়া","মিঠাপুকুর","পীরগঞ্জ","পীরগাছা","তারাগঞ্জ"],
+    "দিনাজপুর": ["দিনাজপুর সদর","বিরল","বিরামপুর","বিরগঞ্জ","বোচাগঞ্জ","চিরিরবন্দর","ফুলবাড়ী","ঘোড়াঘাট","হাকিমপুর","কাহারোল","খানসামা","নবাবগঞ্জ","পার্বতীপুর"],
+    "গাইবান্ধা": ["গাইবান্ধা সদর","ফুলছড়ি","গোবিন্দগঞ্জ","পলাশবাড়ী","সাদুল্লাপুর","সাঘাটা","সুন্দরগঞ্জ"],
+    "কুড়িগ্রাম": ["কুড়িগ্রাম সদর","ভুরুঙ্গামারী","চর রাজিবপুর","চিলমারী","ফুলবাড়ী","কচাকাটা","নাগেশ্বরী","রাজারহাট","রৌমারী","উলিপুর"],
+    "লালমনিরহাট": ["লালমনিরহাট সদর","আদিতমারী","কালীগঞ্জ","হাতীবান্ধা","পাটগ্রাম"],
+    "নীলফামারী": ["নীলফামারী সদর","ডোমার","ডিমলা","জলঢাকা","কিশোরগঞ্জ","সৈয়দপুর"],
+    "পঞ্চগড়": ["পঞ্চগড় সদর","আটোয়ারী","বোদা","দেবীগঞ্জ","তেঁতুলিয়া"],
+    "ঠাকুরগাঁও": ["ঠাকুরগাঁও সদর","বালিয়াডাঙ্গী","হরিপুর","পীরগঞ্জ","রাণীশংকৈল"]
+  },
+  "ময়মনসিংহ": {
+    "ময়মনসিংহ": ["ময়মনসিংহ সদর","ভালুকা","ফুলবাড়ীয়া","গফরগাঁও","গৌরীপুর","হালুয়াঘাট","ঈশ্বরগঞ্জ","মুক্তাগাছা","নান্দাইল","ফুলপুর","তারাকান্দা","ত্রিশাল","ধোবাউড়া"],
+    "জামালপুর": ["জামালপুর সদর","বকশীগঞ্জ","দেওয়ানগঞ্জ","ইসলামপুর","মাদারগঞ্জ","মেলান্দহ","সরিষাবাড়ী"],
+    "নেত্রকোণা": ["নেত্রকোণা সদর","আটপাড়া","বারহাট্টা","দুর্গাপুর","খালিয়াজুরী","কলমাকান্দা","কেন্দুয়া","মদন","মোহনগঞ্জ","পূর্বধলা"],
+    "শেরপুর": ["শেরপুর সদর","ঝিনাইগাতী","নকলা","নালিতাবাড়ী","শ্রীবরদী"]
+  }
+};
+
+// বিভাগ ও জেলার ইংরেজি বানান (একাধিক প্রচলিত বানানসহ) -> বাংলা ক্যানোনিকাল নাম।
+// মেলানোর সময় স্পেস/অ্যাপস্ট্রফি বাদ দিয়ে লোয়ারকেসে তুলনা করা হয় (দ্র. normLatin),
+// তাই "Cox's Bazar", "Coxs Bazar", "cox bazar" — সবই "coxsbazar"/"coxbazar" কী-তে মিলবে।
+const DIVISION_EN_ALIASES = {
+  'dhaka':'ঢাকা',
+  'chittagong':'চট্টগ্রাম','chattogram':'চট্টগ্রাম',
+  'rajshahi':'রাজশাহী',
+  'khulna':'খুলনা',
+  'barisal':'বরিশাল','barishal':'বরিশাল',
+  'sylhet':'সিলেট',
+  'rangpur':'রংপুর',
+  'mymensingh':'ময়মনসিংহ'
+};
+const DISTRICT_EN_ALIASES = {
+  'dhaka':'ঢাকা','gazipur':'গাজীপুর','narayanganj':'নারায়ণগঞ্জ','narshingdi':'নরসিংদী','narsingdi':'নরসিংদী',
+  'manikganj':'মানিকগঞ্জ','munshiganj':'মুন্সিগঞ্জ','munsigonj':'মুন্সিগঞ্জ','tangail':'টাঙ্গাইল','kishoreganj':'কিশোরগঞ্জ','kishorganj':'কিশোরগঞ্জ',
+  'faridpur':'ফরিদপুর','gopalganj':'গোপালগঞ্জ','madaripur':'মাদারীপুর','rajbari':'রাজবাড়ী','shariatpur':'শরীয়তপুর',
+  'chattogram':'চট্টগ্রাম','chittagong':'চট্টগ্রাম',
+  'coxsbazar':'কক্সবাজার','coxbazar':'কক্সবাজার',
+  'cumilla':'কুমিল্লা','comilla':'কুমিল্লা','brahmanbaria':'ব্রাহ্মণবাড়িয়া','brahmonbaria':'ব্রাহ্মণবাড়িয়া','chandpur':'চাঁদপুর','lakshmipur':'লক্ষ্মীপুর','laxmipur':'লক্ষ্মীপুর',
+  'noakhali':'নোয়াখালী','feni':'ফেনী','khagrachhari':'খাগড়াছড়ি','khagrachari':'খাগড়াছড়ি','rangamati':'রাঙ্গামাটি','bandarban':'বান্দরবান',
+  'rajshahi':'রাজশাহী','bogra':'বগুড়া','bogura':'বগুড়া','pabna':'পাবনা','sirajganj':'সিরাজগঞ্জ','natore':'নাটোর',
+  'joypurhat':'জয়পুরহাট','joypurhaat':'জয়পুরহাট','chapainawabganj':'চাঁপাইনবাবগঞ্জ','nawabganj':'চাঁপাইনবাবগঞ্জ','naogaon':'নওগাঁ',
+  'khulna':'খুলনা','jashore':'যশোর','jessore':'যশোর','satkhira':'সাতক্ষীরা','bagerhat':'বাগেরহাট','kushtia':'কুষ্টিয়া',
+  'meherpur':'মেহেরপুর','chuadanga':'চুয়াডাঙ্গা','narail':'নড়াইল','magura':'মাগুরা','jhenaidah':'ঝিনাইদহ','jhenaidaha':'ঝিনাইদহ',
+  'barishal':'বরিশাল','barisal':'বরিশাল','bhola':'ভোলা','patuakhali':'পটুয়াখালী','pirojpur':'পিরোজপুর','barguna':'বরগুনা','jhalokati':'ঝালকাঠি','jhalokathi':'ঝালকাঠি',
+  'sylhet':'সিলেট','moulvibazar':'মৌলভীবাজার','maulvibazar':'মৌলভীবাজার','habiganj':'হবিগঞ্জ','sunamganj':'সুনামগঞ্জ',
+  'rangpur':'রংপুর','dinajpur':'দিনাজপুর','gaibandha':'গাইবান্ধা','kurigram':'কুড়িগ্রাম','lalmonirhat':'লালমনিরহাট',
+  'nilphamari':'নীলফামারী','nilphamary':'নীলফামারী','panchagarh':'পঞ্চগড়','thakurgaon':'ঠাকুরগাঁও',
+  'mymensingh':'ময়মনসিংহ','jamalpur':'জামালপুর','netrokona':'নেত্রকোণা','netrakona':'নেত্রকোণা','sherpur':'শেরপুর'
+};
+const DISTRICT_TO_DIVISION = {};
+const THANA_NAME_TO_LOCATIONS = {};
+(function(){
+  for(const division in BD_GEO){
+    for(const district in BD_GEO[division]){
+      DISTRICT_TO_DIVISION[district] = division;
+      BD_GEO[division][district].forEach(function(thana){
+        (THANA_NAME_TO_LOCATIONS[thana] = THANA_NAME_TO_LOCATIONS[thana] || []).push({ division, district });
+      });
+    }
+  }
+})();
+
+// ঢাকা/চট্টগ্রাম/রাজশাহী মেট্রোর থানাগুলোর কোনো "X সদর" নাম নেই (এগুলোর বদলে
+// এলাকাভিত্তিক নাম আছে — ধানমন্ডি, গুলশান, পাঁচলাইশ...), তাই এই তিনটার
+// পরিচিত থানার ইংরেজি বানান আলাদাভাবে দেওয়া হলো। বাকি ৬১টা জেলার জন্য নিচের
+// generic "Sadar" নিয়মটাই যথেষ্ট (District + Sadar -> "{জেলা} সদর")।
+const ENGLISH_THANA_ALIASES = {
+  // ঢাকা মেট্রো
+  'dhanmondi':'ধানমন্ডি','dhanmandi':'ধানমন্ডি','gulshan':'গুলশান','banani':'বনানী','mirpur':'মিরপুর',
+  'uttara':'উত্তরা','mohammadpur':'মোহাম্মদপুর','mohammadpur':'মোহাম্মদপুর','tejgaon':'তেজগাঁও','ramna':'রমনা',
+  'paltan':'পল্টন','palton':'পল্টন','jatrabari':'যাত্রাবাড়ী','khilgaon':'খিলগাঁও','badda':'বাড্ডা',
+  'shahbagh':'শাহবাগ','shahbag':'শাহবাগ','wari':'ওয়ারী','sabujbagh':'সবুজবাগ','sabujbag':'সবুজবাগ','demra':'ডেমরা',
+  'kadamtali':'কদমতলী','kadamtoli':'কদমতলী','kamrangirchar':'কামরাঙ্গীরচর','lalbagh':'লালবাগ','lalbag':'লালবাগ',
+  'hazaribagh':'হাজারীবাগ','hazaribag':'হাজারীবাগ','adabor':'আদাবর','shyampur':'শ্যামপুর','kotwali':'কোতোয়ালী','kotoali':'কোতোয়ালী',
+  'sutrapur':'সূত্রাপুর','chawkbazar':'চকবাজার','chalkbazar':'চকবাজার','chakbazar':'চকবাজার','bangshal':'বংশাল','bonshal':'বংশাল',
+  'newmarket':'নিউমার্কেট','pallabi':'পল্লবী','kafrul':'কাফরুল','bhatara':'ভাটারা','cantonment':'ক্যান্টনমেন্ট',
+  'shahali':'শাহআলী','turag':'তুরাগ','dakshinkhan':'দক্ষিণখান','uttarkhan':'উত্তরখান',
+  // চট্টগ্রাম মেট্রো
+  'panchlaish':'পাঁচলাইশ','pahartali':'পাহাড়তলী','doublemooring':'ডবলমুরিং','bandar':'বন্দর','halishahar':'হালিশহর',
+  'chandgaon':'চান্দগাঁও','bayazid':'বায়েজিদ','akbarshah':'আকবরশাহ','khulshi':'খুলশী','patenga':'পতেঙ্গা','bakalia':'বাকলিয়া',
+  // রাজশাহী মেট্রো
+  'boalia':'বোয়ালিয়া','motihar':'মতিহার','shahmakhdum':'শাহমখদুম','rajpara':'রাজপাড়া'
+};
+
+// ইংরেজি টেক্সট তুলনার আগে শুধু a-z অক্ষর রেখে বাকি সব (স্পেস/অ্যাপস্ট্রফি/কমা) বাদ দেওয়া হয়,
+// যাতে "Cox's Bazar", "Cox Bazar", "coxsbazar" — বানানের ছোটখাটো তফাত থাকলেও মিলে যায়।
+function normLatin(s){ return (s || '').toLowerCase().replace(/[^a-z]/g, ''); }
+
+// ঠিকানার টেক্সট থেকে থানা/জেলা/বিভাগ সনাক্ত করে। বাংলা নাম সরাসরি সাব-স্ট্রিং হিসেবে
+// মেলানো হয়; ইংরেজি নামের জন্য উপরের অ্যালিয়াস টেবিল ব্যবহার হয়। একই থানার নাম একাধিক
+// জেলায় থাকলে (যেমন "মিরপুর", "কালীগঞ্জ") — ঠিকানায় জেলার নামও থাকলে সেটা দিয়ে
+// নিশ্চিত করা হয়, নাহলে candidates হিসেবে ফেরত দেওয়া হয় যাতে কাস্টমারকে জিজ্ঞাসা করা যায়।
+function detectLocationFromText(rawText){
+  const text = String(rawText || '');
+  const normText = normLatin(text);
+  const thanaMatches = [];
+  const districtMatches = [];
+  let divisionMatch = '';
+
+  for(const division in BD_GEO){
+    for(const district in BD_GEO[division]){
+      if(district.length >= 2 && text.indexOf(district) !== -1){
+        districtMatches.push({ division, district, len: district.length, source: 'bn' });
+      }
+      const thanas = BD_GEO[division][district];
+      for(let i = 0; i < thanas.length; i++){
+        const thana = thanas[i];
+        if(thana.length >= 2 && text.indexOf(thana) !== -1){
+          thanaMatches.push({ division, district, thana, len: thana.length });
+        }
+      }
+    }
+  }
+  if(normText){
+    for(const key in DISTRICT_EN_ALIASES){
+      if(normText.indexOf(key) !== -1){
+        const bnDistrict = DISTRICT_EN_ALIASES[key];
+        districtMatches.push({ division: DISTRICT_TO_DIVISION[bnDistrict], district: bnDistrict, len: key.length, source: 'en' });
+      }
+    }
+    for(const key in DIVISION_EN_ALIASES){
+      if(normText.indexOf(key) !== -1){ divisionMatch = DIVISION_EN_ALIASES[key]; }
+    }
+    for(const key in ENGLISH_THANA_ALIASES){
+      if(normText.indexOf(key) !== -1){
+        const bnThana = ENGLISH_THANA_ALIASES[key];
+        (THANA_NAME_TO_LOCATIONS[bnThana] || []).forEach(function(loc){
+          thanaMatches.push({ division: loc.division, district: loc.district, thana: bnThana, len: key.length });
+        });
+      }
+    }
+  }
+
+  // জেলা ম্যাচ ডিডুপ করা হয় (বাংলা মিল ইংরেজি মিলের চেয়ে বেশি বিশ্বাসযোগ্য ধরা হয়)
+  const districtByName = {};
+  districtMatches.forEach(function(d){
+    const existing = districtByName[d.district];
+    if(!existing || (existing.source !== 'bn' && d.source === 'bn')) districtByName[d.district] = d;
+  });
+  const uniqueDistricts = Object.values(districtByName);
+  const matchedDistrictNames = uniqueDistricts.map(function(d){ return d.district; });
+
+  if(thanaMatches.length){
+    thanaMatches.sort(function(a,b){ return b.len - a.len; });
+    const topLen = thanaMatches[0].len;
+    let top = thanaMatches.filter(function(m){ return m.len === topLen; });
+    if(top.length > 1){
+      const narrowed = top.filter(function(m){ return matchedDistrictNames.indexOf(m.district) !== -1; });
+      if(narrowed.length === 1) top = narrowed;
+    }
+    // একাধিক থানার নাম মিলে থাকলে সবগুলোকেই candidate তালিকায় রাখা হয় (দৈর্ঘ্য যাই হোক)
+    if(top.length === 1){
+      return { division: top[0].division, district: top[0].district, thana: top[0].thana, candidates: null };
+    }
+    const uniq = {};
+    thanaMatches.filter(function(m){ return m.len === topLen; }).forEach(function(m){
+      uniq[m.division + '|' + m.district + '|' + m.thana] = m;
+    });
+    return { division: '', district: '', thana: '', candidates: Object.values(uniq) };
+  }
+
+  if(uniqueDistricts.length === 1){
+    const d = uniqueDistricts[0];
+    // "Cumilla Sadar", "নোয়াখালী সদর" প্যাটার্নের জন্য — জেলা ধরা পড়লে ও ঠিকানায়
+    // "sadar" শব্দ থাকলে, ৬১টা জেলার বেশিরভাগেই থানার নাম ঠিক "{জেলা} সদর" হওয়ায়
+    // সরাসরি থানাও বসিয়ে দেওয়া যায় (ঢাকা/চট্টগ্রাম/রাজশাহী মেট্রোতে এই প্যাটার্ন নেই)
+    const sadarThana = d.district + ' সদর';
+    const hasSadarWord = normText.indexOf('sadar') !== -1 || text.indexOf('সদর') !== -1;
+    if(hasSadarWord && (BD_GEO[d.division][d.district] || []).indexOf(sadarThana) !== -1){
+      return { division: d.division, district: d.district, thana: sadarThana, candidates: null };
+    }
+    return { division: d.division, district: d.district, thana: '', candidates: null };
+  }
+  if(uniqueDistricts.length > 1){
+    return { division: '', district: '', thana: '', candidates: uniqueDistricts };
+  }
+  if(divisionMatch){
+    return { division: divisionMatch, district: '', thana: '', candidates: null };
+  }
+  return { division: '', district: '', thana: '', candidates: null };
+}
+
+// ---- অ্যাড্রেস বক্সে টাইপ করার সাথে সাথে সনাক্তকরণ চালানো ও UI দেখানো ----
+let detectedLocation = { division:'', district:'', thana:'' };
+let addrDetectTimer = null;
+
+function handleAddressLocationDetect(){
+  clearTimeout(addrDetectTimer);
+  addrDetectTimer = setTimeout(runAddressLocationDetect, 350);
+}
+
+function renderAddrHintOk(loc){
+  detectedLocation = { division: loc.division || '', district: loc.district || '', thana: loc.thana || '' };
+  const hint = document.getElementById('addrLocationHint');
+  const parts = [];
+  if(loc.division) parts.push('বিভাগ: ' + loc.division);
+  if(loc.district) parts.push('জেলা: ' + loc.district);
+  if(loc.thana) parts.push('থানা: ' + loc.thana);
+  hint.className = 'addr-hint addr-hint-ok';
+  hint.style.display = 'block';
+  hint.innerHTML = '✓ সনাক্ত হয়েছে — ' + parts.map(escapeHTML).join(' · ');
+}
+
+function runAddressLocationDetect(){
+  const text = document.getElementById('custAddress').value;
+  const hint = document.getElementById('addrLocationHint');
+  if(!text.trim()){
+    hint.style.display = 'none';
+    detectedLocation = { division:'', district:'', thana:'' };
+    return;
+  }
+  const result = detectLocationFromText(text);
+  if(result.candidates && result.candidates.length){
+    detectedLocation = { division:'', district:'', thana: result.thana || '' };
+    hint.className = 'addr-hint addr-hint-pick';
+    hint.style.display = 'block';
+    hint.innerHTML = 'কোন এলাকা?<br>' + result.candidates.map(function(c){
+      const label = (result.thana ? result.thana + ', ' : '') + c.district;
+      return '<button type="button" class="addr-chip" onclick="pickAddrCandidate(\'' +
+        String(c.division).replace(/'/g,"\\'") + '\',\'' + String(c.district).replace(/'/g,"\\'") + '\',\'' +
+        String(result.thana || '').replace(/'/g,"\\'") + '\')">' + escapeHTML(label) + '</button>';
+    }).join('');
+  } else if(result.division || result.district || result.thana){
+    renderAddrHintOk(result);
+  } else {
+    detectedLocation = { division:'', district:'', thana:'' };
+    hint.style.display = 'none';
+  }
+}
+
+function pickAddrCandidate(division, district, thana){
+  renderAddrHintOk({ division, district, thana });
+}
+
+
 // মোবাইল নম্বরে বাংলা (০-৯) ও ইংরেজি (0-9) — দুই ধরনের ডিজিটই লেখা যাবে,
 // টাইপ করার সাথে সাথে বাংলা ডিজিটকে ইংরেজিতে রূপান্তর করা হয় এবং অন্য সব ক্যারেক্টার বাদ দেওয়া হয়
 const BENGALI_DIGITS = '০১২৩৪৫৬৭৮৯';
@@ -1804,10 +2123,14 @@ function submitOrder(e){
   const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
   const total = subtotal + delivery.charge;
 
+  // ঠিকানায় থানা/জেলা লিখে যা সনাক্ত হয়েছে (detectedLocation), তা অর্ডারের সাথে
+  // পাঠানো হয় — যাতে দোকানদারের অ্যাপে কুরিয়ার বুক করার সময় Division/District/Thana
+  // নতুন করে বেছে নেওয়া না লাগে (সব ক-টা মিললেই autoBookOnConfirm সচল হয়)
   const order = {
     customerName: custName,
     phone: phone,
     address: custAddress,
+    courier: { division: detectedLocation.division, district: detectedLocation.district, thana: detectedLocation.thana },
     paymentMethod,
     trxId: isCOD ? '' : document.getElementById('custTrxId').value.trim(),
     orderRef: isCOD ? '' : currentOrderRef,
