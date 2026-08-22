@@ -115,6 +115,117 @@
     border-radius:10px; padding:6px 10px; backdrop-filter:blur(3px);
   }
 
+  /* ---------- ভাষা টগল (বাংলা/English) ---------- */
+  .lang-toggle{
+    position:absolute; top:14px; left:14px; z-index:3;
+    display:flex; background:rgba(8,20,36,0.62); border:1px solid rgba(255,168,87,0.35);
+    border-radius:20px; padding:3px; backdrop-filter:blur(3px);
+  }
+  .lang-toggle button{
+    border:none; background:none; color:#CFE0FF; font-size:11px; font-weight:700;
+    padding:5px 10px; border-radius:16px; font-family:'Hind Siliguri',sans-serif; letter-spacing:.02em;
+  }
+  .lang-toggle button.active{
+    background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  /* ---------- সার্চ বার ---------- */
+  .search-bar{
+    display:flex; align-items:center; gap:8px; margin:14px 16px 0; padding:11px 14px;
+    background:var(--card); border:1.5px solid var(--rule); border-radius:14px; box-shadow:0 2px 8px rgba(14,42,90,0.06);
+  }
+  .search-bar svg{ flex:none; opacity:.55; }
+  .search-bar input{
+    flex:1; border:none; outline:none; background:none; font-size:14px; color:var(--ink);
+    font-family:'Hind Siliguri',sans-serif; min-width:0;
+  }
+  .search-bar input::placeholder{ color:#9CA6BC; }
+  .search-bar .search-clear{
+    flex:none; border:none; background:var(--paper-deep); color:var(--muted); width:22px; height:22px;
+    border-radius:50%; font-size:12px; display:none; align-items:center; justify-content:center;
+  }
+  .search-bar.has-text .search-clear{ display:flex; }
+  .search-empty-note{ grid-column:1/-1; text-align:center; padding:22px 10px; color:var(--muted); font-size:13px; }
+  .search-empty-note button{
+    display:block; margin:10px auto 0; border:1.5px solid var(--rule); background:var(--card); color:var(--plum-800);
+    font-size:12.5px; font-weight:600; padding:8px 16px; border-radius:20px; font-family:'Hind Siliguri',sans-serif;
+  }
+
+  /* ---------- 💰 প্রাইস রেঞ্জ ফিল্টার ---------- */
+  .search-row{ display:flex; gap:8px; align-items:stretch; margin:14px 16px 0; }
+  .search-row .search-bar{ margin:0; flex:1; min-width:0; }
+  .filter-toggle-btn{
+    flex:none; width:44px; border-radius:14px; border:1.5px solid var(--rule); background:var(--card);
+    display:flex; align-items:center; justify-content:center; color:var(--plum-800); position:relative;
+  }
+  .filter-toggle-btn.active-filter{ border-color:var(--gold); background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); }
+  .filter-toggle-btn .filter-dot{
+    position:absolute; top:-3px; right:-3px; width:9px; height:9px; border-radius:50%; background:var(--rust);
+    border:2px solid var(--paper); display:none;
+  }
+  .filter-toggle-btn.has-active .filter-dot{ display:block; }
+  .price-filter-panel{
+    display:none; margin:10px 16px 0; padding:14px; background:var(--card); border:1.5px solid var(--rule);
+    border-radius:14px; box-shadow:0 2px 8px rgba(14,42,90,0.06);
+  }
+  .price-filter-panel.open{ display:block; }
+  .price-filter-row{ display:flex; align-items:center; gap:10px; }
+  .price-filter-row input[type="number"]{
+    flex:1; min-width:0; border:1.5px solid rgba(21,53,122,0.16); border-radius:10px; padding:9px 10px;
+    font-size:13.5px; font-family:'IBM Plex Mono',monospace; color:var(--ink); outline:none; -webkit-appearance:none;
+  }
+  .price-filter-row span{ color:var(--muted); font-size:12px; flex:none; }
+  .price-filter-actions{ display:flex; gap:8px; margin-top:12px; }
+  .price-filter-actions button{
+    flex:1; border-radius:10px; padding:9px; font-size:12.5px; font-weight:700; font-family:'Hind Siliguri',sans-serif; border:none;
+  }
+  .price-filter-apply{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900); }
+  .price-filter-reset{ background:var(--paper-deep); color:var(--muted); }
+
+  /* ---------- সম্পর্কিত পণ্য / সাম্প্রতিক দেখা পণ্য — অনুভূমিক স্ট্রিপ ---------- */
+  .prod-strip-section{ margin-top:10px; }
+  .prod-strip-title{ font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:0 0 9px; display:flex; align-items:center; gap:6px; }
+  .prod-strip{ display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+  .prod-strip::-webkit-scrollbar{ display:none; }
+  .prod-strip-card{
+    flex:none; width:118px; background:var(--plum-900); border-radius:13px; overflow:hidden;
+    border:1px solid rgba(0,0,0,0.35); text-align:left;
+  }
+  .prod-strip-card .ps-thumb{ width:100%; aspect-ratio:1/1; background:var(--paper-deep); overflow:hidden; }
+  .prod-strip-card .ps-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .prod-strip-card .ps-body{ padding:8px 9px 9px; }
+  .prod-strip-card .ps-name{ font-size:11px; font-weight:600; color:#EEF8F0; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em; }
+  .prod-strip-card .ps-price{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:700; color:var(--gold-light); margin-top:4px; display:block; }
+  #qvRelatedSection{ margin-top:18px; padding-top:16px; border-top:1px solid var(--rule); }
+  #cartRelatedSection{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
+
+  /* ---------- উইশলিস্ট ---------- */
+  .wish-btn{
+    position:absolute; top:8px; right:8px; z-index:3; width:30px; height:30px; border-radius:50%;
+    border:none; background:rgba(8,20,36,0.5); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff;
+    transition:transform .12s ease;
+  }
+  .wish-btn:active{ transform:scale(0.85); }
+  .wish-btn.active{ color:var(--rust); background:rgba(255,255,255,0.92); }
+  .wish-tab-bar{ display:flex; gap:8px; padding:0 16px 10px; }
+  .wish-nav-btn{
+    flex:none; margin-left:auto; display:flex; align-items:center; gap:6px; padding:8px 14px;
+    border-radius:20px; border:1.5px solid var(--rule); background:var(--card); font-size:12.5px; font-weight:600;
+    color:var(--plum-800); font-family:'Hind Siliguri',sans-serif;
+  }
+  .wish-nav-btn .wish-count{
+    background:var(--rust); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px;
+    border-radius:9px; display:inline-flex; align-items:center; justify-content:center; padding:0 4px;
+  }
+  .wish-overlay{ position:fixed; inset:0; background:rgba(8,20,36,0.86); z-index:96; display:none; align-items:flex-end; justify-content:center; }
+  .wish-overlay.open{ display:flex; }
+  .wish-sheet{ width:100%; max-width:520px; max-height:80vh; overflow-y:auto; background:var(--paper); border-radius:20px 20px 0 0; animation:qvUp .22s ease; padding:16px 16px 22px; }
+  .wish-sheet-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .wish-sheet-head h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0; color:var(--plum-900); }
+  .wish-empty{ text-align:center; padding:30px 10px; color:var(--muted); font-size:13.5px; }
+
   /* ---------- Marquee (pinned to top of viewport, always visible while scrolling) ---------- */
   .marquee-bar{
     background:#0E2A5A; overflow:hidden; white-space:nowrap; padding:7px 0;
@@ -152,27 +263,39 @@
   .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(14,42,90,0.05); padding:18px 16px; margin-bottom:16px; }
   .card h2{ font-size:17px; margin:0 0 14px; color:var(--plum-900); }
 
-  .field{ margin-bottom:13px; }
+  .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
   /* নাম / ঠিকানা / মোবাইল / পেমেন্ট / নোট — এই লেবেলগুলো একটু বড়, হালকা বোল্ড ও সবুজ রঙের */
   .field label.field-label-lg{
     font-size:14.5px; font-weight:600; color:#1E8A4C; text-transform:none; letter-spacing:0; margin-bottom:7px;
   }
   .field input, .field select, .field textarea{
-    width:100%; border:1.5px solid rgba(21,53,122,0.16); background:#fff; border-radius:12px;
-    padding:12px 14px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
-    box-shadow:0 1px 3px rgba(14,42,90,0.05); -webkit-appearance:none;
-    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    width:100%; border:1.5px solid rgba(21,53,122,0.14); background:linear-gradient(180deg,#FFFFFF,#FCFDFE);
+    border-radius:14px; padding:13px 15px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
+    box-shadow:0 1px 2px rgba(14,42,90,0.04), 0 5px 12px rgba(14,42,90,0.05); -webkit-appearance:none;
+    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
   }
   .field input::placeholder, .field textarea::placeholder{ color:#9CA6BC; opacity:1; }
-  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(21,53,122,0.3); }
+  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(21,53,122,0.32); box-shadow:0 1px 2px rgba(14,42,90,0.05), 0 6px 14px rgba(14,42,90,0.07); }
   .field input:focus, .field select:focus, .field textarea:focus{
-    border-color:var(--gold); background:#fff; box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05);
+    border-color:var(--gold); background:#fff; transform:translateY(-1px);
+    box-shadow:0 0 0 4px rgba(242,129,43,0.14), 0 8px 18px rgba(14,42,90,0.09);
   }
   .field textarea{ resize:vertical; line-height:1.5; }
   .field select{ appearance:none; -webkit-appearance:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M1 1l6 6 6-6' stroke='%238A7C6C' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat:no-repeat; background-position:right 12px center; padding-right:34px;
+  }
+
+  /* ---------- নাম / মোবাইল / ঠিকানা বক্সে ছোট আইকন — প্রতিটি বক্স আলাদাভাবে চেনা যায় ---------- */
+  #custName, #custPhone{
+    padding-left:43px; background-repeat:no-repeat; background-size:18px 18px; background-position:14px center;
+  }
+  #custName{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8' r='4'/><path d='M4 20c0-4 3.6-7 8-7s8 3 8 7'/></svg>"); }
+  #custPhone{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5l1.5-2 4 1.5v3c0 1-1 2-2 2C11 19.5 4.5 13 3 4.5c0-1 1-2 2-2z'/></svg>"); }
+  #custAddress{
+    padding-left:43px; background-repeat:no-repeat; background-size:18px 18px; background-position:14px 15px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 11.5 12 4l8 7.5'/><path d='M6 10v9h12v-9'/><path d='M10 19v-5h4v5'/></svg>");
   }
 
   /* ---------- Online payment details panel ---------- */
@@ -278,8 +401,33 @@
   .qv-overlay.open{ display:flex; }
   .qv-sheet{ width:100%; max-width:520px; background:var(--paper); border-radius:20px 20px 0 0; max-height:88vh; overflow-y:auto; animation:qvUp .22s ease; }
   @keyframes qvUp{ from{ transform:translateY(30px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
-  .qv-sheet .qv-img{ width:100%; aspect-ratio:1/1; background:var(--paper-deep); }
-  .qv-sheet .qv-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .qv-sheet .qv-img{ width:100%; aspect-ratio:1/1; background:var(--paper-deep); position:relative; }
+  .qv-sheet .qv-img img{ width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; }
+  .qv-sheet .qv-img .zoom-hint{
+    position:absolute; right:10px; bottom:10px; z-index:2; background:rgba(8,20,36,0.55); color:#fff;
+    font-size:10.5px; font-weight:600; padding:5px 10px; border-radius:14px; display:flex; align-items:center; gap:4px;
+    pointer-events:none;
+  }
+  /* একাধিক ছবির গ্যালারি — থাম্বনেইল স্ট্রিপ */
+  .qv-gallery-strip{ display:flex; gap:8px; padding:9px 18px 0; overflow-x:auto; scrollbar-width:none; }
+  .qv-gallery-strip::-webkit-scrollbar{ display:none; }
+  .qv-gallery-thumb{
+    flex:none; width:50px; height:50px; border-radius:10px; overflow:hidden; border:2px solid var(--rule);
+    padding:0; background:var(--paper-deep); opacity:.75;
+  }
+  .qv-gallery-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .qv-gallery-thumb.active{ border-color:var(--gold); opacity:1; box-shadow:0 0 0 3px rgba(242,129,43,0.22); }
+  /* জুম লাইটবক্স (পিঞ্চ/ডাবল-ট্যাপ স্টাইল না, সাধারণ ফুলস্ক্রিন জুম ভিউ) */
+  .img-zoom-overlay{ position:fixed; inset:0; background:rgba(4,10,20,0.96); z-index:98; display:none; align-items:center; justify-content:center; padding:0; touch-action:pinch-zoom; }
+  .img-zoom-overlay.open{ display:flex; }
+  .img-zoom-overlay img{ max-width:100%; max-height:100%; object-fit:contain; touch-action:pinch-zoom; }
+  .img-zoom-close{
+    position:fixed; top:16px; right:16px; z-index:99; width:38px; height:38px; border-radius:50%;
+    border:none; background:rgba(255,255,255,0.14); color:#fff; font-size:16px;
+  }
+  .img-zoom-dots{ position:fixed; bottom:22px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:99; }
+  .img-zoom-dots span{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.35); }
+  .img-zoom-dots span.active{ background:var(--gold-light); }
   .qv-body{ padding:16px 18px 22px; }
   .qv-body h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0 0 6px; color:var(--plum-900); }
   .qv-body p{ font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 12px; }
@@ -330,35 +478,67 @@
     cursor:pointer; font-family:inherit; padding:0; margin-left:4px;
   }
 
-  /* ---------- থানা সার্চ-বক্স ও 📍 GPS বাটন ---------- */
+  /* ---------- থানা/এলাকা স্মার্ট সার্চ-বক্স ---------- */
+  /* অন্যান্য বক্সের চেয়ে ইচ্ছাকৃতভাবে আলাদা: সোনালি-নীল গ্রেডিয়েন্ট বর্ডার-ফ্রেম, ভেতরে ম্যাগনিফাই আইকন,
+     আর একটি এলিভেটেড GPS বাটন — যাতে ইউজার এক নজরেই বুঝতে পারে এটা একটা স্মার্ট/অটো-খোঁজ ফিচার। */
   .field-label-sub{ text-transform:none; letter-spacing:0; font-size:10.5px; font-weight:400; color:var(--muted); }
-  .thana-search-row{ display:flex; gap:8px; }
+
+  .thana-search-wrap{
+    position:relative; border-radius:18px; padding:2.5px;
+    background:linear-gradient(120deg, var(--gold-light) 0%, var(--gold) 48%, var(--plum-600) 100%);
+    box-shadow:0 8px 20px rgba(217,105,26,0.22), 0 2px 6px rgba(14,42,90,0.10);
+    transition:box-shadow .18s ease;
+  }
+  .thana-search-wrap:focus-within{
+    box-shadow:0 0 0 4px rgba(242,129,43,0.16), 0 8px 20px rgba(217,105,26,0.24), 0 2px 6px rgba(14,42,90,0.10);
+  }
+  .thana-search-row{ display:flex; align-items:center; gap:6px; background:#fff; border-radius:15.5px; padding:4px; }
   .thana-search-row input{
-    flex:1; min-width:0; padding:12px 14px; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
-    background:#fff; font-size:13.5px; font-family:inherit; color:var(--ink);
-    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, box-shadow .15s ease;
+    flex:1; min-width:0; border:none; background:transparent; border-radius:12px;
+    padding:11px 12px 11px 38px; font-size:13.5px; font-family:inherit; color:var(--ink);
+    transition:background-color .15s ease;
   }
-  .thana-search-row input::placeholder{ color:#9CA6BC; opacity:1; }
-  .thana-search-row input:hover{ border-color:rgba(21,53,122,0.3); }
-  .thana-search-row input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05); }
+  /* আইডি সিলেক্টর ব্যবহার করা হয়েছে যাতে ফোকাস অবস্থায় .field input:focus-এর background শর্টহ্যান্ড
+     আইকনটা মুছে না ফেলে (নাহলে ফোকাস করলেই ম্যাগনিফাই আইকন হারিয়ে যেত) */
+  #thanaSearchInput{
+    background-repeat:no-repeat; background-size:16px 16px; background-position:12px center;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9691A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='6.5'/><path d='m20 20-3.6-3.6'/></svg>");
+  }
+  .thana-search-row input::placeholder{ color:#ACA495; opacity:1; }
+  .thana-search-row input:focus{ outline:none; background-color:rgba(242,129,43,0.07); box-shadow:none; transform:none; }
   .gps-btn{
-    flex:0 0 auto; width:46px; height:auto; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
-    background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, background .15s ease;
+    flex:0 0 auto; width:42px; height:42px; border-radius:12px; border:none; position:relative;
+    background:linear-gradient(155deg, var(--plum-700), var(--plum-900)); color:#fff; font-size:17px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 10px rgba(8,26,59,0.35); transition:transform .15s ease, box-shadow .15s ease;
   }
-  .gps-btn:active{ background:var(--paper-deep); border-color:var(--gold); }
+  .gps-btn::after{
+    content:''; position:absolute; inset:-4px; border-radius:16px; border:1.5px solid rgba(53,102,194,0.45);
+    animation:gpsPulse 2.4s ease-out infinite; pointer-events:none;
+  }
+  @keyframes gpsPulse{
+    0%{ transform:scale(0.86); opacity:.9; }
+    70%{ transform:scale(1.2); opacity:0; }
+    100%{ opacity:0; }
+  }
+  .gps-btn:active{ transform:scale(0.93); box-shadow:0 1px 4px rgba(8,26,59,0.35); }
+
   .thana-suggest-list{
-    position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:20; max-height:220px; overflow-y:auto;
-    background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow);
+    position:absolute; left:3px; right:3px; top:100%; margin-top:6px; z-index:20; max-height:224px; overflow-y:auto;
+    background:#fff; border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow-lift); padding:5px;
   }
   .thana-suggest-item{
-    padding:9px 12px; display:flex; align-items:baseline; gap:7px; cursor:pointer; border-bottom:1px dashed var(--rule);
+    padding:9px 10px; display:flex; align-items:center; gap:8px; cursor:pointer; border-radius:10px;
   }
-  .thana-suggest-item:last-child{ border-bottom:none; }
+  .thana-suggest-item:not(:last-child){ border-bottom:1px dashed var(--rule); }
+  .thana-suggest-item:not(.thana-suggest-live)::before{
+    content:''; flex:0 0 auto; width:13px; height:13px;
+    background:no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9691A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z'/><circle cx='12' cy='9' r='2.3'/></svg>");
+  }
   .thana-suggest-item:active{ background:var(--paper-deep); }
   .thana-suggest-item b{ font-size:13px; color:var(--ink); font-weight:600; }
   .thana-suggest-item span{ font-size:11px; color:var(--muted); }
-  .thana-suggest-item.thana-suggest-live{ background:rgba(53,102,194,0.05); }
+  .thana-suggest-item.thana-suggest-live{ background:rgba(53,102,194,0.06); border-radius:10px; }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
@@ -539,6 +719,83 @@
   .pf-contact-btn .txt .t1{ font-size:10px; color:#8C9A88; text-transform:uppercase; letter-spacing:.05em; }
   .pf-contact-btn .txt .t2{ font-size:13px; font-weight:700; color:#EEF8F0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
+  /* ---------- Product rating (কার্ড ও কুইক-ভিউ উভয় জায়গায় ব্যবহৃত) ---------- */
+  .pcard-rating{ display:flex; align-items:center; gap:1px; margin:1px 0 2px; }
+  .pcard-rating .star{ color:rgba(255,255,255,0.18); font-size:11.5px; line-height:1; }
+  .pcard-rating .star.on{ color:var(--gold-light); }
+  .pcard-rating .rating-count{ font-size:10px; color:#8C9A88; margin-left:4px; }
+
+  /* ---------- Quick view: রিভিউ ও রেটিং সেকশন ---------- */
+  .qv-reviews{ margin-top:18px; padding-top:16px; border-top:1px solid var(--rule); }
+  .qv-reviews-header{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .qv-reviews-header h4{ font-family:'Tiro Bangla', serif; font-weight:400; font-size:15.5px; margin:0; color:var(--plum-900); }
+  .qv-rating-summary{ font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .qv-rating-summary .star{ color:rgba(21,53,122,0.18); font-size:13px; }
+  .qv-rating-summary .star.on{ color:var(--gold); }
+  .qv-review-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:12px; }
+  .qv-review-item{ background:var(--paper-deep); border-radius:12px; padding:11px 13px; }
+  .qv-review-top{ display:flex; align-items:center; gap:8px; margin-bottom:3px; flex-wrap:wrap; }
+  .qv-review-name{ font-size:12.5px; font-weight:700; color:var(--plum-900); }
+  .qv-verified-badge{ font-size:9.5px; font-weight:700; color:#1E8A4C; background:rgba(30,138,76,0.12); padding:2px 7px; border-radius:6px; }
+  .qv-review-stars{ font-size:12px; margin-bottom:4px; }
+  .qv-review-stars .star{ color:rgba(21,53,122,0.18); }
+  .qv-review-stars .star.on{ color:var(--gold); }
+  .qv-review-comment{ font-size:12.5px; color:var(--ink); line-height:1.6; margin:0 0 5px; }
+  .qv-review-date{ font-size:10.5px; color:var(--muted); }
+  .qv-write-review-btn{ width:100%; background:none; border:1.5px dashed var(--gold); color:var(--gold-deep); border-radius:10px; padding:10px; font-size:13px; font-weight:700; font-family:'Hind Siliguri',sans-serif; }
+  .qv-review-form{ display:flex; flex-direction:column; gap:9px; margin-top:10px; }
+  .qv-review-form input, .qv-review-form textarea{
+    width:100%; border:1.5px solid rgba(21,53,122,0.16); background:#fff; border-radius:12px;
+    padding:11px 13px; font-size:13.5px; color:var(--ink); outline:none; font-family:inherit; resize:vertical;
+  }
+  .qv-review-form input:focus, .qv-review-form textarea:focus{ border-color:var(--gold); box-shadow:0 0 0 3.5px rgba(242,129,43,0.16); }
+  .qv-star-input{ display:flex; gap:6px; }
+  .qv-star-input button{ background:none; border:none; font-size:26px; line-height:1; color:rgba(21,53,122,0.18); padding:0; }
+  .qv-star-input button.active{ color:var(--gold); }
+
+  /* ---------- টেস্টিমোনিয়াল সেকশন — শুধু যাচাইকৃত ক্রেতাদের ৪+ স্টার রিভিউ থেকে বাছাই করা হয় ---------- */
+  .testimonial-row{ display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; -ms-overflow-style:none; }
+  .testimonial-row::-webkit-scrollbar{ display:none; }
+  .testimonial-card{ flex:none; width:220px; background:var(--paper-deep); border-radius:14px; padding:14px; border:1px solid var(--rule); }
+  .testimonial-card .t-top{ display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:6px; }
+  .testimonial-card .t-name{ font-size:12.5px; font-weight:700; color:var(--plum-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .testimonial-card .t-verified{ flex:none; font-size:9px; font-weight:700; color:#1E8A4C; background:rgba(30,138,76,0.12); padding:2px 6px; border-radius:6px; white-space:nowrap; }
+  .testimonial-card .t-stars{ font-size:12px; margin-bottom:6px; }
+  .testimonial-card .t-stars .star{ color:rgba(21,53,122,0.18); }
+  .testimonial-card .t-stars .star.on{ color:var(--gold); }
+  .testimonial-card .t-comment{ font-size:12.5px; color:var(--ink); line-height:1.55; margin:0 0 6px; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .testimonial-card .t-product{ font-size:10.5px; color:var(--muted); }
+
+  /* ---------- অর্ডার ট্র্যাকিং লিংক ও মোডাল ---------- */
+  .track-order-bar{ display:flex; justify-content:flex-end; padding:2px 16px 0; }
+  .track-order-link{ background:none; border:none; color:var(--plum-700); font-size:12px; font-weight:600; padding:6px 2px; display:inline-flex; align-items:center; gap:5px; font-family:'Hind Siliguri',sans-serif; text-decoration:underline; text-underline-offset:3px; }
+
+  .track-overlay{ position:fixed; inset:0; background:rgba(8,20,36,0.86); z-index:96; display:none; align-items:flex-end; justify-content:center; }
+  .track-overlay.open{ display:flex; }
+  .track-sheet{ width:100%; max-width:520px; background:var(--paper); border-radius:20px 20px 0 0; max-height:88vh; overflow-y:auto; animation:qvUp .22s ease; }
+  .track-body{ padding:18px 18px 26px; }
+  .track-body h3{ font-family:'Tiro Bangla', serif; font-weight:400; font-size:18px; margin:8px 0 6px; color:var(--plum-900); }
+  .track-sub{ font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 0 16px; }
+  .track-status-card{ background:var(--paper-deep); border-radius:14px; padding:16px; margin-top:12px; }
+  .track-steps{ display:flex; justify-content:space-between; margin:6px 0 18px; position:relative; }
+  .track-steps::before{ content:''; position:absolute; top:13px; left:8%; right:8%; height:2px; background:var(--rule); z-index:0; }
+  .track-step{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; z-index:1; }
+  .track-step .dot{ width:26px; height:26px; border-radius:50%; background:#fff; border:2px solid var(--rule); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted); }
+  .track-step.done .dot{ background:linear-gradient(155deg, var(--gold-light), var(--gold)); border-color:transparent; color:var(--plum-900); }
+  .track-step .lbl{ font-size:9.5px; color:var(--muted); text-align:center; line-height:1.3; }
+  .track-step.done .lbl{ color:var(--plum-900); font-weight:700; }
+  .track-cancelled-note{ background:rgba(194,59,59,0.1); border:1px solid rgba(194,59,59,0.3); color:var(--rust); border-radius:10px; padding:10px 12px; font-size:12.5px; font-weight:600; }
+  .track-order-summary{ margin-top:14px; font-size:12.5px; color:var(--ink); line-height:1.9; }
+  .track-order-summary b{ color:var(--plum-900); }
+  .track-not-found{ text-align:center; padding:22px 0; color:var(--muted); font-size:13px; line-height:1.7; }
+
+  /* ---------- রিটার্ন ও রিফান্ড নীতি লিংক ও মোডাল ---------- */
+  .policy-link-row{ text-align:center; margin-top:12px; }
+  .policy-link-row button{ background:none; border:none; color:var(--plum-700); font-size:12.5px; font-weight:600; text-decoration:underline; text-underline-offset:3px; font-family:'Hind Siliguri',sans-serif; padding:4px; }
+  .qv-policy-note{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:12px; padding:10px 12px; background:var(--paper-deep); border-radius:10px; font-size:12px; color:var(--plum-800); }
+  .qv-policy-note button{ flex:none; background:none; border:none; color:var(--gold-deep); font-size:12px; font-weight:700; text-decoration:underline; text-underline-offset:3px; font-family:'Hind Siliguri',sans-serif; padding:2px; }
+  .policy-text{ font-size:13px; color:var(--ink); line-height:1.9; white-space:pre-line; }
+
   /* ---------- Real desktop/PC layout ----------
      Below 900px the site keeps the mobile-style single-column card (just centered
      with a shadow). At 900px+ it reflows into an actual desktop page: a wider
@@ -593,6 +850,43 @@
   }
 
 </style>
+<!-- ============================================================
+     📊 Facebook Pixel ও Google Analytics (GA4) — বিজ্ঞাপন ট্র্যাকিং
+     আইডি এখানে হার্ডকোড করা লাগে না — দোকানদার নিজের অ্যাডমিন অ্যাপের
+     Settings → Landing Page → Footer Contact Info থেকে নিজের Pixel ID
+     ও GA4 Measurement ID বসালে, Firebase থেকে company প্রোফাইলের সাথে
+     এখানেও অটোমেটিক চলে আসে (নিচে applyShopProfile() ফাংশনে দেখুন)।
+     আইডি সেট করা না থাকলে এই কোড চুপচাপ বন্ধ থাকে, কোনো এরর দেখায় না।
+     ============================================================ -->
+<script>
+  window.__fbPixelLoaded = false;
+  function initFacebookPixel(pixelId){
+    if(!pixelId || window.__fbPixelLoaded) return;
+    window.__fbPixelLoaded = true;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', pixelId);
+    fbq('track', 'PageView');
+  }
+  window.__ga4Loaded = false;
+  function initGA4(measurementId){
+    if(!measurementId || window.__ga4Loaded) return;
+    window.__ga4Loaded = true;
+    (function(){
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + measurementId;
+      document.head.appendChild(s);
+    })();
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ window.dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', measurementId);
+  }
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer onerror="window.__fbLoadFailed=true;"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js" defer onerror="window.__fbLoadFailed=true;"></script>
 </head>
@@ -608,6 +902,10 @@
   </div>
   <div class="hero">
     <img class="hero-photo" src="https://images.unsplash.com/photo-1604118464816-5e2bd7b863c2?fm=jpg&q=45&w=500&auto=format&fit=crop" alt="শপিং ব্যাগ" fetchpriority="high" decoding="async">
+    <div class="lang-toggle" id="langToggle">
+      <button type="button" data-lang="bn" onclick="setLang('bn')">বাং</button>
+      <button type="button" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
     <div class="hero-datetime" id="heroDateTime">
       <div class="d1" id="heroDay">—</div>
       <div class="d2" id="heroDateEn">—</div>
@@ -617,19 +915,58 @@
     <div class="hero-inner">
       <div class="seal" id="bizSeal"><span>🛍️</span></div>
       <h1 id="bizName">SOHAN SHOP BD</h1>
-      <p class="tagline">নিচে থেকে পণ্য বেছে অর্ডার করুন — নিশ্চিত করার পর আমরা যোগাযোগ করব</p>
+      <p class="tagline" data-i18n="tagline">নিচে থেকে পণ্য বেছে অর্ডার করুন — নিশ্চিত করার পর আমরা যোগাযোগ করব</p>
     </div>
   </div>
 
+  <div class="search-row">
+    <div class="search-bar" id="searchBar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="পণ্য খুঁজুন…" oninput="onSearchInput(this.value)">
+      <button type="button" class="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+    <button type="button" class="filter-toggle-btn" id="filterToggleBtn" onclick="togglePriceFilterPanel()" aria-label="প্রাইস ফিল্টার">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="14" y2="12"></line><line x1="4" y1="18" x2="9" y2="18"></line><circle cx="17" cy="12" r="2"></circle><circle cx="11" cy="18" r="2"></circle></svg>
+      <span class="filter-dot"></span>
+    </button>
+  </div>
+
+  <div class="price-filter-panel" id="priceFilterPanel">
+    <div class="price-filter-row">
+      <input type="number" id="priceMinInput" inputmode="numeric" min="0" data-i18n-placeholder="minPrice" placeholder="সর্বনিম্ন ৳">
+      <span>—</span>
+      <input type="number" id="priceMaxInput" inputmode="numeric" min="0" data-i18n-placeholder="maxPrice" placeholder="সর্বোচ্চ ৳">
+    </div>
+    <div class="price-filter-actions">
+      <button type="button" class="price-filter-reset" onclick="resetPriceFilter()" data-i18n="resetFilter">মুছে ফেলুন</button>
+      <button type="button" class="price-filter-apply" onclick="applyPriceFilter()" data-i18n="applyFilter">প্রয়োগ করুন</button>
+    </div>
+  </div>
+
+  <div class="wish-tab-bar">
+    <button type="button" class="wish-nav-btn" onclick="openWishlist()">
+      ♥ <span id="wishTabLabel" data-i18n="wishlist">উইশলিস্ট</span> <span class="wish-count" id="wishCount" style="display:none;">0</span>
+    </button>
+  </div>
+
   <div class="cat-nav" id="catNav"></div>
+
+  <div class="track-order-bar">
+    <button type="button" class="track-order-link" onclick="openOrderTracking()">📦 <span data-i18n="trackOrder">অর্ডার ট্র্যাক করুন</span></button>
+  </div>
 
   <main>
     <form id="orderForm" onsubmit="return submitOrder(event)">
       <div class="form-col-main">
 
+      <div class="card" id="recentlyViewedCard" style="display:none; padding-left:14px; padding-right:14px;">
+        <div class="prod-strip-title">🕘 <span data-i18n="recentlyViewed">সাম্প্রতিক দেখা পণ্য</span></div>
+        <div class="prod-strip" id="recentlyViewedStrip"></div>
+      </div>
+
       <div class="card" style="padding-left:14px; padding-right:14px;">
-        <span class="eyebrow">০১ · পণ্য নির্বাচন</span>
-        <h2>পণ্য দেখুন ও যোগ করুন</h2>
+        <span class="eyebrow" data-i18n="step1Eyebrow">০১ · পণ্য নির্বাচন</span>
+        <h2 data-i18n="step1Title">পণ্য দেখুন ও যোগ করুন</h2>
         <div class="catalog-grid" id="catalogGrid">
           <div class="skel-card"><div class="skel-thumb"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div>
           <div class="skel-card"><div class="skel-thumb"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div>
@@ -637,127 +974,143 @@
       </div>
 
       <div class="card" id="videoSection" style="display:none;">
-        <span class="eyebrow">ভিডিও</span>
-        <h2>আমাদের ভিডিও দেখুন</h2>
+        <span class="eyebrow" data-i18n="videoEyebrow">ভিডিও</span>
+        <h2 data-i18n="videoTitle">আমাদের ভিডিও দেখুন</h2>
         <div class="video-grid" id="videoGrid"></div>
+      </div>
+
+      <div class="card" id="testimonialsSection" style="display:none;">
+        <span class="eyebrow" data-i18n="testimonialsEyebrow">গ্রাহক অভিজ্ঞতা</span>
+        <h2 data-i18n="testimonialsTitle">আমাদের গ্রাহকরা যা বলছেন</h2>
+        <div class="testimonial-row" id="testimonialRow"></div>
       </div>
 
       </div>
       <div class="form-col-side">
 
       <div class="card" id="cartCard" style="display:none;">
-        <span class="eyebrow">০২ · অর্ডার সারাংশ</span>
-        <h2>আপনার অর্ডার</h2>
+        <span class="eyebrow" data-i18n="step2Eyebrow">০২ · অর্ডার সারাংশ</span>
+        <h2 data-i18n="step2Title">আপনার অর্ডার</h2>
         <div id="cartBox"></div>
 
+        <div id="cartRelatedSection" style="display:none;">
+          <div class="prod-strip-title">🔗 <span data-i18n="youMayAlsoLike">আপনার পছন্দ হতে পারে</span></div>
+          <div class="prod-strip" id="cartRelatedStrip"></div>
+        </div>
+
         <div class="delivery-box">
-          <p class="delivery-note" id="deliveryNote">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে।</p>
+          <p class="delivery-note" id="deliveryNote" data-i18n="deliveryNote">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে।</p>
           <div class="delivery-options">
             <label class="delivery-opt">
-              <input type="radio" name="deliveryArea" id="deliveryInsideInput" value="0" data-label="ঢাকার ভেতরে" onchange="updateTotal(); syncDeliveryOptStyle();" required>
-              <span>ঢাকার ভেতরে<b id="deliveryInsideAmt">৳0</b></span>
+              <input type="radio" name="deliveryArea" id="deliveryInsideInput" value="0" data-label="ঢাকার ভেতরে" data-label-en="Inside Dhaka" onchange="updateTotal(); syncDeliveryOptStyle();" required>
+              <span data-i18n="deliveryInside">ঢাকার ভেতরে<b id="deliveryInsideAmt">৳0</b></span>
             </label>
             <label class="delivery-opt">
-              <input type="radio" name="deliveryArea" id="deliveryOutsideInput" value="0" data-label="ঢাকার বাইরে" onchange="updateTotal(); syncDeliveryOptStyle();" required>
-              <span>ঢাকার বাইরে<b id="deliveryOutsideAmt">৳0</b></span>
+              <input type="radio" name="deliveryArea" id="deliveryOutsideInput" value="0" data-label="ঢাকার বাইরে" data-label-en="Outside Dhaka" onchange="updateTotal(); syncDeliveryOptStyle();" required>
+              <span data-i18n="deliveryOutside">ঢাকার বাইরে<b id="deliveryOutsideAmt">৳0</b></span>
             </label>
           </div>
           <div class="cart-breakdown">
-            <div class="br-row"><span>সাবটোটাল</span><span id="subtotalDisplay">৳0.00</span></div>
-            <div class="br-row"><span>ডেলিভারি চার্জ</span><span id="deliveryDisplay">—</span></div>
+            <div class="br-row"><span data-i18n="subtotal">সাবটোটাল</span><span id="subtotalDisplay">৳0.00</span></div>
+            <div class="br-row"><span data-i18n="deliveryCharge">ডেলিভারি চার্জ</span><span id="deliveryDisplay">—</span></div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <span class="eyebrow">০৩ · যোগাযোগ তথ্য</span>
-        <h2>আপনার তথ্য</h2>
+        <span class="eyebrow" data-i18n="step3Eyebrow">০৩ · যোগাযোগ তথ্য</span>
+        <h2 data-i18n="step3Title">আপনার তথ্য</h2>
         <div class="field">
-          <label class="field-label-lg">আপনার নাম *</label>
+          <label class="field-label-lg" data-i18n="yourName">আপনার নাম *</label>
           <input type="text" id="custName" required>
         </div>
         <div class="field">
-          <label class="field-label-lg">মোবাইল নাম্বার *</label>
+          <label class="field-label-lg" data-i18n="mobileNumber">মোবাইল নাম্বার *</label>
           <input type="tel" id="custPhone" required placeholder="01XXXXXXXXX" inputmode="numeric" maxlength="11" autocomplete="tel" oninput="this.value=normalizePhoneDigits(this.value);">
         </div>
         <div class="field" style="position:relative;">
-          <label class="field-label-lg">থানা/এলাকা খুঁজুন <span class="field-label-sub">(ঐচ্ছিক — বাংলা বা ইংরেজিতে লিখুন)</span></label>
-          <div class="thana-search-row">
-            <input type="text" id="thanaSearchInput" placeholder="যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর" autocomplete="off" oninput="handleThanaSearchInput()" onfocus="handleThanaSearchInput()">
-            <button type="button" id="gpsLocateBtn" class="gps-btn" onclick="useGpsLocation()" title="বর্তমান অবস্থান ব্যবহার করুন">📍</button>
+          <label class="field-label-lg"><span data-i18n="findThana">থানা/এলাকা খুঁজুন</span> <span class="field-label-sub" data-i18n="findThanaSub">(ঐচ্ছিক — বাংলা বা ইংরেজিতে লিখুন)</span></label>
+          <div class="thana-search-wrap">
+            <div class="thana-search-row">
+              <input type="text" id="thanaSearchInput" data-i18n-placeholder="thanaPlaceholder" placeholder="যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর" autocomplete="off" oninput="handleThanaSearchInput()" onfocus="handleThanaSearchInput()">
+              <button type="button" id="gpsLocateBtn" class="gps-btn" onclick="useGpsLocation()" title="বর্তমান অবস্থান ব্যবহার করুন">📍</button>
+            </div>
           </div>
           <div id="thanaSuggestList" class="thana-suggest-list" style="display:none;"></div>
         </div>
         <div class="field" style="margin-bottom:0;">
-          <label class="field-label-lg">সম্পূর্ন ঠিকানা *</label>
-          <textarea id="custAddress" rows="2" required placeholder="বাসা/রোড, এলাকা, থানা, জেলা" oninput="handleAddressLocationDetect()"></textarea>
+          <label class="field-label-lg" data-i18n="fullAddress">সম্পূর্ন ঠিকানা *</label>
+          <textarea id="custAddress" rows="2" required data-i18n-placeholder="addressPlaceholder" placeholder="বাসা/রোড, এলাকা, থানা, জেলা" oninput="handleAddressLocationDetect()"></textarea>
           <div id="addrLocationHint" class="addr-hint" style="display:none;"></div>
         </div>
       </div>
 
       <div class="card">
-        <span class="eyebrow">০৪ · পেমেন্ট</span>
-        <h2>পেমেন্ট পদ্ধতি ও নোট</h2>
+        <span class="eyebrow" data-i18n="step4Eyebrow">০৪ · পেমেন্ট</span>
+        <h2 data-i18n="step4Title">পেমেন্ট পদ্ধতি ও নোট</h2>
         <div class="field">
-          <label class="field-label-lg">পেমেন্ট পদ্ধতি *</label>
+          <label class="field-label-lg" data-i18n="paymentMethod">পেমেন্ট পদ্ধতি *</label>
           <select id="custPayment" required onchange="updatePaymentPanel()">
-            <option value="Cash on Delivery">ক্যাশ অন ডেলিভারি</option>
-            <option value="bKash">বিকাশ</option>
-            <option value="Nagad">নগদ</option>
-            <option value="Rocket">রকেট</option>
-            <option value="Bank Transfer">ব্যাংক ট্রান্সফার</option>
+            <option value="Cash on Delivery" data-i18n="cod">ক্যাশ অন ডেলিভারি</option>
+            <option value="bKash" data-i18n="bkash">বিকাশ</option>
+            <option value="Nagad" data-i18n="nagad">নগদ</option>
+            <option value="Rocket" data-i18n="rocket">রকেট</option>
+            <option value="Bank Transfer" data-i18n="bankTransfer">ব্যাংক ট্রান্সফার</option>
           </select>
         </div>
         <div class="field" id="paymentDetailsPanel" style="display:none;">
           <div class="pay-panel">
-            <p class="pay-panel-title">📌 <span id="payMethodLabel">bKash</span>-এ টাকা পাঠান</p>
+            <p class="pay-panel-title">📌 <span id="payMethodLabel">bKash</span><span data-i18n="sendMoneyTo">-এ টাকা পাঠান</span></p>
 
             <div class="pay-row" id="payNumberRow">
               <div>
-                <span class="pay-row-lbl">Send Money নম্বর</span>
+                <span class="pay-row-lbl" data-i18n="sendMoneyNumber">Send Money নম্বর</span>
                 <span class="pay-row-val" id="payNumberText">—</span>
               </div>
-              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('payNumberText').textContent)">কপি</button>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('payNumberText').textContent)" data-i18n="copy">কপি</button>
             </div>
 
             <div class="pay-row" id="bankDetailsRow" style="display:none; align-items:flex-start;">
               <div>
-                <span class="pay-row-lbl">ব্যাংক তথ্য</span>
+                <span class="pay-row-lbl" data-i18n="bankInfo">ব্যাংক তথ্য</span>
                 <span class="pay-row-val" id="bankDetailsText" style="white-space:pre-line; font-size:12.5px;">—</span>
               </div>
-              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('bankDetailsText').textContent)">কপি</button>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('bankDetailsText').textContent)" data-i18n="copy">কপি</button>
             </div>
 
             <div class="pay-row">
               <div>
-                <span class="pay-row-lbl">Reference (অবশ্যই উল্লেখ করুন)</span>
+                <span class="pay-row-lbl" data-i18n="referenceMustMention">Reference (অবশ্যই উল্লেখ করুন)</span>
                 <span class="pay-row-val" id="orderRefText">—</span>
               </div>
-              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('orderRefText').textContent)">কপি</button>
+              <button type="button" class="copy-btn" onclick="copyText(document.getElementById('orderRefText').textContent)" data-i18n="copy">কপি</button>
             </div>
 
-            <p class="pay-panel-note">উপরের নম্বরে টাকা পাঠানোর সময় <b>Reference</b> ফিল্ডে এই কোডটি বসান — এতে আমরা সহজে মিলিয়ে নিতে পারব। এরপর নিচে TrxID লিখুন।</p>
+            <p class="pay-panel-note" data-i18n="payPanelNote">উপরের নম্বরে টাকা পাঠানোর সময় <b>Reference</b> ফিল্ডে এই কোডটি বসান — এতে আমরা সহজে মিলিয়ে নিতে পারব। এরপর নিচে TrxID লিখুন।</p>
           </div>
         </div>
 
         <div class="field" id="trxIdFieldWrap" style="display:none;">
-          <label>TrxID (লেনদেন আইডি) *</label>
+          <label data-i18n="trxId">TrxID (লেনদেন আইডি) *</label>
           <input type="text" id="custTrxId" placeholder="যেমনঃ 9H72K3L1AB">
         </div>
 
         <div class="field" style="margin-bottom:0;">
-          <label class="field-label-lg">ঐচ্ছিক নোট</label>
-          <textarea id="custNotes" rows="2" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></textarea>
+          <label class="field-label-lg" data-i18n="optionalNote">ঐচ্ছিক নোট</label>
+          <textarea id="custNotes" rows="2" data-i18n-placeholder="notesPlaceholder" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></textarea>
         </div>
       </div>
 
       <div class="order-footer">
         <div class="order-footer-inner">
           <div class="total-row">
-            <span class="k">সর্বমোট</span>
+            <span class="k" data-i18n="grandTotal">সর্বমোট</span>
             <span class="v" id="totalDisplay">৳0.00</span>
           </div>
-          <button type="submit" class="btn btn-primary" id="submitBtn">অর্ডার কনফার্ম করুন</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn" data-i18n="confirmOrder">অর্ডার কনফার্ম করুন</button>
+          <div class="policy-link-row">
+            <button type="button" onclick="openReturnPolicy()">📋 <span data-i18n="returnPolicyLink">রিটার্ন ও রিফান্ড নীতি জানুন</span></button>
+          </div>
         </div>
       </div>
 
@@ -806,8 +1159,8 @@
       </div>
 
       <div class="success-actions">
-        <button type="button" class="btn btn-outline" id="downloadReceiptBtn" onclick="downloadReceiptPNG()" style="display:inline-flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span id="downloadReceiptBtnText">রিসিট ডাউনলোড করুন (PNG)</span></button>
-        <button class="btn btn-primary" onclick="window.location.href=window.location.pathname + window.location.search">Back to Home Page</button>
+        <button type="button" class="btn btn-outline" id="downloadReceiptBtn" onclick="downloadReceiptPNG()" style="display:inline-flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span id="downloadReceiptBtnText" data-i18n="downloadReceipt">রিসিট ডাউনলোড করুন (PNG)</span></button>
+        <button class="btn btn-primary" data-i18n="backToHome" onclick="window.location.href=window.location.pathname + window.location.search">Back to Home Page</button>
       </div>
     </div>
   </div>
@@ -860,17 +1213,96 @@
   </div>
 </div>
 
+<div class="img-zoom-overlay" id="imgZoomOverlay" onclick="if(event.target===this) closeImgZoom()">
+  <button type="button" class="img-zoom-close" onclick="closeImgZoom()">✕</button>
+  <img id="imgZoomImg" src="" alt="">
+  <div class="img-zoom-dots" id="imgZoomDots"></div>
+</div>
+
+<div class="wish-overlay" id="wishOverlay" onclick="if(event.target===this) closeWishlist()">
+  <div class="wish-sheet">
+    <div class="wish-sheet-head">
+      <h3 id="wishSheetTitle" data-i18n="wishlist">উইশলিস্ট</h3>
+      <button type="button" class="qv-close" style="position:static; float:none; margin:0;" onclick="closeWishlist()">✕</button>
+    </div>
+    <div class="catalog-grid" id="wishGrid"></div>
+  </div>
+</div>
+
 <div class="qv-overlay" id="qvOverlay" onclick="if(event.target===this) closeQuickView()">
   <div class="qv-sheet">
     <button type="button" class="qv-close" onclick="closeQuickView()">✕</button>
     <div class="qv-img" id="qvImgWrap"></div>
+    <div class="qv-gallery-strip" id="qvGalleryStrip" style="display:none;"></div>
     <div class="qv-body">
       <h3 id="qvName"></h3>
       <div class="qv-designs" id="qvDesigns" style="display:none;"></div>
       <p id="qvDesc"></p>
       <div class="qv-sizes" id="qvSizes" style="display:none;"></div>
       <div class="price-row" id="qvPrice" style="margin-bottom:14px;"></div>
-      <button type="button" class="btn btn-primary" id="qvOrderBtn">Order now</button>
+      <button type="button" class="btn btn-primary" id="qvOrderBtn" data-i18n="orderNow">Order now</button>
+
+      <div class="qv-policy-note">
+        <span>🔄 <span data-i18n="returnRefundAvailable">রিটার্ন ও রিফান্ড সুবিধা আছে</span></span>
+        <button type="button" onclick="openReturnPolicy()" data-i18n="seeDetails">বিস্তারিত দেখুন</button>
+      </div>
+
+      <div id="qvRelatedSection" style="display:none;">
+        <div class="prod-strip-title">🔗 <span data-i18n="relatedProducts">সম্পর্কিত পণ্য</span></div>
+        <div class="prod-strip" id="qvRelatedStrip"></div>
+      </div>
+
+      <div class="qv-reviews">
+        <div class="qv-reviews-header">
+          <h4 data-i18n="reviewsAndRatings">রিভিউ ও রেটিং</h4>
+          <div class="qv-rating-summary" id="qvRatingSummary"></div>
+        </div>
+        <div class="qv-review-list" id="qvReviewList"></div>
+        <button type="button" class="qv-write-review-btn" id="qvWriteReviewBtn" onclick="toggleReviewForm()">✍️ <span data-i18n="writeReview">রিভিউ লিখুন</span></button>
+        <form class="qv-review-form" id="qvReviewForm" style="display:none;" onsubmit="return submitReview(event)">
+          <div class="qv-star-input" id="qvStarInput">
+            <button type="button" data-val="1">★</button>
+            <button type="button" data-val="2">★</button>
+            <button type="button" data-val="3">★</button>
+            <button type="button" data-val="4">★</button>
+            <button type="button" data-val="5">★</button>
+          </div>
+          <input type="text" id="reviewName" data-i18n-placeholder="yourNamePlaceholder" placeholder="আপনার নাম" maxlength="60">
+          <input type="tel" id="reviewPhone" data-i18n-placeholder="reviewPhonePlaceholder" placeholder="মোবাইল নাম্বার (যাচাইয়ের জন্য, প্রকাশ হবে না)" inputmode="numeric" maxlength="11" oninput="this.value=normalizePhoneDigits(this.value);">
+          <textarea id="reviewComment" data-i18n-placeholder="reviewCommentPlaceholder" placeholder="পণ্যটি সম্পর্কে আপনার অভিজ্ঞতা লিখুন" rows="3" maxlength="500"></textarea>
+          <button type="submit" class="btn btn-primary" id="reviewSubmitBtn" data-i18n="submitReview">রিভিউ জমা দিন</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="track-overlay" id="trackOverlay" onclick="if(event.target===this) closeOrderTracking()">
+  <div class="track-sheet">
+    <button type="button" class="qv-close" onclick="closeOrderTracking()">✕</button>
+    <div class="track-body">
+      <h3>অর্ডার ট্র্যাক করুন</h3>
+      <p class="track-sub">অর্ডার আইডি ও অর্ডারে ব্যবহৃত মোবাইল নাম্বার দিয়ে আপনার অর্ডারের বর্তমান অবস্থা দেখুন</p>
+      <div class="field">
+        <label>অর্ডার আইডি</label>
+        <input type="text" id="trackOrderId" placeholder="যেমন: OID-0000123" autocapitalize="characters">
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>মোবাইল নাম্বার</label>
+        <input type="tel" id="trackPhone" placeholder="01XXXXXXXXX" inputmode="numeric" maxlength="11" oninput="this.value=normalizePhoneDigits(this.value);">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="trackOrder()" id="trackSubmitBtn">খুঁজুন</button>
+      <div id="trackResult"></div>
+    </div>
+  </div>
+</div>
+
+<div class="track-overlay" id="policyOverlay" onclick="if(event.target===this) closePolicyModal()">
+  <div class="track-sheet">
+    <button type="button" class="qv-close" onclick="closePolicyModal()">✕</button>
+    <div class="track-body">
+      <h3>রিটার্ন ও রিফান্ড নীতি</h3>
+      <div id="policyText" class="policy-text"></div>
     </div>
   </div>
 </div>
@@ -901,6 +1333,17 @@ function getThumbUrl(p){
   const yid = getYouTubeId(p.videoUrl);
   if(yid) return `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
   return null;
+}
+// একাধিক প্রোডাক্ট ছবি — Firebase-এ p.images অ্যারে (বা কমা-দিয়ে-আলাদা করা স্ট্রিং) থাকলে
+// সেগুলোই ব্যবহার হয়; না থাকলে পুরনো একক imageUrl-এই ফিরে যায়, তাই আগের ডাটা ভাঙে না।
+function getProductImages(p){
+  let list = [];
+  if(Array.isArray(p.images)) list = p.images;
+  else if(typeof p.images === 'string' && p.images.trim()) list = p.images.split(',');
+  list = list.map(u => resolveImageUrl(String(u).trim())).filter(Boolean);
+  const main = getThumbUrl(p);
+  if(main && !list.includes(main)) list = [main, ...list];
+  return list;
 }
 const FIREBASE_CONFIG = {
   // TODO: Firebase কনসোল থেকে কপি করা আপনার config এখানে পেস্ট করুন
@@ -985,14 +1428,301 @@ let products = [];
 let videos = [];
 let cart = {}; // key -> { key, productId, name, price, qty, design?, size? } — সাধারণ পণ্যে key = productId, পোশাকে key = productId+ডিজাইন+সাইজ
 let selectedCategory = 'সকল';
+let searchQuery = ''; // প্রোডাক্ট সার্চ বার — নাম/বিবরণ/ক্যাটাগরিতে খোঁজে
+let priceMin = null; // প্রাইস রেঞ্জ ফিল্টার — null মানে ওই দিকে কোনো সীমা নেই
+let priceMax = null;
 let db;
+
+// ---- 💰 প্রাইস রেঞ্জ ফিল্টার ----
+function togglePriceFilterPanel(){
+  document.getElementById('priceFilterPanel').classList.toggle('open');
+}
+function applyPriceFilter(){
+  const minEl = document.getElementById('priceMinInput');
+  const maxEl = document.getElementById('priceMaxInput');
+  const min = minEl.value.trim() === '' ? null : Number(minEl.value);
+  const max = maxEl.value.trim() === '' ? null : Number(maxEl.value);
+  if(min !== null && max !== null && min > max){
+    showToast(t('invalidPriceRange'));
+    return;
+  }
+  priceMin = min;
+  priceMax = max;
+  updateFilterToggleState();
+  renderCatalog();
+  document.getElementById('priceFilterPanel').classList.remove('open');
+}
+function resetPriceFilter(){
+  priceMin = null;
+  priceMax = null;
+  document.getElementById('priceMinInput').value = '';
+  document.getElementById('priceMaxInput').value = '';
+  updateFilterToggleState();
+  renderCatalog();
+}
+function updateFilterToggleState(){
+  const btn = document.getElementById('filterToggleBtn');
+  if(!btn) return;
+  const active = priceMin !== null || priceMax !== null;
+  btn.classList.toggle('has-active', active);
+  btn.classList.toggle('active-filter', active);
+}
+
+// ---- 🕘 সাম্প্রতিক দেখা পণ্য (Recently Viewed) — শুধু এই ব্রাউজারেই, প্রতি শপের জন্য আলাদা ----
+const RECENTLY_VIEWED_KEY = 'sohanshop_recent_' + SHOP_ID;
+const RECENTLY_VIEWED_MAX = 12;
+function readRecentlyViewed(){
+  try{ const raw = localStorage.getItem(RECENTLY_VIEWED_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ return []; }
+}
+let recentlyViewedIds = readRecentlyViewed(); // productId-দের অ্যারে, সবচেয়ে সাম্প্রতিকটা প্রথমে
+function saveRecentlyViewed(){
+  try{ localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewedIds)); }
+  catch(e){ /* কোটা শেষ/প্রাইভেট মোড হলেও চলবে, শুধু পরের ভিজিটে মনে থাকবে না */ }
+}
+function trackRecentlyViewed(productId){
+  recentlyViewedIds = recentlyViewedIds.filter(id => id !== productId);
+  recentlyViewedIds.unshift(productId);
+  if(recentlyViewedIds.length > RECENTLY_VIEWED_MAX) recentlyViewedIds = recentlyViewedIds.slice(0, RECENTLY_VIEWED_MAX);
+  saveRecentlyViewed();
+  renderRecentlyViewedStrip();
+}
+function buildStripCardHtml(p){
+  const thumbUrl = getThumbUrl(p);
+  const price = Number(p.price) || 0;
+  return `
+  <button type="button" class="prod-strip-card" onclick="openQuickView('${p.id}')">
+    <div class="ps-thumb">${thumbUrl ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'">` : ''}</div>
+    <div class="ps-body">
+      <div class="ps-name">${escapeHTML(p.name)}</div>
+      <span class="ps-price">৳${price.toFixed(0)}</span>
+    </div>
+  </button>`;
+}
+function renderRecentlyViewedStrip(){
+  const card = document.getElementById('recentlyViewedCard');
+  const strip = document.getElementById('recentlyViewedStrip');
+  if(!card || !strip) return;
+  const items = recentlyViewedIds.map(id => products.find(p => p.id === id)).filter(Boolean);
+  if(items.length === 0){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  strip.innerHTML = items.map(buildStripCardHtml).join('');
+}
+
+// ---- 🔗 সম্পর্কিত পণ্য (একই ক্যাটাগরি) — QV এবং কার্ট থেকে দেখানো হয় ----
+function getRelatedProducts(product, excludeIds, limit){
+  if(!product) return [];
+  const cat = (product.category || '').trim();
+  const exclude = new Set(excludeIds || []);
+  exclude.add(product.id);
+  let related = cat
+    ? products.filter(p => !exclude.has(p.id) && (p.category || '').trim() === cat)
+    : [];
+  // একই ক্যাটাগরিতে যথেষ্ট পণ্য না থাকলে বাকি জায়গা অন্য যেকোনো পণ্য দিয়ে পূরণ করা হয়,
+  // যাতে সেকশনটা প্রায় খালি অবস্থায় না দেখায়
+  if(related.length < limit){
+    const filler = products.filter(p => !exclude.has(p.id) && !related.includes(p));
+    related = related.concat(filler.slice(0, limit - related.length));
+  }
+  return related.slice(0, limit);
+}
+function renderQvRelated(product){
+  const section = document.getElementById('qvRelatedSection');
+  const strip = document.getElementById('qvRelatedStrip');
+  const related = getRelatedProducts(product, [], 8);
+  if(related.length === 0){ section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  strip.innerHTML = related.map(buildStripCardHtml).join('');
+}
+function renderCartRelated(){
+  const section = document.getElementById('cartRelatedSection');
+  const strip = document.getElementById('cartRelatedStrip');
+  if(!section || !strip) return;
+  const cartProductIds = [...new Set(Object.values(cart).map(it => it.productId))];
+  if(cartProductIds.length === 0){ section.style.display = 'none'; return; }
+  // কার্টের সবশেষ যোগ করা পণ্যের ক্যাটাগরি ধরে সাজেশন বানানো হয়
+  const lastProduct = products.find(p => p.id === cartProductIds[cartProductIds.length - 1]);
+  const related = getRelatedProducts(lastProduct, cartProductIds, 8);
+  if(related.length === 0){ section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  strip.innerHTML = related.map(buildStripCardHtml).join('');
+}
+
+/* ---------------- 🌐 ভাষা টগল (বাংলা/English) ----------------
+   দোকানদারের নিজের দেওয়া প্রোডাক্টের নাম/বিবরণ অনুবাদ করা হয় না (সেটা তার নিজের ভাষায় যা
+   লিখেছেন তাই থাকে) — শুধু পেজের নিজস্ব UI টেক্সট (বাটন, লেবেল, শিরোনাম ইত্যাদি) টগল হয়। */
+const I18N = {
+  bn: {
+    tagline:'নিচে থেকে পণ্য বেছে অর্ডার করুন — নিশ্চিত করার পর আমরা যোগাযোগ করব',
+    searchPlaceholder:'পণ্য খুঁজুন…', wishlist:'উইশলিস্ট', trackOrder:'অর্ডার ট্র্যাক করুন',
+    step1Eyebrow:'০১ · পণ্য নির্বাচন', step1Title:'পণ্য দেখুন ও যোগ করুন',
+    videoEyebrow:'ভিডিও', videoTitle:'আমাদের ভিডিও দেখুন',
+    testimonialsEyebrow:'গ্রাহক অভিজ্ঞতা', testimonialsTitle:'আমাদের গ্রাহকরা যা বলছেন',
+    step2Eyebrow:'০২ · অর্ডার সারাংশ', step2Title:'আপনার অর্ডার',
+    deliveryNote:'মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে।', deliveryInside:'ঢাকার ভেতরে', deliveryOutside:'ঢাকার বাইরে',
+    subtotal:'সাবটোটাল', deliveryCharge:'ডেলিভারি চার্জ',
+    step3Eyebrow:'০৩ · যোগাযোগ তথ্য', step3Title:'আপনার তথ্য',
+    yourName:'আপনার নাম *', mobileNumber:'মোবাইল নাম্বার *',
+    findThana:'থানা/এলাকা খুঁজুন', findThanaSub:'(ঐচ্ছিক — বাংলা বা ইংরেজিতে লিখুন)', thanaPlaceholder:'যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর',
+    fullAddress:'সম্পূর্ন ঠিকানা *', addressPlaceholder:'বাসা/রোড, এলাকা, থানা, জেলা',
+    step4Eyebrow:'০৪ · পেমেন্ট', step4Title:'পেমেন্ট পদ্ধতি ও নোট', paymentMethod:'পেমেন্ট পদ্ধতি *',
+    cod:'ক্যাশ অন ডেলিভারি', bkash:'বিকাশ', nagad:'নগদ', rocket:'রকেট', bankTransfer:'ব্যাংক ট্রান্সফার',
+    sendMoneyTo:'-এ টাকা পাঠান', sendMoneyNumber:'Send Money নম্বর', copy:'কপি', bankInfo:'ব্যাংক তথ্য',
+    referenceMustMention:'Reference (অবশ্যই উল্লেখ করুন)',
+    payPanelNote:'উপরের নম্বরে টাকা পাঠানোর সময় <b>Reference</b> ফিল্ডে এই কোডটি বসান — এতে আমরা সহজে মিলিয়ে নিতে পারব। এরপর নিচে TrxID লিখুন।',
+    trxId:'TrxID (লেনদেন আইডি) *', optionalNote:'ঐচ্ছিক নোট', notesPlaceholder:'কোনো বিশেষ নির্দেশনা থাকলে লিখুন',
+    grandTotal:'সর্বমোট', confirmOrder:'অর্ডার কনফার্ম করুন', returnPolicyLink:'রিটার্ন ও রিফান্ড নীতি জানুন',
+    downloadReceipt:'রিসিট ডাউনলোড করুন (PNG)', backToHome:'হোম পেজে ফিরুন',
+    orderNow:'Order now', returnRefundAvailable:'রিটার্ন ও রিফান্ড সুবিধা আছে', seeDetails:'বিস্তারিত দেখুন',
+    reviewsAndRatings:'রিভিউ ও রেটিং', writeReview:'রিভিউ লিখুন',
+    yourNamePlaceholder:'আপনার নাম', reviewPhonePlaceholder:'মোবাইল নাম্বার (যাচাইয়ের জন্য, প্রকাশ হবে না)',
+    reviewCommentPlaceholder:'পণ্যটি সম্পর্কে আপনার অভিজ্ঞতা লিখুন', submitReview:'রিভিউ জমা দিন',
+    allCategory:'সকল', addToCartBtn:'Order now', inCartBtn:'টি কার্টে', chooseDesignSize:'ডিজাইন ও সাইজ বাছাই করুন',
+    wishAdded:'উইশলিস্টে যোগ করা হয়েছে', wishRemoved:'উইশলিস্ট থেকে সরানো হয়েছে', wishEmpty:'উইশলিস্ট এখনো খালি — পছন্দের পণ্যে ♡ চাপুন',
+    noSearchResults:'কোনো পণ্য খুঁজে পাওয়া যায়নি।', clearSearch:'সার্চ মুছুন', zoomHint:'ছবি বড় করে দেখুন',
+    selectAreaHint:'এলাকা নির্বাচন করুন', addedToCartToast:'কার্টে যোগ করা হয়েছে',
+    minPrice:'সর্বনিম্ন ৳', maxPrice:'সর্বোচ্চ ৳', resetFilter:'মুছে ফেলুন', applyFilter:'প্রয়োগ করুন',
+    recentlyViewed:'সাম্প্রতিক দেখা পণ্য', relatedProducts:'সম্পর্কিত পণ্য', youMayAlsoLike:'আপনার পছন্দ হতে পারে',
+    invalidPriceRange:'সর্বনিম্ন মূল্য সর্বোচ্চ মূল্যের চেয়ে বেশি হতে পারবে না',
+    noProductsInRange:'এই মূল্যসীমায় কোনো পণ্য নেই।',
+  },
+  en: {
+    tagline:'Pick your products below — we\'ll contact you after you confirm',
+    searchPlaceholder:'Search products…', wishlist:'Wishlist', trackOrder:'Track Order',
+    step1Eyebrow:'01 · Select Products', step1Title:'Browse & Add Products',
+    videoEyebrow:'Video', videoTitle:'Watch Our Videos',
+    testimonialsEyebrow:'Customer Feedback', testimonialsTitle:'What Our Customers Say',
+    step2Eyebrow:'02 · Order Summary', step2Title:'Your Order',
+    deliveryNote:'Delivery charge will be added to the price.', deliveryInside:'Inside Dhaka', deliveryOutside:'Outside Dhaka',
+    subtotal:'Subtotal', deliveryCharge:'Delivery Charge',
+    step3Eyebrow:'03 · Contact Info', step3Title:'Your Details',
+    yourName:'Your Name *', mobileNumber:'Mobile Number *',
+    findThana:'Find Thana/Area', findThanaSub:'(optional — type in Bangla or English)', thanaPlaceholder:'e.g. Dhanmondi, Mirpur, Comilla Sadar',
+    fullAddress:'Full Address *', addressPlaceholder:'House/Road, Area, Thana, District',
+    step4Eyebrow:'04 · Payment', step4Title:'Payment Method & Note', paymentMethod:'Payment Method *',
+    cod:'Cash on Delivery', bkash:'bKash', nagad:'Nagad', rocket:'Rocket', bankTransfer:'Bank Transfer',
+    sendMoneyTo:' — Send Money to', sendMoneyNumber:'Send Money Number', copy:'Copy', bankInfo:'Bank Info',
+    referenceMustMention:'Reference (please mention)',
+    payPanelNote:'Enter this code in the <b>Reference</b> field when sending money — this helps us match your payment. Then enter the TrxID below.',
+    trxId:'TrxID (Transaction ID) *', optionalNote:'Optional Note', notesPlaceholder:'Any special instructions',
+    grandTotal:'Grand Total', confirmOrder:'Confirm Order', returnPolicyLink:'Return & Refund Policy',
+    downloadReceipt:'Download Receipt (PNG)', backToHome:'Back to Home Page',
+    orderNow:'Order now', returnRefundAvailable:'Return & refund available', seeDetails:'See details',
+    reviewsAndRatings:'Reviews & Ratings', writeReview:'Write a Review',
+    yourNamePlaceholder:'Your name', reviewPhonePlaceholder:'Mobile number (for verification, not shown publicly)',
+    reviewCommentPlaceholder:'Share your experience with this product', submitReview:'Submit Review',
+    allCategory:'All', addToCartBtn:'Order now', inCartBtn:' in cart', chooseDesignSize:'Choose design & size',
+    wishAdded:'Added to wishlist', wishRemoved:'Removed from wishlist', wishEmpty:'Your wishlist is empty — tap ♡ on items you like',
+    noSearchResults:'No products found.', clearSearch:'Clear search', zoomHint:'Tap to zoom',
+    selectAreaHint:'select delivery area', addedToCartToast:'Added to cart',
+    minPrice:'Min ৳', maxPrice:'Max ৳', resetFilter:'Reset', applyFilter:'Apply',
+    recentlyViewed:'Recently Viewed', relatedProducts:'Related Products', youMayAlsoLike:'You may also like',
+    invalidPriceRange:'Minimum price cannot be greater than maximum price',
+    noProductsInRange:'No products in this price range.',
+  }
+};
+let currentLang = (function(){
+  try{ return localStorage.getItem('sohanshop_lang') || 'bn'; } catch(e){ return 'bn'; }
+})();
+function t(key){
+  const dict = I18N[currentLang] || I18N.bn;
+  return (key in dict) ? dict[key] : (I18N.bn[key] || key);
+}
+function setLang(lang){
+  if(lang !== 'bn' && lang !== 'en') return;
+  currentLang = lang;
+  try{ localStorage.setItem('sohanshop_lang', lang); } catch(e){}
+  applyI18n();
+}
+function applyI18n(){
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('#langToggle button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
+  // ডেলিভারি রেডিও লেবেল (ঢাকার ভেতরে/বাইরে) — বাংলা/ইংরেজি dataset থেকে সেট হয়, backend লজিকে অপরিবর্তিত
+  document.querySelectorAll('[data-label][data-label-en]').forEach(el => {
+    el.dataset.label = currentLang === 'en' ? el.dataset.labelEn : (el.id === 'deliveryInsideInput' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে');
+  });
+  // যেসব অংশ JS দিয়ে ডাইনামিকভাবে তৈরি হয়, সেগুলো নতুন ভাষায় আবার আঁকা হয়
+  if(typeof renderCatNav === 'function' && products) renderCatNav();
+  if(typeof renderCatalog === 'function') renderCatalog();
+  if(typeof renderCart === 'function') renderCart();
+  const searchInput = document.getElementById('searchInput');
+  if(searchInput) searchInput.placeholder = t('searchPlaceholder');
+}
+
+// ---- ❤️ উইশলিস্ট (শুধু এই ব্রাউজারেই, প্রতি শপের জন্য আলাদা, localStorage) ----
+const WISHLIST_KEY = 'sohanshop_wishlist_' + SHOP_ID;
+function readWishlist(){
+  try{ const raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ return []; }
+}
+let wishlist = readWishlist(); // productId-দের অ্যারে
+function saveWishlist(){
+  try{ localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist)); }
+  catch(e){ /* কোটা শেষ/প্রাইভেট মোড হলেও চলবে, শুধু পরের ভিজিটে মনে থাকবে না */ }
+}
+function isWished(productId){ return wishlist.includes(productId); }
+function toggleWishlist(productId, evt){
+  if(evt) evt.stopPropagation();
+  const idx = wishlist.indexOf(productId);
+  if(idx === -1){ wishlist.push(productId); showToast(t('wishAdded')); }
+  else { wishlist.splice(idx, 1); showToast(t('wishRemoved')); }
+  saveWishlist();
+  document.querySelectorAll(`.wish-btn[data-pid="${CSS.escape(productId)}"]`).forEach(btn => btn.classList.toggle('active', isWished(productId)));
+  updateWishCount();
+  if(document.getElementById('wishOverlay').classList.contains('open')) renderWishlistSheet();
+}
+function updateWishCount(){
+  const el = document.getElementById('wishCount');
+  if(!el) return;
+  if(wishlist.length > 0){ el.style.display = 'inline-flex'; el.textContent = wishlist.length; }
+  else { el.style.display = 'none'; }
+}
+function openWishlist(){
+  renderWishlistSheet();
+  document.getElementById('wishOverlay').classList.add('open');
+}
+function closeWishlist(){
+  document.getElementById('wishOverlay').classList.remove('open');
+}
+function renderWishlistSheet(){
+  const grid = document.getElementById('wishGrid');
+  const items = products.filter(p => isWished(p.id));
+  if(items.length === 0){
+    grid.innerHTML = `<div class="wish-empty" style="grid-column:1/-1;">${t('wishEmpty')}</div>`;
+    return;
+  }
+  grid.innerHTML = items.map(p => buildCardHtml(p, false)).join('');
+}
+
+// ---- 🔎 প্রোডাক্ট সার্চ বার ----
+let searchDebounceTimer;
+function onSearchInput(val){
+  searchQuery = val;
+  document.getElementById('searchBar').classList.toggle('has-text', !!val.trim());
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(renderCatalog, 120);
+}
+function clearSearch(){
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchBar').classList.remove('has-text');
+  renderCatalog();
+}
+// প্রোডাক্ট রিভিউ — productId -> [{id, name, rating, comment, verified, createdAt}, ...] — Firebase-এ shops/{SHOP_ID}/reviews/{productId}/{pushId}
+let reviews = {};
+let qvReviewRating = 0;
+// শপ প্রোফাইল (Firebase-এর company নোড) মনে রাখা হয় — রিটার্ন/রিফান্ড নীতির কাস্টম টেক্সট (returnPolicyText) পড়তে লাগে
+let SHOP_COMPANY = {};
 // Quick View-তে পোশাক পণ্যের জন্য বাছাই করা ডিজাইন/সাইজ — সবার আগে ডিক্লেয়ার করা হলো (cache-render early-call এর জন্য)
 let currentQvProduct = null;
 let qvSelection = { designIdx: null, size: null };
+let qvGalleryImages = []; // Quick View-তে বর্তমান পণ্যের সব ছবি (গ্যালারি)
+let qvGalleryIdx = 0;
 
 // bKash/Nagad/Rocket/Bank details পাওয়ার জন্য — শপ প্রোফাইল লোড হলে applyShopProfile() এটা ভরে দেয়
 let PAYMENT_INFO = { bKash: '', Nagad: '', Rocket: '', 'Bank Transfer': '' };
-let shopWhatsAppIntl = ''; // দোকানের WhatsApp নম্বর, আন্তর্জাতিক ফরম্যাটে (৮৮ সহ), অর্ডার নোটিফিকেশন পাঠাতে ব্যবহার হয়
 // প্রতিটা অর্ডার-এর জন্য একটা ছোট, পড়তে সহজ রেফারেন্স কোড — bKash/Nagad "Send Money" স্টেটমেন্টে
 // কোন টাকা কোন অর্ডারের সেটা মেলাতে সাহায্য করে। শুধু এই একটা অর্ডারের জন্যই বৈধ ধরা হয়।
 let currentOrderRef = 'ORD' + Math.floor(100 + Math.random() * 900);
@@ -1064,6 +1794,7 @@ if(__cached){
 }
 
 function applyShopProfile(company){
+  SHOP_COMPANY = company || {};
   const name = company.name || BUSINESS_NAME;
   const phone = company.contactPhone || '';
   const inside = Number(company.deliveryInside) || 0;
@@ -1121,12 +1852,15 @@ function applyShopProfile(company){
     if(wa) wa.href = 'https://wa.me/' + intl;
     if(tel) tel.href = 'tel:' + digitsOnly;
     if(telLbl) telLbl.textContent = phone;
-    shopWhatsAppIntl = intl;
   } else {
     if(wa) wa.style.display = 'none';
     if(tel) tel.style.display = 'none';
-    shopWhatsAppIntl = '';
   }
+
+  // ---- 📊 Facebook Pixel / GA4 — অ্যাডমিন অ্যাপের Settings থেকে বসানো আইডি দিয়ে চালু হয় ----
+  if((company.fbPixelId || '').trim()) initFacebookPixel(company.fbPixelId.trim());
+  if((company.ga4MeasurementId || '').trim()) initGA4(company.ga4MeasurementId.trim());
+
 
   // bKash/Nagad/Rocket নম্বর — আলাদাভাবে সেট করা না থাকলে যোগাযোগের নম্বরটাই ফলব্যাক হিসেবে দেখানো হয়
   PAYMENT_INFO = {
@@ -1338,7 +2072,17 @@ window.addEventListener('online', function(){
   if(!fbInitStarted){ clearTimeout(fbRetryTimer); tryInitFirebase(1); }
 });
 document.addEventListener('DOMContentLoaded', function(){
+  // পেজ লোডের একদম শুরুতে (স্ক্রিপ্টের ওপরের দিকে) সরাসরি updateWishCount()/applyI18n()
+  // কল করা হতো — কিন্তু applyI18n() ভেতরে renderCart()ও ডাকে, যেটা updateTotal()-এর
+  // মাধ্যমে isSubmitting ভ্যারিয়েবল পড়ে (নিচে অনেক পরে let দিয়ে ডিক্লেয়ার করা) — ফলে
+  // "Cannot access ... before initialization" ReferenceError-এ পুরো স্ক্রিপ্ট থেমে যেত
+  // (products/cart/db/wishlist/I18N কিছুই সেট হতো না, ক্যাটালগ কখনো লোড হতো না)।
+  // DOMContentLoaded ততক্ষণে পুরো স্ক্রিপ্ট (সব let/const) execute হয়ে যাওয়ার পরে ফায়ার
+  // হয়, তাই এখানে কল করা নিরাপদ — অন্য init কাজ (Firebase, saved info) এখানেই হয়।
+  updateWishCount();
+  applyI18n();
   tryInitFirebase();
+  prefillSavedCustomerInfo();
 });
 
 function initFirebaseApp(){
@@ -1396,6 +2140,23 @@ function initFirebaseApp(){
     __cVideos = videos;
     __persistCache();
   });
+
+  // ---- ⭐ প্রোডাক্ট রিভিউ — shops/{SHOP_ID}/reviews/{productId}/{pushId} থেকে লাইভ সিংক ----
+  // এখানে কোনো ডামি/প্রি-সিডেড রিভিউ নেই — কাস্টমাররা নিজে যা জমা দেন শুধু সেটাই দেখানো হয়,
+  // তাই প্রতিটা রিভিউ সত্যিকারের। "যাচাইকৃত ক্রেতা" ব্যাজ পাওয়ার শর্ত submitReview()-তে আছে।
+  db.ref('shops/' + SHOP_ID + '/reviews').on('value', snap => {
+    const val = snap.val() || {};
+    reviews = {};
+    Object.keys(val).forEach(productId => {
+      const productReviews = val[productId] || {};
+      reviews[productId] = Object.keys(productReviews)
+        .map(id => Object.assign({ id }, productReviews[id]))
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    });
+    renderCatalog();
+    renderTestimonials();
+    if(currentQvProduct) renderQvReviews(currentQvProduct.id);
+  });
 }
 
 function renderCatNav(){
@@ -1409,7 +2170,7 @@ function renderCatNav(){
   if(cats.length <= 1){ nav.style.display = 'none'; return; }
   nav.style.display = 'flex';
   nav.innerHTML = cats.map(c => `
-    <button type="button" class="cat-pill ${c === selectedCategory ? 'active' : ''}" onclick="selectCategory('${escapeHTML(c).replace(/'/g,"\\'")}')">${escapeHTML(c)}</button>
+    <button type="button" class="cat-pill ${c === selectedCategory ? 'active' : ''}" onclick="selectCategory('${escapeHTML(c).replace(/'/g,"\\'")}')">${escapeHTML(c === 'সকল' ? t('allCategory') : c)}</button>
   `).join('');
 }
 function selectCategory(cat){
@@ -1448,6 +2209,7 @@ function buildCardHtml(p, isPriority){
       ${thumbUrl
         ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" ${imgAttrs} onerror="this.outerHTML='<div class=noimg></div>'">`
         : `<div class="noimg"></div>`}
+      <button type="button" class="wish-btn ${isWished(p.id) ? 'active' : ''}" data-pid="${escapeHTML(p.id)}" onclick="toggleWishlist('${p.id}', event)" aria-label="উইশলিস্টে যোগ করুন">${isWished(p.id) ? '♥' : '♡'}</button>
       <div class="badge-row">
         <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
         <span>${hasDiscount ? `<span class="badge-off">-${pct}%</span>` : ''}</span>
@@ -1456,6 +2218,7 @@ function buildCardHtml(p, isPriority){
     </div>
     <div class="body">
       <div class="pname">${escapeHTML(p.name)}</div>
+      ${(() => { const rs = getRatingSummary(p.id); return rs ? `<div class="pcard-rating">${starsHtml(rs.avg)}<span class="rating-count">(${rs.count})</span></div>` : ''; })()}
       ${p.description ? `<div class="pdesc">${escapeHTML(p.description)}</div>` : ''}
       <div class="price-row">
         <span class="price-now">৳${price.toFixed(0)}</span>
@@ -1463,7 +2226,7 @@ function buildCardHtml(p, isPriority){
       </div>
       <div class="action-row">
         <button type="button" class="add-btn ${inCartQty ? 'in-cart' : ''}" onclick="${clothing ? `openQuickView('${p.id}')` : `addToCart('${p.id}')`}">
-          ${inCartQty ? `${inCartQty}টি কার্টে <span class="plus">+</span>` : (clothing ? `ডিজাইন ও সাইজ বাছাই করুন <span class="plus">+</span>` : `Order now <span class="plus">+</span>`)}
+          ${inCartQty ? `${inCartQty}${t('inCartBtn')} <span class="plus">+</span>` : (clothing ? `${t('chooseDesignSize')} <span class="plus">+</span>` : `${t('addToCartBtn')} <span class="plus">+</span>`)}
         </button>
         <button type="button" class="view-btn" onclick="openQuickView('${p.id}')" aria-label="Quick view">👁</button>
       </div>
@@ -1473,15 +2236,38 @@ function buildCardHtml(p, isPriority){
 
 function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
+  renderRecentlyViewedStrip();
   if(products.length === 0){
     grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই মুহূর্তে কোনো পণ্য যোগ করা হয়নি। দোকানদারকে জানান।</div>';
     document.getElementById('submitBtn').disabled = true;
     return;
   }
   document.getElementById('submitBtn').disabled = false;
-  const visible = selectedCategory === 'সকল' ? products : products.filter(p => (p.category || '').trim() === selectedCategory);
+  let visible = selectedCategory === 'সকল' ? products : products.filter(p => (p.category || '').trim() === selectedCategory);
+  const q = searchQuery.trim().toLowerCase();
+  if(q){
+    visible = visible.filter(p => {
+      return (p.name || '').toLowerCase().includes(q)
+        || (p.description || '').toLowerCase().includes(q)
+        || (p.category || '').toLowerCase().includes(q);
+    });
+  }
+  if(priceMin !== null || priceMax !== null){
+    visible = visible.filter(p => {
+      const price = Number(p.price) || 0;
+      if(priceMin !== null && price < priceMin) return false;
+      if(priceMax !== null && price > priceMax) return false;
+      return true;
+    });
+  }
   if(visible.length === 0){
-    grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</div>';
+    if(q){
+      grid.innerHTML = `<div class="search-empty-note" style="grid-column:1/-1;">${t('noSearchResults')}<button type="button" onclick="clearSearch()">${t('clearSearch')}</button></div>`;
+    } else if(priceMin !== null || priceMax !== null){
+      grid.innerHTML = `<div class="search-empty-note" style="grid-column:1/-1;">${t('noProductsInRange')}<button type="button" onclick="resetPriceFilter()">${t('resetFilter')}</button></div>`;
+    } else {
+      grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</div>';
+    }
     return;
   }
   // প্রথমে উপরের ২টি (একটি সারি) সাথে সাথে দেখানো হয়, তারপর বাকি প্রডাক্ট
@@ -1522,8 +2308,8 @@ function updateCardQtyDisplay(productId){
   document.querySelectorAll(`.pcard[data-pid="${CSS.escape(productId)}"] .add-btn`).forEach(btn => {
     btn.classList.toggle('in-cart', !!inCartQty);
     btn.innerHTML = inCartQty
-      ? `${inCartQty}টি কার্টে <span class="plus">+</span>`
-      : (clothing ? `ডিজাইন ও সাইজ বাছাই করুন <span class="plus">+</span>` : `Order now <span class="plus">+</span>`);
+      ? `${inCartQty}${t('inCartBtn')} <span class="plus">+</span>`
+      : (clothing ? `${t('chooseDesignSize')} <span class="plus">+</span>` : `${t('addToCartBtn')} <span class="plus">+</span>`);
   });
 }
 
@@ -1532,14 +2318,27 @@ function openQuickView(productId){
   if(!p) return;
   currentQvProduct = p;
   qvSelection = { designIdx: null, size: null };
+  trackRecentlyViewed(productId);
+  renderQvRelated(p);
   const clothing = isClothingProduct(p);
   const thumbUrl = getThumbUrl(p);
   const price = Number(p.price) || 0;
   const original = Number(p.originalPrice) || 0;
   const hasDiscount = original > price;
-  document.getElementById('qvImgWrap').innerHTML = thumbUrl
-    ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" onerror="this.style.display='none'">`
-    : '';
+  qvGalleryImages = clothing ? [] : getProductImages(p);
+  qvGalleryIdx = 0;
+  renderQvMainImage();
+  const galleryStrip = document.getElementById('qvGalleryStrip');
+  if(!clothing && qvGalleryImages.length > 1){
+    galleryStrip.style.display = 'flex';
+    galleryStrip.innerHTML = qvGalleryImages.map((url, i) => `
+      <button type="button" class="qv-gallery-thumb ${i === 0 ? 'active' : ''}" onclick="selectQvGalleryImage(${i})">
+        <img src="${escapeHTML(url)}" alt="${escapeHTML(p.name)} ${i+1}" loading="lazy">
+      </button>`).join('');
+  } else {
+    galleryStrip.style.display = 'none';
+    galleryStrip.innerHTML = '';
+  }
   document.getElementById('qvName').textContent = p.name;
   document.getElementById('qvDesc').textContent = p.description || '';
   document.getElementById('qvPrice').innerHTML = `<span class="price-now" style="color:var(--gold-deep);">৳${price.toFixed(0)}</span>${hasDiscount ? ` <span class="price-old">৳${original.toFixed(0)}</span>` : ''}`;
@@ -1560,7 +2359,241 @@ function openQuickView(productId){
     sizesBox.innerHTML = '';
   }
   updateQvOrderBtnState();
+  renderQvReviews(p.id);
   document.getElementById('qvOverlay').classList.add('open');
+}
+
+function renderQvReviews(productId){
+  const list = reviews[productId] || [];
+  const summaryEl = document.getElementById('qvRatingSummary');
+  const listEl = document.getElementById('qvReviewList');
+  const summary = getRatingSummary(productId);
+  summaryEl.innerHTML = summary
+    ? `${starsHtml(summary.avg)} <b>${summary.avg.toFixed(1)}</b> <span>(${summary.count}টি রিভিউ)</span>`
+    : `<span>এখনো কোনো রিভিউ নেই — প্রথম রিভিউটি আপনিই দিন</span>`;
+  listEl.innerHTML = list.map(r => `
+    <div class="qv-review-item">
+      <div class="qv-review-top">
+        <span class="qv-review-name">${escapeHTML(r.name || 'ক্রেতা')}</span>
+        ${r.verified ? `<span class="qv-verified-badge">✓ যাচাইকৃত ক্রেতা</span>` : ''}
+      </div>
+      <div class="qv-review-stars">${starsHtml(Number(r.rating) || 0)}</div>
+      ${r.comment ? `<p class="qv-review-comment">${escapeHTML(r.comment)}</p>` : ''}
+      <span class="qv-review-date">${fmtDateOnly(r.createdAt)}</span>
+    </div>
+  `).join('');
+
+  // ফর্ম প্রতিবার নতুন করে বন্ধ অবস্থায় শুরু হয়
+  document.getElementById('qvReviewForm').style.display = 'none';
+  const writeBtn = document.getElementById('qvWriteReviewBtn');
+  writeBtn.style.display = 'block';
+  qvReviewRating = 0;
+  document.querySelectorAll('#qvStarInput button').forEach(b => b.classList.remove('active'));
+  document.getElementById('reviewName').value = '';
+  document.getElementById('reviewPhone').value = '';
+  document.getElementById('reviewComment').value = '';
+
+  // এই ডিভাইস থেকে এই পণ্যে আগেই রিভিউ দেওয়া থাকলে আবার লেখার বাটনটা লুকানো হয় (ডুপ্লিকেট ঠেকাতে —
+  // তবে এটা শুধু এই ব্রাউজারের জন্যই, অন্য ডিভাইস থেকে একই ব্যক্তি চাইলে আবার দিতে পারবেন)
+  if(localStorage.getItem('sohanshop_reviewed_' + productId)){
+    writeBtn.style.display = 'none';
+  }
+}
+
+function toggleReviewForm(){
+  const form = document.getElementById('qvReviewForm');
+  const btn = document.getElementById('qvWriteReviewBtn');
+  const show = form.style.display === 'none';
+  form.style.display = show ? 'flex' : 'none';
+  btn.style.display = show ? 'none' : 'block';
+}
+
+document.addEventListener('click', function(e){
+  const starBtn = e.target.closest('#qvStarInput button');
+  if(!starBtn) return;
+  qvReviewRating = Number(starBtn.dataset.val);
+  document.querySelectorAll('#qvStarInput button').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.val) <= qvReviewRating);
+  });
+});
+
+function submitReview(e){
+  e.preventDefault();
+  if(!currentQvProduct) return false;
+  if(!db){ showToast('সংযোগ প্রস্তুত হচ্ছে — একটু পর আবার চেষ্টা করুন'); return false; }
+  if(qvReviewRating < 1){ showToast('কতটি স্টার দেবেন তা বাছাই করুন'); return false; }
+  const name = document.getElementById('reviewName').value.trim();
+  const phone = normalizePhoneDigits(document.getElementById('reviewPhone').value.trim());
+  const comment = document.getElementById('reviewComment').value.trim();
+  if(!name){ showToast('আপনার নাম লিখুন'); return false; }
+  if(!isValidPhone(phone)){ showToast('মোবাইল নাম্বারটি সঠিক নয়'); return false; }
+  if(!comment){ showToast('অভিজ্ঞতা কিছু লিখুন'); return false; }
+
+  const productId = currentQvProduct.id;
+  const reviewedKey = 'sohanshop_reviewed_' + productId;
+  if(localStorage.getItem(reviewedKey)){
+    showToast('আপনি ইতিমধ্যে এই পণ্যের রিভিউ দিয়েছেন');
+    return false;
+  }
+
+  const btn = document.getElementById('reviewSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'পাঠানো হচ্ছে…';
+
+  // ---- ✅ যাচাইকৃত ক্রেতা যাচাই ----
+  // এই ফোন নাম্বার দিয়ে সত্যিই এই পণ্যটি আগে অর্ডার করা হয়েছে কিনা — অর্ডার হিস্টোরির
+  // সাথে মিলিয়ে দেখা হয়, মিললেই "যাচাইকৃত ক্রেতা" ব্যাজ যোগ হয়। না মিললেও রিভিউটি
+  // জমা হয়, শুধু ব্যাজ ছাড়া দেখানো হয় — সত্যিকারের ক্রেতাকে আটকানো হয় না।
+  db.ref('shops/' + SHOP_ID + '/orders').orderByChild('phone').equalTo(phone).once('value')
+    .then(snap => {
+      let verified = false;
+      snap.forEach(child => {
+        const o = child.val();
+        if(o && Array.isArray(o.items) && o.items.some(it => it.productId === productId)) verified = true;
+      });
+      return db.ref('shops/' + SHOP_ID + '/reviews/' + productId).push().set({
+        name, phone, comment, rating: qvReviewRating, verified, createdAt: Date.now()
+      });
+    })
+    .then(() => {
+      localStorage.setItem(reviewedKey, '1');
+      showToast('ধন্যবাদ! আপনার রিভিউ যোগ হয়েছে ✓');
+      toggleReviewForm();
+    })
+    .catch(() => {
+      showToast('রিভিউ পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'রিভিউ জমা দিন';
+    });
+  return false;
+}
+
+/* ---------------- টেস্টিমোনিয়াল সেকশন (হোমপেজ) ---------------- */
+function renderTestimonials(){
+  const section = document.getElementById('testimonialsSection');
+  const row = document.getElementById('testimonialRow');
+  if(!section || !row) return;
+  // শুধু "যাচাইকৃত ক্রেতা" ও ৪+ স্টার, মন্তব্যসহ রিভিউ থেকে বাছাই করা হয় — কোনো ফেক/সিডেড ডেটা নেই,
+  // তাই এই সেকশনটা সবসময় প্রকৃত সন্তুষ্ট গ্রাহকদের প্রতিনিধিত্ব করে। রিভিউ না থাকলে সেকশনটাই লুকানো থাকে।
+  let all = [];
+  Object.keys(reviews).forEach(pid => {
+    (reviews[pid] || []).forEach(r => {
+      if(r.verified && Number(r.rating) >= 4 && r.comment){
+        const p = products.find(x => x.id === pid);
+        all.push(Object.assign({}, r, { productName: p ? p.name : '' }));
+      }
+    });
+  });
+  if(!all.length){ section.style.display = 'none'; row.innerHTML = ''; return; }
+  all.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  row.innerHTML = all.slice(0, 10).map(r => `
+    <div class="testimonial-card">
+      <div class="t-top">
+        <span class="t-name">${escapeHTML(r.name || 'ক্রেতা')}</span>
+        <span class="t-verified">✓ যাচাইকৃত</span>
+      </div>
+      <div class="t-stars">${starsHtml(Number(r.rating) || 0)}</div>
+      <p class="t-comment">${escapeHTML(r.comment)}</p>
+      ${r.productName ? `<span class="t-product">${escapeHTML(r.productName)}</span>` : ''}
+    </div>
+  `).join('');
+  section.style.display = 'block';
+}
+
+/* ---------------- অর্ডার ট্র্যাকিং ---------------- */
+const ORDER_STATUS_STEPS = [
+  { key: 'pending', label: 'অর্ডার গৃহীত', icon: '📝' },
+  { key: 'confirmed', label: 'নিশ্চিত হয়েছে', icon: '✅' },
+  { key: 'shipped', label: 'পাঠানো হয়েছে', icon: '🚚' },
+  { key: 'delivered', label: 'পৌঁছে গেছে', icon: '🎉' }
+];
+function openOrderTracking(){
+  document.getElementById('trackResult').innerHTML = '';
+  const savedPhone = localStorage.getItem('sohanshop_last_phone');
+  if(savedPhone) document.getElementById('trackPhone').value = savedPhone;
+  document.getElementById('trackOverlay').classList.add('open');
+}
+function closeOrderTracking(){
+  document.getElementById('trackOverlay').classList.remove('open');
+}
+function trackOrder(){
+  if(!db){ showToast('সংযোগ প্রস্তুত হচ্ছে — একটু পর আবার চেষ্টা করুন'); return; }
+  const orderId = document.getElementById('trackOrderId').value.trim().toUpperCase();
+  const phone = normalizePhoneDigits(document.getElementById('trackPhone').value.trim());
+  const resultBox = document.getElementById('trackResult');
+  if(!orderId){ showToast('অর্ডার আইডি লিখুন'); return; }
+  if(!isValidPhone(phone)){ showToast('মোবাইল নাম্বারটি সঠিক নয়'); return; }
+  const btn = document.getElementById('trackSubmitBtn');
+  btn.disabled = true; btn.textContent = 'খোঁজা হচ্ছে…';
+  resultBox.innerHTML = '';
+  db.ref('shops/' + SHOP_ID + '/orders').orderByChild('phone').equalTo(phone).once('value')
+    .then(snap => {
+      let found = null;
+      snap.forEach(child => {
+        const o = child.val();
+        if(o && String(o.orderId || '').toUpperCase() === orderId) found = o;
+      });
+      resultBox.innerHTML = found
+        ? buildTrackResultHtml(found)
+        : `<div class="track-not-found">🔍 এই তথ্যে কোনো অর্ডার পাওয়া যায়নি।<br>অর্ডার আইডি ও মোবাইল নাম্বারটি আবার যাচাই করুন।</div>`;
+      if(found) localStorage.setItem('sohanshop_last_phone', phone);
+    })
+    .catch(() => {
+      resultBox.innerHTML = `<div class="track-not-found">খুঁজতে সমস্যা হয়েছে, আবার চেষ্টা করুন।</div>`;
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'খুঁজুন';
+    });
+}
+function buildTrackResultHtml(order){
+  const status = String(order.status || 'pending').toLowerCase();
+  if(status === 'cancelled' || status === 'canceled'){
+    return `<div class="track-status-card">
+      <div class="track-cancelled-note">❌ এই অর্ডারটি বাতিল হয়ে গেছে।</div>
+      ${trackOrderSummaryHtml(order)}
+    </div>`;
+  }
+  const stepIdx = Math.max(0, ORDER_STATUS_STEPS.findIndex(s => s.key === status));
+  const stepsHtml = ORDER_STATUS_STEPS.map((s, i) => `
+    <div class="track-step ${i <= stepIdx ? 'done' : ''}">
+      <span class="dot">${i <= stepIdx ? '✓' : s.icon}</span>
+      <span class="lbl">${s.label}</span>
+    </div>
+  `).join('');
+  return `<div class="track-status-card">
+    <div class="track-steps">${stepsHtml}</div>
+    ${trackOrderSummaryHtml(order)}
+  </div>`;
+}
+function trackOrderSummaryHtml(order){
+  const itemCount = Array.isArray(order.items) ? order.items.reduce((s, it) => s + (Number(it.qty) || 0), 0) : 0;
+  return `<div class="track-order-summary">
+    <div>অর্ডার আইডি: <b>${escapeHTML(order.orderId || '—')}</b></div>
+    <div>তারিখ: <b>${fmtReceiptDateTime(order.createdAt)}</b></div>
+    <div>পণ্য: <b>${itemCount} পিস</b></div>
+    <div>ডেলিভারি এলাকা: <b>${escapeHTML(order.deliveryArea || '—')}</b></div>
+    <div>সর্বমোট: <b>${fmtMoney(order.total)}</b></div>
+  </div>`;
+}
+
+/* ---------------- রিটার্ন ও রিফান্ড নীতি ---------------- */
+const DEFAULT_RETURN_POLICY = `✅ ডেলিভারির সময় পণ্য বুঝে নেওয়ার আগে ভালোভাবে চেক করে নিন।
+✅ পণ্যে কোনো ত্রুটি বা ড্যামেজ থাকলে ডেলিভারির ২৪ ঘণ্টার মধ্যে আমাদের জানান (ছবি/ভিডিওসহ প্রমাণ দিন)।
+✅ ভুল পণ্য পাঠানো হলে সম্পূর্ণ রিটার্ন বা এক্সচেঞ্জ করা হবে, কোনো অতিরিক্ত চার্জ ছাড়াই।
+❌ ব্যবহৃত, ধোয়া বা ট্যাগ খোলা পণ্য রিটার্ন/এক্সচেঞ্জযোগ্য নয়।
+❌ শুধু "পছন্দ হয়নি" এই কারণে রিটার্ন গ্রহণযোগ্য নয়, তবে এক্ষেত্রে এক্সচেঞ্জের ব্যবস্থা করা যেতে পারে।
+💰 রিফান্ড অনুমোদিত হলে সাধারণত ৩–৭ কার্যদিবসের মধ্যে বিকাশ/নগদ/ব্যাংকে ফেরত দেওয়া হয়।
+📞 যেকোনো সমস্যায় সরাসরি WhatsApp বা ফোনে যোগাযোগ করুন — আমরা সমাধানে সাহায্য করব।`;
+function openReturnPolicy(){
+  const custom = ((SHOP_COMPANY && SHOP_COMPANY.returnPolicyText) || '').trim();
+  document.getElementById('policyText').textContent = custom || DEFAULT_RETURN_POLICY;
+  document.getElementById('policyOverlay').classList.add('open');
+}
+function closePolicyModal(){
+  document.getElementById('policyOverlay').classList.remove('open');
 }
 function selectQvDesign(idx){
   if(!currentQvProduct || !currentQvProduct.designs[idx]) return;
@@ -1591,13 +2624,13 @@ function updateQvOrderBtnState(){
   if(!currentQvProduct) return;
   if(!isClothingProduct(currentQvProduct)){
     btn.disabled = false;
-    btn.textContent = 'Order now';
+    btn.textContent = t('orderNow');
     btn.setAttribute('onclick', `addToCart('${currentQvProduct.id}'); closeQuickView();`);
     return;
   }
   const ready = qvSelection.designIdx !== null && !!qvSelection.size;
   btn.disabled = false;
-  btn.textContent = ready ? 'কার্টে যোগ করুন' : 'ডিজাইন ও সাইজ বাছাই করুন';
+  btn.textContent = ready ? (currentLang === 'en' ? 'Add to Cart' : 'কার্টে যোগ করুন') : t('chooseDesignSize');
   if(ready){
     const idx = qvSelection.designIdx;
     const size = qvSelection.size.replace(/'/g, "\\'");
@@ -1615,6 +2648,58 @@ function closeQuickView(){
   document.getElementById('qvOverlay').classList.remove('open');
 }
 
+// ---- 🖼️ একাধিক প্রোডাক্ট ছবি: গ্যালারি স্ট্রিপ + জুম ----
+function renderQvMainImage(){
+  const wrap = document.getElementById('qvImgWrap');
+  const url = qvGalleryImages[qvGalleryIdx];
+  if(!url){ wrap.innerHTML = ''; return; }
+  const name = currentQvProduct ? currentQvProduct.name : '';
+  wrap.innerHTML = `<img src="${escapeHTML(url)}" alt="${escapeHTML(name)}" onclick="openImgZoom(${qvGalleryIdx})" onerror="this.style.display='none'">` +
+    `<span class="zoom-hint">🔍 <span>${t('zoomHint')}</span></span>`;
+}
+function selectQvGalleryImage(idx){
+  if(!qvGalleryImages[idx]) return;
+  qvGalleryIdx = idx;
+  renderQvMainImage();
+  document.querySelectorAll('#qvGalleryStrip .qv-gallery-thumb').forEach((el,i) => el.classList.toggle('active', i === idx));
+}
+function openImgZoom(idx){
+  if(!qvGalleryImages.length) return;
+  qvGalleryIdx = idx;
+  renderImgZoom();
+  document.getElementById('imgZoomOverlay').classList.add('open');
+}
+function renderImgZoom(){
+  document.getElementById('imgZoomImg').src = qvGalleryImages[qvGalleryIdx] || '';
+  const dotsEl = document.getElementById('imgZoomDots');
+  if(qvGalleryImages.length > 1){
+    dotsEl.innerHTML = qvGalleryImages.map((_, i) => `<span class="${i === qvGalleryIdx ? 'active' : ''}"></span>`).join('');
+  } else {
+    dotsEl.innerHTML = '';
+  }
+}
+function closeImgZoom(){
+  document.getElementById('imgZoomOverlay').classList.remove('open');
+}
+// ফুলস্ক্রিন জুম ভিউতে সোয়াইপ করে পরের/আগের ছবি দেখার জন্য
+(function(){
+  let touchStartX = null;
+  document.addEventListener('touchstart', e => {
+    if(!document.getElementById('imgZoomOverlay').classList.contains('open')) return;
+    touchStartX = e.touches[0].clientX;
+  }, {passive:true});
+  document.addEventListener('touchend', e => {
+    if(touchStartX === null || !document.getElementById('imgZoomOverlay').classList.contains('open')) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if(Math.abs(dx) < 40 || qvGalleryImages.length < 2) return;
+    qvGalleryIdx = dx < 0
+      ? (qvGalleryIdx + 1) % qvGalleryImages.length
+      : (qvGalleryIdx - 1 + qvGalleryImages.length) % qvGalleryImages.length;
+    renderImgZoom();
+  }, {passive:true});
+})();
+
 function addToCart(productId){
   const p = products.find(x => x.id === productId);
   if(!p) return;
@@ -1625,6 +2710,8 @@ function addToCart(productId){
   }
   updateCardQtyDisplay(productId);
   renderCart();
+  trackPixelEvent('AddToCart', { content_name: p.name, content_ids: [p.id], value: Number(p.price) || 0, currency: 'BDT' });
+  trackGaEvent('add_to_cart', { currency: 'BDT', value: Number(p.price) || 0, items: [{ item_id: p.id, item_name: p.name }] });
 }
 function addClothingToCart(productId, designIdx, size){
   const p = products.find(x => x.id === productId);
@@ -1647,7 +2734,9 @@ function addClothingToCart(productId, designIdx, size){
   }
   updateCardQtyDisplay(productId);
   renderCart();
-  showToast('কার্টে যোগ করা হয়েছে');
+  showToast(t('addedToCartToast'));
+  trackPixelEvent('AddToCart', { content_name: p.name, content_ids: [p.id], value: Number(p.price) || 0, currency: 'BDT' });
+  trackGaEvent('add_to_cart', { currency: 'BDT', value: Number(p.price) || 0, items: [{ item_id: p.id, item_name: p.name }] });
 }
 function changeQty(key, delta){
   if(!cart[key]) return;
@@ -1683,6 +2772,7 @@ function renderCart(){
       </div>
       <button type="button" class="cart-rm" onclick="removeFromCart('${it.key}')">✕</button>
     </div>`).join('');
+  renderCartRelated();
   updateTotal();
 }
 function collectItems(){
@@ -1709,7 +2799,7 @@ function updateTotal(){
   const subtotalEl = document.getElementById('subtotalDisplay');
   const deliveryEl = document.getElementById('deliveryDisplay');
   if(subtotalEl) subtotalEl.textContent = '৳' + subtotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  if(deliveryEl) deliveryEl.textContent = delivery ? '৳' + delivery.charge.toFixed(2) + ' (' + delivery.label + ')' : '— (এলাকা নির্বাচন করুন)';
+  if(deliveryEl) deliveryEl.textContent = delivery ? '৳' + delivery.charge.toFixed(2) + ' (' + delivery.label + ')' : '— (' + t('selectAreaHint') + ')';
   document.getElementById('totalDisplay').textContent = '৳' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   const submitBtn = document.getElementById('submitBtn');
   if(submitBtn && !isSubmitting){
@@ -1717,6 +2807,36 @@ function updateTotal(){
   }
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ---------------- রিভিউ/রেটিং হেল্পার ফাংশন ---------------- */
+function starsHtml(avg){
+  const full = Math.round(Number(avg) || 0);
+  let html = '';
+  for(let i = 1; i <= 5; i++){
+    html += `<span class="star ${i <= full ? 'on' : ''}">★</span>`;
+  }
+  return html;
+}
+function getRatingSummary(productId){
+  const list = reviews[productId];
+  if(!list || !list.length) return null;
+  const avg = list.reduce((s, r) => s + (Number(r.rating) || 0), 0) / list.length;
+  return { avg, count: list.length };
+}
+function fmtDateOnly(ts){
+  if(!ts) return '';
+  const months = ['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্ট','অক্টো','নভে','ডিসে'];
+  const d = new Date(ts);
+  return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ---- 📊 Facebook Pixel / GA4 ইভেন্ট — নিরাপদভাবে পাঠানো (আইডি বসানো না থাকলে চুপচাপ কিছুই করে না) ----
+function trackPixelEvent(name, params){
+  try{ if(typeof fbq === 'function') fbq('track', name, params || {}); }catch(e){}
+}
+function trackGaEvent(name, params){
+  try{ if(typeof gtag === 'function') gtag('event', name, params || {}); }catch(e){}
+}
 
 // ============================================================
 // থানা/জেলা অটো-সনাক্তকরণ (বাংলা ও ইংরেজি) — কাস্টমার ঠিকানায়
@@ -2334,6 +3454,43 @@ function isValidPhone(value){
   return /^0[0-9]{10}$/.test(digits);
 }
 
+// ---- 🙂 রিপিট কাস্টমারের জন্য নাম/ফোন/ঠিকানা মনে রাখা (শুধু এই ব্রাউজারেই, localStorage) ----
+// একবার সফলভাবে অর্ডার করলে এই তথ্যগুলো ব্রাউজারে সেভ থাকে — পরের বার এই একই
+// ডিভাইস/ব্রাউজার থেকে সাইটে এলে ফর্ম আগে থেকেই ভরা পাবে, নতুন করে টাইপ করতে
+// হয় না। অন্য কারো ডিভাইসে বা দোকানদারের কাছে এই তথ্য যায় না।
+const SAVED_CUSTOMER_KEY = 'sohanshop_saved_customer';
+function saveCustomerInfoForNextTime(order){
+  try{
+    localStorage.setItem(SAVED_CUSTOMER_KEY, JSON.stringify({
+      name: order.customerName,
+      phone: order.phone,
+      address: order.address,
+      thana: (order.courier && order.courier.thana) || '',
+      district: (order.courier && order.courier.district) || '',
+      division: (order.courier && order.courier.division) || ''
+    }));
+  }catch(e){ /* localStorage বন্ধ/পূর্ণ থাকলে চুপচাপ বাদ, ফর্মের কাজে কোনো প্রভাব পড়বে না */ }
+}
+function prefillSavedCustomerInfo(){
+  let saved;
+  try{ saved = JSON.parse(localStorage.getItem(SAVED_CUSTOMER_KEY) || 'null'); }catch(e){ saved = null; }
+  if(!saved) return;
+  const nameEl = document.getElementById('custName');
+  const phoneEl = document.getElementById('custPhone');
+  const addrEl = document.getElementById('custAddress');
+  const thanaEl = document.getElementById('thanaSearchInput');
+  if(nameEl && !nameEl.value.trim() && saved.name) nameEl.value = saved.name;
+  if(phoneEl && !phoneEl.value.trim() && saved.phone) phoneEl.value = saved.phone;
+  if(addrEl && !addrEl.value.trim() && saved.address) addrEl.value = saved.address;
+  if(saved.thana || saved.district || saved.division){
+    explicitLocationLock = true;
+    renderAddrHintOk({ division: saved.division, district: saved.district, thana: saved.thana }, true);
+    if(thanaEl && !thanaEl.value.trim()){
+      thanaEl.value = [saved.thana, saved.district].filter(Boolean).join(', ');
+    }
+  }
+}
+
 /* ---------------- VIDEO LIGHTBOX ---------------- */
 function getYouTubeEmbed(url){
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{6,})/);
@@ -2398,6 +3555,7 @@ function closeLightbox(){
 function buildOrderNotificationText(order){
   const itemsList = order.items.map(it => `- ${it.name} × ${it.qty} = ৳${(it.price * it.qty).toFixed(2)}`).join('\n');
   const lines = [
+    order.flagged ? `⚠️ সতর্কতা: এই নম্বরে আগে সমস্যা হয়েছিল বলে চিহ্নিত — শিপ করার আগে ফোনে কনফার্ম করে নিন` : null,
     `🛍️ নতুন অর্ডার${order.orderRef ? ' — রেফারেন্স: ' + order.orderRef : ''}`,
     `নাম: ${order.customerName}`,
     `মোবাইল: ${order.phone}`,
@@ -2411,7 +3569,7 @@ function buildOrderNotificationText(order){
     `সর্বমোট: ৳${order.total.toFixed(2)}`,
     ``,
     `পেমেন্ট মাধ্যম: ${order.paymentMethod}`
-  ];
+  ].filter(l => l !== null);
   if(order.trxId) lines.push(`TrxID: ${order.trxId}`);
   if(order.notes) lines.push(`নোট: ${order.notes}`);
   return lines.join('\n');
@@ -2438,6 +3596,13 @@ function submitOrder(e){
     showToast('সংযোগ প্রস্তুত হচ্ছে — কয়েক সেকেন্ড পর আবার চেষ্টা করুন');
     return false;
   }
+  // ---- 🚫 ভুলবশত/বারবার ডাবল-ট্যাপে একই অর্ডার দুইবার বসে যাওয়া ঠেকাতে ----
+  // শেষ অর্ডার পাঠানোর ৬০ সেকেন্ডের মধ্যে আবার সাবমিট করলে আটকে দেওয়া হয়
+  const lastOrderAt = Number(localStorage.getItem('sohanshop_last_order_at') || 0);
+  if(Date.now() - lastOrderAt < 60000){
+    showToast('একটু আগেই একটা অর্ডার পাঠানো হয়েছে — কিছুক্ষণ পর আবার চেষ্টা করুন');
+    return false;
+  }
   const items = collectItems();
   if(items.length === 0){ showToast('অন্তত একটি পণ্য নির্বাচন করুন'); return false; }
   const custName = document.getElementById('custName').value.trim();
@@ -2460,6 +3625,9 @@ function submitOrder(e){
 
   const subtotal = items.reduce((s,it) => s + it.price * it.qty, 0);
   const total = subtotal + delivery.charge;
+
+  trackPixelEvent('InitiateCheckout', { value: total, currency: 'BDT', num_items: items.reduce((s,it)=>s+it.qty,0) });
+  trackGaEvent('begin_checkout', { value: total, currency: 'BDT' });
 
   // ঠিকানায় থানা/জেলা লিখে যা সনাক্ত হয়েছে (detectedLocation), তা অর্ডারের সাথে
   // পাঠানো হয় — যাতে দোকানদারের অ্যাপে কুরিয়ার বুক করার সময় Division/District/Thana
@@ -2497,13 +3665,27 @@ function submitOrder(e){
       .catch(() => Number(String(Date.now()).slice(-7)));
   }
 
+  // ---- ⚠️ ফোন নাম্বার ব্ল্যাকলিস্ট চেক (ফেক/সমস্যাযুক্ত অর্ডার শনাক্তকরণ) ----
+  // দোকানদার Firebase Console থেকে shops/{SHOP_ID}/blacklistedPhones এর নিচে
+  // সমস্যাযুক্ত নাম্বার যোগ করে রাখলে (যেমন: blacklistedPhones/01712345678: true),
+  // সেই নাম্বার দিয়ে অর্ডার করলে অর্ডারটা আটকানো হয় না (ভুল করে সত্যিকারের
+  // কাস্টমারকে আটকে দেওয়ার ঝুঁকি এড়াতে), বরং Telegram নোটিফিকেশনে ⚠️ সতর্কতা
+  // যোগ হয় যাতে দোকানদার শিপ করার আগে ফোনে কনফার্ম করে নিতে পারেন।
+  // এটা সম্পূর্ণ OTP/SMS ভেরিফিকেশনের বিকল্প না — সেজন্য আলাদা SMS গেটওয়ে
+  // (যেমন BulkSMSBD) অথবা Firebase Phone Authentication লাগবে, যেটার জন্য
+  // দোকানদারের নিজের অ্যাকাউন্ট/API-কি সেটআপ করা প্রয়োজন।
+  const blacklistCheck = db.ref('shops/' + SHOP_ID + '/blacklistedPhones/' + phone).once('value')
+    .then(snap => !!snap.val())
+    .catch(() => false); // চেক করা না গেলেও অর্ডার আটকাবে না, শুধু ফ্ল্যাগ বাদ যাবে
+
   // ধীরগতির নেটওয়ার্কে অর্ডার পাঠানো আটকে থাকতে পারে — ৪ সেকেন্ডের মধ্যে সাড়া না পেলে
   // ব্যবহারকারীকে জানিয়ে বাটন আবার সচল করে দেওয়া হয়, যাতে সে আবার চেষ্টা করতে পারে।
   // তবে আসল অনুরোধটি (নাম্বার আনা + সেভ করা) ব্যাকগ্রাউন্ডে চলতেই থাকে — পরে সফল হলে
   // (ডুপ্লিকেট অর্ডার এড়াতে) বাটন আর নতুন করে সচল করা হয় না, বরং সরাসরি সফলতার স্ক্রিন দেখানো হয়
   let settled = false;
-  const savePromise = nextOrderNumber().then(seq => {
+  const savePromise = Promise.all([nextOrderNumber(), blacklistCheck]).then(([seq, flagged]) => {
     order.orderId = 'OID-' + String(seq).padStart(7, '0');
+    order.flagged = flagged;
     return db.ref('shops/' + SHOP_ID + '/orders').push().set(order);
   });
   const submitTimeout = new Promise((_, reject) => {
@@ -2512,6 +3694,13 @@ function submitOrder(e){
 
   function showSuccess(){
     sendTelegramNotification(order); // COD সহ সব অর্ডারেই — কাস্টমার কোথাও যায় না
+    localStorage.setItem('sohanshop_last_order_at', String(Date.now())); // ডাবল-সাবমিট থ্রটলের জন্য
+    saveCustomerInfoForNextTime(order); // পরের বার ফর্ম অটো-ফিল করার জন্য
+    trackPixelEvent('Purchase', { value: order.total, currency: 'BDT', content_ids: order.items.map(it => it.productId) });
+    trackGaEvent('purchase', {
+      transaction_id: order.orderId, value: order.total, currency: 'BDT',
+      items: order.items.map(it => ({ item_id: it.productId, item_name: it.name, price: it.price, quantity: it.qty }))
+    });
     document.getElementById('orderWrap').querySelector('main').style.display = 'none';
     document.querySelector('.hero').style.display = 'none';
     populateSuccessScreen(order);
