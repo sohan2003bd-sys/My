@@ -1545,6 +1545,9 @@ function applyI18n(){
     el.dataset.label = currentLang === 'en' ? el.dataset.labelEn : (el.id === 'deliveryInsideInput' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে');
   });
   // যেসব অংশ JS দিয়ে ডাইনামিকভাবে তৈরি হয়, সেগুলো নতুন ভাষায় আবার আঁকা হয়
+  // (ভাষা পাল্টালে পণ্যের ডেটা একই থাকলেও কার্ডের বাটন-টেক্সট (Order now/অর্ডার করুন ইত্যাদি)
+  // নতুন ভাষায় দেখাতে হবে, তাই ক্যাটালগের "একই তালিকা" ফাস্ট-পাথ এড়িয়ে জোর করে আবার আঁকা হয়)
+  catalogVisibleIdsKey = '';
   if(typeof renderCatNav === 'function' && products) renderCatNav();
   if(typeof renderCatalog === 'function') renderCatalog();
   if(typeof renderCart === 'function') renderCart();
@@ -1662,38 +1665,50 @@ function restoreCart(){
   renderCatalog(); // কার্ডের "X টি কার্টে" বাটন-স্টেট রিফ্রেশ করতে ক্যাটালগ আবার আঁকা হয়
   renderCart();
 }
-const __cached = readCache();
-if(__cached){
-  // Cache validity check — যদি cache এর মধ্যে কোনো product imageUrl ছাড়াই থাকে, তাহলে cache পরিষ্কার করা হয়
-  let isValidCache = true;
-  if(Array.isArray(__cached.products) && __cached.products.length > 0){
-    // প্রথম দুইটি প্রোডাক্ট চেক করা — যদি কোনো imageUrl বা videoUrl না থাকে তাহলে cache invalid
-    const sample = __cached.products.slice(0, 2);
-    for(let p of sample){
-      if(!p.imageUrl && !p.videoUrl){
-        isValidCache = false;
-        console.warn('Cache corrupted: products have no images');
-        break;
+// পুরো ক্যাশ-রিস্টোর ব্লকটা try/catch দিয়ে ঘেরা — কোনো কারণে পুরনো/ভাঙা ক্যাশ ডেটা থেকে
+// পেজ সাজাতে গিয়ে (applyShopProfile/renderCatalog/restoreCart এর ভেতরে) কোনো এরর হলেও
+// যেন নিচের DOMContentLoaded → tryInitFirebase() (লাইভ ডাটা লোড) কখনো আটকে না যায়।
+// আগে try/catch ছাড়া থাকায় ক্যাশ থেকে সাজানোর সময় কোনো এরর হলে পুরো স্ক্রিপ্ট থেমে যেত,
+// ফলে লাইভ Firebase লোড শুরুই হতো না — পেজ চিরকাল স্কেলিটন লোডিং অবস্থায় আটকে থাকতো।
+try{
+  const __cached = readCache();
+  if(__cached){
+    // Cache validity check — যদি cache এর মধ্যে কোনো product imageUrl ছাড়াই থাকে, তাহলে cache পরিষ্কার করা হয়
+    let isValidCache = true;
+    if(Array.isArray(__cached.products) && __cached.products.length > 0){
+      // প্রথম দুইটি প্রোডাক্ট চেক করা — যদি কোনো imageUrl বা videoUrl না থাকে তাহলে cache invalid
+      const sample = __cached.products.slice(0, 2);
+      for(let p of sample){
+        if(!p.imageUrl && !p.videoUrl){
+          isValidCache = false;
+          console.warn('Cache corrupted: products have no images');
+          break;
+        }
       }
     }
-  }
-  
-  if(isValidCache){
-    if(__cached.company) applyShopProfile(__cached.company);
-    if(Array.isArray(__cached.products) && __cached.products.length){
-      products = __cached.products;
-      renderCatNav();
-      renderCatalog();
-      restoreCart();
+
+    if(isValidCache){
+      if(__cached.company) applyShopProfile(__cached.company);
+      if(Array.isArray(__cached.products) && __cached.products.length){
+        products = __cached.products;
+        renderCatNav();
+        renderCatalog();
+        restoreCart();
+      }
+      if(Array.isArray(__cached.videos) && __cached.videos.length){
+        videos = __cached.videos;
+        renderVideos();
+      }
+    } else {
+      // Invalid cache — পরবর্তী Firebase load-এর জন্য ক্যাশ পরিষ্কার করা
+      try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
     }
-    if(Array.isArray(__cached.videos) && __cached.videos.length){
-      videos = __cached.videos;
-      renderVideos();
-    }
-  } else {
-    // Invalid cache — পরবর্তী Firebase load-এর জন্য ক্যাশ পরিষ্কার করা
-    try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
   }
+} catch(e){
+  // ক্যাশ থেকে পেজ সাজাতে গিয়ে যেকোনো এরর হলে — ক্যাশটাই মুছে ফেলা হচ্ছে (পরের ভিজিটে যেন
+  // আবার একই এরর না হয়) এবং স্কিপ করে নিচের লাইভ Firebase লোডের দিকে এগিয়ে যাওয়া হচ্ছে
+  console.warn('ক্যাশ থেকে পেজ সাজাতে সমস্যা হয়েছে, ক্যাশ বাদ দিয়ে লাইভ ডাটার অপেক্ষা করা হচ্ছে:', e);
+  try { localStorage.removeItem(CACHE_KEY); } catch(e2) {}
 }
 
 function applyShopProfile(company){
@@ -2137,11 +2152,17 @@ const CATALOG_PAGE_SIZE = 12;
 let catalogVisibleList = [];
 let catalogRenderedCount = 0;
 let catalogObserver = null;
+let catalogVisibleIdsKey = ''; // বর্তমানে গ্রিডে যা আঁকা আছে তার একটা "স্বাক্ষর" — একই তালিকা
+                                 // দ্বিতীয়বার এলে (ক্যাশ → লাইভ Firebase → restoreCart ইত্যাদি
+                                 // ধারাবাহিকভাবে renderCatalog() কল হয়) পুরো গ্রিড আবার না
+                                 // ভেঙে শুধু বাটন-স্টেট (কার্ট কোয়ান্টিটি) আপডেট করে দেওয়া হয়,
+                                 // যাতে রিফ্রেশে পণ্যগুলো চোখের সামনে মিলিয়ে গিয়ে আবার না ফেরে।
 function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
   if(products.length === 0){
     grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই মুহূর্তে কোনো পণ্য যোগ করা হয়নি। দোকানদারকে জানান।</div>';
     document.getElementById('submitBtn').disabled = true;
+    catalogVisibleIdsKey = '';
     return;
   }
   document.getElementById('submitBtn').disabled = false;
@@ -2162,8 +2183,9 @@ function renderCatalog(){
       return true;
     });
   }
-  if(catalogObserver){ catalogObserver.disconnect(); catalogObserver = null; }
   if(visible.length === 0){
+    if(catalogObserver){ catalogObserver.disconnect(); catalogObserver = null; }
+    catalogVisibleIdsKey = '';
     if(q){
       grid.innerHTML = `<div class="search-empty-note" style="grid-column:1/-1;">${t('noSearchResults')}<button type="button" onclick="clearSearch()">${t('clearSearch')}</button></div>`;
     } else if(priceMin !== null || priceMax !== null){
@@ -2173,8 +2195,20 @@ function renderCatalog(){
     }
     return;
   }
+  // বর্তমান তালিকার "স্বাক্ষর" — পণ্যের id + দাম + ছবি মিলিয়ে বানানো, যাতে দাম/ছবি বদলালে
+  // ঠিকই নতুন করে আঁকা হয়, কিন্তু হুবহু একই ডেটা দ্বিতীয়বার এলে গ্রিড অক্ষত থাকে
+  const newKey = visible.map(p => p.id + ':' + p.price + ':' + (p.imageUrl || '')).join('|');
+  if(newKey === catalogVisibleIdsKey && grid.children.length > 0){
+    // তালিকাটা আগেরটার সাথে হুবহু মিলে গেছে — শুধু ইতিমধ্যে আঁকা কার্ডগুলোর "কার্টে" বাটন-স্টেট
+    // (qty/in-cart) সবশেষ cart অনুযায়ী মিলিয়ে নেওয়া হয়, DOM ভাঙা-গড়া করা হয় না
+    catalogVisibleList = visible; // রেফারেন্স আপডেট রাখা হয় (পরের স্ক্রল-লোড ব্যাচ যেন সঠিক তালিকা থেকে আসে)
+    visible.slice(0, catalogRenderedCount).forEach(p => updateCardQtyDisplay(p.id));
+    return;
+  }
+  catalogVisibleIdsKey = newKey;
   catalogVisibleList = visible;
   catalogRenderedCount = 0;
+  if(catalogObserver){ catalogObserver.disconnect(); catalogObserver = null; }
   grid.innerHTML = '';
   renderNextCatalogBatch();
 }
