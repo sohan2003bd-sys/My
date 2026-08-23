@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0E2A5A">
-<title>অর্ডার করুন — SOHAN SHOP BD</title>
+<title>অর্ডার করুন — আমার দোকান</title>
 <script>
 /* সবার আগে চলে (head-এর একদম শুরুতে) — আগের ভিজিটের localStorage ক্যাশ থেকে
    সবচেয়ে উপরের সারির প্রথম ২টি পণ্যের ছবি সাথে সাথে খুঁজে বের করে preload করে দেয়,
@@ -849,7 +849,7 @@
     </div>
     <div class="hero-inner">
       <div class="seal" id="bizSeal"><span>🛍️</span></div>
-      <h1 id="bizName">SOHAN SHOP BD</h1>
+      <h1 id="bizName">আমার দোকান</h1>
       <p class="tagline" data-i18n="tagline">নিচে থেকে পণ্য বেছে অর্ডার করুন — নিশ্চিত করার পর আমরা যোগাযোগ করব</p>
     </div>
   </div>
@@ -1231,7 +1231,11 @@
 /* =========================================================
    CONFIGURE THIS SECTION FOR YOUR BUSINESS
    ========================================================= */
-const BUSINESS_NAME = "SOHAN SHOP BD";
+// এটা শুধুই একটা fallback — Firebase-এ শপের company.name সেট করা থাকলে (MY SHOP অ্যাপের
+// Settings থেকে) সবসময় সেটাই দেখানো হবে, এই মানটা শুধু ডাটা লোড হওয়ার আগে বা company.name
+// একেবারেই ফাঁকা থাকলে ব্যবহার হয়। তাই এটাকে কোনো নির্দিষ্ট শপের নামে হার্ডকোড না করে একটা
+// নিরপেক্ষ ডিফল্ট রাখা হলো, যাতে এই একই ফাইল যেকোনো শপের জন্য পুনর্ব্যবহার করা যায়।
+const BUSINESS_NAME = "আমার দোকান";
 // যদি প্রোডাক্টের ছবির লিংক পূর্ণ (https://...) না হয়ে শুধু ফোল্ডার পাথ হয় (যেমন "images/file.png"),
 // তাহলে এই সাইটের ঠিকানা ধরে সেটা স্বয়ংক্রিয়ভাবে পূর্ণ লিংকে পরিণত করা হবে।
 const IMAGE_BASE_URL = "https://sohan2003bd-sys.github.io/My/";
@@ -1670,8 +1674,9 @@ function restoreCart(){
 // যেন নিচের DOMContentLoaded → tryInitFirebase() (লাইভ ডাটা লোড) কখনো আটকে না যায়।
 // আগে try/catch ছাড়া থাকায় ক্যাশ থেকে সাজানোর সময় কোনো এরর হলে পুরো স্ক্রিপ্ট থেমে যেত,
 // ফলে লাইভ Firebase লোড শুরুই হতো না — পেজ চিরকাল স্কেলিটন লোডিং অবস্থায় আটকে থাকতো।
+let __cached = null;
 try{
-  const __cached = readCache();
+  __cached = readCache();
   if(__cached){
     // Cache validity check — যদি cache এর মধ্যে কোনো product imageUrl ছাড়াই থাকে, তাহলে cache পরিষ্কার করা হয়
     let isValidCache = true;
@@ -3851,7 +3856,7 @@ function drawReceipt(ctx, order, opts){
     ctx.restore();
   }
   setFont(700, 20, "'Hind Siliguri', sans-serif");
-  text(bizNameEl ? bizNameEl.textContent : 'SOHAN SHOP BD', nameX, 34, {color:'#FFFFFF'});
+  text(bizNameEl ? bizNameEl.textContent : BUSINESS_NAME, nameX, 34, {color:'#FFFFFF'});
   setFont(600, 11.5);
   text('অর্ডার রিসিট', nameX, 54, {color: C.gold});
   setFont(600, 11, "'IBM Plex Mono', monospace");
