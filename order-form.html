@@ -115,19 +115,19 @@
     border-radius:10px; padding:6px 10px; backdrop-filter:blur(3px);
   }
 
-  /* ---------- ভাষা টগল (বাংলা/English) ---------- */
-  .lang-toggle{
-    position:absolute; top:14px; left:14px; z-index:3;
-    display:flex; background:rgba(8,20,36,0.62); border:1px solid rgba(255,168,87,0.35);
-    border-radius:20px; padding:3px; backdrop-filter:blur(3px);
+  /* ---------- ভাষা টগল (বাংলা/English) — পেজের নিচে, ফুটারের পর ---------- */
+  .lang-toggle-footer{
+    display:flex; justify-content:center; gap:6px; margin:18px 16px 22px; padding:4px;
+    background:var(--card); border:1px solid var(--rule); border-radius:22px; max-width:220px; margin-left:auto; margin-right:auto;
+    box-shadow:0 2px 8px rgba(14,42,90,0.06);
   }
-  .lang-toggle button{
-    border:none; background:none; color:#CFE0FF; font-size:11px; font-weight:700;
-    padding:5px 10px; border-radius:16px; font-family:'Hind Siliguri',sans-serif; letter-spacing:.02em;
+  .lang-toggle-footer button{
+    flex:1; border:none; background:none; color:var(--muted); font-size:12.5px; font-weight:700;
+    padding:8px 14px; border-radius:18px; font-family:'Hind Siliguri',sans-serif; letter-spacing:.02em;
   }
-  .lang-toggle button.active{
+  .lang-toggle-footer button.active{
     background:linear-gradient(155deg, var(--gold-light), var(--gold)); color:var(--plum-900);
-    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
   }
 
   /* ---------- সার্চ বার ---------- */
@@ -198,33 +198,7 @@
   .prod-strip-card .ps-name{ font-size:11px; font-weight:600; color:#EEF8F0; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em; }
   .prod-strip-card .ps-price{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:700; color:var(--gold-light); margin-top:4px; display:block; }
   #qvRelatedSection{ margin-top:18px; padding-top:16px; border-top:1px solid var(--rule); }
-  #cartRelatedSection{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); }
-
-  /* ---------- উইশলিস্ট ---------- */
-  .wish-btn{
-    position:absolute; top:8px; right:8px; z-index:3; width:30px; height:30px; border-radius:50%;
-    border:none; background:rgba(8,20,36,0.5); backdrop-filter:blur(2px);
-    display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff;
-    transition:transform .12s ease;
-  }
-  .wish-btn:active{ transform:scale(0.85); }
-  .wish-btn.active{ color:var(--rust); background:rgba(255,255,255,0.92); }
-  .wish-tab-bar{ display:flex; gap:8px; padding:0 16px 10px; }
-  .wish-nav-btn{
-    flex:none; margin-left:auto; display:flex; align-items:center; gap:6px; padding:8px 14px;
-    border-radius:20px; border:1.5px solid var(--rule); background:var(--card); font-size:12.5px; font-weight:600;
-    color:var(--plum-800); font-family:'Hind Siliguri',sans-serif;
-  }
-  .wish-nav-btn .wish-count{
-    background:var(--rust); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px;
-    border-radius:9px; display:inline-flex; align-items:center; justify-content:center; padding:0 4px;
-  }
-  .wish-overlay{ position:fixed; inset:0; background:rgba(8,20,36,0.86); z-index:96; display:none; align-items:flex-end; justify-content:center; }
-  .wish-overlay.open{ display:flex; }
-  .wish-sheet{ width:100%; max-width:520px; max-height:80vh; overflow-y:auto; background:var(--paper); border-radius:20px 20px 0 0; animation:qvUp .22s ease; padding:16px 16px 22px; }
-  .wish-sheet-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .wish-sheet-head h3{ font-family:'Tiro Bangla', serif; font-size:18px; margin:0; color:var(--plum-900); }
-  .wish-empty{ text-align:center; padding:30px 10px; color:var(--muted); font-size:13.5px; }
+  #cartRelatedSection{ margin-bottom:14px; padding-bottom:14px; border-bottom:1px dashed var(--rule); }
 
   /* ---------- Marquee (pinned to top of viewport, always visible while scrolling) ---------- */
   .marquee-bar{
@@ -263,39 +237,27 @@
   .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(14,42,90,0.05); padding:18px 16px; margin-bottom:16px; }
   .card h2{ font-size:17px; margin:0 0 14px; color:var(--plum-900); }
 
-  .field{ margin-bottom:14px; }
+  .field{ margin-bottom:13px; }
   .field label{ display:block; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
   /* নাম / ঠিকানা / মোবাইল / পেমেন্ট / নোট — এই লেবেলগুলো একটু বড়, হালকা বোল্ড ও সবুজ রঙের */
   .field label.field-label-lg{
     font-size:14.5px; font-weight:600; color:#1E8A4C; text-transform:none; letter-spacing:0; margin-bottom:7px;
   }
   .field input, .field select, .field textarea{
-    width:100%; border:1.5px solid rgba(21,53,122,0.14); background:linear-gradient(180deg,#FFFFFF,#FCFDFE);
-    border-radius:14px; padding:13px 15px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
-    box-shadow:0 1px 2px rgba(14,42,90,0.04), 0 5px 12px rgba(14,42,90,0.05); -webkit-appearance:none;
-    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
+    width:100%; border:1.5px solid rgba(21,53,122,0.16); background:#fff; border-radius:12px;
+    padding:12px 14px; font-size:14.5px; color:var(--ink); outline:none; font-family:inherit;
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); -webkit-appearance:none;
+    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
   .field input::placeholder, .field textarea::placeholder{ color:#9CA6BC; opacity:1; }
-  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(21,53,122,0.32); box-shadow:0 1px 2px rgba(14,42,90,0.05), 0 6px 14px rgba(14,42,90,0.07); }
+  .field input:hover, .field select:hover, .field textarea:hover{ border-color:rgba(21,53,122,0.3); }
   .field input:focus, .field select:focus, .field textarea:focus{
-    border-color:var(--gold); background:#fff; transform:translateY(-1px);
-    box-shadow:0 0 0 4px rgba(242,129,43,0.14), 0 8px 18px rgba(14,42,90,0.09);
+    border-color:var(--gold); background:#fff; box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05);
   }
   .field textarea{ resize:vertical; line-height:1.5; }
   .field select{ appearance:none; -webkit-appearance:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M1 1l6 6 6-6' stroke='%238A7C6C' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat:no-repeat; background-position:right 12px center; padding-right:34px;
-  }
-
-  /* ---------- নাম / মোবাইল / ঠিকানা বক্সে ছোট আইকন — প্রতিটি বক্স আলাদাভাবে চেনা যায় ---------- */
-  #custName, #custPhone{
-    padding-left:43px; background-repeat:no-repeat; background-size:18px 18px; background-position:14px center;
-  }
-  #custName{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8' r='4'/><path d='M4 20c0-4 3.6-7 8-7s8 3 8 7'/></svg>"); }
-  #custPhone{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5l1.5-2 4 1.5v3c0 1-1 2-2 2C11 19.5 4.5 13 3 4.5c0-1 1-2 2-2z'/></svg>"); }
-  #custAddress{
-    padding-left:43px; background-repeat:no-repeat; background-size:18px 18px; background-position:14px 15px;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B8C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 11.5 12 4l8 7.5'/><path d='M6 10v9h12v-9'/><path d='M10 19v-5h4v5'/></svg>");
   }
 
   /* ---------- Online payment details panel ---------- */
@@ -478,67 +440,35 @@
     cursor:pointer; font-family:inherit; padding:0; margin-left:4px;
   }
 
-  /* ---------- থানা/এলাকা স্মার্ট সার্চ-বক্স ---------- */
-  /* অন্যান্য বক্সের চেয়ে ইচ্ছাকৃতভাবে আলাদা: সোনালি-নীল গ্রেডিয়েন্ট বর্ডার-ফ্রেম, ভেতরে ম্যাগনিফাই আইকন,
-     আর একটি এলিভেটেড GPS বাটন — যাতে ইউজার এক নজরেই বুঝতে পারে এটা একটা স্মার্ট/অটো-খোঁজ ফিচার। */
+  /* ---------- থানা সার্চ-বক্স ও 📍 GPS বাটন ---------- */
   .field-label-sub{ text-transform:none; letter-spacing:0; font-size:10.5px; font-weight:400; color:var(--muted); }
-
-  .thana-search-wrap{
-    position:relative; border-radius:18px; padding:2.5px;
-    background:linear-gradient(120deg, var(--gold-light) 0%, var(--gold) 48%, var(--plum-600) 100%);
-    box-shadow:0 8px 20px rgba(217,105,26,0.22), 0 2px 6px rgba(14,42,90,0.10);
-    transition:box-shadow .18s ease;
-  }
-  .thana-search-wrap:focus-within{
-    box-shadow:0 0 0 4px rgba(242,129,43,0.16), 0 8px 20px rgba(217,105,26,0.24), 0 2px 6px rgba(14,42,90,0.10);
-  }
-  .thana-search-row{ display:flex; align-items:center; gap:6px; background:#fff; border-radius:15.5px; padding:4px; }
+  .thana-search-row{ display:flex; gap:8px; }
   .thana-search-row input{
-    flex:1; min-width:0; border:none; background:transparent; border-radius:12px;
-    padding:11px 12px 11px 38px; font-size:13.5px; font-family:inherit; color:var(--ink);
-    transition:background-color .15s ease;
+    flex:1; min-width:0; padding:12px 14px; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
+    background:#fff; font-size:13.5px; font-family:inherit; color:var(--ink);
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, box-shadow .15s ease;
   }
-  /* আইডি সিলেক্টর ব্যবহার করা হয়েছে যাতে ফোকাস অবস্থায় .field input:focus-এর background শর্টহ্যান্ড
-     আইকনটা মুছে না ফেলে (নাহলে ফোকাস করলেই ম্যাগনিফাই আইকন হারিয়ে যেত) */
-  #thanaSearchInput{
-    background-repeat:no-repeat; background-size:16px 16px; background-position:12px center;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9691A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='6.5'/><path d='m20 20-3.6-3.6'/></svg>");
-  }
-  .thana-search-row input::placeholder{ color:#ACA495; opacity:1; }
-  .thana-search-row input:focus{ outline:none; background-color:rgba(242,129,43,0.07); box-shadow:none; transform:none; }
+  .thana-search-row input::placeholder{ color:#9CA6BC; opacity:1; }
+  .thana-search-row input:hover{ border-color:rgba(21,53,122,0.3); }
+  .thana-search-row input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3.5px rgba(242,129,43,0.16), 0 1px 3px rgba(14,42,90,0.05); }
   .gps-btn{
-    flex:0 0 auto; width:42px; height:42px; border-radius:12px; border:none; position:relative;
-    background:linear-gradient(155deg, var(--plum-700), var(--plum-900)); color:#fff; font-size:17px;
-    cursor:pointer; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 3px 10px rgba(8,26,59,0.35); transition:transform .15s ease, box-shadow .15s ease;
+    flex:0 0 auto; width:46px; height:auto; border-radius:12px; border:1.5px solid rgba(21,53,122,0.16);
+    background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 3px rgba(14,42,90,0.05); transition:border-color .15s ease, background .15s ease;
   }
-  .gps-btn::after{
-    content:''; position:absolute; inset:-4px; border-radius:16px; border:1.5px solid rgba(53,102,194,0.45);
-    animation:gpsPulse 2.4s ease-out infinite; pointer-events:none;
-  }
-  @keyframes gpsPulse{
-    0%{ transform:scale(0.86); opacity:.9; }
-    70%{ transform:scale(1.2); opacity:0; }
-    100%{ opacity:0; }
-  }
-  .gps-btn:active{ transform:scale(0.93); box-shadow:0 1px 4px rgba(8,26,59,0.35); }
-
+  .gps-btn:active{ background:var(--paper-deep); border-color:var(--gold); }
   .thana-suggest-list{
-    position:absolute; left:3px; right:3px; top:100%; margin-top:6px; z-index:20; max-height:224px; overflow-y:auto;
-    background:#fff; border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow-lift); padding:5px;
+    position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:20; max-height:220px; overflow-y:auto;
+    background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow);
   }
   .thana-suggest-item{
-    padding:9px 10px; display:flex; align-items:center; gap:8px; cursor:pointer; border-radius:10px;
+    padding:9px 12px; display:flex; align-items:baseline; gap:7px; cursor:pointer; border-bottom:1px dashed var(--rule);
   }
-  .thana-suggest-item:not(:last-child){ border-bottom:1px dashed var(--rule); }
-  .thana-suggest-item:not(.thana-suggest-live)::before{
-    content:''; flex:0 0 auto; width:13px; height:13px;
-    background:no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9691A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z'/><circle cx='12' cy='9' r='2.3'/></svg>");
-  }
+  .thana-suggest-item:last-child{ border-bottom:none; }
   .thana-suggest-item:active{ background:var(--paper-deep); }
   .thana-suggest-item b{ font-size:13px; color:var(--ink); font-weight:600; }
   .thana-suggest-item span{ font-size:11px; color:var(--muted); }
-  .thana-suggest-item.thana-suggest-live{ background:rgba(53,102,194,0.06); border-radius:10px; }
+  .thana-suggest-item.thana-suggest-live{ background:rgba(53,102,194,0.05); }
 
   /* ---------- Cart / receipt strip ---------- */
   #cartCard{ position:relative; }
@@ -577,6 +507,15 @@
   .btn:disabled{ opacity:.55; box-shadow:none; }
 
   .empty-note{ font-size:12.5px; color:var(--muted); text-align:center; padding:14px; }
+
+  /* ---------- 📦 বড় ক্যাটালগ অপটিমাইজেশন — একবারে সব পণ্যের DOM না বানিয়ে ধাপে ধাপে লোড ---------- */
+  .catalog-load-sentinel{ grid-column:1/-1; height:1px; }
+  .load-more-row{ grid-column:1/-1; display:flex; justify-content:center; padding:8px 0 2px; }
+  .load-more-btn{
+    border:1.5px solid var(--rule); background:var(--card); color:var(--plum-800); font-weight:600;
+    font-size:12.5px; padding:10px 22px; border-radius:22px; font-family:'Hind Siliguri',sans-serif;
+  }
+  .load-more-count{ grid-column:1/-1; text-align:center; font-size:11.5px; color:var(--muted); padding:2px 0 6px; }
 
   /* ---------- Skeleton loaders (slow-network first paint) ---------- */
   @keyframes skeletonPulse{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
@@ -902,10 +841,6 @@
   </div>
   <div class="hero">
     <img class="hero-photo" src="https://images.unsplash.com/photo-1604118464816-5e2bd7b863c2?fm=jpg&q=45&w=500&auto=format&fit=crop" alt="শপিং ব্যাগ" fetchpriority="high" decoding="async">
-    <div class="lang-toggle" id="langToggle">
-      <button type="button" data-lang="bn" onclick="setLang('bn')">বাং</button>
-      <button type="button" data-lang="en" onclick="setLang('en')">EN</button>
-    </div>
     <div class="hero-datetime" id="heroDateTime">
       <div class="d1" id="heroDay">—</div>
       <div class="d2" id="heroDateEn">—</div>
@@ -943,12 +878,6 @@
     </div>
   </div>
 
-  <div class="wish-tab-bar">
-    <button type="button" class="wish-nav-btn" onclick="openWishlist()">
-      ♥ <span id="wishTabLabel" data-i18n="wishlist">উইশলিস্ট</span> <span class="wish-count" id="wishCount" style="display:none;">0</span>
-    </button>
-  </div>
-
   <div class="cat-nav" id="catNav"></div>
 
   <div class="track-order-bar">
@@ -958,11 +887,6 @@
   <main>
     <form id="orderForm" onsubmit="return submitOrder(event)">
       <div class="form-col-main">
-
-      <div class="card" id="recentlyViewedCard" style="display:none; padding-left:14px; padding-right:14px;">
-        <div class="prod-strip-title">🕘 <span data-i18n="recentlyViewed">সাম্প্রতিক দেখা পণ্য</span></div>
-        <div class="prod-strip" id="recentlyViewedStrip"></div>
-      </div>
 
       <div class="card" style="padding-left:14px; padding-right:14px;">
         <span class="eyebrow" data-i18n="step1Eyebrow">০১ · পণ্য নির্বাচন</span>
@@ -991,12 +915,13 @@
       <div class="card" id="cartCard" style="display:none;">
         <span class="eyebrow" data-i18n="step2Eyebrow">০২ · অর্ডার সারাংশ</span>
         <h2 data-i18n="step2Title">আপনার অর্ডার</h2>
-        <div id="cartBox"></div>
 
         <div id="cartRelatedSection" style="display:none;">
           <div class="prod-strip-title">🔗 <span data-i18n="youMayAlsoLike">আপনার পছন্দ হতে পারে</span></div>
           <div class="prod-strip" id="cartRelatedStrip"></div>
         </div>
+
+        <div id="cartBox"></div>
 
         <div class="delivery-box">
           <p class="delivery-note" id="deliveryNote" data-i18n="deliveryNote">মূল্যের সাথে ডেলিভারি চার্জ যুক্ত হবে।</p>
@@ -1030,11 +955,9 @@
         </div>
         <div class="field" style="position:relative;">
           <label class="field-label-lg"><span data-i18n="findThana">থানা/এলাকা খুঁজুন</span> <span class="field-label-sub" data-i18n="findThanaSub">(ঐচ্ছিক — বাংলা বা ইংরেজিতে লিখুন)</span></label>
-          <div class="thana-search-wrap">
-            <div class="thana-search-row">
-              <input type="text" id="thanaSearchInput" data-i18n-placeholder="thanaPlaceholder" placeholder="যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর" autocomplete="off" oninput="handleThanaSearchInput()" onfocus="handleThanaSearchInput()">
-              <button type="button" id="gpsLocateBtn" class="gps-btn" onclick="useGpsLocation()" title="বর্তমান অবস্থান ব্যবহার করুন">📍</button>
-            </div>
+          <div class="thana-search-row">
+            <input type="text" id="thanaSearchInput" data-i18n-placeholder="thanaPlaceholder" placeholder="যেমন: ধানমন্ডি, Mirpur, কুমিল্লা সদর" autocomplete="off" oninput="handleThanaSearchInput()" onfocus="handleThanaSearchInput()">
+            <button type="button" id="gpsLocateBtn" class="gps-btn" onclick="useGpsLocation()" title="বর্তমান অবস্থান ব্যবহার করুন">📍</button>
           </div>
           <div id="thanaSuggestList" class="thana-suggest-list" style="display:none;"></div>
         </div>
@@ -1203,6 +1126,11 @@
     <hr class="pf-rule">
     <div class="pf-bottom" id="pfBottom"></div>
   </footer>
+
+  <div class="lang-toggle-footer" id="langToggleFooter">
+    <button type="button" data-lang="bn" onclick="setLang('bn')">বাংলা</button>
+    <button type="button" data-lang="en" onclick="setLang('en')">English</button>
+  </div>
 </div>
 
 
@@ -1217,16 +1145,6 @@
   <button type="button" class="img-zoom-close" onclick="closeImgZoom()">✕</button>
   <img id="imgZoomImg" src="" alt="">
   <div class="img-zoom-dots" id="imgZoomDots"></div>
-</div>
-
-<div class="wish-overlay" id="wishOverlay" onclick="if(event.target===this) closeWishlist()">
-  <div class="wish-sheet">
-    <div class="wish-sheet-head">
-      <h3 id="wishSheetTitle" data-i18n="wishlist">উইশলিস্ট</h3>
-      <button type="button" class="qv-close" style="position:static; float:none; margin:0;" onclick="closeWishlist()">✕</button>
-    </div>
-    <div class="catalog-grid" id="wishGrid"></div>
-  </div>
 </div>
 
 <div class="qv-overlay" id="qvOverlay" onclick="if(event.target===this) closeQuickView()">
@@ -1423,6 +1341,7 @@ function updateHeroDateTime(){
 }
 updateHeroDateTime();
 setInterval(updateHeroDateTime, 60 * 1000);
+applyI18n();
 
 let products = [];
 let videos = [];
@@ -1440,8 +1359,10 @@ function togglePriceFilterPanel(){
 function applyPriceFilter(){
   const minEl = document.getElementById('priceMinInput');
   const maxEl = document.getElementById('priceMaxInput');
-  const min = minEl.value.trim() === '' ? null : Number(minEl.value);
-  const max = maxEl.value.trim() === '' ? null : Number(maxEl.value);
+  const minRaw = minEl.value.trim();
+  const maxRaw = maxEl.value.trim();
+  const min = minRaw === '' || isNaN(Number(minRaw)) ? null : Number(minRaw);
+  const max = maxRaw === '' || isNaN(Number(maxRaw)) ? null : Number(maxRaw);
   if(min !== null && max !== null && min > max){
     showToast(t('invalidPriceRange'));
     return;
@@ -1468,25 +1389,6 @@ function updateFilterToggleState(){
   btn.classList.toggle('active-filter', active);
 }
 
-// ---- 🕘 সাম্প্রতিক দেখা পণ্য (Recently Viewed) — শুধু এই ব্রাউজারেই, প্রতি শপের জন্য আলাদা ----
-const RECENTLY_VIEWED_KEY = 'sohanshop_recent_' + SHOP_ID;
-const RECENTLY_VIEWED_MAX = 12;
-function readRecentlyViewed(){
-  try{ const raw = localStorage.getItem(RECENTLY_VIEWED_KEY); return raw ? JSON.parse(raw) : []; }
-  catch(e){ return []; }
-}
-let recentlyViewedIds = readRecentlyViewed(); // productId-দের অ্যারে, সবচেয়ে সাম্প্রতিকটা প্রথমে
-function saveRecentlyViewed(){
-  try{ localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewedIds)); }
-  catch(e){ /* কোটা শেষ/প্রাইভেট মোড হলেও চলবে, শুধু পরের ভিজিটে মনে থাকবে না */ }
-}
-function trackRecentlyViewed(productId){
-  recentlyViewedIds = recentlyViewedIds.filter(id => id !== productId);
-  recentlyViewedIds.unshift(productId);
-  if(recentlyViewedIds.length > RECENTLY_VIEWED_MAX) recentlyViewedIds = recentlyViewedIds.slice(0, RECENTLY_VIEWED_MAX);
-  saveRecentlyViewed();
-  renderRecentlyViewedStrip();
-}
 function buildStripCardHtml(p){
   const thumbUrl = getThumbUrl(p);
   const price = Number(p.price) || 0;
@@ -1499,15 +1401,6 @@ function buildStripCardHtml(p){
     </div>
   </button>`;
 }
-function renderRecentlyViewedStrip(){
-  const card = document.getElementById('recentlyViewedCard');
-  const strip = document.getElementById('recentlyViewedStrip');
-  if(!card || !strip) return;
-  const items = recentlyViewedIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-  if(items.length === 0){ card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  strip.innerHTML = items.map(buildStripCardHtml).join('');
-}
 
 // ---- 🔗 সম্পর্কিত পণ্য (একই ক্যাটাগরি) — QV এবং কার্ট থেকে দেখানো হয় ----
 function getRelatedProducts(product, excludeIds, limit){
@@ -1515,16 +1408,26 @@ function getRelatedProducts(product, excludeIds, limit){
   const cat = (product.category || '').trim();
   const exclude = new Set(excludeIds || []);
   exclude.add(product.id);
-  let related = cat
-    ? products.filter(p => !exclude.has(p.id) && (p.category || '').trim() === cat)
-    : [];
-  // একই ক্যাটাগরিতে যথেষ্ট পণ্য না থাকলে বাকি জায়গা অন্য যেকোনো পণ্য দিয়ে পূরণ করা হয়,
-  // যাতে সেকশনটা প্রায় খালি অবস্থায় না দেখায়
-  if(related.length < limit){
-    const filler = products.filter(p => !exclude.has(p.id) && !related.includes(p));
-    related = related.concat(filler.slice(0, limit - related.length));
+  const related = [];
+  // বড় ক্যাটালগে (হাজারো পণ্য) পুরো লিস্ট স্ক্যান করার বদলে যত পাওয়া দরকার (limit) ততটা
+  // পেলেই থেমে যাওয়া হয় — আগে পুরো ফিল্টার করে পরে slice করা হতো, যা অহেতুক সময় নিত
+  if(cat){
+    for(let i = 0; i < products.length && related.length < limit; i++){
+      const p = products[i];
+      if(!exclude.has(p.id) && (p.category || '').trim() === cat) related.push(p);
+    }
   }
-  return related.slice(0, limit);
+  // একই ক্যাটাগরিতে যথেষ্ট পণ্য না থাকলে বাকি জায়গা অন্য যেকোনো পণ্য দিয়ে পূরণ করা হয়,
+  // যাতে সেকশনটা প্রায় খালি অবস্থায় না দেখায়। related ছোট (সর্বোচ্চ limit), তাই
+  // related.includes() এখানে আর ব্যয়বহুল নয়।
+  if(related.length < limit){
+    const relatedIds = new Set(related.map(p => p.id));
+    for(let i = 0; i < products.length && related.length < limit; i++){
+      const p = products[i];
+      if(!exclude.has(p.id) && !relatedIds.has(p.id)) related.push(p);
+    }
+  }
+  return related;
 }
 function renderQvRelated(product){
   const section = document.getElementById('qvRelatedSection');
@@ -1554,7 +1457,7 @@ function renderCartRelated(){
 const I18N = {
   bn: {
     tagline:'নিচে থেকে পণ্য বেছে অর্ডার করুন — নিশ্চিত করার পর আমরা যোগাযোগ করব',
-    searchPlaceholder:'পণ্য খুঁজুন…', wishlist:'উইশলিস্ট', trackOrder:'অর্ডার ট্র্যাক করুন',
+    searchPlaceholder:'পণ্য খুঁজুন…', trackOrder:'অর্ডার ট্র্যাক করুন',
     step1Eyebrow:'০১ · পণ্য নির্বাচন', step1Title:'পণ্য দেখুন ও যোগ করুন',
     videoEyebrow:'ভিডিও', videoTitle:'আমাদের ভিডিও দেখুন',
     testimonialsEyebrow:'গ্রাহক অভিজ্ঞতা', testimonialsTitle:'আমাদের গ্রাহকরা যা বলছেন',
@@ -1578,17 +1481,16 @@ const I18N = {
     yourNamePlaceholder:'আপনার নাম', reviewPhonePlaceholder:'মোবাইল নাম্বার (যাচাইয়ের জন্য, প্রকাশ হবে না)',
     reviewCommentPlaceholder:'পণ্যটি সম্পর্কে আপনার অভিজ্ঞতা লিখুন', submitReview:'রিভিউ জমা দিন',
     allCategory:'সকল', addToCartBtn:'Order now', inCartBtn:'টি কার্টে', chooseDesignSize:'ডিজাইন ও সাইজ বাছাই করুন',
-    wishAdded:'উইশলিস্টে যোগ করা হয়েছে', wishRemoved:'উইশলিস্ট থেকে সরানো হয়েছে', wishEmpty:'উইশলিস্ট এখনো খালি — পছন্দের পণ্যে ♡ চাপুন',
     noSearchResults:'কোনো পণ্য খুঁজে পাওয়া যায়নি।', clearSearch:'সার্চ মুছুন', zoomHint:'ছবি বড় করে দেখুন',
     selectAreaHint:'এলাকা নির্বাচন করুন', addedToCartToast:'কার্টে যোগ করা হয়েছে',
     minPrice:'সর্বনিম্ন ৳', maxPrice:'সর্বোচ্চ ৳', resetFilter:'মুছে ফেলুন', applyFilter:'প্রয়োগ করুন',
-    recentlyViewed:'সাম্প্রতিক দেখা পণ্য', relatedProducts:'সম্পর্কিত পণ্য', youMayAlsoLike:'আপনার পছন্দ হতে পারে',
+    relatedProducts:'সম্পর্কিত পণ্য', youMayAlsoLike:'আপনার পছন্দ হতে পারে',
     invalidPriceRange:'সর্বনিম্ন মূল্য সর্বোচ্চ মূল্যের চেয়ে বেশি হতে পারবে না',
-    noProductsInRange:'এই মূল্যসীমায় কোনো পণ্য নেই।',
+    noProductsInRange:'এই মূল্যসীমায় কোনো পণ্য নেই।', loadMore:'আরও দেখুন',
   },
   en: {
     tagline:'Pick your products below — we\'ll contact you after you confirm',
-    searchPlaceholder:'Search products…', wishlist:'Wishlist', trackOrder:'Track Order',
+    searchPlaceholder:'Search products…', trackOrder:'Track Order',
     step1Eyebrow:'01 · Select Products', step1Title:'Browse & Add Products',
     videoEyebrow:'Video', videoTitle:'Watch Our Videos',
     testimonialsEyebrow:'Customer Feedback', testimonialsTitle:'What Our Customers Say',
@@ -1612,13 +1514,12 @@ const I18N = {
     yourNamePlaceholder:'Your name', reviewPhonePlaceholder:'Mobile number (for verification, not shown publicly)',
     reviewCommentPlaceholder:'Share your experience with this product', submitReview:'Submit Review',
     allCategory:'All', addToCartBtn:'Order now', inCartBtn:' in cart', chooseDesignSize:'Choose design & size',
-    wishAdded:'Added to wishlist', wishRemoved:'Removed from wishlist', wishEmpty:'Your wishlist is empty — tap ♡ on items you like',
     noSearchResults:'No products found.', clearSearch:'Clear search', zoomHint:'Tap to zoom',
     selectAreaHint:'select delivery area', addedToCartToast:'Added to cart',
     minPrice:'Min ৳', maxPrice:'Max ৳', resetFilter:'Reset', applyFilter:'Apply',
-    recentlyViewed:'Recently Viewed', relatedProducts:'Related Products', youMayAlsoLike:'You may also like',
+    relatedProducts:'Related Products', youMayAlsoLike:'You may also like',
     invalidPriceRange:'Minimum price cannot be greater than maximum price',
-    noProductsInRange:'No products in this price range.',
+    noProductsInRange:'No products in this price range.', loadMore:'Load more',
   }
 };
 let currentLang = (function(){
@@ -1636,7 +1537,7 @@ function setLang(lang){
 }
 function applyI18n(){
   document.documentElement.lang = currentLang;
-  document.querySelectorAll('#langToggle button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+  document.querySelectorAll('#langToggleFooter button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
   document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
   // ডেলিভারি রেডিও লেবেল (ঢাকার ভেতরে/বাইরে) — বাংলা/ইংরেজি dataset থেকে সেট হয়, backend লজিকে অপরিবর্তিত
@@ -1649,51 +1550,6 @@ function applyI18n(){
   if(typeof renderCart === 'function') renderCart();
   const searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.placeholder = t('searchPlaceholder');
-}
-
-// ---- ❤️ উইশলিস্ট (শুধু এই ব্রাউজারেই, প্রতি শপের জন্য আলাদা, localStorage) ----
-const WISHLIST_KEY = 'sohanshop_wishlist_' + SHOP_ID;
-function readWishlist(){
-  try{ const raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; }
-  catch(e){ return []; }
-}
-let wishlist = readWishlist(); // productId-দের অ্যারে
-function saveWishlist(){
-  try{ localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist)); }
-  catch(e){ /* কোটা শেষ/প্রাইভেট মোড হলেও চলবে, শুধু পরের ভিজিটে মনে থাকবে না */ }
-}
-function isWished(productId){ return wishlist.includes(productId); }
-function toggleWishlist(productId, evt){
-  if(evt) evt.stopPropagation();
-  const idx = wishlist.indexOf(productId);
-  if(idx === -1){ wishlist.push(productId); showToast(t('wishAdded')); }
-  else { wishlist.splice(idx, 1); showToast(t('wishRemoved')); }
-  saveWishlist();
-  document.querySelectorAll(`.wish-btn[data-pid="${CSS.escape(productId)}"]`).forEach(btn => btn.classList.toggle('active', isWished(productId)));
-  updateWishCount();
-  if(document.getElementById('wishOverlay').classList.contains('open')) renderWishlistSheet();
-}
-function updateWishCount(){
-  const el = document.getElementById('wishCount');
-  if(!el) return;
-  if(wishlist.length > 0){ el.style.display = 'inline-flex'; el.textContent = wishlist.length; }
-  else { el.style.display = 'none'; }
-}
-function openWishlist(){
-  renderWishlistSheet();
-  document.getElementById('wishOverlay').classList.add('open');
-}
-function closeWishlist(){
-  document.getElementById('wishOverlay').classList.remove('open');
-}
-function renderWishlistSheet(){
-  const grid = document.getElementById('wishGrid');
-  const items = products.filter(p => isWished(p.id));
-  if(items.length === 0){
-    grid.innerHTML = `<div class="wish-empty" style="grid-column:1/-1;">${t('wishEmpty')}</div>`;
-    return;
-  }
-  grid.innerHTML = items.map(p => buildCardHtml(p, false)).join('');
 }
 
 // ---- 🔎 প্রোডাক্ট সার্চ বার ----
@@ -1760,6 +1616,52 @@ function writeCache(data){
   try{ localStorage.setItem(CACHE_KEY, JSON.stringify(data)); }
   catch(e){ /* কোটা শেষ বা প্রাইভেট ব্রাউজিং মোড হলে ক্যাশ ছাড়াই চলবে */ }
 }
+
+/* ---------------- 🛒 কার্ট পার্সিস্টেন্স (রিফ্রেশ দিলেও কার্ট যেন হারিয়ে না যায়) ----------------
+   কাস্টমার পণ্য যোগ করার পর ভুলবশত পেজ রিফ্রেশ/ট্যাব বন্ধ করে ফেললে যাতে পুরো কার্ট আবার
+   নতুন করে সাজাতে না হয়, তাই cart অবজেক্টটা localStorage-এ (প্রতি শপের জন্য আলাদা) সেভ থাকে।
+   পণ্য তালিকা (Firebase থেকে) লোড হওয়ার পরই restoreCart() কল হয় — যাতে ইতিমধ্যে বন্ধ/মুছে
+   ফেলা পণ্য বা পুরনো দাম কার্টে থেকে না যায়, সবসময় সবশেষ প্রোডাক্ট ডেটার সাথে মিলিয়ে নেওয়া হয়। */
+const CART_KEY = 'sohanshop_cart_' + SHOP_ID;
+let cartRestored = false;
+function saveCartToStorage(){
+  try{
+    if(Object.keys(cart).length === 0){ localStorage.removeItem(CART_KEY); return; }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  } catch(e){ /* কোটা শেষ/প্রাইভেট মোড হলেও চলবে, শুধু রিফ্রেশে কার্ট থাকবে না */ }
+}
+function clearCartFromStorage(){
+  try{ localStorage.removeItem(CART_KEY); } catch(e){}
+}
+function restoreCart(){
+  if(cartRestored) return; // পণ্য লোড একাধিকবার (cache + live Firebase) হয়, কিন্তু restore শুধু একবারই দরকার
+  cartRestored = true;
+  let saved;
+  try{
+    const raw = localStorage.getItem(CART_KEY);
+    saved = raw ? JSON.parse(raw) : null;
+  } catch(e){ saved = null; }
+  if(!saved || typeof saved !== 'object') return;
+  const restored = {};
+  Object.keys(saved).forEach(key => {
+    const it = saved[key];
+    if(!it || !it.productId || !it.qty || it.qty <= 0) return;
+    const p = products.find(x => x.id === it.productId);
+    if(!p) return; // পণ্যটি এখন আর নেই — বাদ দেওয়া হলো
+    // দাম সবসময় সবশেষ Firebase ডেটা থেকে নেওয়া হয়, কার্টে সেভ থাকা পুরনো দাম কখনো ব্যবহার হয় না
+    const freshPrice = Number(p.price) || 0;
+    if(it.design && it.size){
+      // পোশাকের ক্ষেত্রে ডিজাইন/সাইজ এখনো বৈধ কিনা তা যাচাই করার সহজ উপায় নেই (ডিজাইন লেবেল
+      // বদলে যেতে পারে), তাই নাম/দাম আপডেট করে রাখা হয় কিন্তু এϾট্রিটা রাখা হয়
+      restored[key] = Object.assign({}, it, { price: freshPrice });
+    } else {
+      restored[key] = { key, productId: p.id, name: p.name, price: freshPrice, qty: it.qty };
+    }
+  });
+  cart = restored;
+  renderCatalog(); // কার্ডের "X টি কার্টে" বাটন-স্টেট রিফ্রেশ করতে ক্যাটালগ আবার আঁকা হয়
+  renderCart();
+}
 const __cached = readCache();
 if(__cached){
   // Cache validity check — যদি cache এর মধ্যে কোনো product imageUrl ছাড়াই থাকে, তাহলে cache পরিষ্কার করা হয়
@@ -1782,6 +1684,7 @@ if(__cached){
       products = __cached.products;
       renderCatNav();
       renderCatalog();
+      restoreCart();
     }
     if(Array.isArray(__cached.videos) && __cached.videos.length){
       videos = __cached.videos;
@@ -2072,15 +1975,6 @@ window.addEventListener('online', function(){
   if(!fbInitStarted){ clearTimeout(fbRetryTimer); tryInitFirebase(1); }
 });
 document.addEventListener('DOMContentLoaded', function(){
-  // পেজ লোডের একদম শুরুতে (স্ক্রিপ্টের ওপরের দিকে) সরাসরি updateWishCount()/applyI18n()
-  // কল করা হতো — কিন্তু applyI18n() ভেতরে renderCart()ও ডাকে, যেটা updateTotal()-এর
-  // মাধ্যমে isSubmitting ভ্যারিয়েবল পড়ে (নিচে অনেক পরে let দিয়ে ডিক্লেয়ার করা) — ফলে
-  // "Cannot access ... before initialization" ReferenceError-এ পুরো স্ক্রিপ্ট থেমে যেত
-  // (products/cart/db/wishlist/I18N কিছুই সেট হতো না, ক্যাটালগ কখনো লোড হতো না)।
-  // DOMContentLoaded ততক্ষণে পুরো স্ক্রিপ্ট (সব let/const) execute হয়ে যাওয়ার পরে ফায়ার
-  // হয়, তাই এখানে কল করা নিরাপদ — অন্য init কাজ (Firebase, saved info) এখানেই হয়।
-  updateWishCount();
-  applyI18n();
   tryInitFirebase();
   prefillSavedCustomerInfo();
 });
@@ -2121,6 +2015,7 @@ function initFirebaseApp(){
     });
     renderCatNav();
     renderCatalog();
+    restoreCart();
     __cProducts = products;
     __persistCache();
   }, (err) => {
@@ -2161,12 +2056,13 @@ function initFirebaseApp(){
 
 function renderCatNav(){
   const nav = document.getElementById('catNav');
+  const seen = new Set(['সকল']);
   const cats = ['সকল'];
-  products.forEach(p => {
-    const c = (p.category || '').trim();
-    if(c && !cats.includes(c)) cats.push(c);
-  });
-  if(!cats.includes(selectedCategory)) selectedCategory = 'সকল';
+  for(let i = 0; i < products.length; i++){
+    const c = (products[i].category || '').trim();
+    if(c && !seen.has(c)){ seen.add(c); cats.push(c); }
+  }
+  if(!seen.has(selectedCategory)) selectedCategory = 'সকল';
   if(cats.length <= 1){ nav.style.display = 'none'; return; }
   nav.style.display = 'flex';
   nav.innerHTML = cats.map(c => `
@@ -2209,7 +2105,6 @@ function buildCardHtml(p, isPriority){
       ${thumbUrl
         ? `<img src="${escapeHTML(thumbUrl)}" alt="${escapeHTML(p.name)}" ${imgAttrs} onerror="this.outerHTML='<div class=noimg></div>'">`
         : `<div class="noimg"></div>`}
-      <button type="button" class="wish-btn ${isWished(p.id) ? 'active' : ''}" data-pid="${escapeHTML(p.id)}" onclick="toggleWishlist('${p.id}', event)" aria-label="উইশলিস্টে যোগ করুন">${isWished(p.id) ? '♥' : '♡'}</button>
       <div class="badge-row">
         <span>${p.hotDeal ? `<span class="badge-hot">Hot Deal</span>` : ''}</span>
         <span>${hasDiscount ? `<span class="badge-off">-${pct}%</span>` : ''}</span>
@@ -2234,9 +2129,16 @@ function buildCardHtml(p, isPriority){
   </div>`;
 }
 
+// বড় ক্যাটালগে (শত শত/হাজারো পণ্য) পারফরম্যান্স ধরে রাখতে — একবারে সবগুলো পণ্যের
+// DOM এলিমেন্ট না বানিয়ে প্রথমে অল্প কিছু (CATALOG_PAGE_SIZE) দেখানো হয়, ব্যবহারকারী
+// নিচে স্ক্রল করলে IntersectionObserver স্বয়ংক্রিয়ভাবে পরের ব্যাচ লোড করে। এতে DOM
+// নোডের সংখ্যা সবসময় সীমিত থাকে, ছবি ডাউনলোড হয় শুধু যেগুলো আসলে দেখা দরকার তার জন্য।
+const CATALOG_PAGE_SIZE = 12;
+let catalogVisibleList = [];
+let catalogRenderedCount = 0;
+let catalogObserver = null;
 function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
-  renderRecentlyViewedStrip();
   if(products.length === 0){
     grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">এই মুহূর্তে কোনো পণ্য যোগ করা হয়নি। দোকানদারকে জানান।</div>';
     document.getElementById('submitBtn').disabled = true;
@@ -2260,6 +2162,7 @@ function renderCatalog(){
       return true;
     });
   }
+  if(catalogObserver){ catalogObserver.disconnect(); catalogObserver = null; }
   if(visible.length === 0){
     if(q){
       grid.innerHTML = `<div class="search-empty-note" style="grid-column:1/-1;">${t('noSearchResults')}<button type="button" onclick="clearSearch()">${t('clearSearch')}</button></div>`;
@@ -2270,28 +2173,78 @@ function renderCatalog(){
     }
     return;
   }
-  // প্রথমে উপরের ২টি (একটি সারি) সাথে সাথে দেখানো হয়, তারপর বাকি প্রডাক্ট
-  // ধাপে ধাপে (সারি অনুযায়ী) লোড হয় — এতে পেজ দ্রুত চোখে পড়ে এবং
-  // মূল থ্রেড একসাথে সব কার্ড আঁকার জন্য ব্লক হয় না।
-  const myToken = ++catalogRenderToken;
+  catalogVisibleList = visible;
+  catalogRenderedCount = 0;
   grid.innerHTML = '';
+  renderNextCatalogBatch();
+}
+// ধাপে ধাপে (রো-বাই-রো, requestAnimationFrame দিয়ে) একটা ব্যাচ আঁকা হয়, যাতে একসাথে
+// অনেক কার্ড বানানোর সময় মূল থ্রেড ব্লক না হয় (স্ক্রল/ট্যাপ ল্যাগবিহীন থাকে)
+function renderNextCatalogBatch(){
+  const grid = document.getElementById('catalogGrid');
+  const myToken = ++catalogRenderToken;
+  const startIdx = catalogRenderedCount;
+  const endIdx = Math.min(startIdx + CATALOG_PAGE_SIZE, catalogVisibleList.length);
   const rowSize = 2;
-  let idx = 0;
+  let idx = startIdx;
   function appendRow(){
-    if(myToken !== catalogRenderToken) return; // মাঝপথে ক্যাটাগরি পাল্টালে পুরোনো রেন্ডার থেমে যাবে
+    if(myToken !== catalogRenderToken) return; // মাঝপথে সার্চ/ক্যাটাগরি/ফিল্টার পাল্টালে থেমে যাবে
     const frag = document.createDocumentFragment();
-    const end = Math.min(idx + rowSize, visible.length);
-    for(; idx < end; idx++){
+    const rowEnd = Math.min(idx + rowSize, endIdx);
+    for(; idx < rowEnd; idx++){
       const holder = document.createElement('div');
-      holder.innerHTML = buildCardHtml(visible[idx], idx < rowSize);
+      holder.innerHTML = buildCardHtml(catalogVisibleList[idx], idx < rowSize);
       frag.appendChild(holder.firstElementChild);
     }
     grid.appendChild(frag);
-    if(idx < visible.length){
+    if(idx < endIdx){
       requestAnimationFrame(appendRow);
+    } else {
+      catalogRenderedCount = endIdx;
+      setupCatalogLoadMore();
     }
   }
   appendRow();
+}
+// নিচে স্ক্রল করলেই (কোনো বাটনে ট্যাপ ছাড়াই) পরের ব্যাচ লোড হয় — IntersectionObserver
+// দিয়ে একটা অদৃশ্য "সেন্টিনেল" এলিমেন্ট viewport-এ ঢুকলে detect করা হয়। ব্রাউজার
+// পুরনো/অসমর্থিত হলে (খুবই বিরল) একটা সাধারণ "আরও দেখুন" বাটনে গ্রেসফুলি ফলব্যাক করে।
+function setupCatalogLoadMore(){
+  const grid = document.getElementById('catalogGrid');
+  const oldSentinel = document.getElementById('catalogLoadSentinel');
+  if(oldSentinel) oldSentinel.remove();
+  const oldCount = document.getElementById('catalogLoadCount');
+  if(oldCount) oldCount.remove();
+  if(catalogRenderedCount >= catalogVisibleList.length) return; // সব পণ্যই দেখানো হয়ে গেছে
+
+  const countEl = document.createElement('div');
+  countEl.className = 'load-more-count';
+  countEl.id = 'catalogLoadCount';
+  countEl.textContent = `${catalogRenderedCount} / ${catalogVisibleList.length}`;
+  grid.appendChild(countEl);
+
+  if(typeof IntersectionObserver === 'function'){
+    const sentinel = document.createElement('div');
+    sentinel.className = 'catalog-load-sentinel';
+    sentinel.id = 'catalogLoadSentinel';
+    grid.appendChild(sentinel);
+    catalogObserver = new IntersectionObserver(entries => {
+      if(entries.some(e => e.isIntersecting)){
+        catalogObserver.disconnect();
+        sentinel.remove();
+        countEl.remove();
+        renderNextCatalogBatch();
+      }
+    }, { rootMargin: '600px 0px' }); // স্ক্রল করে একদম নিচে পৌঁছানোর আগেই লোড শুরু হয়ে যায়, তাই থামা লাগে না
+    catalogObserver.observe(sentinel);
+  } else {
+    const row = document.createElement('div');
+    row.className = 'load-more-row';
+    row.id = 'catalogLoadSentinel';
+    row.innerHTML = `<button type="button" class="load-more-btn">${t('loadMore')}</button>`;
+    row.querySelector('button').onclick = () => { row.remove(); countEl.remove(); renderNextCatalogBatch(); };
+    grid.appendChild(row);
+  }
 }
 
 // কার্টে যোগ/বিয়োগ হলে পুরো গ্রিড (সব প্রডাক্ট কার্ড, ছবিসহ) আবার বানানো হতো —
@@ -2318,7 +2271,6 @@ function openQuickView(productId){
   if(!p) return;
   currentQvProduct = p;
   qvSelection = { designIdx: null, size: null };
-  trackRecentlyViewed(productId);
   renderQvRelated(p);
   const clothing = isClothingProduct(p);
   const thumbUrl = getThumbUrl(p);
@@ -2756,6 +2708,7 @@ function renderCart(){
   const items = Object.values(cart);
   const cartCard = document.getElementById('cartCard');
   const box = document.getElementById('cartBox');
+  saveCartToStorage();
   if(items.length === 0){
     cartCard.style.display = 'none';
     updateTotal();
@@ -2806,7 +2759,8 @@ function updateTotal(){
     submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
   }
 }
-function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+const HTML_ESCAPE_MAP = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => HTML_ESCAPE_MAP[m]); }
 
 /* ---------------- রিভিউ/রেটিং হেল্পার ফাংশন ---------------- */
 function starsHtml(avg){
@@ -4174,6 +4128,7 @@ async function downloadReceiptPNG(){
 function clearCartAndCache(){
   // কার্ট সম্পূর্ণ খালি করা
   cart = {};
+  clearCartFromStorage();
   
   // localStorage থেকে এই শপের ক্যাশ ডেলিট করা (পরবর্তী ভিজিটে তাজা ডেটা লোড হবে)
   try {
