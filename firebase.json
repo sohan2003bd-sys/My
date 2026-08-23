@@ -28,7 +28,7 @@
         ]
       },
       {
-        "source": "/terms_of_service",
+        "source": "/terms",
         "headers": [
           { "key": "Cache-Control", "value": "no-cache" }
         ]
