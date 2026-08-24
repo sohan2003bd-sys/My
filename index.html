@@ -3414,62 +3414,6 @@ html,body{background:#FAF3E4;overscroll-behavior:none;-webkit-tap-highlight-colo
 </script>
 
 
-<style id="native-list-entry-motion">
-/* ==========================================================
-   NATIVE-APP LIST ENTRY MOTION
-   Only the newly selected section's data cards/rows animate.
-   Navigation itself stays instant. Uses transform + opacity only.
-   ========================================================== */
-
-@keyframes nativeListItemIn{
-  from{
-    opacity:0;
-    transform:translate3d(0,8px,0);
-  }
-  to{
-    opacity:1;
-    transform:translate3d(0,0,0);
-  }
-}
-
-/* Sales / Purchase / Expense rows */
-#page-sales .ledger-card.native-list-enter .txn-row,
-#page-purchase .ledger-card.native-list-enter .txn-row,
-#page-expense .ledger-card.native-list-enter .txn-row,
-#page-orders .ledger-card.native-list-enter > *,
-#page-inventory .ledger-card.native-list-enter > *,
-#page-stockalerts .ledger-card.native-list-enter > *,
-#page-warranty .ledger-card.native-list-enter > *{
-  opacity:0;
-  transform:translate3d(0,8px,0);
-  animation:nativeListItemIn 220ms cubic-bezier(.22,.75,.2,1) forwards;
-  animation-delay:calc(min(var(--list-index, 0), 9) * 22ms);
-  will-change:transform,opacity;
-}
-
-/* Don't animate the "See More" button like a data record. */
-.ledger-card.native-list-enter > .btn{
-  opacity:1 !important;
-  transform:none !important;
-  animation:none !important;
-}
-
-@media (prefers-reduced-motion:reduce){
-  #page-sales .ledger-card.native-list-enter .txn-row,
-  #page-purchase .ledger-card.native-list-enter .txn-row,
-  #page-expense .ledger-card.native-list-enter .txn-row,
-  #page-orders .ledger-card.native-list-enter > *,
-  #page-inventory .ledger-card.native-list-enter > *,
-  #page-stockalerts .ledger-card.native-list-enter > *,
-  #page-warranty .ledger-card.native-list-enter > *{
-    opacity:1;
-    transform:none;
-    animation:none;
-  }
-}
-</style>
-
-
 <style id="premium-top-menu-blocks">
 /* =========================================================
    PREMIUM TOP 3-LINE MENU
@@ -5630,6 +5574,102 @@ body.dark-mode #mainMenuDrawer .main-menu-item.active .main-menu-chevron{
 #mainMenuDrawer .main-menu-item .main-menu-text{
   font-size:11.5px !important;
   font-weight:750 !important;
+}
+</style>
+
+
+<style id="v5-2-flash-fix">
+/* Prevent Android WebView full-surface flash/jitter on taps. */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent !important;
+}
+button, a, .btn, .nav-item, .bottomnav-item, .fab,
+.card, .clickable, [role="button"] {
+  -webkit-tap-highlight-color: transparent !important;
+}
+/* Do not animate layout/transform/filter on primary interactive controls. */
+button, .btn, .nav-item, .bottomnav-item, .fab,
+[role="button"] {
+  transition-property: background-color, color, border-color, box-shadow !important;
+}
+</style>
+
+
+<style id="v5-3-scroll-flash-stability">
+/* ===== V5.3: REAL PAGE SCROLL + NO FULL-SURFACE TAP FLASH ===== */
+
+/* Let Android/WebView own the normal vertical scroll path. */
+html, body {
+  touch-action: pan-y !important;
+  -ms-touch-action: pan-y !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+#app {
+  touch-action: pan-y !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+.page {
+  touch-action: pan-y !important;
+  overflow: visible !important;
+}
+
+/* No transform/scale feedback on primary taps. A paint-only state change
+   avoids promoting/recompositing the whole WebView surface. */
+.navbtn,
+.navbtn .ico-wrap,
+.fab,
+#mainMenuBtn,
+button,
+.btn,
+.icon-btn,
+.navtab,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent !important;
+}
+.navbtn,
+.navbtn .ico-wrap,
+.fab,
+#mainMenuBtn {
+  transform: none !important;
+  will-change: auto !important;
+  transition: background-color .08s linear, color .08s linear, box-shadow .08s linear !important;
+}
+.navbtn:active,
+.navbtn:active .ico-wrap,
+.fab:active,
+#mainMenuBtn:active,
+button:active,
+.btn:active,
+.icon-btn:active {
+  transform: none !important;
+}
+
+/* Page navigation must not animate rows/cards into view. */
+.page .ledger-card,
+.page .txn-row,
+.page .kpi-card,
+.page .card {
+  animation: none !important;
+}
+
+/* Sheets/overlays open immediately. This removes the large transform/opacity
+   compositor transition that can flash the complete WebView on Android. */
+.overlay,
+.overlay.open,
+.sheet,
+.sheet.open,
+.sheet form {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Keep only the sheet's intended static position. */
+.sheet {
+  will-change: auto !important;
 }
 </style>
 
@@ -8756,34 +8796,65 @@ const ORDERS_CACHE_KEY = 'myshop_orders_cache_v1';
 // Step 3 — নেটিভ অ্যান্ড্রয়েড অ্যাপে থাকলে PIN-সহ পুরো লোকাল ক্যাশ Android Keystore-ভিত্তিক
 // এনক্রিপ্টেড স্টোরেজে রাখা হয় (প্লেইন localStorage-এর চেয়ে অনেক নিরাপদ)। ব্রাউজারে আগের মতোই
 // localStorage ব্যবহার হয়। পুরনো ইউজারের আগের localStorage ডাটা প্রথমবার স্বয়ংক্রিয়ভাবে মাইগ্রেট হয়ে যায়।
-function secureLocalGet(key){
-  if(window.MyShopAndroid && typeof window.MyShopAndroid.secureGet === 'function'){
-    const native = window.MyShopAndroid.secureGet(key);
-    if(native !== null && native !== undefined) return native;
-    const legacy = localStorage.getItem(key);
-    if(legacy !== null){
-      window.MyShopAndroid.secureSet(key, legacy);
-      localStorage.removeItem(key);
-      return legacy;
-    }
-    return null;
-  }
-  return localStorage.getItem(key);
+function isNativeSecureBridge(){
+  return !!(window.MyShopAndroid &&
+    typeof window.MyShopAndroid.secureGet === 'function' &&
+    typeof window.MyShopAndroid.secureSet === 'function');
 }
-function secureLocalSet(key, value){
-  if(window.MyShopAndroid && typeof window.MyShopAndroid.secureSet === 'function'){
-    window.MyShopAndroid.secureSet(key, value);
-    return;
+function secureLocalGet(key){
+  try{
+    const k=String(key);
+    if(isNativeSecureBridge()){
+      const native=window.MyShopAndroid.secureGet(k);
+      if(native !== null && native !== undefined) return String(native);
+      const legacy=localStorage.getItem(k);
+      if(legacy !== null){
+        const ok=window.MyShopAndroid.secureSet(k,String(legacy));
+        if(ok !== false){ try{ localStorage.removeItem(k); }catch(_e){} }
+        return legacy;
+      }
+      return null;
+    }
+    return localStorage.getItem(k);
+  }catch(e){
+    try{return localStorage.getItem(String(key));}catch(_e){return null;}
   }
-  localStorage.setItem(key, value);
+}
+function secureLocalSet(key,value){
+  try{
+    const k=String(key), v=String(value==null?'':value);
+    if(isNativeSecureBridge()) return window.MyShopAndroid.secureSet(k,v) !== false;
+    localStorage.setItem(k,v);
+    return true;
+  }catch(e){ return false; }
 }
 function secureLocalRemove(key){
-  if(window.MyShopAndroid && typeof window.MyShopAndroid.secureRemove === 'function'){
-    window.MyShopAndroid.secureRemove(key);
-    return;
-  }
-  localStorage.removeItem(key);
+  try{
+    const k=String(key);
+    if(window.MyShopAndroid && typeof window.MyShopAndroid.secureRemove==='function') window.MyShopAndroid.secureRemove(k);
+    try{localStorage.removeItem(k);}catch(_e){}
+    return true;
+  }catch(e){return false;}
 }
+
+// Device-session marker. It is cleared ONLY by logout. It is not a Firebase credential;
+// it is a recovery marker used to prevent a transient WebView auth-restore failure from
+// throwing a previously logged-in user back to the login page.
+const AUTH_SESSION_KEY='myshop_auth_session_v2';
+function getAuthSessionMarker(){
+  try{
+    const raw=secureLocalGet(AUTH_SESSION_KEY);
+    if(!raw) return null;
+    const d=JSON.parse(raw);
+    return d && d.uid ? d : null;
+  }catch(_e){return null;}
+}
+function setAuthSessionMarker(uid,provider){
+  if(!uid) return false;
+  return secureLocalSet(AUTH_SESSION_KEY,JSON.stringify({uid:String(uid),provider:String(provider||'firebase'),at:Date.now()}));
+}
+function clearAuthSessionMarker(){ secureLocalRemove(AUTH_SESSION_KEY); }
+
 // Dark Mode is a pure device display-preference, kept in its own tiny key instead of
 // only inside the big shop-data blob. Two reasons:
 //  1) Reading/writing one boolean is instant, so the toggle never has to wait on
@@ -9672,97 +9743,140 @@ let otpAutoSent = false;
 // কারণ ইমেইল ভেরিফিকেশন একবার হলে আর পাল্টায় না।
 let lastKnownVerifiedUid = null;
 try{ lastKnownVerifiedUid = localStorage.getItem('myshop_verified_uid_v1') || null; }catch(e){}
+let firebaseAuthReady = false;
+let firebaseAuthUser = null;
+let firebaseAuthReadyPromise = null;
+let resolveFirebaseAuthReady = null;
+let firebasePersistenceReadyPromise = null;
+let resolveFirebasePersistenceReady = null;
+
 function initFirebaseCore(){
-  if(fbApp) return;
+  if(fbApp) return firebaseAuthReadyPromise;
+
   fbApp = firebase.initializeApp(FIREBASE_CONFIG);
   fbAuth = firebase.auth();
   fbDb = firebase.database();
-  fbAuth.onAuthStateChanged(user => {
-    if(isSigningUp) return; // handleSignup() drives entry itself after the initial cloud write
-    if(user){
-      currentUid = user.uid;
-      const pushOfflineEditsFirst = offlineEditsPending && !!secureLocalGet(STORAGE_KEY);
-      // দ্রুত ওপেন করার জন্য: এই ডিভাইসে আগেই এই দোকানের ক্যাশ করা ডেটা থাকলে (এবং কোনো
-      // অফলাইন পরিবর্তন পাঠানোর দরকার না থাকলে) verification check ও পূর্ণ ডেটা fetch-এর
-      // জন্য অপেক্ষা না করে সাথে সাথেই অ্যাপ খুলে দেওয়া হয়। ভেরিফিকেশন-স্টেটাস ও সবশেষ
-      // ডেটা ব্যাকগ্রাউন্ডে চুপচাপ চেক/সিঙ্ক হয় — কিছু বদলালে UI নিজে থেকেই রিফ্রেশ হবে।
-      const hasCachedShop = !pushOfflineEditsFirst && !!secureLocalGet(STORAGE_KEY)
-        && state.company && state.company.name;
-      if(hasCachedShop && lastKnownVerifiedUid === currentUid){
-        // instant boot (নিচে দ্র.) ইতিমধ্যে সঠিক স্ক্রিন (অ্যাপ/লক) দেখিয়ে দিয়ে থাকলে
-        // enterOrLock() আবার কল করা হয় না — নাহলে লক স্ক্রিনে থাকলে ইউজার তখন যে PIN
-        // ডিজিট টাইপ করছিলেন তা মুছে যেত (showLockScreen() প্রতিবার buffer রিসেট করে)।
-        if(!instantBooted) enterOrLock();
-        else {
-          markScreenDecided();
-          // instant boot-এ লক স্ক্রিন currentUid সেট হওয়ার *আগেই* বানানো হয়ে যায়, আর
-          // ফিঙ্গারপ্রিন্ট ক্রেডেনশিয়াল currentUid-ভিত্তিক key-তে (bioCred_<uid>) রাখা —
-          // তাই প্রথম রেন্ডারে hasBioCredential() ভুল key ('bioCred_local') চেক করে
-          // ফিঙ্গারপ্রিন্ট বাটন বাদ দিয়ে ফেলত (সংখ্যাগুলো সাথে সাথে আসত, ফিঙ্গার আইকন
-          // দেরিতে বা একদমই আসত না)। এখন currentUid ঠিকভাবে জানা মাত্রই কীপ্যাড আবার
-          // বানানো হচ্ছে, যাতে সঠিক ক্রেডেনশিয়াল পাওয়া গেলে ফিঙ্গার আইকন সাথে সাথেই যোগ হয়।
-          const lockEl = document.getElementById('lockScreen');
-          if(lockEl && lockEl.style.display !== 'none') buildKeypad();
-        }
-        syncShopDataInBackground(currentUid);
-        return;
+
+  firebaseAuthReady = false;
+  firebaseAuthReadyPromise = new Promise(resolve => {
+    resolveFirebaseAuthReady = resolve;
+  });
+
+  // IMPORTANT: configure LOCAL persistence before registering the auth-state
+  // listener AND before allowing an interactive sign-in call to race it.
+  firebasePersistenceReadyPromise = new Promise(resolve => {
+    resolveFirebasePersistenceReady = resolve;
+  });
+
+  fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .catch(err => {
+      // Firebase's default web persistence is already LOCAL in normal browser
+      // environments. Keep booting if explicit configuration is rejected.
+      console.warn('[Auth] LOCAL persistence setup failed:', err);
+    })
+    .finally(() => {
+      if(resolveFirebasePersistenceReady){
+        resolveFirebasePersistenceReady();
+        resolveFirebasePersistenceReady = null;
       }
-      checkOwnVerificationStatus(currentUid).then(verified => {
-        if(verified){
-          lastKnownVerifiedUid = currentUid;
-          try{ localStorage.setItem('myshop_verified_uid_v1', currentUid); }catch(e){}
-          const pushStep = pushOfflineEditsFirst
-            ? (window.MYSHOP_SCALABLE_SYNC_V26 && typeof window.MYSHOP_SCALABLE_SYNC_V26.syncState==='function'
-                ? window.MYSHOP_SCALABLE_SYNC_V26.syncState({alsoLegacy:true})
-                : shopRef().update(stripUndefinedDeep(Object.assign(
-                    { company: state.company, settings: state.settings, security: state.security, idCounter },
-                    buildFullModuleKeyedUpdates({
-                      sales: state.sales, purchases: state.purchases, expenses: state.expenses,
-                      warrantyClaims: state.warrantyClaims, invItems: state.invItems, orders: state.orders
-                    })
-                  ))))
-            : Promise.resolve();
-          pushStep.then(()=>{
-            clearLegacyRecordPatches();
-            setOfflineEditsPending(false); // পুশ সফল হলে তবেই ফ্ল্যাগ সাফ হবে
-            txnEngineAcknowledgeSynced();
-            return loadShopData(currentUid);
-          }).then(()=>{
-            enterOrLock();
-            if(pushOfflineEditsFirst) showToast('অফলাইনে করা পরিবর্তন ক্লাউডে সিঙ্ক হয়েছে ✅');
-          }).catch((err)=>{
-            // পুশ ব্যর্থ হলে loadShopData একদম না চালিয়ে সরাসরি থামানো হলো — নাহলে
-            // ক্লাউডের পুরনো ডেটা লোকাল ক্যাশ ওভাররাইট করে অফলাইন এন্ট্রি হারিয়ে ফেলতো।
-            console.error('Offline-edit push failed:', err);
-            offlineEditsPending = true; // মেমরিতে সত্যিটা বহাল রাখা হলো — localStorage আগের মতোই '1' আছে
-            enterOrLock(); // ক্যাশ করা (এখনও-না-সিঙ্ক-হওয়া) ডেটা দিয়েই অ্যাপ খুলে দেওয়া হলো, ডেটা হারায়নি
-            if(navigator.onLine) showToast('অফলাইন এন্ট্রি ক্লাউডে পাঠানো যায়নি — পরে আবার চেষ্টা হবে');
-          });
-        } else {
-          showVerifyEmailScreen(user.email);
-          if(!otpAutoSent){
-            otpAutoSent = true;
-            sendVerificationCode(currentUid, user.email);
-          }
+
+      fbAuth.onAuthStateChanged(user => {
+        firebaseAuthReady = true;
+        firebaseAuthUser = user || null;
+        if(resolveFirebaseAuthReady){
+          resolveFirebaseAuthReady(firebaseAuthUser);
+          resolveFirebaseAuthReady = null;
         }
-      }).catch((err)=>{
-        // ভেরিফিকেশন-স্টেটাস চেক করতে ব্যর্থ হলে (যেমন নেটওয়ার্ক এরর) আগে এখানে কোনো catch
-        // না থাকায় ব্যবহারকারী স্প্ল্যাশ স্ক্রিনেই আটকে থাকতেন। এখন লোকাল ক্যাশ থাকলে সেটা
-        // দিয়েই অ্যাপ খুলে দেওয়া হয়, না থাকলে auth স্ক্রিন দেখানো হয়।
-        console.error('Verification status check failed:', err);
-        const hasLocalData = !!secureLocalGet(STORAGE_KEY) && state.company && state.company.name;
-        if(hasLocalData){
-          enterOrLock();
-        } else {
+
+        if(isSigningUp) return;
+
+        if(user){
+          currentUid = user.uid;
+          setAuthSessionMarker(user.uid, user.providerData?.[0]?.providerId || 'firebase');
+          const pushOfflineEditsFirst = offlineEditsPending && !!secureLocalGet(STORAGE_KEY);
+          const hasCachedShop = !pushOfflineEditsFirst && !!secureLocalGet(STORAGE_KEY)
+            && state.company && state.company.name;
+          if(hasCachedShop && lastKnownVerifiedUid === currentUid){
+            if(!instantBooted) enterOrLock();
+            else {
+              markScreenDecided();
+              const lockEl=document.getElementById('lockScreen');
+              if(lockEl && lockEl.style.display !== 'none') buildKeypad();
+            }
+            syncShopDataInBackground(currentUid);
+            return;
+          }
+          checkOwnVerificationStatus(currentUid).then(verified => {
+            if(verified){
+              lastKnownVerifiedUid=currentUid;
+              try{localStorage.setItem('myshop_verified_uid_v1',currentUid);}catch(e){}
+              let pushStep = Promise.resolve();
+              if(pushOfflineEditsFirst){
+                if(window.MYSHOP_SCALABLE_SYNC_V26 && typeof window.MYSHOP_SCALABLE_SYNC_V26.syncState==='function'){
+                  pushStep = window.MYSHOP_SCALABLE_SYNC_V26.syncState({alsoLegacy:true});
+                }else{
+                  pushStep = shopRef().update(stripUndefinedDeep(Object.assign(
+                    {company:state.company,settings:state.settings,security:state.security,idCounter},
+                    buildFullModuleKeyedUpdates({
+                      sales:state.sales,
+                      purchases:state.purchases,
+                      expenses:state.expenses,
+                      warrantyClaims:state.warrantyClaims,
+                      invItems:state.invItems,
+                      orders:state.orders
+                    })
+                  )));
+                }
+              }
+              pushStep.then(()=>{
+                clearLegacyRecordPatches();
+                setOfflineEditsPending(false);
+                txnEngineAcknowledgeSynced();
+                return loadShopData(currentUid);
+              }).then(()=>{
+                cacheStateLocally(false);
+                enterOrLock();
+                if(pushOfflineEditsFirst) showToast('অফলাইনে করা পরিবর্তন ক্লাউডে সিঙ্ক হয়েছে ✅');
+              }).catch(err=>{
+                console.error('Offline-edit push failed:',err);
+                offlineEditsPending=true;
+                enterOrLock();
+                if(navigator.onLine) showToast('অফলাইন এন্ট্রি ক্লাউডে পাঠানো যায়নি — পরে আবার চেষ্টা হবে');
+              });
+            }else{
+              showVerifyEmailScreen(user.email);
+              if(!otpAutoSent){
+                otpAutoSent=true;
+                sendVerificationCode(currentUid,user.email);
+              }
+            }
+          }).catch(err=>{
+            console.error('Verification status check failed:',err);
+            const hasLocalData=!!secureLocalGet(STORAGE_KEY)&&state.company&&state.company.name;
+            if(hasLocalData) enterOrLock();
+            else showAuthScreen();
+          });
+        }else{
+          currentUid=null;
+          otpAutoSent=false;
+          const marker=getAuthSessionMarker();
+          const hasLocalData=!!secureLocalGet(STORAGE_KEY)&&state.company&&state.company.name;
+          // Firebase has now definitively resolved to null. If a marker remains,
+          // keep the cached app usable rather than converting a transient offline
+          // restore into a Login screen. Explicit logout clears this marker first.
+          if(marker && hasLocalData){
+            if(!navigator.onLine || !fbAuth.currentUser){
+              if(!instantBooted) enterOfflineMode(true);
+              else showOfflineBanner(true);
+              return;
+            }
+          }
           showAuthScreen();
         }
       });
-    } else {
-      currentUid = null;
-      otpAutoSent = false;
-      showAuthScreen();
-    }
-  });
+    });
+
+  return firebaseAuthReadyPromise;
 }
 function shopRef(path){ return fbDb.ref('shops/' + currentUid + (path ? '/' + path : '')); }
 
@@ -10110,6 +10224,15 @@ async function forceFullCloudResync(){
 
 const WELCOME_SEEN_KEY = 'myshop_welcome_seen_v1';
 function showAuthScreen(){
+  // Never show Login while Firebase is still restoring a persistent session.
+  // Once onAuthStateChanged has definitively reported null, Login is allowed
+  // (unless we are intentionally using an offline cached session).
+  if(fbAuth && !firebaseAuthReady){
+    return;
+  }
+  if(fbAuth && !fbAuth.currentUser && getAuthSessionMarker() && secureLocalGet(STORAGE_KEY) && !navigator.onLine){
+    return;
+  }
   document.getElementById('app').style.display = 'none';
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('verifyEmailScreen').style.display = 'none';
@@ -10389,9 +10512,12 @@ function handleLogin(e){
   const errBox = document.getElementById('loginError');
   const btn = document.getElementById('loginSubmitBtn');
   btn.disabled = true; btn.textContent = 'লগইন হচ্ছে…';
-  initFirebaseCore();
-  fbAuth.signInWithEmailAndPassword(email, password)
+  const authInit = initFirebaseCore();
+  Promise.resolve(firebasePersistenceReadyPromise || authInit)
+    .then(() => fbAuth.signInWithEmailAndPassword(email, password))
     .then(cred => {
+      currentUid = cred.user.uid;
+      setAuthSessionMarker(currentUid, 'password');
       if(__pendingGoogleLinkCred && __pendingGoogleLinkEmail && __pendingGoogleLinkEmail.toLowerCase() === email.toLowerCase()){
         const pendingCred = __pendingGoogleLinkCred;
         __pendingGoogleLinkCred = null; __pendingGoogleLinkEmail = null;
@@ -10428,7 +10554,8 @@ function handleGoogleAuth(){
 
   // ব্রাউজারে (বা bridge না থাকলে) আগের মতোই popup দিয়ে সাইনইন
   const provider = new firebase.auth.GoogleAuthProvider();
-  fbAuth.signInWithPopup(provider)
+  Promise.resolve(firebasePersistenceReadyPromise)
+    .then(() => fbAuth.signInWithPopup(provider))
     .then(result => afterGoogleAuthSuccess(result))
     .catch(err => onGoogleAuthError(err));
 }
@@ -10455,7 +10582,8 @@ window.onNativeGoogleSignIn = function(resultJson){
 
   initFirebaseCore();
   const credential = firebase.auth.GoogleAuthProvider.credential(payload.idToken);
-  fbAuth.signInWithCredential(credential)
+  Promise.resolve(firebasePersistenceReadyPromise)
+    .then(() => fbAuth.signInWithCredential(credential))
     .then(result => afterGoogleAuthSuccess(result))
     .catch(err => {
       // DEBUG: Firebase সাইড থেকে reject হলে (SHA/config মিলল কিন্তু Firebase-এ token invalid হলে) কারণটা দেখাও
@@ -10473,6 +10601,7 @@ window.onNativeGoogleSignIn = function(resultJson){
 // popup ও নেটিভ — দুই পথের সফল ফলাফলই এখানে একইভাবে হ্যান্ডল হয় (shop তৈরি/লোড, ইত্যাদি)
 function afterGoogleAuthSuccess(result){
   currentUid = result.user.uid;
+  setAuthSessionMarker(currentUid, 'google');
   const isNewUser = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
   const hadLocalData = !!secureLocalGet(STORAGE_KEY);
   let chain = Promise.resolve();
@@ -10490,6 +10619,7 @@ function afterGoogleAuthSuccess(result){
   return chain
     .then(()=> loadShopData(currentUid))
     .then(()=>{
+      cacheStateLocally(false);
       // Google ইমেইল আগে থেকেই ভেরিফাইড, তাই OTP ধাপ বাদ — সরাসরি ডাটা লোড করে ঢুকে যাবে
       isSigningUp = false;
       enterOrLock();
@@ -10649,6 +10779,7 @@ function logoutShop(){
   if(!confirm('লগ আউট করতে চান? এই ডিভাইসে থাকা ক্যাশও মুছে যাবে।')) return;
   try{ sessionStorage.removeItem(tabUnlockKey()); }catch(e){}
   fbAuth.signOut().then(()=>{
+    clearAuthSessionMarker();
     secureLocalRemove(STORAGE_KEY);
     try{ localStorage.removeItem('myshop_verified_uid_v1'); }catch(e){}
     setOfflineEditsPending(false); // লোকাল ক্যাশ মুছে ফেলা হচ্ছে, তাই সিঙ্ক-পেন্ডিং ফ্ল্যাগও সাফ — নাহলে পরের একাউন্টে বিভ্রান্তি হতে পারতো
@@ -10991,7 +11122,9 @@ let instantBooted = false;
       instantBooted = true;
       const splashEl = document.getElementById('splashScreen');
       if(splashEl) splashEl.classList.add('no-anim');
-      enterOrLock();
+      // Cached data may paint instantly, but authentication decides whether this
+      // is an authenticated session. Do not call enterOrLock before Firebase restore.
+      initFirebaseCore();
     }
   }catch(e){
     instantBooted = false; // সমস্যা হলে চুপচাপ স্বাভাবিক bootApp() ফ্লো-তেই চলে যাবে
@@ -11041,8 +11174,13 @@ function bootApp(){
       // এই সময়ের মধ্যে Firebase থেকে কোনো সিদ্ধান্ত (লগইন/লক/অনবোর্ডিং) না এলে
       // ক্যাশ করা ডাটা দিয়েই অ্যাপ খুলে দেওয়া হবে, Firebase ব্যাকগ্রাউন্ডে চলতেই থাকবে।
       bootFallbackTimer = setTimeout(()=>{
-        if(!splashScreenDecided) enterOfflineMode(hasLocalAccount);
-      }, 1000);
+        if(!splashScreenDecided && !fbAuth?.currentUser){
+          const marker=getAuthSessionMarker();
+          if(marker && hasLocalAccount) enterOfflineMode(true);
+          // Otherwise keep splash briefly rather than incorrectly converting an
+          // unresolved online auth restore into a Login screen.
+        }
+      }, 2500);
     }
   }
   window.addEventListener('online', syncAfterReconnect);
@@ -11104,6 +11242,13 @@ function isTabAlreadyUnlocked(){
   try{ return sessionStorage.getItem(tabUnlockKey()) === '1'; }catch(e){ return false; }
 }
 function enterOrLock(){
+  // Online startup must not enter the app until Firebase has definitively
+  // restored an authenticated user. The marker is recovery metadata only and
+  // must never substitute for Firebase authentication while online.
+  if(navigator.onLine && fbAuth && (!firebaseAuthReady || !fbAuth.currentUser)) return;
+  // Offline recovery is explicitly allowed only for a previously authenticated
+  // device with a local shop cache and a session marker.
+  if(!navigator.onLine && (!getAuthSessionMarker() || !secureLocalGet(STORAGE_KEY))) return;
   if(!state.security.pinEnabled || isTabAlreadyUnlocked()){
     enterApp();
   } else {
@@ -22172,64 +22317,6 @@ function startHighScaleOrderListener_DISABLED() {
 
 
 
-<script id="native-list-motion-engine">
-(function(){
-  'use strict';
-
-  /*
-   * Called after a bottom-nav page becomes active.
-   * The navigation tap remains instant; only the visible data rows
-   * receive a tiny native-app style settle-in.
-   */
-  window.__animateActivePageLists = function(page){
-    const pageEl = document.getElementById('page-' + page);
-    if(!pageEl) return;
-
-    const containers = pageEl.querySelectorAll('.ledger-card');
-    containers.forEach(function(box){
-      /* Skip hidden/nested analysis cards unless they belong to the active page. */
-      if(box.closest('.sheet,[hidden]')) return;
-
-      box.classList.remove('native-list-enter');
-
-      const children = Array.from(box.children);
-      children.forEach(function(el, i){
-        el.style.setProperty('--list-index', String(i));
-      });
-
-      /* Restart the animation cleanly without forcing layout on the whole page. */
-      requestAnimationFrame(function(){
-        if(document.getElementById('page-' + page) !== pageEl) return;
-        box.classList.add('native-list-enter');
-
-        /* Remove the class after the short motion so later interactions
-           don't carry animation state around. */
-        setTimeout(function(){
-          box.classList.remove('native-list-enter');
-          children.forEach(function(el){
-            el.style.removeProperty('--list-index');
-          });
-        }, 480);
-      });
-    });
-  };
-
-  /* Hook the existing instant navigation without replacing goPage(). */
-  const oldGoPage = window.goPage;
-  if(typeof oldGoPage === 'function'){
-    window.goPage = function(page){
-      const result = oldGoPage.apply(this, arguments);
-      window.__animateActivePageLists(page);
-      return result;
-    };
-  }
-})();
-</script>
-
-
-
-
-
 <script id="instant-hamburger-handler">
 (function(){
   const btn = document.getElementById('mainMenuBtn');
@@ -22507,283 +22594,69 @@ function startHighScaleOrderListener_DISABLED() {
 })();
 </script>
 
-<script id="keyboard-pin-header-nav-fix">
-(function(){
-  'use strict';
-  // সমস্যা: সেটিংস/এডিট ফর্মে কোনো ইনপুটে ট্যাপ করে কিবোর্ড খোলার পর, উপরের
-  // sticky টপবার আর নিচের fixed বটম-ন্যাভ আসল দৃশ্যমান (visual) ভিউপোর্টের
-  // বদলে পুরোনো, লম্বা লেআউট-ভিউপোর্ট ধরে পজিশন হিসাব করতে থাকে — ফলে
-  // কিবোর্ড খোলা অবস্থায় স্ক্রল করলে ওরা "মুক্ত" সাধারণ এলিমেন্টের মতো
-  // উপরে সরে যায়, নিচে ফাঁকা জায়গা রেখে যায়।
-  //
-  // সমাধান: window.visualViewport থেকে আসল দৃশ্যমান অংশের উচ্চতা ও অফসেট
-  // মেপে, কিবোর্ড খোলা অবস্থায় টপবার ও বটম-ন্যাভকে সরাসরি ওই দৃশ্যমান
-  // অংশের উপরে/নিচে পিন (position:fixed + সঠিক top) করে দেওয়া হয়, এবং
-  // কিবোর্ড অ্যানিমেশন চলাকালীন প্রতিটা resize/scroll ইভেন্টে রিক্যালকুলেট
-  // করা হয়। ইনপুট থেকে ফোকাস সরে (কিবোর্ড বন্ধ হয়ে) গেলে দুটোকেই আগের
-  // স্বাভাবিক CSS পজিশনে (sticky/fixed bottom:0) ফিরিয়ে দেওয়া হয়।
-  var vv = window.visualViewport;
-  if(!vv) return; // visualViewport না থাকা পুরনো WebView-তে কিছু করার নেই, ক্ষতিও নেই
 
-  var pinned = false;
-  var rafId = null;
-
-  function isFormField(el){
-    return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
-  }
-  function getTopbar(){ return document.querySelector('.topbar'); }
-  function getNavWrap(){ return document.querySelector('.bottomnav-wrap'); }
-
-  function applyPin(){
-    var tb = getTopbar();
-    var nav = getNavWrap();
-    var vTop = vv.offsetTop;
-    var vBottom = vv.offsetTop + vv.height;
-
-    if(tb && !tb.__saFrozen){
-      var tbRect = tb.getBoundingClientRect();
-      if(tb.__kbPrevInline === undefined) tb.__kbPrevInline = tb.getAttribute('style') || '';
-      tb.style.position = 'fixed';
-      tb.style.top = vTop + 'px';
-      tb.style.left = tbRect.left + 'px';
-      tb.style.width = tbRect.width + 'px';
-      tb.style.margin = '0';
-      tb.style.zIndex = '30';
-    }
-    if(nav){
-      var navRect = nav.getBoundingClientRect();
-      if(nav.__kbPrevInline === undefined) nav.__kbPrevInline = nav.getAttribute('style') || '';
-      nav.style.position = 'fixed';
-      nav.style.top = (vBottom - navRect.height) + 'px';
-      nav.style.bottom = 'auto';
-    }
-  }
-
-  function releasePin(){
-    var tb = getTopbar();
-    var nav = getNavWrap();
-    if(tb && tb.__kbPrevInline !== undefined){
-      if(tb.__kbPrevInline) tb.setAttribute('style', tb.__kbPrevInline);
-      else tb.removeAttribute('style');
-      delete tb.__kbPrevInline;
-    }
-    if(nav && nav.__kbPrevInline !== undefined){
-      if(nav.__kbPrevInline) nav.setAttribute('style', nav.__kbPrevInline);
-      else nav.removeAttribute('style');
-      delete nav.__kbPrevInline;
-    }
-    pinned = false;
-  }
-
-  function scheduleApply(){
-    if(rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function(){
-      rafId = null;
-      if(pinned) applyPin();
-    });
-  }
-
-  document.addEventListener('focusin', function(e){
-    if(!isFormField(e.target)) return;
-    pinned = true;
-    applyPin();
-  }, true);
-
-  document.addEventListener('focusout', function(e){
-    if(!isFormField(e.target)) return;
-    setTimeout(function(){
-      if(!isFormField(document.activeElement)) releasePin();
-    }, 60);
-  }, true);
-
-  vv.addEventListener('resize', scheduleApply);
-  vv.addEventListener('scroll', scheduleApply);
-  window.addEventListener('scroll', function(){ if(pinned) scheduleApply(); }, true);
-})();
-</script>
-
-<script id="keyboard-close-white-flash-fix">
-(function(){
-  'use strict';
-  // সমস্যা: ফর্মের কোনো ইনপুট/টেক্সটএরিয়ায় লেখার পর কিবোর্ডের নিজস্ব
-  // dismiss/back বাটনে ট্যাপ করে কিবোর্ড বন্ধ করলে, কিবোর্ড যেখানে ছিল
-  // ঠিক তার জায়গায় (স্ক্রিনের একদম নিচের অংশে) কিছুক্ষণের জন্য সাদা রঙ
-  // দেখা যায়। কারণ: কিবোর্ড বন্ধ হওয়ার সময় Android WebView-এর দৃশ্যমান
-  // অংশ নিচের দিকে বড় হয় (resize), আর ঠিক নতুন উন্মুক্ত হওয়া স্ট্রিপটা
-  // WebView-এর কম্পোজিটর অ্যাপের আসল ব্যাকগ্রাউন্ড রঙ (ক্রিম/ডার্ক) দিয়ে
-  // পেইন্ট করার আগেই এক-দুই ফ্রেমের জন্য নিজের ডিফল্ট সাদা রঙ দেখিয়ে ফেলে।
-  // সাধারণ ব্রাউজারে এই বাগ নেই, শুধু হাইব্রিড WebView-তেই হয় — অনেকটা এই
-  // ফাইলেরই topbar-flicker-freeze-fix ও safe-area-stabilizer প্যাচ দুটোর
-  // মতো একই ধরনের রিসাইজ/রিপেইন্ট গ্লিচ।
-  //
-  // সমাধান: কিবোর্ড বন্ধ হওয়ার সংকেত (ইনপুট থেকে ফোকাস সরে যাওয়া, আর পরের
-  // মুহূর্তে অন্য কোনো ইনপুটে ফোকাস না যাওয়া) পেলেই সাথে সাথে পুরো স্ক্রিন
-  // জুড়ে অ্যাপের আসল ব্যাকগ্রাউন্ড রঙের একটা fixed ওভারলে বসিয়ে দেওয়া হয়।
-  // এই ওভারলে নতুন, আলাদা এলিমেন্ট বলে কোনো reflow অপেক্ষা না করেই সাথে
-  // সাথে পেইন্ট হয়ে যায় — তাই তার নিচে WebView যে রিসাইজ/রিপেইন্টই করুক
-  // না কেন, চোখে সাদা ঝলক ধরা পড়ে না। কিবোর্ড বন্ধ হওয়ার এনিমেশন সেটল
-  // হওয়ার মতো যথেষ্ট সময় পর (ও visualViewport রিসাইজ হলে অতিরিক্ত
-  // নিশ্চিতভাবে) ওভারলেটা আবার সরিয়ে ফেলা হয়।
-  var overlay = null;
-  var hideTimer = null;
-
-  function currentBg(){
-    var cs = getComputedStyle(document.body);
-    if(cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent'){
-      return cs.backgroundColor;
-    }
-    return document.body.classList.contains('dark-mode') ? '#101112' : '#FAF3E4';
-  }
-
-  function isFormField(el){
-    return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
-  }
-
-  function showOverlay(){
-    if(!overlay){
-      overlay = document.createElement('div');
-      overlay.id = 'kbCloseFlashGuard';
-      overlay.setAttribute('aria-hidden', 'true');
-      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:none;display:none;';
-      (document.body || document.documentElement).appendChild(overlay);
-    }
-    overlay.style.background = currentBg();
-    overlay.style.display = 'block';
-    if(hideTimer){ clearTimeout(hideTimer); hideTimer = null; }
-  }
-
-  function hideOverlaySoon(delay){
-    if(hideTimer) clearTimeout(hideTimer);
-    hideTimer = setTimeout(function(){
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          if(overlay) overlay.style.display = 'none';
-        });
-      });
-    }, delay || 180); // কিবোর্ড বন্ধ হওয়ার এনিমেশন সাধারণত ~150-250ms সময় নেয়
-  }
-
-  document.addEventListener('focusout', function(e){
-    if(!isFormField(e.target)) return;
-    // সাথে সাথে না বসিয়ে এক টিক পর চেক করা হয় — যদি ফোকাস তাৎক্ষণিকভাবে
-    // (Next/Tab চেপে) আরেকটা ইনপুটে চলে যায়, তাহলে কিবোর্ড আসলে বন্ধ
-    // হচ্ছে না, তাই ওভারলে দেখানোর দরকার নেই।
-    setTimeout(function(){
-      if(isFormField(document.activeElement)) return;
-      showOverlay();
-      hideOverlaySoon();
-    }, 0);
-  }, true);
-
-  // ভিউপোর্ট সত্যিই কতটা বড় হয়ে ফিরল সেটার ভিত্তিতেও ওভারলে সরানো
-  // নিশ্চিত করা হয় — focusout-টাইমারের বাইরেও একটা বাড়তি সুরক্ষা স্তর।
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', function(){
-      if(overlay && overlay.style.display === 'block') hideOverlaySoon(120);
-    });
-  }
-})();
-</script>
-
-
-<style id="keyboard-safe-layout-final">
-/* FINAL keyboard/layout stabilization.
-   Android WebView may keep the original layout viewport while the IME is open.
-   The app must therefore scroll the focused control into the actually visible
-   visual viewport instead of letting the keyboard cover it. */
-html, body{
-  min-height:100dvh !important;
-  height:auto !important;
-  overflow-x:hidden !important;
-}
-#app{
-  min-height:100dvh !important;
-  background:var(--paper,#F0F0F0) !important;
-}
-main{
-  min-height:calc(100dvh - 96px) !important;
-  padding-bottom:112px !important;
-}
-.page.active{
-  min-height:calc(100dvh - 96px) !important;
-}
-#onboardingScreen.light-auth,
-#verifyEmailScreen{
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  -webkit-overflow-scrolling:touch !important;
-  align-items:flex-start !important;
-  justify-content:flex-start !important;
-  min-height:100dvh !important;
-  box-sizing:border-box !important;
-}
-#onboardingScreen.light-auth .login-card,
-#verifyEmailScreen .login-card{
-  margin-top:max(72px, calc(env(safe-area-inset-top) + 48px)) !important;
-  margin-bottom:28px !important;
-}
-@media (min-height:760px) and (min-width:521px){
-  #onboardingScreen.light-auth, #verifyEmailScreen{align-items:center !important; justify-content:center !important;}
-  #onboardingScreen.light-auth .login-card, #verifyEmailScreen .login-card{margin-top:0 !important;}
-}
+<!-- ================================================================
+     MY SHOP V5 — FLOATING ANDROID KEYBOARD FIX
+     Base: V3 Login Persistence build.
+     The IME must stay above the entire WebView. No app element is moved,
+     resized, hidden, or positioned against visualViewport when the keyboard opens.
+     ================================================================ -->
+<style id="keyboard-floating-v5">
+html,body,#app{overflow-x:hidden !important;}
+/* Never move the fixed bottom navigation/FAB to the keyboard boundary. */
+.bottomnav-wrap{bottom:0 !important;}
 </style>
-
-<script id="keyboard-field-visibility-final">
+<script id="keyboard-floating-v5">
 (function(){
   'use strict';
-  var vv = window.visualViewport;
-  var timer = null;
-
-  function isField(el){
-    return !!el && (el.tagName==='INPUT' || el.tagName==='TEXTAREA' || el.tagName==='SELECT' || el.isContentEditable);
+  var vv=window.visualViewport||null;
+  var timers=[];
+  function field(el){
+    return !!el && (el.matches && el.matches('input,textarea,select,[contenteditable="true"]'));
   }
-
-  function scrollFocusedField(){
+  function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+  function ensureVisible(){
     var el=document.activeElement;
-    if(!isField(el)) return;
-
+    if(!field(el)) return;
     var rect=el.getBoundingClientRect();
-    var top=vv ? vv.offsetTop : 0;
-    var bottom=vv ? (vv.offsetTop + vv.height) : window.innerHeight;
-
+    var viewportBottom=vv ? (vv.offsetTop+vv.height) : window.innerHeight;
+    var viewportTop=vv ? vv.offsetTop : 0;
+    var topReserve=12;
+    var bottomReserve=12;
     var topbar=document.querySelector('.topbar');
-    var nav=document.querySelector('.bottomnav-wrap');
-    var topReserve=topbar ? Math.max(8, topbar.getBoundingClientRect().height + 8) : 12;
-    var bottomReserve=nav && getComputedStyle(nav).display!=='none' ? nav.getBoundingClientRect().height + 14 : 14;
-
-    var safeTop=top + topReserve;
-    var safeBottom=bottom - bottomReserve;
-    var delta=0;
-
-    if(rect.bottom > safeBottom) delta = rect.bottom - safeBottom;
-    else if(rect.top < safeTop) delta = rect.top - safeTop;
-
-    if(Math.abs(delta) > 2){
-      var authScreen=el.closest ? el.closest('#onboardingScreen, #verifyEmailScreen') : null;
-      if(authScreen && getComputedStyle(authScreen).overflowY !== 'hidden'){
-        authScreen.scrollTop += delta;
-      }else{
-        window.scrollBy({top:delta, left:0, behavior:'auto'});
-      }
+    if(topbar) topReserve=Math.max(topReserve,topbar.getBoundingClientRect().bottom+8-viewportTop);
+    if(rect.top < viewportTop+topReserve || rect.bottom > viewportBottom-bottomReserve){
+      try{ el.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'}); }catch(_){ try{el.scrollIntoView(false);}catch(__){} }
     }
   }
-
   function schedule(){
-    clearTimeout(timer);
-    requestAnimationFrame(scrollFocusedField);
-    timer=setTimeout(scrollFocusedField,120);
-    setTimeout(scrollFocusedField,320);
-    setTimeout(scrollFocusedField,650);
+    clearTimers();
+    timers.push(setTimeout(ensureVisible,180));
+    timers.push(setTimeout(ensureVisible,420));
+    timers.push(setTimeout(ensureVisible,700));
   }
+  document.addEventListener('focusin',function(e){ if(field(e.target)) schedule(); },true);
+  document.addEventListener('focusout',function(){ clearTimers(); },true);
+  /* visualViewport is used only to determine the visible area for the focused
+     field. It never changes app/nav/FAB position or height. */
+  if(vv) vv.addEventListener('resize',function(){
+    var el=document.activeElement;
+    if(field(el)) schedule();
+  },{passive:true});
+})();
+</script>
 
-  document.addEventListener('focusin', function(e){
-    if(isField(e.target)) schedule();
-  }, true);
-  if(vv){
-    vv.addEventListener('resize', schedule);
-    vv.addEventListener('scroll', schedule);
-  }
-  window.addEventListener('resize', schedule);
+
+<script id="v5-2-flash-fix-js">
+(function(){
+  'use strict';
+  document.addEventListener('touchstart', function(e){
+    if (e.touches && e.touches.length > 1) return;
+    var t=e.target && e.target.closest ? e.target.closest(
+      'button,a,.btn,.nav-item,.bottomnav-item,.fab,[role="button"]'
+    ) : null;
+    if (t) t.style.webkitTapHighlightColor='transparent';
+  }, {passive:true});
 })();
 </script>
 
