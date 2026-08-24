@@ -105,7 +105,9 @@
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{
     margin:0;padding:0;
-    height:100%;
+    height:auto;
+    min-height:100%;
+    min-height:100dvh;
     touch-action: pan-x pan-y;
     -ms-touch-action: pan-x pan-y;
     overscroll-behavior: none;
@@ -136,8 +138,8 @@
     color:var(--ink);
     font-family:'IBM Plex Sans', sans-serif;
     -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-    min-height:100svh;
+    min-height:100%;
+    min-height:100dvh;
     overscroll-behavior-y: none;
   }
   h1,h2,h3,.display{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
@@ -174,7 +176,7 @@
   }
 
   /* ---------- App shell ---------- */
-  #app{ display:none; max-width:520px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:84px; }
+  #app{ display:none; max-width:520px; width:100%; margin:0 auto; min-height:100%; min-height:100dvh; position:relative; padding-bottom:96px; background:var(--paper); }
   .topbar{
     position:sticky; top:0; z-index:30;
     background: var(--topbar-green);
@@ -573,8 +575,8 @@
     left: 24px;
   }
 
-  main{ padding:18px 16px 8px; }
-  .page{ display:none; }
+  main{ padding:18px 16px 8px; min-height:calc(100dvh - 96px); }
+  .page{ display:none; min-height:calc(100dvh - 96px); }
   .page.active{ display:block; }
 
 
@@ -1046,7 +1048,7 @@
 
   /* ---------- Login (premium ledger-vault design) ---------- */
   #onboardingScreen, #lockScreen, #verifyEmailScreen{
-    min-height:100vh; min-height:100svh; display:flex; align-items:center; justify-content:center; padding:24px;
+    min-height:100vh; min-height:100svh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
     position:relative; overflow:hidden;
     background:
       repeating-linear-gradient(0deg, rgba(217,175,107,0.05) 0px, rgba(217,175,107,0.05) 1px, transparent 1px, transparent 36px),
@@ -2271,7 +2273,8 @@
   .v-wrap{ max-width:480px; margin:0 auto; padding:28px 18px 40px; min-height:100%; }
   .v-brandrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
   .v-brandmark{ width:34px; height:34px; border-radius:10px; background:var(--gold-bright); color:var(--green-900);
-    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex:none; }
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex:none; overflow:hidden; }
+  .v-brandmark img{ width:100%; height:100%; object-fit:cover; display:block; }
   .v-brandtext{ color:var(--ink); font-family:'Fraunces',serif; font-weight:600; font-size:17px; }
   .v-brandtext span{ display:block; font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:12px; color:rgba(27,36,32,0.62); margin-top:1px; }
   .v-body{ min-height:60vh; display:flex; flex-direction:column; }
@@ -5640,7 +5643,7 @@ body.dark-mode #mainMenuDrawer .main-menu-item.active .main-menu-chevron{
 <div id="verifyScreen" style="display:none;">
 <div class="v-wrap">
 <div class="v-brandrow">
-<div class="v-brandmark">✓</div>
+<div class="v-brandmark"><img src="./icon-192.png" alt="MY SHOP"></div>
 <div class="v-brandtext">MY SHOP <span id="verifyBrandSub">Verification</span></div>
 </div>
 <div class="v-body" id="verifyBody">
@@ -8812,18 +8815,18 @@ let __dataMutationVersion = 0;
 
 // Shared Firebase project — every shop's data lives isolated under /shops/{uid}/
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCJOhYaGVS3OlMdpwHAYtNTnkc4cLNWlIU",
-  authDomain: "sohanshopbd.firebaseapp.com",
-  databaseURL: "https://sohanshopbd-default-rtdb.firebaseio.com",
-  projectId: "sohanshopbd",
-  storageBucket: "sohanshopbd.firebasestorage.app",
-  messagingSenderId: "375490913858",
-  appId: "1:375490913858:web:3596b25f007cc10be1efdb"
+  apiKey: "AIzaSyAqDxuNhZB7bMy08S3VX0PSPPw50k7CoQs",
+  authDomain: "my-shop-8ec16.firebaseapp.com",
+  databaseURL: "https://my-shop-8ec16-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "my-shop-8ec16",
+  storageBucket: "my-shop-8ec16.firebasestorage.app",
+  messagingSenderId: "423907690855",
+  appId: "1:423907690855:web:3a9c40c0ed25c339b487c2"
 };
 
 // ---- Push Notifications (Firebase Cloud Messaging — সম্পূর্ণ ফ্রি) ----
 // এই একটা মান নিজে বসাতে হবে, নাহলে পুশ কাজ করবে না (লোকাল নোটিফিকেশন আগের মতোই চলবে):
-// Firebase Console → এই প্রজেক্ট (sohanshopbd) → ⚙️ Project settings → Cloud Messaging ট্যাব →
+// Firebase Console → এই প্রজেক্ট (my-shop-8ec16) → ⚙️ Project settings → Cloud Messaging ট্যাব →
 // "Web Push certificates" সেকশনে "Generate key pair" চাপুন → যে কী-টা আসবে সেটা এখানে বসান।
 const FCM_VAPID_KEY = "BGna7tP_mYdATruDGkLFs2XCNjYSA8Yu-JKxz9HDkHqlxRRf2p9Km5tRjP63AKttdDXmqq5tGkavozmWIUIYBK8";
 
@@ -11313,6 +11316,14 @@ function lockNow(){
 
 /* ---------------- MAIN 3-LINE MENU ---------------- */
 function openMainMenu(){
+  // Opening the global drawer is a navigation action, not a text-entry action.
+  // Blur the active field first so Android closes the IME instead of leaving the
+  // keyboard underneath the drawer (which previously made the menu look clipped).
+  const active=document.activeElement;
+  if(active && (active.tagName==='INPUT' || active.tagName==='TEXTAREA' || active.tagName==='SELECT' || active.isContentEditable)){
+    try{ active.blur(); }catch(e){}
+    try{ if(window.MyShopAndroid && typeof MyShopAndroid.hideKeyboard==='function') MyShopAndroid.hideKeyboard(); }catch(e){}
+  }
   const d=document.getElementById('mainMenuDrawer');
   const o=document.getElementById('mainMenuOverlay');
   const b=document.getElementById('mainMenuBtn');
@@ -13960,9 +13971,9 @@ function ensureVerificationId(sale){
 // আসল হোস্টেড (Firebase Hosting) ডোমেইন ব্যবহার করা হচ্ছে; সাধারণ ব্রাউজার/PWA-তে আগের
 // মতোই বর্তমান origin ব্যবহার হবে।
 // ⚠️ এই ডোমেইনটা আসল প্রোডাকশন Firebase Hosting URL-এর সাথে মিলিয়ে নিন —
-// প্রজেক্ট আইডি "sohanshopbd" থেকে ধরে নেওয়া হয়েছে, কাস্টম ডোমেইন থাকলে বদলে দিন।
+// প্রজেক্ট আইডি "my-shop-8ec16" থেকে ধরে নেওয়া হয়েছে, কাস্টম ডোমেইন থাকলে বদলে দিন।
 const NATIVE_APP_HOSTNAME = 'appassets.androidplatform.net';
-const PUBLIC_HOSTED_BASE = 'https://sohanshopbd.web.app/';
+const PUBLIC_HOSTED_BASE = 'https://myshop-bd.web.app/';
 function publicPageUrl(){
   if(window.location.hostname === NATIVE_APP_HOSTNAME){
     return PUBLIC_HOSTED_BASE;
@@ -14933,7 +14944,7 @@ window.onNativeBiometricResult = function(resultJson){
    creates itself, in a hidden Drive area invisible in the user's normal Drive UI.
    This is a separate permission from Firebase Google Sign-In and never touches any
    other file in the user's Drive. */
-const DRIVE_CLIENT_ID = '375490913858-s10cu4q3mko3aa2j5vfga4q9lbv7ien4.apps.googleusercontent.com';
+const DRIVE_CLIENT_ID = '423907690855-47p5j5cvimst1shjo5mqiq7dkadqg2ch.apps.googleusercontent.com';
 // appDataFolder keeps the backup private to this app. metadata.readonly is used only
 // for Drive account quota/status information shown in the backup screen.
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata.readonly';
@@ -15049,7 +15060,7 @@ function requestDriveToken(promptMode,onDone){
     window.MyShopAndroid.requestDriveAuthorization();
     return;
   }
-  // --- ওয়েব ফলব্যাক: sohanshopbd.web.app-এ সরাসরি ব্রাউজারে খোলা হলে (নেটিভ অ্যাপ না হলে) ---
+  // --- ওয়েব ফলব্যাক: myshop-bd.web.app-এ সরাসরি ব্রাউজারে খোলা হলে (নেটিভ অ্যাপ না হলে) ---
   if(!ensureDriveTokenClient()){ onDone(false,'google_unavailable'); return; }
   let settled=false;
   const finish=(...args)=>{if(settled)return;settled=true;clearTimeout(timeoutId);onDone(...args);};
@@ -15685,8 +15696,8 @@ function syncToSheetViaForm(url, bodyStr, type){
 // deployed yet" toast instead of throwing on a bad fetch — the rest of the
 // UI (address picking, bulk selection, receipt tracking-ID printing) all
 // works fully before this is set; only the actual courier API call waits on it.
-//   Example once deployed: 'https://asia-southeast1-sohanshopbd.cloudfunctions.net'
-const COURIER_FUNCTION_BASE_URL = 'https://us-central1-sohanshopbd.cloudfunctions.net';
+//   Example once deployed: 'https://asia-southeast1-my-shop-8ec16.cloudfunctions.net'
+const COURIER_FUNCTION_BASE_URL = '';
 
 const COURIER_PROVIDERS = [
   { id:'steadfast', name:'Steadfast Courier', short:'SF', color:'#7b2ff7', logo:'https://play-lh.googleusercontent.com/OQgYiwAh2d4VqZgjf0GxZM83ylNIzxOQ-Wctx_MXmrxuaSA67UeYYwVhQ2PEMBxd0hs0nxnsRvnsviPRDgWgoGU=s256' },
@@ -18193,26 +18204,19 @@ function saveRsEntries(){
       সিটের ভেতরের কনটেন্ট একদম উপরে স্ক্রল করা অবস্থায় যেকোনো জায়গা থেকে টানলে।
    ======================================================================= */
 
-// হ্যাপটিক ফিডব্যাক — যেসব ডিভাইসে navigator.vibrate নেই (যেমন iOS Safari) সেখানে
-// চুপচাপ কিছুই হবে না, কোনো এরর দেখাবে না।
+// হ্যাপটিক ফিডব্যাক — ব্যবহারকারীর রিপোর্ট: যেকোনো বাটনে ট্যাপ করলেই ফোন কেঁপে ওঠা/
+// ভাইব্রেট করাটা অ্যাপকে অস্থির/জ্যাঙ্কি অনুভব করাচ্ছিল। তাই navigator.vibrate() পুরোপুরি
+// নিষ্ক্রিয় (no-op) করে দেওয়া হলো — নিচের ফাংশনটা কল হলেও এখন আর কিছুই করে না, তাই
+// কোডবেসের কোনো জায়গা থেকে haptic(...) ডাকা হলেও (লক-স্ক্রিন কীপ্যাড, শিট-সোয়াইপ ইত্যাদি
+// সহ) ফোন আর কখনো ভাইব্রেট/কাঁপবে না।
 function haptic(style){
-  if(!('vibrate' in navigator)) return;
-  try{
-    const patterns = { light:8, medium:16, success:[10,30,10], warning:[16,40,16] };
-    navigator.vibrate(patterns[style] || 8);
-  }catch(e){}
+  return;
 }
-// অ্যাপ জুড়ে প্রতিটা ট্যাপযোগ্য এলিমেন্টে (যেকোনো [onclick], <button>, বটম-নেভ ট্যাব)
-// হালকা হ্যাপটিক — কোডবেসেই এই তিনটাকে "ট্যাপযোগ্য" হিসেবে ধরা হয় (দ্র. tap-highlight
-// রুল, উপরে), তাই একই কনভেনশন এখানেও ব্যবহার করা হলো।
-document.addEventListener('click', function(e){
-  const el = e.target.closest('[onclick], button, .navtab');
-  if(!el) return;
-  // লক-স্ক্রিন কীপ্যাডের বাটনে হ্যাপটিক ইতিমধ্যেই pointerdown লিসেনারে হয়ে গেছে
-  // (দ্র. buildKeypad, উপরে) — এখানে আবার করলে ডাবল-ভাইব্রেট হতো।
-  if(el.closest('#keypad')) return;
-  haptic('light');
-}, true);
+// আগে এখানে "যেকোনো ট্যাপযোগ্য এলিমেন্টে ক্লিক করলেই হালকা হ্যাপটিক" নামে একটা
+// document-wide delegated click listener ছিল — এটাই মূলত প্রতিটা বাটন-ট্যাপে ভাইব্রেশনের
+// উৎস ছিল, আর পুরো অ্যাপ জুড়ে (ক্যাপচার ফেজে) প্রতিটা ক্লিকে একটা অতিরিক্ত DOM ট্রাভার্সালও
+// (closest lookup) চালাচ্ছিল। ভাইব্রেশন বন্ধ করার পাশাপাশি এই অপ্রয়োজনীয় লিসেনারটাও পুরোপুরি
+// সরিয়ে ফেলা হলো — এতে অ্যাপ আগের চেয়ে বেশি স্থির/স্ট্যাবল থাকবে।
 
 // বটম শিট টেনে বন্ধ করার জেশ্চার — sheetId/overlayId/closeFn নিয়ে কাজ করে, তাই
 // পাঁচটা শিটেই একই ফাংশন পুনর্ব্যবহার করা যায়।
@@ -22503,6 +22507,101 @@ function startHighScaleOrderListener_DISABLED() {
 })();
 </script>
 
+<script id="keyboard-pin-header-nav-fix">
+(function(){
+  'use strict';
+  // সমস্যা: সেটিংস/এডিট ফর্মে কোনো ইনপুটে ট্যাপ করে কিবোর্ড খোলার পর, উপরের
+  // sticky টপবার আর নিচের fixed বটম-ন্যাভ আসল দৃশ্যমান (visual) ভিউপোর্টের
+  // বদলে পুরোনো, লম্বা লেআউট-ভিউপোর্ট ধরে পজিশন হিসাব করতে থাকে — ফলে
+  // কিবোর্ড খোলা অবস্থায় স্ক্রল করলে ওরা "মুক্ত" সাধারণ এলিমেন্টের মতো
+  // উপরে সরে যায়, নিচে ফাঁকা জায়গা রেখে যায়।
+  //
+  // সমাধান: window.visualViewport থেকে আসল দৃশ্যমান অংশের উচ্চতা ও অফসেট
+  // মেপে, কিবোর্ড খোলা অবস্থায় টপবার ও বটম-ন্যাভকে সরাসরি ওই দৃশ্যমান
+  // অংশের উপরে/নিচে পিন (position:fixed + সঠিক top) করে দেওয়া হয়, এবং
+  // কিবোর্ড অ্যানিমেশন চলাকালীন প্রতিটা resize/scroll ইভেন্টে রিক্যালকুলেট
+  // করা হয়। ইনপুট থেকে ফোকাস সরে (কিবোর্ড বন্ধ হয়ে) গেলে দুটোকেই আগের
+  // স্বাভাবিক CSS পজিশনে (sticky/fixed bottom:0) ফিরিয়ে দেওয়া হয়।
+  var vv = window.visualViewport;
+  if(!vv) return; // visualViewport না থাকা পুরনো WebView-তে কিছু করার নেই, ক্ষতিও নেই
+
+  var pinned = false;
+  var rafId = null;
+
+  function isFormField(el){
+    return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+  }
+  function getTopbar(){ return document.querySelector('.topbar'); }
+  function getNavWrap(){ return document.querySelector('.bottomnav-wrap'); }
+
+  function applyPin(){
+    var tb = getTopbar();
+    var nav = getNavWrap();
+    var vTop = vv.offsetTop;
+    var vBottom = vv.offsetTop + vv.height;
+
+    if(tb && !tb.__saFrozen){
+      var tbRect = tb.getBoundingClientRect();
+      if(tb.__kbPrevInline === undefined) tb.__kbPrevInline = tb.getAttribute('style') || '';
+      tb.style.position = 'fixed';
+      tb.style.top = vTop + 'px';
+      tb.style.left = tbRect.left + 'px';
+      tb.style.width = tbRect.width + 'px';
+      tb.style.margin = '0';
+      tb.style.zIndex = '30';
+    }
+    if(nav){
+      var navRect = nav.getBoundingClientRect();
+      if(nav.__kbPrevInline === undefined) nav.__kbPrevInline = nav.getAttribute('style') || '';
+      nav.style.position = 'fixed';
+      nav.style.top = (vBottom - navRect.height) + 'px';
+      nav.style.bottom = 'auto';
+    }
+  }
+
+  function releasePin(){
+    var tb = getTopbar();
+    var nav = getNavWrap();
+    if(tb && tb.__kbPrevInline !== undefined){
+      if(tb.__kbPrevInline) tb.setAttribute('style', tb.__kbPrevInline);
+      else tb.removeAttribute('style');
+      delete tb.__kbPrevInline;
+    }
+    if(nav && nav.__kbPrevInline !== undefined){
+      if(nav.__kbPrevInline) nav.setAttribute('style', nav.__kbPrevInline);
+      else nav.removeAttribute('style');
+      delete nav.__kbPrevInline;
+    }
+    pinned = false;
+  }
+
+  function scheduleApply(){
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function(){
+      rafId = null;
+      if(pinned) applyPin();
+    });
+  }
+
+  document.addEventListener('focusin', function(e){
+    if(!isFormField(e.target)) return;
+    pinned = true;
+    applyPin();
+  }, true);
+
+  document.addEventListener('focusout', function(e){
+    if(!isFormField(e.target)) return;
+    setTimeout(function(){
+      if(!isFormField(document.activeElement)) releasePin();
+    }, 60);
+  }, true);
+
+  vv.addEventListener('resize', scheduleApply);
+  vv.addEventListener('scroll', scheduleApply);
+  window.addEventListener('scroll', function(){ if(pinned) scheduleApply(); }, true);
+})();
+</script>
+
 <script id="keyboard-close-white-flash-fix">
 (function(){
   'use strict';
@@ -22583,6 +22682,108 @@ function startHighScaleOrderListener_DISABLED() {
       if(overlay && overlay.style.display === 'block') hideOverlaySoon(120);
     });
   }
+})();
+</script>
+
+
+<style id="keyboard-safe-layout-final">
+/* FINAL keyboard/layout stabilization.
+   Android WebView may keep the original layout viewport while the IME is open.
+   The app must therefore scroll the focused control into the actually visible
+   visual viewport instead of letting the keyboard cover it. */
+html, body{
+  min-height:100dvh !important;
+  height:auto !important;
+  overflow-x:hidden !important;
+}
+#app{
+  min-height:100dvh !important;
+  background:var(--paper,#F0F0F0) !important;
+}
+main{
+  min-height:calc(100dvh - 96px) !important;
+  padding-bottom:112px !important;
+}
+.page.active{
+  min-height:calc(100dvh - 96px) !important;
+}
+#onboardingScreen.light-auth,
+#verifyEmailScreen{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  align-items:flex-start !important;
+  justify-content:flex-start !important;
+  min-height:100dvh !important;
+  box-sizing:border-box !important;
+}
+#onboardingScreen.light-auth .login-card,
+#verifyEmailScreen .login-card{
+  margin-top:max(72px, calc(env(safe-area-inset-top) + 48px)) !important;
+  margin-bottom:28px !important;
+}
+@media (min-height:760px) and (min-width:521px){
+  #onboardingScreen.light-auth, #verifyEmailScreen{align-items:center !important; justify-content:center !important;}
+  #onboardingScreen.light-auth .login-card, #verifyEmailScreen .login-card{margin-top:0 !important;}
+}
+</style>
+
+<script id="keyboard-field-visibility-final">
+(function(){
+  'use strict';
+  var vv = window.visualViewport;
+  var timer = null;
+
+  function isField(el){
+    return !!el && (el.tagName==='INPUT' || el.tagName==='TEXTAREA' || el.tagName==='SELECT' || el.isContentEditable);
+  }
+
+  function scrollFocusedField(){
+    var el=document.activeElement;
+    if(!isField(el)) return;
+
+    var rect=el.getBoundingClientRect();
+    var top=vv ? vv.offsetTop : 0;
+    var bottom=vv ? (vv.offsetTop + vv.height) : window.innerHeight;
+
+    var topbar=document.querySelector('.topbar');
+    var nav=document.querySelector('.bottomnav-wrap');
+    var topReserve=topbar ? Math.max(8, topbar.getBoundingClientRect().height + 8) : 12;
+    var bottomReserve=nav && getComputedStyle(nav).display!=='none' ? nav.getBoundingClientRect().height + 14 : 14;
+
+    var safeTop=top + topReserve;
+    var safeBottom=bottom - bottomReserve;
+    var delta=0;
+
+    if(rect.bottom > safeBottom) delta = rect.bottom - safeBottom;
+    else if(rect.top < safeTop) delta = rect.top - safeTop;
+
+    if(Math.abs(delta) > 2){
+      var authScreen=el.closest ? el.closest('#onboardingScreen, #verifyEmailScreen') : null;
+      if(authScreen && getComputedStyle(authScreen).overflowY !== 'hidden'){
+        authScreen.scrollTop += delta;
+      }else{
+        window.scrollBy({top:delta, left:0, behavior:'auto'});
+      }
+    }
+  }
+
+  function schedule(){
+    clearTimeout(timer);
+    requestAnimationFrame(scrollFocusedField);
+    timer=setTimeout(scrollFocusedField,120);
+    setTimeout(scrollFocusedField,320);
+    setTimeout(scrollFocusedField,650);
+  }
+
+  document.addEventListener('focusin', function(e){
+    if(isField(e.target)) schedule();
+  }, true);
+  if(vv){
+    vv.addEventListener('resize', schedule);
+    vv.addEventListener('scroll', schedule);
+  }
+  window.addEventListener('resize', schedule);
 })();
 </script>
 
